@@ -1,0 +1,36 @@
+COMMON
+~~~~~~
+
+GeeXboX libplayer is a multimedia A/V abstraction layer API.
+Its goal is to interact with GeeXboX Open Media Center (OMC).
+
+libplayer provides a generic A/V API that relies on various
+multimedia player for Linux systems.
+It currently supports xine only.
+More bindings (MPlayer, GStreamer, ...) are bound to come some day.
+
+DEVELOPERS
+~~~~~~~~~~
+
+Modify config.mak before build in order to specify which binding
+you want to enable.
+
+libplayer comes with a regression tests toolkit called libtest.
+Use it to validate your code before each modification to libplayer.
+If you add new functions to libplayer, ALWAYS add them to libtest.c too.
+
+libplayer uses GNU Coding Standards as default indentation and code style.
+Please always conform to this standard before applying your changes.
+
+In order to provide a minimalistic player dependancy
+towards frontends, only the abstraction layer has to be exported.
+ALWAYS consider player.h as the ONLY public header.
+Private definitions have to go to player_internals.h
+NEVER include other headers in .h files, always do so in .c files.
+NEVER use printf(), always use plog().
+Check your code for warnings before commits.
+
+AUTHORS
+~~~~~~~
+
+Benjamin Zores <ben@geexbox.org>
