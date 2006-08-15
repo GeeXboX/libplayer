@@ -20,7 +20,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #include "player.h"
 #include "player_internals.h"
