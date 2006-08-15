@@ -19,6 +19,8 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <inttypes.h>
 
 #include "player.h"
 
@@ -39,6 +41,8 @@ do_regression_tests (struct player_t *player)
   
   player_mrl_append (player, AUDIO_TEST_FILE,
                      PLAYER_MRL_TYPE_NONE, NULL, PLAYER_ADD_MRL_NOW);
+  player_mrl_get_properties (player, player->mrl);
+  player_mrl_get_metadata (player, player->mrl);
   printf ("Current volume: %d\n", player_get_volume (player));
   player_set_volume (player, 85);
   player_playback_start (player);

@@ -20,11 +20,133 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 
 #include "player.h"
+#include "player_internals.h"
 #include "logs.h"
 
 #define MODULE_NAME "player"
+
+struct mrl_properties_audio_t *
+mrl_properties_audio_new (void)
+{
+  struct mrl_properties_audio_t *audio;
+
+  audio = (struct mrl_properties_audio_t *)
+    malloc (sizeof (struct mrl_properties_audio_t));
+  audio->codec = NULL;
+  audio->bitrate = 0;
+  audio->bits = 0;
+  audio->channels = 0;
+  audio->samplerate = 0;
+
+  return audio;
+}
+
+void
+mrl_properties_audio_free (struct mrl_properties_audio_t *audio)
+{
+  if (!audio)
+    return;
+
+  if (audio->codec)
+    free (audio->codec);
+  free (audio);
+}
+
+struct mrl_properties_video_t *
+mrl_properties_video_new (void)
+{
+  struct mrl_properties_video_t *video;
+
+  video = (struct mrl_properties_video_t *)
+    malloc (sizeof (struct mrl_properties_video_t));
+  video->codec = NULL;
+  video->bitrate = 0;
+  video->width = 0;
+  video->height = 0;
+  video->channels = 0;
+  video->streams = 0;
+
+  return video;
+}
+
+void
+mrl_properties_video_free (struct mrl_properties_video_t *video)
+{
+  if (!video)
+    return;
+
+  if (video->codec)
+    free (video->codec);
+  free (video);
+}
+
+struct mrl_properties_t *
+mrl_properties_new (void)
+{
+  struct mrl_properties_t *prop;
+
+  prop = (struct mrl_properties_t *)
+    malloc (sizeof (struct mrl_properties_t));
+  prop->size = 0;
+  prop->seekable = 0;
+  prop->audio = NULL;
+  prop->video = NULL;
+
+  return prop;
+}
+
+void
+mrl_properties_free (struct mrl_properties_t *prop)
+{
+  if (!prop)
+    return;
+
+  if (prop->audio)
+    mrl_properties_audio_free (prop->audio);
+  if (prop->video)
+    mrl_properties_video_free (prop->video);
+  free (prop);
+}
+
+struct mrl_metadata_t *
+mrl_metadata_new (void)
+{
+  struct mrl_metadata_t *meta;
+
+  meta = (struct mrl_metadata_t *) malloc (sizeof (struct mrl_metadata_t));
+  meta->title = NULL;
+  meta->artist = NULL;
+  meta->genre = NULL;
+  meta->album = NULL;
+  meta->year = NULL;
+  meta->track = NULL;
+
+  return meta;
+}
+
+void
+mrl_metadata_free (struct mrl_metadata_t *meta)
+{
+  if (!meta)
+    return;
+
+  if (meta->title)
+    free (meta->title);
+  if (meta->artist)
+    free (meta->artist);
+  if (meta->genre)
+    free (meta->genre);
+  if (meta->album)
+    free (meta->album);
+  if (meta->year)
+    free (meta->year);
+  if (meta->track)
+    free (meta->track);
+  free (meta);
+}
 
 static struct mrl_t *
 mrl_new (struct player_t *player, char *name,
@@ -45,10 +167,6 @@ mrl_new (struct player_t *player, char *name,
   mrl->prev = NULL;
   mrl->next = NULL;
 
-  /* get MRL properties if available */
-
-  /* get MRL metadata if available */
-  
   return mrl;
 }
 
@@ -63,12 +181,10 @@ mrl_free (struct mrl_t *mrl, int recursive)
   if (mrl->cover)
     free (mrl->cover);
 
-  /*
   if (mrl->prop)
     mrl_properties_free (mrl->prop);
   if (mrl->meta)
-    mrl_metadata_free (mrl->prop);
-  */
+    mrl_metadata_free (mrl->meta);
   
   if (recursive && mrl->next)
     mrl_free (mrl->next, 1);
@@ -161,4 +277,40 @@ player_mrl_next (struct player_t *player)
   player_playback_stop (player);
   player->mrl = mrl->next;
   player_playback_start (player);
+}
+
+void
+player_mrl_get_properties (struct player_t *player, struct mrl_t *mrl)
+{
+  plog (MODULE_NAME, "player_mrl_get_properties");
+  
+  if (!player || !mrl)
+    return;
+
+  if (mrl->prop) /* already retrieved */
+    return;
+
+  mrl->prop = mrl_properties_new ();
+  
+  /* player specific init */
+  if (player->funcs->mrl_get_props)
+    player->funcs->mrl_get_props (player, mrl);
+}
+
+void
+player_mrl_get_metadata (struct player_t *player, struct mrl_t *mrl)
+{
+  plog (MODULE_NAME, "player_mrl_get_metadata");
+  
+  if (!player || !mrl)
+    return;
+
+  if (mrl->meta) /* already retrieved */
+    return;
+
+  mrl->meta = mrl_metadata_new ();
+  
+  /* player specific init */
+  if (player->funcs->mrl_get_meta)
+    player->funcs->mrl_get_meta (player, mrl);
 }

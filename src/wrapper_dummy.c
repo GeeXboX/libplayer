@@ -19,6 +19,7 @@
  */
 
 #include <stdlib.h>
+#include <inttypes.h>
 
 #include "player.h"
 #include "player_internals.h"
@@ -61,6 +62,18 @@ dummy_uninit (void *priv)
 
   dummy = (struct dummy_t *) priv;
   free (dummy);
+}
+
+static void
+dummy_mrl_get_properties (struct player_t *player, struct mrl_t *mrl)
+{
+  plog (MODULE_NAME, "mrl_get_properties");
+}
+
+static void
+dummy_mrl_get_metadata (struct player_t *player, struct mrl_t *mrl)
+{
+  plog (MODULE_NAME, "mrl_get_metadata");
 }
 
 static playback_status_t
@@ -111,13 +124,15 @@ register_functions_dummy (void)
   funcs = (struct player_funcs_t *) malloc (sizeof (struct player_funcs_t));
   funcs->init = dummy_init;
   funcs->uninit = dummy_uninit;
+  funcs->mrl_get_props = dummy_mrl_get_properties;
+  funcs->mrl_get_meta = dummy_mrl_get_metadata;
   funcs->pb_start = dummy_playback_start;
   funcs->pb_stop = dummy_playback_stop;
   funcs->pb_pause = dummy_playback_pause;
   funcs->pb_seek = dummy_playback_seek;
   funcs->get_volume = dummy_get_volume;
   funcs->set_volume = dummy_set_volume;
-     
+  
   return funcs;
 }
 

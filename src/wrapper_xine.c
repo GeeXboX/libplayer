@@ -19,6 +19,11 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
+#include <inttypes.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <xine.h>
 
 #include "player.h"
@@ -135,6 +140,176 @@ xine_player_uninit (void *priv)
     xine_exit (x->xine);
 
   free (x);
+}
+
+static void
+xine_player_mrl_get_audio_properties (struct player_t *player,
+                                      struct mrl_properties_audio_t *audio)
+{
+  struct xine_player_t *x = NULL;
+
+  if (!player || !audio)
+    return;
+
+  x = (struct xine_player_t *) player->priv;
+  if (!x->stream)
+    return;
+
+  if (xine_get_meta_info (x->stream, XINE_META_INFO_AUDIOCODEC))
+    audio->codec =
+      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_AUDIOCODEC));
+  plog (MODULE_NAME, "Audio Codec: %s", audio->codec);
+
+  audio->bitrate =
+    xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_BITRATE);
+  plog (MODULE_NAME, "Audio Bitrate: %d kbps",
+        (int) (audio->bitrate / 1000));
+
+  audio->bits =
+    xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_BITS);
+  plog (MODULE_NAME, "Audio Bits: %d bps", audio->bits);
+
+  audio->channels =
+    xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_CHANNELS);
+  plog (MODULE_NAME, "Audio Channels: %d", audio->channels);
+
+  audio->samplerate =
+    xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_SAMPLERATE);
+  plog (MODULE_NAME, "Audio Sample Rate: %d Hz", audio->samplerate);
+}
+
+static void
+xine_player_mrl_get_video_properties (struct player_t *player,
+                                      struct mrl_properties_video_t *video)
+{
+  struct xine_player_t *x = NULL;
+
+  if (!player || !video)
+    return;
+
+  x = (struct xine_player_t *) player->priv;
+  if (!x->stream)
+    return;
+
+  if (xine_get_meta_info (x->stream, XINE_META_INFO_VIDEOCODEC))
+    video->codec =
+      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_VIDEOCODEC));
+  plog (MODULE_NAME, "Video Codec: %s", video->codec);
+
+  video->bitrate =
+    xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_BITRATE);
+  plog (MODULE_NAME, "Video Bitrate: %d kbps",
+        (int) (video->bitrate / 1000));
+
+  video->width =
+    xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_WIDTH);
+  plog (MODULE_NAME, "Video Width: %d", video->width);
+
+  video->height =
+    xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_HEIGHT);
+  plog (MODULE_NAME, "Video Height: %d", video->height);
+
+  video->channels =
+    xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_CHANNELS);
+  plog (MODULE_NAME, "Video Channels: %d", video->channels);
+
+  video->streams =
+    xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_STREAMS);
+  plog (MODULE_NAME, "Video Streams: %d", video->streams);
+}
+  
+static void
+xine_player_mrl_get_properties (struct player_t *player, struct mrl_t *mrl)
+{
+  struct xine_player_t *x = NULL;
+  struct stat st;
+  
+  plog (MODULE_NAME, "mrl_get_properties");
+
+  if (!player)
+    return;
+
+  x = (struct xine_player_t *) player->priv;
+  if (!x->stream)
+    return;
+  
+  /* close existing stream if any */
+  xine_stop (x->stream);
+  xine_close (x->stream);
+  xine_open (x->stream, mrl->name);
+
+  /* now fetch properties */
+  stat (mrl->name, &st);
+  mrl->prop->size = st.st_size;
+  plog (MODULE_NAME, "File Size: %.2f MB",
+        (float) mrl->prop->size / 1024 / 1024);
+  
+  mrl->prop->seekable =
+    xine_get_stream_info (x->stream, XINE_STREAM_INFO_SEEKABLE);
+  plog (MODULE_NAME, "Seekable: %d", mrl->prop->seekable);
+
+  if (xine_get_stream_info (x->stream, XINE_STREAM_INFO_HAS_AUDIO))
+  {
+    mrl->prop->audio = mrl_properties_audio_new ();
+    xine_player_mrl_get_audio_properties (player, mrl->prop->audio);
+  }  
+  
+  if (xine_get_stream_info (x->stream, XINE_STREAM_INFO_HAS_VIDEO))
+  {
+    mrl->prop->video = mrl_properties_video_new ();
+    xine_player_mrl_get_video_properties (player, mrl->prop->video);
+  }
+}
+
+static void
+xine_player_mrl_get_metadata (struct player_t *player, struct mrl_t *mrl)
+{
+  struct xine_player_t *x = NULL;
+  
+  plog (MODULE_NAME, "mrl_get_metadata");
+
+  if (!player)
+    return;
+    
+  x = (struct xine_player_t *) player->priv; 
+  if (!x->stream)
+    return;
+  
+  /* close existing stream if any */
+  xine_stop (x->stream);
+  xine_close (x->stream);
+  xine_open (x->stream, mrl->name);
+
+  /* now fetch metadata */
+  if (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST))
+    mrl->meta->title =
+      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST));
+  plog (MODULE_NAME, "Meta Title: %s", mrl->meta->title);
+  
+  if (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST))
+    mrl->meta->artist =
+      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST));
+  plog (MODULE_NAME, "Meta Artist: %s", mrl->meta->artist);
+  
+  if (xine_get_meta_info (x->stream, XINE_META_INFO_GENRE))
+    mrl->meta->genre =
+      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_GENRE));
+  plog (MODULE_NAME, "Meta Genre: %s", mrl->meta->genre);
+  
+  if (xine_get_meta_info (x->stream, XINE_META_INFO_ALBUM))
+    mrl->meta->album =
+      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ALBUM));
+  plog (MODULE_NAME, "Meta Album: %s", mrl->meta->album);
+  
+  if (xine_get_meta_info (x->stream, XINE_META_INFO_YEAR))
+    mrl->meta->year =
+      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_YEAR));
+  plog (MODULE_NAME, "Meta Year: %s", mrl->meta->year);
+  
+  if (xine_get_meta_info (x->stream, XINE_META_INFO_TRACK_NUMBER))
+    mrl->meta->track =
+      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_TRACK_NUMBER));
+  plog (MODULE_NAME, "Meta Track: %s", mrl->meta->track);
 }
 
 static playback_status_t
@@ -272,6 +447,8 @@ register_functions_xine (void)
   funcs = (struct player_funcs_t *) malloc (sizeof (struct player_funcs_t));
   funcs->init = xine_player_init;
   funcs->uninit = xine_player_uninit;
+  funcs->mrl_get_props = xine_player_mrl_get_properties;
+  funcs->mrl_get_meta = xine_player_mrl_get_metadata;
   funcs->pb_start = xine_player_playback_start;
   funcs->pb_stop = xine_player_playback_stop;
   funcs->pb_pause = xine_player_playback_pause;

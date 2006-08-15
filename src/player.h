@@ -59,12 +59,37 @@ enum player_event_s {
   PLAYER_EVENT_MRL_UPDATED
 };
 
+struct mrl_properties_audio_t {
+  char *codec;
+  uint32_t bitrate;
+  uint32_t bits;
+  uint32_t channels;
+  uint32_t samplerate;
+};
+
+struct mrl_properties_video_t {
+  char *codec;
+  uint32_t bitrate;
+  uint32_t width;
+  uint32_t height;
+  uint32_t channels;
+  uint32_t streams;
+};
+
 struct mrl_properties_t {
-  /* not yet defined */
+  off_t size;
+  uint32_t seekable;
+  struct mrl_properties_audio_t *audio;
+  struct mrl_properties_video_t *video;
 };
 
 struct mrl_metadata_t {
-  /* not yet defined */
+  char *title;
+  char *artist;
+  char *genre;
+  char *album;
+  char *year;
+  char *track;
 };
 
 struct mrl_t {
@@ -105,6 +130,8 @@ void player_mrl_append (struct player_t *player,
                         char *cover, player_add_mrl_t when);
 void player_mrl_previous (struct player_t *player);
 void player_mrl_next (struct player_t *player);
+void player_mrl_get_properties (struct player_t *player, struct mrl_t *mrl);
+void player_mrl_get_metadata (struct player_t *player, struct mrl_t *mrl);
 
 /* get player playback properties */
 int player_get_volume (struct player_t *player);
