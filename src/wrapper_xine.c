@@ -69,6 +69,12 @@ static init_status_t
 xine_player_init (struct player_t *player)
 {
   struct xine_player_t *x = NULL;
+  int verbosity = XINE_VERBOSITY_NONE;
+
+#ifdef HAVE_DEBUG
+  verbosity = XINE_VERBOSITY_LOG;
+#endif /* HAVE_DEBUG */
+
   
   plog (MODULE_NAME, "init");
 
@@ -79,8 +85,7 @@ xine_player_init (struct player_t *player)
 
   x->xine = xine_new ();
   xine_init (x->xine);
-  xine_engine_set_param (x->xine, XINE_ENGINE_PARAM_VERBOSITY,
-                         XINE_VERBOSITY_NONE);
+  xine_engine_set_param (x->xine, XINE_ENGINE_PARAM_VERBOSITY, verbosity);
 
   /* init video output driver: for now, just set to NULL */
   x->vo_port = xine_open_video_driver (x->xine, NULL,
