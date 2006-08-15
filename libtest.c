@@ -22,7 +22,7 @@
 
 #include "player.h"
 
-#define TEST_FILE "dummy_file"
+#define AUDIO_TEST_FILE "samples/audio.ogg"
 
 static int
 frontend_event_cb (player_event_t e, void *data)
@@ -37,7 +37,7 @@ do_regression_tests (struct player_t *player)
   if (!player)
     return;
   
-  player_mrl_append (player, TEST_FILE,
+  player_mrl_append (player, AUDIO_TEST_FILE,
                      PLAYER_MRL_TYPE_NONE, NULL, PLAYER_ADD_MRL_NOW);
   printf ("Current volume: %d\n", player_get_volume (player));
   player_set_volume (player, 85);
