@@ -34,14 +34,14 @@
 
 #define MODULE_NAME "player"
 
-struct player_t *
+player_t *
 player_init (player_type_t type, char *ao, char *vo,
              int event_cb (player_event_t e, void *data))
 {
-  struct player_t *player = NULL;
+  player_t *player = NULL;
   int res = PLAYER_INIT_ERROR;
   
-  player = (struct player_t *) malloc (sizeof (struct player_t));
+  player = (player_t *) malloc (sizeof (player_t));
   player->type = type;
   player->mrl = NULL;  
   player->state = PLAYER_STATE_IDLE;
@@ -93,7 +93,7 @@ player_init (player_type_t type, char *ao, char *vo,
 }
 
 void
-player_uninit (struct player_t *player)
+player_uninit (player_t *player)
 {
   if (!player)
     return;
@@ -110,7 +110,7 @@ player_uninit (struct player_t *player)
 }
 
 void
-player_playback_start (struct player_t *player)
+player_playback_start (player_t *player)
 {
   int res = PLAYER_PB_ERROR;
   
@@ -139,7 +139,7 @@ player_playback_start (struct player_t *player)
 }
 
 void
-player_playback_stop (struct player_t *player)
+player_playback_stop (player_t *player)
 {
   if (!player)
     return;
@@ -159,7 +159,7 @@ player_playback_stop (struct player_t *player)
 }
 
 void
-player_playback_pause (struct player_t *player)
+player_playback_pause (player_t *player)
 {
   int res = PLAYER_PB_ERROR;
   
@@ -184,7 +184,7 @@ player_playback_pause (struct player_t *player)
 }
 
 void
-player_playback_seek (struct player_t *player, int value)
+player_playback_seek (player_t *player, int value)
 {
   if (!player)
     return;
@@ -196,7 +196,7 @@ player_playback_seek (struct player_t *player, int value)
 
 /* get player playback properties */
 int
-player_get_volume (struct player_t *player)
+player_get_volume (player_t *player)
 {
   int res = -1;
   
@@ -212,7 +212,7 @@ player_get_volume (struct player_t *player)
 
 /* tune player playback properties */
 void
-player_set_loop (struct player_t *player, int value)
+player_set_loop (player_t *player, int value)
 {
   if (!player)
     return;
@@ -221,7 +221,7 @@ player_set_loop (struct player_t *player, int value)
 }
 
 void
-player_set_shuffle (struct player_t *player, int value)
+player_set_shuffle (player_t *player, int value)
 {
   if (!player)
     return;
@@ -230,7 +230,7 @@ player_set_shuffle (struct player_t *player, int value)
 }
 
 void
-player_set_volume (struct player_t *player, int value)
+player_set_volume (player_t *player, int value)
 {
   if (!player)
     return;

@@ -21,7 +21,7 @@
 #ifndef _WRAPPER_DUMMY_H_
 #define _WRAPPER_DUMMY_H_
 
-struct player_funcs_t * register_functions_dummy (void);
+player_funcs_t * register_functions_dummy (void);
 void *register_private_dummy (void);
 
 #endif /* _WRAPPER_DUMMY_H_ */

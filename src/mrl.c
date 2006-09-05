@@ -28,13 +28,13 @@
 
 #define MODULE_NAME "player"
 
-struct mrl_properties_audio_t *
+mrl_properties_audio_t *
 mrl_properties_audio_new (void)
 {
-  struct mrl_properties_audio_t *audio;
+  mrl_properties_audio_t *audio;
 
-  audio = (struct mrl_properties_audio_t *)
-    malloc (sizeof (struct mrl_properties_audio_t));
+  audio = (mrl_properties_audio_t *)
+    malloc (sizeof (mrl_properties_audio_t));
   audio->codec = NULL;
   audio->bitrate = 0;
   audio->bits = 0;
@@ -45,7 +45,7 @@ mrl_properties_audio_new (void)
 }
 
 void
-mrl_properties_audio_free (struct mrl_properties_audio_t *audio)
+mrl_properties_audio_free (mrl_properties_audio_t *audio)
 {
   if (!audio)
     return;
@@ -55,13 +55,13 @@ mrl_properties_audio_free (struct mrl_properties_audio_t *audio)
   free (audio);
 }
 
-struct mrl_properties_video_t *
+mrl_properties_video_t *
 mrl_properties_video_new (void)
 {
-  struct mrl_properties_video_t *video;
+  mrl_properties_video_t *video;
 
-  video = (struct mrl_properties_video_t *)
-    malloc (sizeof (struct mrl_properties_video_t));
+  video = (mrl_properties_video_t *)
+    malloc (sizeof (mrl_properties_video_t));
   video->codec = NULL;
   video->bitrate = 0;
   video->width = 0;
@@ -73,7 +73,7 @@ mrl_properties_video_new (void)
 }
 
 void
-mrl_properties_video_free (struct mrl_properties_video_t *video)
+mrl_properties_video_free (mrl_properties_video_t *video)
 {
   if (!video)
     return;
@@ -83,13 +83,13 @@ mrl_properties_video_free (struct mrl_properties_video_t *video)
   free (video);
 }
 
-struct mrl_properties_t *
+mrl_properties_t *
 mrl_properties_new (void)
 {
-  struct mrl_properties_t *prop;
+  mrl_properties_t *prop;
 
-  prop = (struct mrl_properties_t *)
-    malloc (sizeof (struct mrl_properties_t));
+  prop = (mrl_properties_t *)
+    malloc (sizeof (mrl_properties_t));
   prop->size = 0;
   prop->seekable = 0;
   prop->audio = NULL;
@@ -99,7 +99,7 @@ mrl_properties_new (void)
 }
 
 void
-mrl_properties_free (struct mrl_properties_t *prop)
+mrl_properties_free (mrl_properties_t *prop)
 {
   if (!prop)
     return;
@@ -111,12 +111,12 @@ mrl_properties_free (struct mrl_properties_t *prop)
   free (prop);
 }
 
-struct mrl_metadata_t *
+mrl_metadata_t *
 mrl_metadata_new (void)
 {
-  struct mrl_metadata_t *meta;
+  mrl_metadata_t *meta;
 
-  meta = (struct mrl_metadata_t *) malloc (sizeof (struct mrl_metadata_t));
+  meta = (mrl_metadata_t *) malloc (sizeof (mrl_metadata_t));
   meta->title = NULL;
   meta->artist = NULL;
   meta->genre = NULL;
@@ -128,7 +128,7 @@ mrl_metadata_new (void)
 }
 
 void
-mrl_metadata_free (struct mrl_metadata_t *meta)
+mrl_metadata_free (mrl_metadata_t *meta)
 {
   if (!meta)
     return;
@@ -148,17 +148,17 @@ mrl_metadata_free (struct mrl_metadata_t *meta)
   free (meta);
 }
 
-static struct mrl_t *
-mrl_new (struct player_t *player, char *name,
+static mrl_t *
+mrl_new (player_t *player, char *name,
          player_mrl_type_t type, char *cover)
 {
-  struct mrl_t *mrl = NULL;
+  mrl_t *mrl = NULL;
 
   /* check for minimal requirements */
   if (!player || !name)
     return NULL;
   
-  mrl = (struct mrl_t *) malloc (sizeof (struct mrl_t));
+  mrl = (mrl_t *) malloc (sizeof (mrl_t));
   mrl->name = strdup (name);
   mrl->cover = cover ? strdup (cover) : NULL;
   mrl->type = type;
@@ -171,7 +171,7 @@ mrl_new (struct player_t *player, char *name,
 }
 
 static void
-mrl_free (struct mrl_t *mrl, int recursive)
+mrl_free (mrl_t *mrl, int recursive)
 {
   if (!mrl)
     return;
@@ -193,7 +193,7 @@ mrl_free (struct mrl_t *mrl, int recursive)
 }
 
 void
-mrl_list_free (struct mrl_t *mrl)
+mrl_list_free (mrl_t *mrl)
 {
   /* go to the very begining of the playlist in case of recursive free() */
   while (mrl->prev)
@@ -203,11 +203,11 @@ mrl_list_free (struct mrl_t *mrl)
 }
 
 void
-player_mrl_append (struct player_t *player,
+player_mrl_append (player_t *player,
                    char *location, player_mrl_type_t type,
                    char *cover, player_add_mrl_t when)
 {
-  struct mrl_t *mrl = NULL;
+  mrl_t *mrl = NULL;
 
   plog (MODULE_NAME, "player_mrl_append");
     
@@ -223,7 +223,7 @@ player_mrl_append (struct player_t *player,
     player->mrl = mrl;
   else /* create double-linked playlist, appending new MRL to the bottom */
   {
-    struct mrl_t *list;
+    mrl_t *list;
 
     list = player->mrl;
     while (list->next)
@@ -242,9 +242,9 @@ player_mrl_append (struct player_t *player,
 }
    
 void
-player_mrl_previous (struct player_t *player)
+player_mrl_previous (player_t *player)
 {
-  struct mrl_t *mrl;
+  mrl_t *mrl;
 
   plog (MODULE_NAME, "player_mrl_previous");
   
@@ -261,9 +261,9 @@ player_mrl_previous (struct player_t *player)
 }
 
 void
-player_mrl_next (struct player_t *player)
+player_mrl_next (player_t *player)
 {
-  struct mrl_t *mrl;
+  mrl_t *mrl;
 
   plog (MODULE_NAME, "player_mrl_next");
   
@@ -280,7 +280,7 @@ player_mrl_next (struct player_t *player)
 }
 
 void
-player_mrl_get_properties (struct player_t *player, struct mrl_t *mrl)
+player_mrl_get_properties (player_t *player, mrl_t *mrl)
 {
   plog (MODULE_NAME, "player_mrl_get_properties");
   
@@ -298,7 +298,7 @@ player_mrl_get_properties (struct player_t *player, struct mrl_t *mrl)
 }
 
 void
-player_mrl_get_metadata (struct player_t *player, struct mrl_t *mrl)
+player_mrl_get_metadata (player_t *player, mrl_t *mrl)
 {
   plog (MODULE_NAME, "player_mrl_get_metadata");
   

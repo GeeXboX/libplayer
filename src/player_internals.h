@@ -21,41 +21,39 @@
 #ifndef _PLAYER_INTERNALS_H_
 #define _PLAYER_INTERNALS_H_
 
-typedef enum init_status_s init_status_t;
-enum init_status_s {
+typedef enum init_status {
   PLAYER_INIT_OK,
   PLAYER_INIT_ERROR
-};
+} init_status_t;
 
-typedef enum playback_status_s playback_status_t;
-enum playback_status_s {
+typedef enum playback_status {
   PLAYER_PB_OK,
   PLAYER_PB_FATAL,
   PLAYER_PB_ERROR
-};
+} playback_status_t;
 
-struct player_funcs_t {
-  init_status_t (* init) (struct player_t *player);
+typedef struct player_funcs_s {
+  init_status_t (* init) (player_t *player);
   void (* uninit) (void *priv);
-  void (* mrl_get_props) (struct player_t *player, struct mrl_t *mrl);
-  void (* mrl_get_meta) (struct player_t *player, struct mrl_t *mrl);
-  playback_status_t (* pb_start) (struct player_t *player);
-  void (* pb_stop) (struct player_t *player);
-  playback_status_t (* pb_pause) (struct player_t *player);
-  void (* pb_seek) (struct player_t *player, int value);
-  int (* get_volume) (struct player_t *player);
-  void (* set_volume) (struct player_t *player, int value);
-};
+  void (* mrl_get_props) (player_t *player, mrl_t *mrl);
+  void (* mrl_get_meta) (player_t *player, mrl_t *mrl);
+  playback_status_t (* pb_start) (player_t *player);
+  void (* pb_stop) (player_t *player);
+  playback_status_t (* pb_pause) (player_t *player);
+  void (* pb_seek) (player_t *player, int value);
+  int (* get_volume) (player_t *player);
+  void (* set_volume) (player_t *player, int value);
+} player_funcs_t;
 
-void mrl_list_free (struct mrl_t *mrl);
+void mrl_list_free (mrl_t *mrl);
 
-struct mrl_properties_audio_t *mrl_properties_audio_new (void);
-void mrl_properties_audio_free (struct mrl_properties_audio_t *audio);
-struct mrl_properties_video_t *mrl_properties_video_new (void);
-void mrl_properties_video_free (struct mrl_properties_video_t *video);
-struct mrl_properties_t *mrl_properties_new (void);
-void mrl_properties_free (struct mrl_properties_t *prop);
-struct mrl_metadata_t *mrl_metadata_new (void);
-void mrl_metadata_free (struct mrl_metadata_t *meta);
+mrl_properties_audio_t *mrl_properties_audio_new (void);
+void mrl_properties_audio_free (mrl_properties_audio_t *audio);
+mrl_properties_video_t *mrl_properties_video_new (void);
+void mrl_properties_video_free (mrl_properties_video_t *video);
+mrl_properties_t *mrl_properties_new (void);
+void mrl_properties_free (mrl_properties_t *prop);
+mrl_metadata_t *mrl_metadata_new (void);
+void mrl_metadata_free (mrl_metadata_t *meta);
 
 #endif /* _PLAYER_INTERNALS_H_ */

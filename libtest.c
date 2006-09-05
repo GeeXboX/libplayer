@@ -34,7 +34,7 @@ frontend_event_cb (player_event_t e, void *data)
 }
 
 static void
-do_regression_tests (struct player_t *player)
+do_regression_tests (player_t *player)
 {
   if (!player)
     return;
@@ -58,7 +58,7 @@ do_regression_tests (struct player_t *player)
 int
 main (int argc, char **argv)
 {
-  struct player_t *player = NULL;
+  player_t *player = NULL;
   
   printf ("*** libplayer regression tool ***\n");
 

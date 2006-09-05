@@ -29,22 +29,22 @@
 #define MODULE_NAME "dummy"
 
 /* player specific structure */
-struct dummy_t {
+typedef struct dummy_s {
   int dummy_var;
-};
+} dummy_t;
 
 /* private functions */
 static init_status_t
-dummy_init (struct player_t *player)
+dummy_init (player_t *player)
 {
-  struct dummy_t *dummy = NULL;
+  dummy_t *dummy = NULL;
   
   plog (MODULE_NAME, "init");
   
   if (!player)
     return PLAYER_INIT_ERROR;
 
-  dummy = (struct dummy_t *) player->priv;
+  dummy = (dummy_t *) player->priv;
   dummy->dummy_var = 1;
 
   return PLAYER_INIT_OK;
@@ -53,75 +53,75 @@ dummy_init (struct player_t *player)
 static void
 dummy_uninit (void *priv)
 {
-  struct dummy_t *dummy = NULL;
+  dummy_t *dummy = NULL;
   
   plog (MODULE_NAME, "uninit");
   
   if (!priv)
     return;
 
-  dummy = (struct dummy_t *) priv;
+  dummy = (dummy_t *) priv;
   free (dummy);
 }
 
 static void
-dummy_mrl_get_properties (struct player_t *player, struct mrl_t *mrl)
+dummy_mrl_get_properties (player_t *player, mrl_t *mrl)
 {
   plog (MODULE_NAME, "mrl_get_properties");
 }
 
 static void
-dummy_mrl_get_metadata (struct player_t *player, struct mrl_t *mrl)
+dummy_mrl_get_metadata (player_t *player, mrl_t *mrl)
 {
   plog (MODULE_NAME, "mrl_get_metadata");
 }
 
 static playback_status_t
-dummy_playback_start (struct player_t *player)
+dummy_playback_start (player_t *player)
 {
   plog (MODULE_NAME, "playback_start");
   return PLAYER_PB_OK;
 }
 
 static void
-dummy_playback_stop (struct player_t *player)
+dummy_playback_stop (player_t *player)
 {
   plog (MODULE_NAME, "playback_stop");
 }
 
 static playback_status_t
-dummy_playback_pause (struct player_t *player)
+dummy_playback_pause (player_t *player)
 {
   plog (MODULE_NAME, "playback_pause");
   return PLAYER_PB_OK;
 }
 
 static void
-dummy_playback_seek (struct player_t *player, int value)
+dummy_playback_seek (player_t *player, int value)
 {
   plog (MODULE_NAME, "playback_seek: %d", value);
 }
 
 static int
-dummy_get_volume (struct player_t *player)
+dummy_get_volume (player_t *player)
 {
   plog (MODULE_NAME, "get_volume");
   return 0;
 }
 
 static void
-dummy_set_volume (struct player_t *player, int value)
+dummy_set_volume (player_t *player, int value)
 {
   plog (MODULE_NAME, "set_volume: %d", value);
 }
 
 /* public API */
-struct player_funcs_t *
+player_funcs_t *
 register_functions_dummy (void)
 {
-  struct player_funcs_t *funcs = NULL;
+  player_funcs_t *funcs = NULL;
 
-  funcs = (struct player_funcs_t *) malloc (sizeof (struct player_funcs_t));
+  funcs = (player_funcs_t *) malloc (sizeof (player_funcs_t));
   funcs->init = dummy_init;
   funcs->uninit = dummy_uninit;
   funcs->mrl_get_props = dummy_mrl_get_properties;
@@ -139,9 +139,9 @@ register_functions_dummy (void)
 void *
 register_private_dummy (void)
 {
-  struct dummy_t *dummy = NULL;
+  dummy_t *dummy = NULL;
 
-  dummy = (struct dummy_t *) malloc (sizeof (struct dummy_t));
+  dummy = (dummy_t *) malloc (sizeof (dummy_t));
   dummy->dummy_var = 0;
 
   return dummy;

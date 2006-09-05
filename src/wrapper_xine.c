@@ -34,20 +34,20 @@
 #define MODULE_NAME "xine"
 
 /* player specific structure */
-struct xine_player_t {
+typedef struct xine_player_s {
   xine_t *xine;
   xine_stream_t *stream;
   xine_event_queue_t *event_queue;
   xine_video_port_t *vo_port;
   xine_audio_port_t *ao_port;
-};
+} xine_player_t;
 
 static void
 xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
 {
-  struct player_t *player = NULL;
+  player_t *player = NULL;
 
-  player = (struct player_t *) user_data;
+  player = (player_t *) user_data;
   if (!player)
     return;
 
@@ -71,9 +71,9 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
 
 /* private functions */
 static init_status_t
-xine_player_init (struct player_t *player)
+xine_player_init (player_t *player)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
   int verbosity = XINE_VERBOSITY_NONE;
 
 #ifdef HAVE_DEBUG
@@ -86,7 +86,7 @@ xine_player_init (struct player_t *player)
   if (!player)
     return PLAYER_INIT_ERROR;
 
-  x = (struct xine_player_t *) player->priv;
+  x = (xine_player_t *) player->priv;
 
   x->xine = xine_new ();
   xine_init (x->xine);
@@ -113,14 +113,14 @@ xine_player_init (struct player_t *player)
 static void
 xine_player_uninit (void *priv)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
   
   plog (MODULE_NAME, "uninit");
 
   if (!priv)
     return;
 
-  x = (struct xine_player_t *) priv;
+  x = (xine_player_t *) priv;
 
   if (x->stream)
   {
@@ -143,15 +143,15 @@ xine_player_uninit (void *priv)
 }
 
 static void
-xine_player_mrl_get_audio_properties (struct player_t *player,
-                                      struct mrl_properties_audio_t *audio)
+xine_player_mrl_get_audio_properties (player_t *player,
+                                      mrl_properties_audio_t *audio)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
 
   if (!player || !audio)
     return;
 
-  x = (struct xine_player_t *) player->priv;
+  x = (xine_player_t *) player->priv;
   if (!x->stream)
     return;
 
@@ -179,15 +179,15 @@ xine_player_mrl_get_audio_properties (struct player_t *player,
 }
 
 static void
-xine_player_mrl_get_video_properties (struct player_t *player,
-                                      struct mrl_properties_video_t *video)
+xine_player_mrl_get_video_properties (player_t *player,
+                                      mrl_properties_video_t *video)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
 
   if (!player || !video)
     return;
 
-  x = (struct xine_player_t *) player->priv;
+  x = (xine_player_t *) player->priv;
   if (!x->stream)
     return;
 
@@ -219,9 +219,9 @@ xine_player_mrl_get_video_properties (struct player_t *player,
 }
   
 static void
-xine_player_mrl_get_properties (struct player_t *player, struct mrl_t *mrl)
+xine_player_mrl_get_properties (player_t *player, mrl_t *mrl)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
   struct stat st;
   
   plog (MODULE_NAME, "mrl_get_properties");
@@ -229,7 +229,7 @@ xine_player_mrl_get_properties (struct player_t *player, struct mrl_t *mrl)
   if (!player)
     return;
 
-  x = (struct xine_player_t *) player->priv;
+  x = (xine_player_t *) player->priv;
   if (!x->stream)
     return;
   
@@ -262,16 +262,16 @@ xine_player_mrl_get_properties (struct player_t *player, struct mrl_t *mrl)
 }
 
 static void
-xine_player_mrl_get_metadata (struct player_t *player, struct mrl_t *mrl)
+xine_player_mrl_get_metadata (player_t *player, mrl_t *mrl)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
   
   plog (MODULE_NAME, "mrl_get_metadata");
 
   if (!player)
     return;
     
-  x = (struct xine_player_t *) player->priv; 
+  x = (xine_player_t *) player->priv; 
   if (!x->stream)
     return;
   
@@ -313,16 +313,16 @@ xine_player_mrl_get_metadata (struct player_t *player, struct mrl_t *mrl)
 }
 
 static playback_status_t
-xine_player_playback_start (struct player_t *player)
+xine_player_playback_start (player_t *player)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
 
   plog (MODULE_NAME, "playback_start");
   
   if (!player)
     return PLAYER_PB_FATAL;
 
-  x = (struct xine_player_t *) player->priv;
+  x = (xine_player_t *) player->priv;
   
   if (!x->stream)
     return PLAYER_PB_ERROR;
@@ -334,16 +334,16 @@ xine_player_playback_start (struct player_t *player)
 }
 
 static void
-xine_player_playback_stop (struct player_t *player)
+xine_player_playback_stop (player_t *player)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
 
   plog (MODULE_NAME, "playback_stop");
 
   if (!player)
     return;
 
-  x = (struct xine_player_t *) player->priv;
+  x = (xine_player_t *) player->priv;
 
   if (!x->stream)
     return;
@@ -353,16 +353,16 @@ xine_player_playback_stop (struct player_t *player)
 }
 
 static playback_status_t
-xine_player_playback_pause (struct player_t *player)
+xine_player_playback_pause (player_t *player)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
 
   plog (MODULE_NAME, "playback_pause");
   
   if (!player)
     return PLAYER_PB_FATAL;
 
-  x = (struct xine_player_t *) player->priv;
+  x = (xine_player_t *) player->priv;
 
   if (!x->stream)
     return PLAYER_PB_ERROR;
@@ -376,9 +376,9 @@ xine_player_playback_pause (struct player_t *player)
 }
 
 static void
-xine_player_playback_seek (struct player_t *player, int value)
+xine_player_playback_seek (player_t *player, int value)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
   int pos_time = 0, length = 0;
   
   plog (MODULE_NAME, "playback_seek: %d", value);
@@ -386,7 +386,7 @@ xine_player_playback_seek (struct player_t *player, int value)
   if (!player)
     return;
 
-  x = (struct xine_player_t *) player->priv;
+  x = (xine_player_t *) player->priv;
 
   if (!x->stream)
     return;
@@ -403,16 +403,16 @@ xine_player_playback_seek (struct player_t *player, int value)
 }
 
 static int
-xine_player_get_volume (struct player_t *player)
+xine_player_get_volume (player_t *player)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
 
   plog (MODULE_NAME, "get_volume");
   
   if (!player)
     return -1;
 
-  x = (struct xine_player_t *) player->priv;
+  x = (xine_player_t *) player->priv;
 
   if (!x->stream)
     return -1;
@@ -421,16 +421,16 @@ xine_player_get_volume (struct player_t *player)
 }
 
 static void
-xine_player_set_volume (struct player_t *player, int value)
+xine_player_set_volume (player_t *player, int value)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
 
   plog (MODULE_NAME, "set_volume: %d", value);
 
   if (!player)
     return;
 
-  x = (struct xine_player_t *) player->priv;
+  x = (xine_player_t *) player->priv;
 
   if (!x->stream)
     return;
@@ -439,12 +439,12 @@ xine_player_set_volume (struct player_t *player, int value)
 }
 
 /* public API */
-struct player_funcs_t *
+player_funcs_t *
 register_functions_xine (void)
 {
-  struct player_funcs_t *funcs = NULL;
+  player_funcs_t *funcs = NULL;
 
-  funcs = (struct player_funcs_t *) malloc (sizeof (struct player_funcs_t));
+  funcs = (player_funcs_t *) malloc (sizeof (player_funcs_t));
   funcs->init = xine_player_init;
   funcs->uninit = xine_player_uninit;
   funcs->mrl_get_props = xine_player_mrl_get_properties;
@@ -462,9 +462,9 @@ register_functions_xine (void)
 void *
 register_private_xine (void)
 {
-  struct xine_player_t *x = NULL;
+  xine_player_t *x = NULL;
 
-  x = (struct xine_player_t *) malloc (sizeof (struct xine_player_t));
+  x = (xine_player_t *) malloc (sizeof (xine_player_t));
   x->xine = NULL;
   x->stream = NULL;
   x->event_queue = NULL;

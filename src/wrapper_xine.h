@@ -21,7 +21,7 @@
 #ifndef _WRAPPER_XINE_H_
 #define _WRAPPER_XINE_H_
 
-struct player_funcs_t * register_functions_xine (void);
+player_funcs_t * register_functions_xine (void);
 void *register_private_xine (void);
 
 #endif /* _WRAPPER_XINE_H_ */
