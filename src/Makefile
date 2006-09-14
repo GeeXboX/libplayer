@@ -1,6 +1,6 @@
 include ../config.mak
 
-LIBNAME = libplayer.a
+LIBNAME = libplayer.so
 
 SRCS =  player.c \
 	mrl.c \
@@ -10,6 +10,7 @@ SRCS =  player.c \
 ifeq ($(WRAPPER_XINE),yes)
   SRCS += wrapper_xine.c
   CFLAGS += -DHAVE_XINE
+  LDFLAGS += -lxine -lpthread
 endif
 
 ifeq ($(DEBUG),yes)
@@ -26,11 +27,10 @@ all: depend $(LIBNAME)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 $(LIBNAME): $(OBJS)
-	$(AR) r $(LIBNAME) $(OBJS)
-	$(RANLIB) $(LIBNAME)
+	$(CC) -shared $(OBJS) $(LDFLAGS) -o $(LIBNAME)
 
 clean:
-	rm -f *.o *.a
+	rm -f *.o *.a *.so
 	rm -f .depend
 
 depend:

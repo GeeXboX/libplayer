@@ -6,10 +6,6 @@ SRCS = libtest.c
 CFLAGS += -Isrc
 LDFLAGS += -Lsrc -lplayer
 
-ifeq ($(WRAPPER_XINE),yes)
-  LDFLAGS += -lxine -lpthread
-endif
-
 all: lib test
 
 lib:
