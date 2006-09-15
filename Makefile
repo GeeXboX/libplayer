@@ -18,4 +18,7 @@ clean:
 	$(MAKE) -C src clean
 	rm $(LIBTEST)
 
+install:
+	$(MAKE) -C src install
+
 .phony: clean

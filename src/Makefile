@@ -33,6 +33,10 @@ clean:
 	rm -f *.o *.a *.so
 	rm -f .depend
 
+install: $(LIBNAME)
+	$(INSTALL) -c $(LIBNAME) $(PREFIX)/lib
+	$(INSTALL) -c -m 644 player.h $(PREFIX)/include
+
 depend:
 	$(CC) -MM $(CFLAGS) $(SRCS) 1>.depend
 
