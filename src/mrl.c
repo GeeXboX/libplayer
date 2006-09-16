@@ -148,7 +148,7 @@ mrl_metadata_free (mrl_metadata_t *meta)
   free (meta);
 }
 
-static mrl_t *
+mrl_t *
 mrl_new (char *name, player_mrl_type_t type)
 {
   mrl_t *mrl = NULL;
@@ -168,7 +168,7 @@ mrl_new (char *name, player_mrl_type_t type)
   return mrl;
 }
 
-static void
+void
 mrl_free (mrl_t *mrl, int recursive)
 {
   if (!mrl)

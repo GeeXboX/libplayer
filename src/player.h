@@ -120,6 +120,10 @@ player_t *player_init (player_type_t type, char *ao, char *vo,
 void player_uninit (player_t *player);
 
 /* MRL helpers */
+mrl_t *mrl_new (char *name, player_mrl_type_t type);
+void mrl_free (mrl_t *mrl, int recursive);
+void mrl_list_free (mrl_t *mrl);
+
 void player_mrl_append (player_t *player,
                         char *location, player_mrl_type_t type,
                         player_add_mrl_t when);
