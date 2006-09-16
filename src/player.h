@@ -21,6 +21,8 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
+#include <inttypes.h>
+
 struct player_funcs_s;
 
 typedef enum player_type {
