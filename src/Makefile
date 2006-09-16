@@ -7,6 +7,8 @@ SRCS =  player.c \
 	logs.c \
 	wrapper_dummy.c
 
+LDFLAGS += -fPIC
+
 ifeq ($(WRAPPER_XINE),yes)
   SRCS += wrapper_xine.c
   CFLAGS += -DHAVE_XINE
