@@ -209,7 +209,7 @@ player_mrl_append (player_t *player,
 {
   mrl_t *mrl = NULL;
 
-  plog (MODULE_NAME, "player_mrl_append");
+  plog (MODULE_NAME, __FUNCTION__);
     
   if (!player || !location)
     return;
@@ -246,7 +246,7 @@ player_mrl_previous (player_t *player)
 {
   mrl_t *mrl;
 
-  plog (MODULE_NAME, "player_mrl_previous");
+  plog (MODULE_NAME, __FUNCTION__);
   
   if (!player)
     return;
@@ -265,7 +265,7 @@ player_mrl_next (player_t *player)
 {
   mrl_t *mrl;
 
-  plog (MODULE_NAME, "player_mrl_next");
+  plog (MODULE_NAME, __FUNCTION__);
   
   if (!player)
     return;
@@ -282,7 +282,7 @@ player_mrl_next (player_t *player)
 void
 player_mrl_get_properties (player_t *player, mrl_t *mrl)
 {
-  plog (MODULE_NAME, "player_mrl_get_properties");
+  plog (MODULE_NAME, __FUNCTION__);
   
   if (!player || !mrl)
     return;
@@ -300,7 +300,7 @@ player_mrl_get_properties (player_t *player, mrl_t *mrl)
 void
 player_mrl_get_metadata (player_t *player, mrl_t *mrl)
 {
-  plog (MODULE_NAME, "player_mrl_get_metadata");
+  plog (MODULE_NAME, __FUNCTION__);
   
   if (!player || !mrl)
     return;
