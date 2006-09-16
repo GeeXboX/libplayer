@@ -149,13 +149,12 @@ mrl_metadata_free (mrl_metadata_t *meta)
 }
 
 static mrl_t *
-mrl_new (player_t *player, char *name,
-         player_mrl_type_t type)
+mrl_new (char *name, player_mrl_type_t type)
 {
   mrl_t *mrl = NULL;
 
   /* check for minimal requirements */
-  if (!player || !name)
+  if (!name)
     return NULL;
   
   mrl = (mrl_t *) malloc (sizeof (mrl_t));
@@ -211,7 +210,7 @@ player_mrl_append (player_t *player,
   if (!player || !location)
     return;
 
-  mrl = mrl_new (player, location, type);
+  mrl = mrl_new (location, type);
   if (!mrl)
     return;
   
