@@ -90,7 +90,6 @@ typedef struct mrl_metadata_s {
 
 typedef struct mrl_s {
   char *name;
-  char *cover;
   player_mrl_type_t type;
   mrl_properties_t *prop;
   mrl_metadata_t *meta;
@@ -123,7 +122,7 @@ void player_uninit (player_t *player);
 /* MRL helpers */
 void player_mrl_append (player_t *player,
                         char *location, player_mrl_type_t type,
-                        char *cover, player_add_mrl_t when);
+                        player_add_mrl_t when);
 void player_mrl_previous (player_t *player);
 void player_mrl_next (player_t *player);
 void player_mrl_get_properties (player_t *player, mrl_t *mrl);

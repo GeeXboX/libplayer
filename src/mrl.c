@@ -150,7 +150,7 @@ mrl_metadata_free (mrl_metadata_t *meta)
 
 static mrl_t *
 mrl_new (player_t *player, char *name,
-         player_mrl_type_t type, char *cover)
+         player_mrl_type_t type)
 {
   mrl_t *mrl = NULL;
 
@@ -160,7 +160,6 @@ mrl_new (player_t *player, char *name,
   
   mrl = (mrl_t *) malloc (sizeof (mrl_t));
   mrl->name = strdup (name);
-  mrl->cover = cover ? strdup (cover) : NULL;
   mrl->type = type;
   mrl->prop = NULL;
   mrl->meta = NULL;
@@ -178,8 +177,6 @@ mrl_free (mrl_t *mrl, int recursive)
   
   if (mrl->name)
     free (mrl->name);
-  if (mrl->cover)
-    free (mrl->cover);
 
   if (mrl->prop)
     mrl_properties_free (mrl->prop);
@@ -205,7 +202,7 @@ mrl_list_free (mrl_t *mrl)
 void
 player_mrl_append (player_t *player,
                    char *location, player_mrl_type_t type,
-                   char *cover, player_add_mrl_t when)
+                   player_add_mrl_t when)
 {
   mrl_t *mrl = NULL;
 
@@ -214,7 +211,7 @@ player_mrl_append (player_t *player,
   if (!player || !location)
     return;
 
-  mrl = mrl_new (player, location, type, cover);
+  mrl = mrl_new (player, location, type);
   if (!mrl)
     return;
   
