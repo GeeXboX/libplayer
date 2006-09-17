@@ -90,6 +90,7 @@ typedef struct mrl_metadata_s {
 
 typedef struct mrl_s {
   char *name;
+  char *cover;
   player_mrl_type_t type;
   mrl_properties_t *prop;
   mrl_metadata_t *meta;

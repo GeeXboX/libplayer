@@ -159,6 +159,7 @@ mrl_new (char *name, player_mrl_type_t type)
   
   mrl = (mrl_t *) malloc (sizeof (mrl_t));
   mrl->name = strdup (name);
+  mrl->cover = NULL;
   mrl->type = type;
   mrl->prop = NULL;
   mrl->meta = NULL;
@@ -176,6 +177,8 @@ mrl_free (mrl_t *mrl, int recursive)
   
   if (mrl->name)
     free (mrl->name);
+  if (mrl->cover)
+    free (mrl->cover);
 
   if (mrl->prop)
     mrl_properties_free (mrl->prop);
