@@ -39,7 +39,8 @@ typedef enum player_state {
 typedef enum player_mrl_type {
   PLAYER_MRL_TYPE_NONE,
   PLAYER_MRL_TYPE_AUDIO,
-  PLAYER_MRL_TYPE_VIDEO
+  PLAYER_MRL_TYPE_VIDEO,
+  PLAYER_MRL_TYPE_IMAGE
 } player_mrl_type_t;
 
 typedef enum player_add_mrl {
