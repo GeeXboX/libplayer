@@ -16,7 +16,7 @@ test:
 
 clean:
 	$(MAKE) -C src clean
-	rm $(LIBTEST)
+	rm -f $(LIBTEST)
 
 install:
 	$(MAKE) -C src install
