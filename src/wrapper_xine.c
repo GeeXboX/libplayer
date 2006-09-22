@@ -226,7 +226,7 @@ xine_player_mrl_get_properties (player_t *player, mrl_t *mrl)
   
   plog (MODULE_NAME, "mrl_get_properties");
 
-  if (!player)
+  if (!player || !mrl || !mrl->prop)
     return;
 
   x = (xine_player_t *) player->priv;
@@ -268,7 +268,7 @@ xine_player_mrl_get_metadata (player_t *player, mrl_t *mrl)
   
   plog (MODULE_NAME, "mrl_get_metadata");
 
-  if (!player)
+  if (!player || !mrl || !mrl->meta)
     return;
     
   x = (xine_player_t *) player->priv; 
