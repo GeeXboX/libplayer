@@ -24,6 +24,7 @@
 #include "player.h"
 
 #define AUDIO_TEST_FILE "samples/audio.ogg"
+#define VIDEO_TEST_FILE "samples/background.avi"
 
 static int
 frontend_event_cb (player_event_t e, void *data)
@@ -33,13 +34,12 @@ frontend_event_cb (player_event_t e, void *data)
 }
 
 static void
-do_regression_tests (player_t *player)
+do_regression_tests (player_t *player, char *mrl, player_mrl_type_t type)
 {
-  if (!player)
+  if (!player || !mrl)
     return;
   
-  player_mrl_append (player, AUDIO_TEST_FILE,
-                     PLAYER_MRL_TYPE_AUDIO, PLAYER_ADD_MRL_NOW);
+  player_mrl_append (player, mrl, type, PLAYER_ADD_MRL_NOW);
   player_mrl_get_properties (player, player->mrl);
   player_mrl_get_metadata (player, player->mrl);
   printf ("Current volume: %d\n", player_get_volume (player));
@@ -51,7 +51,6 @@ do_regression_tests (player_t *player)
   player_playback_stop (player);
   player_mrl_previous (player);
   player_mrl_next (player);
-  player_uninit (player);
 }
 
 int
@@ -63,11 +62,15 @@ main (int argc, char **argv)
 
   printf ("\n--- Dummy ---\n");
   player = player_init (PLAYER_TYPE_DUMMY, NULL, NULL, frontend_event_cb);
-  do_regression_tests (player);
+  do_regression_tests (player, AUDIO_TEST_FILE, PLAYER_MRL_TYPE_AUDIO);
+  do_regression_tests (player, VIDEO_TEST_FILE, PLAYER_MRL_TYPE_VIDEO);
+  player_uninit (player);
   
   printf ("\n--- Xine ---\n");
   player = player_init (PLAYER_TYPE_XINE, NULL, NULL, frontend_event_cb);
-  do_regression_tests (player);
-
+  do_regression_tests (player, AUDIO_TEST_FILE, PLAYER_MRL_TYPE_AUDIO);
+  do_regression_tests (player, VIDEO_TEST_FILE, PLAYER_MRL_TYPE_VIDEO);
+  player_uninit (player);
+  
   return 0;
 }
