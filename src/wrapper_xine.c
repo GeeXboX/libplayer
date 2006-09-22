@@ -158,24 +158,29 @@ xine_player_mrl_get_audio_properties (player_t *player,
   if (xine_get_meta_info (x->stream, XINE_META_INFO_AUDIOCODEC))
     audio->codec =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_AUDIOCODEC));
-  plog (MODULE_NAME, "Audio Codec: %s", audio->codec);
+  if (audio->codec)
+    plog (MODULE_NAME, "Audio Codec: %s", audio->codec);
 
   audio->bitrate =
     xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_BITRATE);
-  plog (MODULE_NAME, "Audio Bitrate: %d kbps",
+  if (audio->bitrate)
+    plog (MODULE_NAME, "Audio Bitrate: %d kbps",
         (int) (audio->bitrate / 1000));
 
   audio->bits =
     xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_BITS);
-  plog (MODULE_NAME, "Audio Bits: %d bps", audio->bits);
+  if (audio->bits)
+    plog (MODULE_NAME, "Audio Bits: %d bps", audio->bits);
 
   audio->channels =
     xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_CHANNELS);
-  plog (MODULE_NAME, "Audio Channels: %d", audio->channels);
+  if (audio->channels)
+    plog (MODULE_NAME, "Audio Channels: %d", audio->channels);
 
   audio->samplerate =
     xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_SAMPLERATE);
-  plog (MODULE_NAME, "Audio Sample Rate: %d Hz", audio->samplerate);
+  if (audio->samplerate)
+    plog (MODULE_NAME, "Audio Sample Rate: %d Hz", audio->samplerate);
 }
 
 static void
@@ -194,28 +199,34 @@ xine_player_mrl_get_video_properties (player_t *player,
   if (xine_get_meta_info (x->stream, XINE_META_INFO_VIDEOCODEC))
     video->codec =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_VIDEOCODEC));
-  plog (MODULE_NAME, "Video Codec: %s", video->codec);
+  if (video->codec)
+    plog (MODULE_NAME, "Video Codec: %s", video->codec);
 
   video->bitrate =
     xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_BITRATE);
-  plog (MODULE_NAME, "Video Bitrate: %d kbps",
+  if (video->bitrate)
+    plog (MODULE_NAME, "Video Bitrate: %d kbps",
         (int) (video->bitrate / 1000));
 
   video->width =
     xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_WIDTH);
-  plog (MODULE_NAME, "Video Width: %d", video->width);
+  if (video->width)
+    plog (MODULE_NAME, "Video Width: %d", video->width);
 
   video->height =
     xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_HEIGHT);
-  plog (MODULE_NAME, "Video Height: %d", video->height);
+  if (video->height)
+    plog (MODULE_NAME, "Video Height: %d", video->height);
 
   video->channels =
     xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_CHANNELS);
-  plog (MODULE_NAME, "Video Channels: %d", video->channels);
+  if (video->channels)
+    plog (MODULE_NAME, "Video Channels: %d", video->channels);
 
   video->streams =
     xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_STREAMS);
-  plog (MODULE_NAME, "Video Streams: %d", video->streams);
+  if (video->streams)
+    plog (MODULE_NAME, "Video Streams: %d", video->streams);
 }
   
 static void
@@ -284,32 +295,38 @@ xine_player_mrl_get_metadata (player_t *player, mrl_t *mrl)
   if (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST))
     mrl->meta->title =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST));
-  plog (MODULE_NAME, "Meta Title: %s", mrl->meta->title);
+  if (mrl->meta->title)
+    plog (MODULE_NAME, "Meta Title: %s", mrl->meta->title);
   
   if (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST))
     mrl->meta->artist =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST));
-  plog (MODULE_NAME, "Meta Artist: %s", mrl->meta->artist);
+  if (mrl->meta->artist)
+    plog (MODULE_NAME, "Meta Artist: %s", mrl->meta->artist);
   
   if (xine_get_meta_info (x->stream, XINE_META_INFO_GENRE))
     mrl->meta->genre =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_GENRE));
-  plog (MODULE_NAME, "Meta Genre: %s", mrl->meta->genre);
+  if (mrl->meta->genre)
+    plog (MODULE_NAME, "Meta Genre: %s", mrl->meta->genre);
   
   if (xine_get_meta_info (x->stream, XINE_META_INFO_ALBUM))
     mrl->meta->album =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ALBUM));
-  plog (MODULE_NAME, "Meta Album: %s", mrl->meta->album);
+  if (mrl->meta->album)
+    plog (MODULE_NAME, "Meta Album: %s", mrl->meta->album);
   
   if (xine_get_meta_info (x->stream, XINE_META_INFO_YEAR))
     mrl->meta->year =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_YEAR));
-  plog (MODULE_NAME, "Meta Year: %s", mrl->meta->year);
+  if (mrl->meta->year)
+    plog (MODULE_NAME, "Meta Year: %s", mrl->meta->year);
   
   if (xine_get_meta_info (x->stream, XINE_META_INFO_TRACK_NUMBER))
     mrl->meta->track =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_TRACK_NUMBER));
-  plog (MODULE_NAME, "Meta Track: %s", mrl->meta->track);
+  if (mrl->meta->track)
+    plog (MODULE_NAME, "Meta Track: %s", mrl->meta->track);
 }
 
 static playback_status_t
