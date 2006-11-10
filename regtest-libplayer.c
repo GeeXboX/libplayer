@@ -109,6 +109,7 @@ player_test_thread (void *cookie)
   }
 #endif /* HAVE_VLC */
 
+  break_down (-1);
   return NULL;
 }
 
