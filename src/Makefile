@@ -11,12 +11,6 @@ CFLAGS += -fPIC
 
 ifeq ($(WRAPPER_XINE),yes)
   SRCS += wrapper_xine.c
-  CFLAGS += -DHAVE_XINE
-  LDFLAGS += -lxine -lpthread
-endif
-
-ifeq ($(DEBUG),yes)
-  CFLAGS += -DHAVE_DEBUG
 endif
 
 OBJS = $(SRCS:.c=.o)
@@ -26,18 +20,18 @@ OBJS = $(SRCS:.c=.o)
 all: depend $(LIBNAME)
 
 .c.o:
-	$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $<
 
 $(LIBNAME): $(OBJS)
-	$(CC) -shared $(OBJS) $(LDFLAGS) -o $(LIBNAME)
+	$(CC) -shared $(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(LIBNAME)
 
 clean:
 	rm -f *.o *.a *.so
 	rm -f .depend
 
 install: $(LIBNAME)
-	$(INSTALL) -c $(LIBNAME) $(PREFIX)/lib
-	$(INSTALL) -c -m 644 player.h $(PREFIX)/include
+	$(INSTALL) -c $(LIBNAME) $(libdir)
+	$(INSTALL) -c -m 644 player.h $(includedir)
 
 depend:
 	$(CC) -MM $(CFLAGS) $(SRCS) 1>.depend
