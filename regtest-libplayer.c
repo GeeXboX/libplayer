@@ -37,8 +37,8 @@ typedef enum player_id {
   PLAYER_ID_DUMMY
 } player_id_t;
 
-pthread_t tid;
-player_id_t player_id = PLAYER_ID_ALL;
+static pthread_t tid;
+static player_id_t player_id = PLAYER_ID_ALL;
 
 static void
 break_down (int s)
