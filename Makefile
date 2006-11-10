@@ -1,7 +1,7 @@
 include config.mak
 
-LIBTEST = libtest
-SRCS = libtest.c
+LIBTEST = regtest-libplayer
+SRCS = regtest-libplayer.c
 
 CFLAGS += -Isrc
 LDFLAGS += -Lsrc -lplayer -lpthread
