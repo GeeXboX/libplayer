@@ -4,7 +4,7 @@ LIBTEST = libtest
 SRCS = libtest.c
 
 CFLAGS += -Isrc
-LDFLAGS += -Lsrc -lplayer
+LDFLAGS += -Lsrc -lplayer -lpthread
 
 all: lib test
 

@@ -20,11 +20,31 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <signal.h>
+#include <pthread.h>
 
 #include "player.h"
 
 #define AUDIO_TEST_FILE "samples/audio.ogg"
 #define VIDEO_TEST_FILE "samples/background.avi"
+
+typedef enum player_id {
+  PLAYER_ID_ALL = 0,
+  PLAYER_ID_XINE,
+  PLAYER_ID_VLC,
+  PLAYER_ID_DUMMY
+} player_id_t;
+
+pthread_t tid;
+player_id_t player_id = PLAYER_ID_ALL;
+
+static void
+break_down (int s)
+{
+  exit (0);
+}
 
 static int
 frontend_event_cb (player_event_t e, void *data)
@@ -53,24 +73,77 @@ do_regression_tests (player_t *player, char *mrl, player_mrl_type_t type)
   player_mrl_next (player);
 }
 
-int
-main (int argc, char **argv)
+static void
+player_run_test (player_id_t player_id)
 {
   player_t *player = NULL;
   
+  player = player_init (player_id, NULL, NULL, frontend_event_cb);
+  do_regression_tests (player, AUDIO_TEST_FILE, PLAYER_MRL_TYPE_AUDIO);
+  do_regression_tests (player, VIDEO_TEST_FILE, PLAYER_MRL_TYPE_VIDEO);
+  player_uninit (player);
+}
+
+static void *
+player_test_thread (void *cookie)
+{
+  if (player_id == PLAYER_ID_DUMMY || player_id == PLAYER_ID_ALL)
+  {
+    printf ("\n--- Dummy ---\n");
+    player_run_test (PLAYER_TYPE_DUMMY);
+  }
+
+#ifdef HAVE_XINE
+  if (player_id == PLAYER_ID_XINE || player_id == PLAYER_ID_ALL)
+  {
+    printf ("\n--- Xine ---\n");
+    player_run_test (PLAYER_TYPE_XINE);
+  }
+#endif /* HAVE_XINE */
+  
+#ifdef HAVE_VLC
+  if (player_id == PLAYER_ID_VLC || player_id == PLAYER_ID_ALL)
+  {
+    printf ("\n--- VLC ---\n");
+    player_run_test (PLAYER_TYPE_VLC);
+  }
+#endif /* HAVE_VLC */
+
+  return NULL;
+}
+
+int
+main (int argc, char **argv)
+{
   printf ("*** libplayer regression tool ***\n");
 
-  printf ("\n--- Dummy ---\n");
-  player = player_init (PLAYER_TYPE_DUMMY, NULL, NULL, frontend_event_cb);
-  do_regression_tests (player, AUDIO_TEST_FILE, PLAYER_MRL_TYPE_AUDIO);
-  do_regression_tests (player, VIDEO_TEST_FILE, PLAYER_MRL_TYPE_VIDEO);
-  player_uninit (player);
+  if (argc > 1)
+  {
+    if (!strcmp (argv[1], "all"))
+      player_id = PLAYER_ID_ALL;
+#ifdef HAVE_XINE
+    else if (!strcmp (argv[1], "xine"))
+      player_id = PLAYER_ID_XINE;
+#endif /* HAVE_XINE */
+#ifdef HAVE_VLC
+    else if (!strcmp (argv[1], "vlc"))
+      player_id = PLAYER_ID_VLC;
+#endif /* HAVE_VLC */
+    else if (!strcmp (argv[1], "dummy"))
+      player_id = PLAYER_ID_DUMMY;
+    else
+    {
+      printf ("unknown or invalid player specified.\n");
+      return -1;
+    }
+  }
   
-  printf ("\n--- Xine ---\n");
-  player = player_init (PLAYER_TYPE_XINE, NULL, NULL, frontend_event_cb);
-  do_regression_tests (player, AUDIO_TEST_FILE, PLAYER_MRL_TYPE_AUDIO);
-  do_regression_tests (player, VIDEO_TEST_FILE, PLAYER_MRL_TYPE_VIDEO);
-  player_uninit (player);
-  
+  signal (SIGINT, break_down);
+  pthread_create (&tid, NULL, player_test_thread, NULL);
+
+  while (1)
+    sleep (1000000);
+
+  /* we should never goes there */
   return 0;
 }
