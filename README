@@ -12,8 +12,9 @@ More bindings (MPlayer, GStreamer, ...) are bound to come some day.
 DEVELOPERS
 ~~~~~~~~~~
 
-Modify config.mak before build in order to specify which binding
-you want to enable.
+Build using traditional ./configure && make commands.
+Try ./configure --help for list of available build options
+and audio/video engines bindings.
 
 libplayer comes with a regression tests toolkit called libtest.
 Use it to validate your code before each modification to libplayer.
