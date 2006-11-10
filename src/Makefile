@@ -13,6 +13,10 @@ ifeq ($(WRAPPER_XINE),yes)
   SRCS += wrapper_xine.c
 endif
 
+ifeq ($(WRAPPER_VLC),yes)
+  SRCS += wrapper_vlc.c
+endif
+
 OBJS = $(SRCS:.c=.o)
 
 .SUFFIXES: .c .o

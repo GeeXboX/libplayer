@@ -31,6 +31,9 @@
 #ifdef HAVE_XINE
 #include "wrapper_xine.h"
 #endif /* HAVE_XINE */
+#ifdef HAVE_VLC
+#include "wrapper_vlc.h"
+#endif /* HAVE_VLC */
 
 #define MODULE_NAME "player"
 
@@ -65,7 +68,13 @@ player_init (player_type_t type, char *ao, char *vo,
     player->priv = register_private_xine ();
     break;
 #endif /* HAVE_XINE */
-  case PLAYER_TYPE_DUMMY:
+#ifdef HAVE_VLC
+  case PLAYER_TYPE_VLC:
+    player->funcs = register_functions_vlc ();
+    player->priv = register_private_vlc ();
+    break;
+#endif /* HAVE_XINE */
+case PLAYER_TYPE_DUMMY:
     player->funcs = register_functions_dummy ();
     player->priv = register_private_dummy ();
     break;

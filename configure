@@ -35,6 +35,9 @@ show_help(){
   echo "  --enable-xine               build xine wrapper"
   echo "  --disable-xine              do not build xine wrapper"
   echo "  --with-xine-dir=DIR         check for libxine installed in DIR"
+  echo "  --enable-vlc                build VLC wrapper"
+  echo "  --disable-vlc               do not build VLC wrapper"
+  echo "  --with-vlc-dir=DIR          check for libvlc installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
   echo "  --disable-debug             disable debugging symbols"
@@ -296,6 +299,7 @@ extralibs=""
 installstrip="-s"
 cross_compile="no"
 wrapper_xine="yes"
+wrapper_vlc="yes"
 INSTALL="install"
 
 #################################################
@@ -390,6 +394,12 @@ for opt do
   --disable-xine) wrapper_xine="no";
   ;;
   --with-xine-dir=*) libxinedir="$optval";
+  ;;
+  --enable-vlc) wrapper_vlc="yes";
+  ;;
+  --disable-vlc) wrapper_vlc="no";
+  ;;
+  --with-vlc-dir=*) libvlcdir="$optval";
   ;;
   --help) show_help
   ;;
@@ -577,6 +587,20 @@ if test "$wrapper_xine" = "yes"; then
 fi
 
 #################################################
+#   check for libvlc
+#################################################
+if test "$wrapper_vlc" = "yes"; then
+  echolog "Checking for libvlc ..."
+  if [ -n "$libvlcdir" ]; then
+    check_cflags -I$libvlcdir
+    check_ldflags -L$libvlcdir
+  fi
+  check_lib vlc/libvlc.h libvlc_new -lvlc || die "Error, can't find libvlc !"
+  add_cflags -DHAVE_VLC
+  add_extralibs -lpthread
+fi
+
+#################################################
 #   logging result
 #################################################
 echolog ""
@@ -630,6 +654,7 @@ append_config "INSTALL=$INSTALL"
 
 append_config "DEBUG=$debug"
 append_config "WRAPPER_XINE=$wrapper_xine"
+append_config "WRAPPER_VLC=$wrapper_vlc"
 
 clean
 exit 0
