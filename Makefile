@@ -24,5 +24,6 @@ distclean: clean
 
 install:
 	$(MAKE) -C src install
+	$(INSTALL) -c -m 755 $(LIBTEST) $(bindir)
 
 .phony: clean distclean
