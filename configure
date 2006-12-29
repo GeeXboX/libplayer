@@ -218,6 +218,7 @@ check_func(){
 extern int $func();
 int main(){
     $func();
+    return 0;
 }
 EOF
 }
