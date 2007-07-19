@@ -75,11 +75,11 @@ do_regression_tests (player_t *player, char *mrl, player_mrl_type_t type)
 }
 
 static void
-player_run_test (player_id_t player_id)
+player_run_test (player_type_t player_type)
 {
   player_t *player = NULL;
   
-  player = player_init (player_id, NULL, NULL, frontend_event_cb);
+  player = player_init (player_type, NULL, NULL, frontend_event_cb);
   do_regression_tests (player, AUDIO_TEST_FILE, PLAYER_MRL_TYPE_AUDIO);
   do_regression_tests (player, VIDEO_TEST_FILE, PLAYER_MRL_TYPE_VIDEO);
   player_uninit (player);
