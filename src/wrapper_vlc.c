@@ -88,13 +88,13 @@ vlc_uninit (void *priv)
 }
 
 static void
-vlc_mrl_get_properties (player_t *player, mrl_t *mrl)
+vlc_mrl_get_properties (player_t *player)
 {
   plog (MODULE_NAME, "mrl_get_properties");
 }
 
 static void
-vlc_mrl_get_metadata (player_t *player, mrl_t *mrl)
+vlc_mrl_get_metadata (player_t *player)
 {
   plog (MODULE_NAME, "mrl_get_metadata");
 }

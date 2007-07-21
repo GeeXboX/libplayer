@@ -280,10 +280,14 @@ player_mrl_next (player_t *player)
 }
 
 void
-player_mrl_get_properties (player_t *player, mrl_t *mrl)
+player_mrl_get_properties (player_t *player)
 {
+  mrl_t *mrl;
+
   plog (MODULE_NAME, __FUNCTION__);
-  
+
+  mrl = player->mrl;
+
   if (!player || !mrl)
     return;
 
@@ -294,14 +298,18 @@ player_mrl_get_properties (player_t *player, mrl_t *mrl)
   
   /* player specific init */
   if (player->funcs->mrl_get_props)
-    player->funcs->mrl_get_props (player, mrl);
+    player->funcs->mrl_get_props (player);
 }
 
 void
-player_mrl_get_metadata (player_t *player, mrl_t *mrl)
+player_mrl_get_metadata (player_t *player)
 {
+  mrl_t *mrl;
+
   plog (MODULE_NAME, __FUNCTION__);
-  
+
+  mrl = player->mrl;
+
   if (!player || !mrl)
     return;
 
@@ -312,5 +320,5 @@ player_mrl_get_metadata (player_t *player, mrl_t *mrl)
   
   /* player specific init */
   if (player->funcs->mrl_get_meta)
-    player->funcs->mrl_get_meta (player, mrl);
+    player->funcs->mrl_get_meta (player);
 }

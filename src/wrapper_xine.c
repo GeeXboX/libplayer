@@ -231,12 +231,15 @@ xine_player_mrl_get_video_properties (player_t *player,
 }
   
 static void
-xine_player_mrl_get_properties (player_t *player, mrl_t *mrl)
+xine_player_mrl_get_properties (player_t *player)
 {
   xine_player_t *x = NULL;
   struct stat st;
-  
+  mrl_t *mrl;
+
   plog (MODULE_NAME, "mrl_get_properties");
+
+  mrl = player->mrl;
 
   if (!player || !mrl || !mrl->prop)
     return;
@@ -244,11 +247,6 @@ xine_player_mrl_get_properties (player_t *player, mrl_t *mrl)
   x = (xine_player_t *) player->priv;
   if (!x->stream)
     return;
-  
-  /* close existing stream if any */
-  xine_stop (x->stream);
-  xine_close (x->stream);
-  xine_open (x->stream, mrl->name);
 
   /* now fetch properties */
   stat (mrl->name, &st);
@@ -274,11 +272,14 @@ xine_player_mrl_get_properties (player_t *player, mrl_t *mrl)
 }
 
 static void
-xine_player_mrl_get_metadata (player_t *player, mrl_t *mrl)
+xine_player_mrl_get_metadata (player_t *player)
 {
   xine_player_t *x = NULL;
-  
+  mrl_t *mrl;
+
   plog (MODULE_NAME, "mrl_get_metadata");
+
+  mrl = player->mrl;
 
   if (!player || !mrl || !mrl->meta)
     return;
@@ -286,11 +287,6 @@ xine_player_mrl_get_metadata (player_t *player, mrl_t *mrl)
   x = (xine_player_t *) player->priv; 
   if (!x->stream)
     return;
-  
-  /* close existing stream if any */
-  xine_stop (x->stream);
-  xine_close (x->stream);
-  xine_open (x->stream, mrl->name);
 
   /* now fetch metadata */
   if (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST))

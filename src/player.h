@@ -133,8 +133,8 @@ void player_mrl_append (player_t *player,
                         player_add_mrl_t when);
 void player_mrl_previous (player_t *player);
 void player_mrl_next (player_t *player);
-void player_mrl_get_properties (player_t *player, mrl_t *mrl);
-void player_mrl_get_metadata (player_t *player, mrl_t *mrl);
+void player_mrl_get_properties (player_t *player);
+void player_mrl_get_metadata (player_t *player);
 
 /* get player playback properties */
 int player_get_volume (player_t *player);

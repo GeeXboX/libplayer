@@ -36,8 +36,8 @@ typedef enum playback_status {
 typedef struct player_funcs_s {
   init_status_t (* init) (player_t *player);
   void (* uninit) (void *priv);
-  void (* mrl_get_props) (player_t *player, mrl_t *mrl);
-  void (* mrl_get_meta) (player_t *player, mrl_t *mrl);
+  void (* mrl_get_props) (player_t *player);
+  void (* mrl_get_meta) (player_t *player);
   playback_status_t (* pb_start) (player_t *player);
   void (* pb_stop) (player_t *player);
   playback_status_t (* pb_pause) (player_t *player);
