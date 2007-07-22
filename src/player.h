@@ -58,6 +58,12 @@ typedef enum player_event {
   PLAYER_EVENT_MRL_UPDATED
 } player_event_t;
 
+typedef enum player_mute {
+  PLAYER_MUTE_UNKNOWN,
+  PLAYER_MUTE_ON,
+  PLAYER_MUTE_OFF
+} player_mute_t;
+
 typedef struct mrl_properties_audio_s {
   char *codec;
   uint32_t bitrate;
@@ -138,11 +144,13 @@ void player_mrl_get_metadata (player_t *player);
 
 /* get player playback properties */
 int player_get_volume (player_t *player);
+player_mute_t player_get_mute (player_t *player);
 
 /* tune player playback properties */
 void player_set_loop (player_t *player, int value);
 void player_set_shuffle (player_t *player, int value);
 void player_set_volume (player_t *player, int value);
+void player_set_mute (player_t *player, player_mute_t value);
 
 /* player controls */
 void player_playback_start (player_t *player);

@@ -220,6 +220,21 @@ player_get_volume (player_t *player)
   return res;
 }
 
+player_mute_t
+player_get_mute (player_t *player)
+{
+  player_mute_t res = PLAYER_MUTE_UNKNOWN;
+
+  if (!player)
+    return res;
+
+  /* player specific get_mute() */
+  if (player->funcs->get_mute)
+    res = player->funcs->get_mute (player);
+
+  return res;
+}
+
 /* tune player playback properties */
 void
 player_set_loop (player_t *player, int value)
@@ -248,4 +263,15 @@ player_set_volume (player_t *player, int value)
   /* player specific set_volume() */
   if (player->funcs->set_volume)
     player->funcs->set_volume (player, value);
+}
+
+void
+player_set_mute (player_t *player, player_mute_t value)
+{
+  if (!player)
+    return;
+
+  /* player specific set_mute() */
+  if (player->funcs->set_mute)
+    player->funcs->set_mute (player, value);
 }

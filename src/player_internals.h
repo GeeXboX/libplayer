@@ -43,7 +43,9 @@ typedef struct player_funcs_s {
   playback_status_t (* pb_pause) (player_t *player);
   void (* pb_seek) (player_t *player, int value);
   int (* get_volume) (player_t *player);
+  player_mute_t (* get_mute) (player_t *player);
   void (* set_volume) (player_t *player, int value);
+  void (* set_mute) (player_t *player, player_mute_t value);
 } player_funcs_t;
 
 void mrl_list_free (mrl_t *mrl);

@@ -434,6 +434,27 @@ xine_player_get_volume (player_t *player)
   return xine_get_param (x->stream, XINE_PARAM_AUDIO_VOLUME);
 }
 
+static player_mute_t
+xine_player_get_mute (player_t *player)
+{
+  xine_player_t *x = NULL;
+
+  plog (MODULE_NAME, "get_mute");
+
+  if (!player)
+    return PLAYER_MUTE_UNKNOWN;
+
+  x = (xine_player_t *) player->priv;
+
+  if (!x->stream)
+    return PLAYER_MUTE_UNKNOWN;
+
+  if (xine_get_param (x->stream, XINE_PARAM_AUDIO_MUTE))
+    return PLAYER_MUTE_ON;
+
+  return PLAYER_MUTE_OFF;
+}
+
 static void
 xine_player_set_volume (player_t *player, int value)
 {
@@ -452,6 +473,31 @@ xine_player_set_volume (player_t *player, int value)
   xine_set_param (x->stream, XINE_PARAM_AUDIO_VOLUME, value);
 }
 
+static void
+xine_player_set_mute (player_t *player, player_mute_t value)
+{
+  xine_player_t *x = NULL;
+  int mute = 0;
+
+  if (value == PLAYER_MUTE_UNKNOWN)
+    return;
+
+  if (value == PLAYER_MUTE_ON)
+    mute = 1;
+
+  plog (MODULE_NAME, "set_mute: %s", mute ? "on" : "off");
+
+  if (!player)
+    return;
+
+  x = (xine_player_t *) player->priv;
+
+  if (!x->stream)
+    return;
+
+  xine_set_param (x->stream, XINE_PARAM_AUDIO_MUTE, mute);
+}
+
 /* public API */
 player_funcs_t *
 register_functions_xine (void)
@@ -468,7 +514,9 @@ register_functions_xine (void)
   funcs->pb_pause = xine_player_playback_pause;
   funcs->pb_seek = xine_player_playback_seek;
   funcs->get_volume = xine_player_get_volume;
+  funcs->get_mute = xine_player_get_mute;
   funcs->set_volume = xine_player_set_volume;
+  funcs->set_mute = xine_player_set_mute;
   
   return funcs;
 }

@@ -147,10 +147,26 @@ vlc_get_volume (player_t *player)
   return 0;
 }
 
+static player_mute_t
+vlc_get_mute (player_t *player)
+{
+  plog (MODULE_NAME, "get_mute");
+  return PLAYER_MUTE_OFF;
+}
+
 static void
 vlc_set_volume (player_t *player, int value)
 {
   plog (MODULE_NAME, "set_volume: %d", value);
+}
+
+static void
+vlc_set_mute (player_t *player, player_mute_t value)
+{
+  if (value == PLAYER_MUTE_UNKNOWN)
+    return;
+
+  plog (MODULE_NAME, "set_mute: %s", value == PLAYER_MUTE_ON ? "on" : "off");
 }
 
 /* public API */
@@ -169,7 +185,9 @@ register_functions_vlc (void)
   funcs->pb_pause = vlc_playback_pause;
   funcs->pb_seek = vlc_playback_seek;
   funcs->get_volume = vlc_get_volume;
+  funcs->get_mute = vlc_get_mute;
   funcs->set_volume = vlc_set_volume;
+  funcs->set_mute = vlc_set_mute;
 
   return funcs;
 }

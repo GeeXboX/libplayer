@@ -68,6 +68,11 @@ do_regression_tests (player_t *player, char *mrl, player_mrl_type_t type)
   player_playback_start (player);
   player_playback_seek (player, 2);  /* 2s forward */
   player_playback_seek (player, -1); /* 1s backward */
+  player_mute_t mute = player_get_mute (player);
+  printf ("Current mute: %s\n", mute == PLAYER_MUTE_ON
+                                ? "on" : (mute == PLAYER_MUTE_OFF
+                                          ? "off" : "unknown"));
+  player_set_mute (player, PLAYER_MUTE_ON);
   player_playback_pause (player);
   player_playback_stop (player);
   player_mrl_previous (player);
