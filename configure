@@ -588,6 +588,19 @@ if test "$wrapper_xine" = "yes"; then
 fi
 
 #################################################
+#   check for libX11
+#################################################
+if test "$wrapper_xine" = "yes"; then
+  echolog "Checking for libX11 ..."
+  if [ -n "$libX11dir" ]; then
+    check_cflags -I$libX11dir
+    check_ldflags -L$libX11dir
+  fi
+  check_lib X11/X.h XInitThreads -lX11 || die "Error, can't find libX11 !"
+  add_extralibs -lX11
+fi
+
+#################################################
 #   check for libvlc
 #################################################
 if test "$wrapper_vlc" = "yes"; then

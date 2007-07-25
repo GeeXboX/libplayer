@@ -25,6 +25,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <math.h>
+
+#include <X11/X.h>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#include <X11/Xutil.h>
+
 #include <xine.h>
 
 #include "player.h"
@@ -41,16 +48,77 @@ typedef struct xine_player_s {
   xine_event_queue_t *event_queue;
   xine_video_port_t *vo_port;
   xine_audio_port_t *ao_port;
+  /* X11 */
+  Display *display;
+  Window window;
 } xine_player_t;
+
+/* for no border with a X window */
+typedef struct {
+  uint32_t flags;
+  uint32_t functions;
+  uint32_t decorations;
+  int32_t input_mode;
+  uint32_t status;
+} MWMHints;
+
+#define MWM_HINTS_DECORATIONS     (1L << 1)
+#define PROP_MWM_HINTS_ELEMENTS   5
+
+/* width and height for the fullscreen */
+static int g_x11_width;
+static int g_x11_height;
+static double g_x11_pixel_aspect;
+
+static void
+x11_map (player_t *player)
+{
+  xine_player_t *x = NULL;
+
+  if (!player)
+    return;
+
+  x = (xine_player_t *) player->priv;
+
+  if (!x || !x->display)
+    return;
+
+  XLockDisplay (x->display);
+  XMapRaised (x->display, x->window);
+  XSync (x->display, False);
+  XUnlockDisplay (x->display);
+}
+
+static void
+x11_unmap (player_t *player)
+{
+  xine_player_t *x = NULL;
+
+  if (!player)
+    return;
+
+  x = (xine_player_t *) player->priv;
+
+  if (!x || !x->display)
+    return;
+
+  XLockDisplay (x->display);
+  XUnmapWindow (x->display, x->window);
+  XSync (x->display, False);
+  XUnlockDisplay (x->display);
+}
 
 static void
 xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
 {
   player_t *player = NULL;
+  xine_player_t *x = NULL;
 
   player = (player_t *) user_data;
   if (!player)
     return;
+
+  x = (xine_player_t *) player->priv;
 
   switch (event->type)
   {
@@ -59,6 +127,9 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
     plog (MODULE_NAME, "Playback of stream has ended"); 
     if (player->event_cb)
       player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+    /* X11 */
+    if (x && x->display && player->mrl->type == PLAYER_MRL_TYPE_VIDEO)
+      x11_unmap (player);
     break;
   }
   case XINE_EVENT_PROGRESS:
@@ -71,11 +142,114 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
 }
 
 /* private functions */
+static void
+dest_size_cb(void *data, int video_width, int video_height,
+             double video_pixel_aspect, int *dest_width,
+             int *dest_height, double *dest_pixel_aspect)
+{
+  *dest_width = g_x11_width;
+  *dest_height = g_x11_height;
+  *dest_pixel_aspect = g_x11_pixel_aspect;
+}
+
+static void
+frame_output_cb(void *data, int video_width, int video_height,
+                double video_pixel_aspect, int *dest_x, int *dest_y,
+                int *dest_width, int *dest_height,
+                double *dest_pixel_aspect, int *win_x, int *win_y)
+{
+  *dest_x = 0;
+  *dest_y = 0;
+  *win_x = 0;
+  *win_y = 0;
+  *dest_width = g_x11_width;
+  *dest_height = g_x11_height;
+  *dest_pixel_aspect = g_x11_pixel_aspect;
+}
+
+static x11_visual_t *
+x11_init (player_t *player)
+{
+  xine_player_t *x = NULL;
+  x11_visual_t *vis = NULL;
+  int screen;
+  double res_v, res_h;
+  Atom XA_NO_BORDER;
+  MWMHints mwmhints;
+  XSetWindowAttributes atts;
+
+  if (!player)
+    return NULL;
+
+  x = (xine_player_t *) player->priv;
+
+  if (!x)
+    return NULL;
+
+  if (!XInitThreads ()) {
+    plog (MODULE_NAME, "Failed to init for X11");
+    return NULL;
+  }
+
+  x->display = XOpenDisplay (NULL);
+  screen = XDefaultScreen (x->display);
+
+  /* the video will be in fullscreen */
+  g_x11_width = DisplayWidth (x->display, screen);
+  g_x11_height = DisplayHeight (x->display, screen);
+
+  XLockDisplay (x->display);
+
+  atts.override_redirect = True;  /* window on top */
+  atts.background_pixel = 0;      /* black background */
+
+  /* create a window for the xine vo */
+  x->window = XCreateWindow (x->display, DefaultRootWindow (x->display),
+                             0, 0, g_x11_width, g_x11_height, 0, 0,
+                             InputOutput, DefaultVisual (x->display, screen),
+                             CWOverrideRedirect | CWBackPixel, &atts);
+
+  /* remove borders for the fullscreen */
+  XA_NO_BORDER = XInternAtom (x->display, "_MOTIF_WM_HINTS", False);
+  mwmhints.flags = MWM_HINTS_DECORATIONS;
+  mwmhints.decorations = 0;
+  XChangeProperty (x->display, x->window, XA_NO_BORDER, XA_NO_BORDER, 32,
+                   PropModeReplace, (unsigned char *) &mwmhints,
+                   PROP_MWM_HINTS_ELEMENTS);
+
+  /* calcul pixel aspect */
+  res_h = DisplayWidth (x->display, screen) * 1000 /
+          DisplayWidthMM (x->display, screen);
+  res_v = DisplayHeight (x->display, screen) * 1000 /
+          DisplayHeightMM (x->display, screen);
+  g_x11_pixel_aspect = res_v / res_h;
+
+  XSync (x->display, False);
+  XUnlockDisplay (x->display);
+
+  vis = malloc (sizeof (x11_visual_t));
+  if (vis) {
+    vis->display = x->display;
+    vis->screen = screen;
+    vis->d = x->window;
+    vis->dest_size_cb = dest_size_cb;
+    vis->frame_output_cb = frame_output_cb;
+    vis->user_data = NULL;
+  }
+
+  return vis;
+}
+
 static init_status_t
 xine_player_init (player_t *player)
 {
   xine_player_t *x = NULL;
   int verbosity = XINE_VERBOSITY_NONE;
+
+  char *id_vo = NULL;
+  char *id_ao = NULL;
+  int visual = XINE_VISUAL_TYPE_NONE;
+  void *data = NULL;
 
 #ifdef HAVE_DEBUG
   verbosity = XINE_VERBOSITY_LOG;
@@ -93,12 +267,67 @@ xine_player_init (player_t *player)
   xine_init (x->xine);
   xine_engine_set_param (x->xine, XINE_ENGINE_PARAM_VERBOSITY, verbosity);
 
-  /* init video output driver: for now, just set to NULL */
-  x->vo_port = xine_open_video_driver (x->xine, NULL,
-                                       XINE_VISUAL_TYPE_NONE, NULL);
+  switch (player->vo) {
+  case PLAYER_VO_NULL:
+    id_vo = NULL;
+    visual = XINE_VISUAL_TYPE_NONE;
+    data = NULL;
+    break;
+
+  case PLAYER_VO_X11:
+    id_vo = strdup ("x11");
+    visual = XINE_VISUAL_TYPE_X11;
+    data = x11_init (player);
+    break;
+
+  case PLAYER_VO_X11_SDL:
+    id_vo = strdup ("sdl");
+    visual = XINE_VISUAL_TYPE_X11;
+    data = x11_init (player);
+    break;
+
+  case PLAYER_VO_XV:
+    id_vo = strdup ("xv");
+    visual = XINE_VISUAL_TYPE_X11;
+    data = x11_init (player);
+    break;
+
+  /* TODO, not implemented */
+  case PLAYER_VO_FB:
+    id_vo = strdup ("fbdev");
+    visual = XINE_VISUAL_TYPE_FB;
+    data = NULL;
+  }
+
+  /* init video output driver */
+  if (!(x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data))) {
+    plog (MODULE_NAME, "Xine can't init '%s' video driver", id_vo);
+    return PLAYER_INIT_ERROR;
+  }
+
+  switch (player->ao) {
+  case PLAYER_AO_NULL:
+    id_ao = NULL;
+    break;
+
+  case PLAYER_AO_ALSA:
+    id_ao = strdup ("alsa");
+    break;
+
+  case PLAYER_AO_OSS:
+    id_ao = strdup ("oss");
+  }
 
   /* init audio output driver */
-  x->ao_port = xine_open_audio_driver (x->xine, NULL, NULL);
+  if (!(x->ao_port = xine_open_audio_driver (x->xine, id_ao, NULL))) {
+    plog (MODULE_NAME, "Xine can't init '%s' audio driver", id_ao);
+    return PLAYER_INIT_ERROR;
+  }
+
+  if (id_vo)
+    free (id_vo);
+  if (id_ao);
+    free (id_ao);
 
   x->stream = xine_stream_new (x->xine, x->ao_port, x->vo_port);
   
@@ -106,6 +335,13 @@ xine_player_init (player_t *player)
   xine_event_create_listener_thread (x->event_queue,
                                      xine_player_event_listener_cb, player);
 
+  /* X11 */
+  if (x->display) {
+    xine_gui_send_vo_data(x->stream,
+                          XINE_GUI_SEND_DRAWABLE_CHANGED, (void *) x->window);
+    xine_gui_send_vo_data(x->stream,
+                          XINE_GUI_SEND_VIDEOWIN_VISIBLE, (void *) 1);
+  }
 
   return PLAYER_INIT_OK;
 }
@@ -138,6 +374,15 @@ xine_player_uninit (void *priv)
   
   if (x->xine)
     xine_exit (x->xine);
+
+  /* X11 */
+  if (x->display) {
+    XLockDisplay (x->display);
+    XUnmapWindow (x->display,  x->window);
+    XDestroyWindow (x->display, x->window);
+    XUnlockDisplay (x->display);
+    XCloseDisplay (x->display);
+  }
 
   free (x);
 }
@@ -339,7 +584,11 @@ xine_player_playback_start (player_t *player)
   
   if (!x->stream)
     return PLAYER_PB_ERROR;
-  
+
+  /* X11 */
+  if (x->display && player->mrl->type == PLAYER_MRL_TYPE_VIDEO)
+    x11_map (player);
+
   xine_open (x->stream, player->mrl->name);
   xine_play (x->stream, 0, 0);
 
@@ -360,7 +609,11 @@ xine_player_playback_stop (player_t *player)
 
   if (!x->stream)
     return;
-  
+
+  /* X11 */
+  if (x->display && player->mrl->type == PLAYER_MRL_TYPE_VIDEO)
+    x11_unmap (player);
+
   xine_stop (x->stream);
   xine_close (x->stream);
 }
@@ -529,8 +782,10 @@ register_private_xine (void)
   x->xine = NULL;
   x->stream = NULL;
   x->event_queue = NULL;
-  x->vo_port = NULL;
-  x->ao_port = NULL;
+  x->vo_port = PLAYER_VO_NULL;
+  x->ao_port = PLAYER_AO_NULL;
+  /* X11 */
+  x->display = NULL;
 
   return x;
 }
