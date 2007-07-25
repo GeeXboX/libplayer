@@ -32,6 +32,20 @@ typedef enum player_type {
   PLAYER_TYPE_DUMMY
 } player_type_t;
 
+typedef enum player_vo {
+  PLAYER_VO_NULL,
+  PLAYER_VO_X11,
+  PLAYER_VO_X11_SDL,
+  PLAYER_VO_XV,
+  PLAYER_VO_FB
+} player_vo_t;
+
+typedef enum player_ao {
+  PLAYER_AO_NULL,
+  PLAYER_AO_ALSA,
+  PLAYER_AO_OSS
+} player_ao_t;
+
 typedef enum player_state {
   PLAYER_STATE_IDLE,
   PLAYER_STATE_PAUSE,
@@ -115,8 +129,8 @@ typedef struct player_s {
   player_state_t state; /* state of the playback */
   int loop;             /* loop elements from playlist */
   int shuffle;          /* shuffle MRLs from playlist */
-  const char *ao;       /* audio output driver name */
-  const char *vo;       /* video output driver name */
+  player_ao_t ao;       /* audio output driver name */
+  player_vo_t vo;       /* video output driver name */
   int x, y;             /* video position */
   int w, h;             /* video size */
   int (*event_cb) (player_event_t e, void *data); /* frontend event callback */
@@ -125,7 +139,7 @@ typedef struct player_s {
 } player_t;
 
 /* player init/uninit prototypes */
-player_t *player_init (player_type_t type, char *ao, char *vo,
+player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
                               int event_cb (player_event_t e, void *data));
 void player_uninit (player_t *player);
 

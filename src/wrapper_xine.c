@@ -98,8 +98,7 @@ xine_player_init (player_t *player)
                                        XINE_VISUAL_TYPE_NONE, NULL);
 
   /* init audio output driver */
-  x->ao_port = xine_open_audio_driver (x->xine,
-                                       player->ao ? player->ao : NULL, NULL);
+  x->ao_port = xine_open_audio_driver (x->xine, NULL, NULL);
 
   x->stream = xine_stream_new (x->xine, x->ao_port, x->vo_port);
   

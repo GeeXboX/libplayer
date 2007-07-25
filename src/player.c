@@ -39,7 +39,7 @@
 #define MODULE_NAME "player"
 
 player_t *
-player_init (player_type_t type, char *ao, char *vo,
+player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
              int event_cb (player_event_t e, void *data))
 {
   player_t *player = NULL;
@@ -51,8 +51,8 @@ player_init (player_type_t type, char *ao, char *vo,
   player->state = PLAYER_STATE_IDLE;
   player->loop = 0;
   player->shuffle = 0;
-  player->ao = ao ? strdup (ao) : NULL;
-  player->vo = vo ? strdup (vo) : NULL;
+  player->ao = ao;
+  player->vo = vo;
   player->x = 0;
   player->y = 0;
   player->w = 0;
