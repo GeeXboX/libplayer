@@ -44,7 +44,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
 {
   player_t *player = NULL;
   int res = PLAYER_INIT_ERROR;
-  
+
   player = (player_t *) malloc (sizeof (player_t));
   player->type = type;
   player->mrl = NULL;  
@@ -60,7 +60,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   player->event_cb = event_cb;
   player->funcs = NULL;
   player->priv = NULL;
-  
+
   switch (player->type)
   {
 #ifdef HAVE_XINE
@@ -97,8 +97,8 @@ case PLAYER_TYPE_DUMMY:
   {
     player_uninit (player);
     return NULL;
-  }  
-  
+  }
+
   return player;
 }
 
@@ -114,7 +114,7 @@ player_uninit (player_t *player)
   /* free player specific private properties */
   if (player->funcs->uninit)
     player->funcs->uninit (player->priv);
-  
+
   free (player->funcs);
   free (player);
 }
@@ -123,10 +123,10 @@ void
 player_playback_start (player_t *player)
 {
   int res = PLAYER_PB_ERROR;
-  
+
   if (!player)
     return;
-  
+
   if (player->state != PLAYER_STATE_IDLE) /* already running : stop it */
     player_playback_stop (player);
 
@@ -139,7 +139,7 @@ player_playback_start (player_t *player)
 
   if (res != PLAYER_PB_OK)
     return;
-  
+
   player->state = PLAYER_STATE_RUNNING;
   plog (MODULE_NAME, "Now playing: %s", player->mrl->name);
 
@@ -160,7 +160,7 @@ player_playback_stop (player_t *player)
   /* player specific playback_stop() */
   if (player->funcs->pb_stop)
     player->funcs->pb_stop (player);
-  
+
   player->state = PLAYER_STATE_IDLE;
 
   /* notify front-end */
@@ -172,7 +172,7 @@ void
 player_playback_pause (player_t *player)
 {
   int res = PLAYER_PB_ERROR;
-  
+
   if (!player)
     return;
 
@@ -186,7 +186,7 @@ player_playback_pause (player_t *player)
 
   if (res != PLAYER_PB_OK)
     return;
-  
+
   if (player->state == PLAYER_STATE_RUNNING)
     player->state = PLAYER_STATE_PAUSE;
   else
@@ -209,7 +209,7 @@ int
 player_get_volume (player_t *player)
 {
   int res = -1;
-  
+
   if (!player)
     return -1;
 

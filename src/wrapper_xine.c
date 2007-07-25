@@ -255,7 +255,6 @@ xine_player_init (player_t *player)
   verbosity = XINE_VERBOSITY_LOG;
 #endif /* HAVE_DEBUG */
 
-  
   plog (MODULE_NAME, "init");
 
   if (!player)
@@ -330,7 +329,7 @@ xine_player_init (player_t *player)
     free (id_ao);
 
   x->stream = xine_stream_new (x->xine, x->ao_port, x->vo_port);
-  
+
   x->event_queue = xine_event_new_queue (x->stream);
   xine_event_create_listener_thread (x->event_queue,
                                      xine_player_event_listener_cb, player);
@@ -350,7 +349,7 @@ static void
 xine_player_uninit (void *priv)
 {
   xine_player_t *x = NULL;
-  
+
   plog (MODULE_NAME, "uninit");
 
   if (!priv)
@@ -363,7 +362,7 @@ xine_player_uninit (void *priv)
     xine_close (x->stream);
     xine_dispose (x->stream);
   }
-  
+
   if (x->event_queue)
     xine_event_dispose_queue (x->event_queue);
 
@@ -371,7 +370,7 @@ xine_player_uninit (void *priv)
     xine_close_audio_driver (x->xine, x->ao_port);
   if (x->vo_port)
     xine_close_video_driver (x->xine, x->vo_port);
-  
+
   if (x->xine)
     xine_exit (x->xine);
 
@@ -473,7 +472,7 @@ xine_player_mrl_get_video_properties (player_t *player,
   if (video->streams)
     plog (MODULE_NAME, "Video Streams: %d", video->streams);
 }
-  
+
 static void
 xine_player_mrl_get_properties (player_t *player)
 {
@@ -497,7 +496,7 @@ xine_player_mrl_get_properties (player_t *player)
   mrl->prop->size = st.st_size;
   plog (MODULE_NAME, "File Size: %.2f MB",
         (float) mrl->prop->size / 1024 / 1024);
-  
+
   mrl->prop->seekable =
     xine_get_stream_info (x->stream, XINE_STREAM_INFO_SEEKABLE);
   plog (MODULE_NAME, "Seekable: %d", mrl->prop->seekable);
@@ -506,8 +505,8 @@ xine_player_mrl_get_properties (player_t *player)
   {
     mrl->prop->audio = mrl_properties_audio_new ();
     xine_player_mrl_get_audio_properties (player, mrl->prop->audio);
-  }  
-  
+  }
+
   if (xine_get_stream_info (x->stream, XINE_STREAM_INFO_HAS_VIDEO))
   {
     mrl->prop->video = mrl_properties_video_new ();
@@ -527,7 +526,7 @@ xine_player_mrl_get_metadata (player_t *player)
 
   if (!player || !mrl || !mrl->meta)
     return;
-    
+
   x = (xine_player_t *) player->priv; 
   if (!x->stream)
     return;
@@ -538,31 +537,31 @@ xine_player_mrl_get_metadata (player_t *player)
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST));
   if (mrl->meta->title)
     plog (MODULE_NAME, "Meta Title: %s", mrl->meta->title);
-  
+
   if (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST))
     mrl->meta->artist =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST));
   if (mrl->meta->artist)
     plog (MODULE_NAME, "Meta Artist: %s", mrl->meta->artist);
-  
+
   if (xine_get_meta_info (x->stream, XINE_META_INFO_GENRE))
     mrl->meta->genre =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_GENRE));
   if (mrl->meta->genre)
     plog (MODULE_NAME, "Meta Genre: %s", mrl->meta->genre);
-  
+
   if (xine_get_meta_info (x->stream, XINE_META_INFO_ALBUM))
     mrl->meta->album =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ALBUM));
   if (mrl->meta->album)
     plog (MODULE_NAME, "Meta Album: %s", mrl->meta->album);
-  
+
   if (xine_get_meta_info (x->stream, XINE_META_INFO_YEAR))
     mrl->meta->year =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_YEAR));
   if (mrl->meta->year)
     plog (MODULE_NAME, "Meta Year: %s", mrl->meta->year);
-  
+
   if (xine_get_meta_info (x->stream, XINE_META_INFO_TRACK_NUMBER))
     mrl->meta->track =
       strdup (xine_get_meta_info (x->stream, XINE_META_INFO_TRACK_NUMBER));
@@ -576,12 +575,12 @@ xine_player_playback_start (player_t *player)
   xine_player_t *x = NULL;
 
   plog (MODULE_NAME, "playback_start");
-  
+
   if (!player)
     return PLAYER_PB_FATAL;
 
   x = (xine_player_t *) player->priv;
-  
+
   if (!x->stream)
     return PLAYER_PB_ERROR;
 
@@ -624,7 +623,7 @@ xine_player_playback_pause (player_t *player)
   xine_player_t *x = NULL;
 
   plog (MODULE_NAME, "playback_pause");
-  
+
   if (!player)
     return PLAYER_PB_FATAL;
 
@@ -646,9 +645,9 @@ xine_player_playback_seek (player_t *player, int value)
 {
   xine_player_t *x = NULL;
   int pos_time = 0, length = 0;
-  
+
   plog (MODULE_NAME, "playback_seek: %d", value);
-  
+
   if (!player)
     return;
 
@@ -664,7 +663,7 @@ xine_player_playback_seek (player_t *player, int value)
     pos_time = 0;
   if (pos_time > length)
     pos_time = length;
-  
+
   xine_play (x->stream, 0, pos_time);
 }
 
@@ -674,7 +673,7 @@ xine_player_get_volume (player_t *player)
   xine_player_t *x = NULL;
 
   plog (MODULE_NAME, "get_volume");
-  
+
   if (!player)
     return -1;
 
@@ -769,7 +768,7 @@ register_functions_xine (void)
   funcs->get_mute = xine_player_get_mute;
   funcs->set_volume = xine_player_set_volume;
   funcs->set_mute = xine_player_set_mute;
-  
+
   return funcs;
 }
 

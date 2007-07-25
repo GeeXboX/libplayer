@@ -59,7 +59,7 @@ do_regression_tests (player_t *player, char *mrl, player_mrl_type_t type)
 {
   if (!player || !mrl)
     return;
-  
+
   player_mrl_append (player, mrl, type, PLAYER_ADD_MRL_NOW);
   player_mrl_get_properties (player);
   player_mrl_get_metadata (player);
@@ -83,7 +83,7 @@ static void
 player_run_test (player_type_t player_type)
 {
   player_t *player = NULL;
-  
+
   player = player_init (player_type, PLAYER_AO_ALSA, PLAYER_VO_XV,
                         frontend_event_cb);
   do_regression_tests (player, AUDIO_TEST_FILE, PLAYER_MRL_TYPE_AUDIO);
@@ -107,7 +107,7 @@ player_test_thread (void *cookie)
     player_run_test (PLAYER_TYPE_XINE);
   }
 #endif /* HAVE_XINE */
-  
+
 #ifdef HAVE_VLC
   if (player_id == PLAYER_ID_VLC || player_id == PLAYER_ID_ALL)
   {
@@ -145,7 +145,7 @@ main (int argc, char **argv)
       return -1;
     }
   }
-  
+
   signal (SIGINT, break_down);
   pthread_create (&tid, NULL, player_test_thread, NULL);
 

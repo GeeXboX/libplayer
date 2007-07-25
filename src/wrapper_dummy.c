@@ -39,9 +39,9 @@ static init_status_t
 dummy_init (player_t *player)
 {
   dummy_t *dummy = NULL;
-  
+
   plog (MODULE_NAME, "init");
-  
+
   if (!player)
     return PLAYER_INIT_ERROR;
 
@@ -55,9 +55,9 @@ static void
 dummy_uninit (void *priv)
 {
   dummy_t *dummy = NULL;
-  
+
   plog (MODULE_NAME, "uninit");
-  
+
   if (!priv)
     return;
 
@@ -151,7 +151,7 @@ register_functions_dummy (void)
   funcs->get_mute = dummy_get_mute;
   funcs->set_volume = dummy_set_volume;
   funcs->set_mute = dummy_set_mute;
-  
+
   return funcs;
 }
 

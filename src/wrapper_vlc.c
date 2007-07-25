@@ -43,9 +43,9 @@ vlc_init (player_t *player)
   vlc_t *vlc = NULL;
   char *vlc_argv[32] = { "vlc" };
   int vlc_argc = 1;
-    
+
   plog (MODULE_NAME, "init");
-  
+
   if (!player)
     return PLAYER_INIT_ERROR;
 
@@ -53,13 +53,13 @@ vlc_init (player_t *player)
   vlc_argv[vlc_argc++] = "--no-stats";
   vlc_argv[vlc_argc++] = "--intf";
   vlc_argv[vlc_argc++] = "dummy";
-  
+
   vlc = (vlc_t *) player->priv;
   libvlc_exception_init (&vlc->ex);
   vlc->core = libvlc_new (vlc_argc, vlc_argv, &vlc->ex);
   if (!vlc->core)
     return PLAYER_INIT_ERROR;
-    
+
   if (libvlc_exception_raised (&vlc->ex))
   {
     plog (MODULE_NAME, libvlc_exception_get_message (&vlc->ex));
@@ -73,9 +73,9 @@ static void
 vlc_uninit (void *priv)
 {
   vlc_t *vlc = NULL;
-  
+
   plog (MODULE_NAME, "uninit");
-  
+
   if (!priv)
     return;
 
@@ -104,20 +104,20 @@ vlc_playback_start (player_t *player)
 {
   vlc_t *vlc;
   int id;
-  
+
   plog (MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
 
   vlc = (vlc_t *) player->priv;
-  
+
   if (!vlc->core)
     return PLAYER_PB_ERROR;
-  
+
   id = libvlc_playlist_add (vlc->core, player->mrl->name, NULL, NULL);
   libvlc_playlist_play (vlc->core, id, 0, NULL, NULL);
-  
+
   return PLAYER_PB_OK;
 }
 

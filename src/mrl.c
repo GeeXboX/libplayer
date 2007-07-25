@@ -157,7 +157,7 @@ mrl_new (char *name, player_mrl_type_t type)
   /* check for minimal requirements */
   if (!name)
     return NULL;
-  
+
   mrl = (mrl_t *) malloc (sizeof (mrl_t));
   mrl->name = strdup (name);
   mrl->cover = NULL;
@@ -175,7 +175,7 @@ mrl_free (mrl_t *mrl, int recursive)
 {
   if (!mrl)
     return;
-  
+
   if (mrl->name)
     free (mrl->name);
   if (mrl->cover)
@@ -185,10 +185,10 @@ mrl_free (mrl_t *mrl, int recursive)
     mrl_properties_free (mrl->prop);
   if (mrl->meta)
     mrl_metadata_free (mrl->meta);
-  
+
   if (recursive && mrl->next)
     mrl_free (mrl->next, 1);
-    
+
   free (mrl);
 }
 
@@ -210,14 +210,14 @@ player_mrl_append (player_t *player,
   mrl_t *mrl = NULL;
 
   plog (MODULE_NAME, __FUNCTION__);
-    
+
   if (!player || !location)
     return;
 
   mrl = mrl_new (location, type);
   if (!mrl)
     return;
-  
+
   /* create/expand the playlist */
   if (!player->mrl) /* empty list */
     player->mrl = mrl;
@@ -240,14 +240,14 @@ player_mrl_append (player_t *player,
     player_playback_start (player);
   }
 }
-   
+
 void
 player_mrl_previous (player_t *player)
 {
   mrl_t *mrl;
 
   plog (MODULE_NAME, __FUNCTION__);
-  
+
   if (!player)
     return;
 
@@ -266,7 +266,7 @@ player_mrl_next (player_t *player)
   mrl_t *mrl;
 
   plog (MODULE_NAME, __FUNCTION__);
-  
+
   if (!player)
     return;
 
@@ -295,7 +295,7 @@ player_mrl_get_properties (player_t *player)
     return;
 
   mrl->prop = mrl_properties_new ();
-  
+
   /* player specific init */
   if (player->funcs->mrl_get_props)
     player->funcs->mrl_get_props (player);
@@ -317,7 +317,7 @@ player_mrl_get_metadata (player_t *player)
     return;
 
   mrl->meta = mrl_metadata_new ();
-  
+
   /* player specific init */
   if (player->funcs->mrl_get_meta)
     player->funcs->mrl_get_meta (player);
