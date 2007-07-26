@@ -35,6 +35,7 @@ show_help(){
   echo "  --enable-xine               build xine wrapper"
   echo "  --disable-xine              do not build xine wrapper"
   echo "  --with-xine-dir=DIR         check for libxine installed in DIR"
+  echo "  --with-X11-dir=DIR          check for libX11 installed in DIR"
   echo "  --enable-mplayer            build MPlayer wrapper"
   echo "  --disable-mplayer           do not build MPlayer wrapper"
   echo "  --enable-vlc                build VLC wrapper"
@@ -398,6 +399,8 @@ for opt do
   --disable-xine) wrapper_xine="no";
   ;;
   --with-xine-dir=*) libxinedir="$optval";
+  ;;
+  --with-X11-dir=*) libX11dir="$optval";
   ;;
   --enable-mplayer) wrapper_mplayer="yes";
   ;;
