@@ -1,0 +1,15 @@
+Some work to make on libplayer (can be incomplete)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* add framebuffer support to xine
+* add functions for command subtitles
+* add functions for command dvd navigation
+* add functions for command TV input
+* add functions for command DVB input
+* add functions for switch between audio channels
+* add functions for set/get playing speed
+* add functions for set/get gamma|brightness|saturation|contrast|hue
+* add functions for set/get video aspect
+* add functions for get time informations on playing stream
+* complete playlist manager
+* complete vlc wrapper
