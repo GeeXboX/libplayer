@@ -2,6 +2,7 @@ Some work to make on libplayer (can be incomplete)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * add framebuffer support to xine
+* add vesa (MPlayer) and vidix support
 * add functions for command subtitles
 * add functions for command dvd navigation
 * add functions for command TV input
@@ -11,5 +12,7 @@ Some work to make on libplayer (can be incomplete)
 * add functions for set/get gamma|brightness|saturation|contrast|hue
 * add functions for set/get video aspect
 * add functions for get time informations on playing stream
+* add functions for load config files (xine and MPlayer)
+* add functions for use OSD (xine and MPlayer)
 * complete playlist manager
 * complete vlc wrapper
