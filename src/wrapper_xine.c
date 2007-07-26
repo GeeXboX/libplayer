@@ -312,7 +312,7 @@ xine_player_init (player_t *player)
 
   /* TODO, not implemented */
   case PLAYER_VO_FB:
-    id_vo = strdup ("fbdev");
+    id_vo = strdup ("fb");
     visual = XINE_VISUAL_TYPE_FB;
     data = NULL;
   }
