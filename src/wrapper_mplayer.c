@@ -489,6 +489,8 @@ mplayer_init (player_t *player)
 
         case PLAYER_VO_FB:
           params[pp++] = "fbdev";
+          /* seems to not work with -vo fbdev and -vo fbdev2 */
+          params[pp++] = "-zoom";
         }
 
         /* select the audio output */
