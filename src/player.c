@@ -84,7 +84,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
     player->priv = register_private_vlc ();
     break;
 #endif /* HAVE_XINE */
-case PLAYER_TYPE_DUMMY:
+  case PLAYER_TYPE_DUMMY:
     player->funcs = register_functions_dummy ();
     player->priv = register_private_dummy ();
     break;
