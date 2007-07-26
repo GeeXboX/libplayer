@@ -17,6 +17,10 @@ ifeq ($(WRAPPER_VLC),yes)
   SRCS += wrapper_vlc.c
 endif
 
+ifeq ($(WRAPPER_MPLAYER),yes)
+  SRCS += wrapper_mplayer.c
+endif
+
 OBJS = $(SRCS:.c=.o)
 
 .SUFFIXES: .c .o

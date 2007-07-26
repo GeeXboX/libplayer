@@ -28,6 +28,7 @@ struct player_funcs_s;
 
 typedef enum player_type {
   PLAYER_TYPE_XINE,
+  PLAYER_TYPE_MPLAYER,
   PLAYER_TYPE_VLC,
   PLAYER_TYPE_DUMMY
 } player_type_t;

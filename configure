@@ -35,6 +35,8 @@ show_help(){
   echo "  --enable-xine               build xine wrapper"
   echo "  --disable-xine              do not build xine wrapper"
   echo "  --with-xine-dir=DIR         check for libxine installed in DIR"
+  echo "  --enable-mplayer            build MPlayer wrapper"
+  echo "  --disable-mplayer           do not build MPlayer wrapper"
   echo "  --enable-vlc                build VLC wrapper"
   echo "  --disable-vlc               do not build VLC wrapper"
   echo "  --with-vlc-dir=DIR          check for libvlc installed in DIR"
@@ -300,6 +302,7 @@ extralibs=""
 installstrip="-s"
 cross_compile="no"
 wrapper_xine="yes"
+wrapper_mplayer="yes"
 wrapper_vlc="yes"
 INSTALL="install"
 
@@ -395,6 +398,10 @@ for opt do
   --disable-xine) wrapper_xine="no";
   ;;
   --with-xine-dir=*) libxinedir="$optval";
+  ;;
+  --enable-mplayer) wrapper_mplayer="yes";
+  ;;
+  --disable-mplayer) wrapper_mplayer="no";
   ;;
   --enable-vlc) wrapper_vlc="yes";
   ;;
@@ -601,6 +608,14 @@ if test "$wrapper_xine" = "yes"; then
 fi
 
 #################################################
+#   check for mplayer
+#################################################
+if test "$wrapper_mplayer" = "yes"; then
+  add_cflags -DHAVE_MPLAYER
+  add_extralibs -lpthread
+fi
+
+#################################################
 #   check for libvlc
 #################################################
 if test "$wrapper_vlc" = "yes"; then
@@ -668,6 +683,7 @@ append_config "INSTALL=$INSTALL"
 
 append_config "DEBUG=$debug"
 append_config "WRAPPER_XINE=$wrapper_xine"
+append_config "WRAPPER_MPLAYER=$wrapper_mplayer"
 append_config "WRAPPER_VLC=$wrapper_vlc"
 
 clean

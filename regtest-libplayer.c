@@ -34,6 +34,7 @@
 typedef enum player_id {
   PLAYER_ID_ALL = 0,
   PLAYER_ID_XINE,
+  PLAYER_ID_MPLAYER,
   PLAYER_ID_VLC,
   PLAYER_ID_DUMMY
 } player_id_t;
@@ -108,6 +109,14 @@ player_test_thread (void *cookie)
   }
 #endif /* HAVE_XINE */
 
+#ifdef HAVE_MPLAYER
+  if (player_id == PLAYER_ID_MPLAYER || player_id == PLAYER_ID_ALL)
+  {
+    printf ("\n--- MPlayer ---\n");
+    player_run_test (PLAYER_TYPE_MPLAYER);
+  }
+#endif /* HAVE_MPLAYER */
+
 #ifdef HAVE_VLC
   if (player_id == PLAYER_ID_VLC || player_id == PLAYER_ID_ALL)
   {
@@ -133,6 +142,10 @@ main (int argc, char **argv)
     else if (!strcmp (argv[1], "xine"))
       player_id = PLAYER_ID_XINE;
 #endif /* HAVE_XINE */
+#ifdef HAVE_MPLAYER
+    else if (!strcmp (argv[1], "mplayer"))
+      player_id = PLAYER_ID_MPLAYER;
+#endif /* HAVE_MPLAYER */
 #ifdef HAVE_VLC
     else if (!strcmp (argv[1], "vlc"))
       player_id = PLAYER_ID_VLC;
