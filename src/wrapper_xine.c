@@ -292,19 +292,22 @@ xine_player_init (player_t *player)
   case PLAYER_VO_X11:
     id_vo = strdup ("x11");
     visual = XINE_VISUAL_TYPE_X11;
-    data = x11_init (player);
+    if (!(data = x11_init (player)))
+      return PLAYER_INIT_ERROR;
     break;
 
   case PLAYER_VO_X11_SDL:
     id_vo = strdup ("sdl");
     visual = XINE_VISUAL_TYPE_X11;
-    data = x11_init (player);
+    if (!(data = x11_init (player)))
+      return PLAYER_INIT_ERROR;
     break;
 
   case PLAYER_VO_XV:
     id_vo = strdup ("xv");
     visual = XINE_VISUAL_TYPE_X11;
-    data = x11_init (player);
+    if (!(data = x11_init (player)))
+      return PLAYER_INIT_ERROR;
     break;
 
   /* TODO, not implemented */
