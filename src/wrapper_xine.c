@@ -203,6 +203,10 @@ x11_init (player_t *player)
   }
 
   x->display = XOpenDisplay (NULL);
+
+  if (!x->display)
+    return NULL;
+
   screen = XDefaultScreen (x->display);
 
   /* the video will be in fullscreen */
