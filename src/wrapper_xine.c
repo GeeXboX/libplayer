@@ -71,6 +71,9 @@ static int g_x11_width;
 static int g_x11_height;
 static double g_x11_pixel_aspect;
 
+/**
+ * Map and raise the window when a video is played.
+ */
 static void
 x11_map (player_t *player)
 {
@@ -90,6 +93,9 @@ x11_map (player_t *player)
   XUnlockDisplay (x->display);
 }
 
+/**
+ * Unmap the window when the video is ended or stopped.
+ */
 static void
 x11_unmap (player_t *player)
 {
@@ -142,7 +148,6 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
   }
 }
 
-/* private functions */
 static void
 dest_size_cb(void *data, int video_width, int video_height,
              double video_pixel_aspect, int *dest_width,
@@ -168,6 +173,11 @@ frame_output_cb(void *data, int video_width, int video_height,
   *dest_pixel_aspect = g_x11_pixel_aspect;
 }
 
+/**
+ * Init and create a window for X11, XV or X11_SDL. Currently this window
+ * is only fullscreen with a black background. The window is not mapped in
+ * this function. Use x11_map() and x11_unmap() for show and hide this one.
+ */
 static x11_visual_t *
 x11_init (player_t *player)
 {
@@ -241,6 +251,7 @@ x11_init (player_t *player)
   return vis;
 }
 
+/* private functions */
 static init_status_t
 xine_player_init (player_t *player)
 {
