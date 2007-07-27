@@ -202,6 +202,32 @@ mrl_list_free (mrl_t *mrl)
   mrl_free (mrl, 1);
 }
 
+int
+mrl_uses_vo (mrl_t *mrl)
+{
+  switch (mrl->type)
+  {
+  case PLAYER_MRL_TYPE_FILE_VIDEO:
+  case PLAYER_MRL_TYPE_FILE_IMAGE:
+    return 1;
+  default:
+    return 0;
+  }
+}
+
+int
+mrl_uses_ao (mrl_t *mrl)
+{
+  switch (mrl->type)
+  {
+  case PLAYER_MRL_TYPE_FILE_VIDEO:
+  case PLAYER_MRL_TYPE_FILE_AUDIO:
+    return 1;
+  default:
+    return 0;
+  }
+}
+
 void
 player_mrl_append (player_t *player,
                    char *location, player_mrl_type_t type,

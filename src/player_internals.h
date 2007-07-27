@@ -59,4 +59,7 @@ void mrl_properties_free (mrl_properties_t *prop);
 mrl_metadata_t *mrl_metadata_new (void);
 void mrl_metadata_free (mrl_metadata_t *meta);
 
+int mrl_uses_vo (mrl_t *mrl);
+int mrl_uses_ao (mrl_t *mrl);
+
 #endif /* _PLAYER_INTERNALS_H_ */

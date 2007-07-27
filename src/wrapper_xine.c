@@ -135,7 +135,7 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
     if (player->event_cb)
       player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
     /* X11 */
-    if (x && x->display && player->mrl->type == PLAYER_MRL_TYPE_FILE_VIDEO)
+    if (x && x->display && mrl_uses_vo (player->mrl))
       x11_unmap (player);
     break;
   }
@@ -604,7 +604,7 @@ xine_player_playback_start (player_t *player)
     return PLAYER_PB_ERROR;
 
   /* X11 */
-  if (x->display && player->mrl->type == PLAYER_MRL_TYPE_FILE_VIDEO)
+  if (x->display && mrl_uses_vo (player->mrl))
     x11_map (player);
 
   xine_open (x->stream, player->mrl->name);
@@ -629,7 +629,7 @@ xine_player_playback_stop (player_t *player)
     return;
 
   /* X11 */
-  if (x->display && player->mrl->type == PLAYER_MRL_TYPE_FILE_VIDEO)
+  if (x->display && mrl_uses_vo (player->mrl))
     x11_unmap (player);
 
   xine_stop (x->stream);
