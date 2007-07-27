@@ -42,6 +42,7 @@ typedef struct player_funcs_s {
   void (* pb_stop) (player_t *player);
   playback_status_t (* pb_pause) (player_t *player);
   void (* pb_seek) (player_t *player, int value);
+  void (* pb_dvdnav) (player_t *player, player_dvdnav_t value);
   int (* get_volume) (player_t *player);
   player_mute_t (* get_mute) (player_t *player);
   void (* set_volume) (player_t *player, int value);

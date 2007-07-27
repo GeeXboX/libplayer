@@ -40,6 +40,13 @@
 
 #define SLAVE_CMD_BUFFER 256
 
+#define MPLAYER_DVDNAV_UP     1
+#define MPLAYER_DVDNAV_DOWN   2
+#define MPLAYER_DVDNAV_LEFT   3
+#define MPLAYER_DVDNAV_RIGHT  4
+#define MPLAYER_DVDNAV_MENU   5
+#define MPLAYER_DVDNAV_SELECT 6
+
 /* Status of MPlayer child */
 typedef enum mplayer_status {
   MPLAYER_IS_IDLE,
@@ -58,6 +65,7 @@ typedef struct mplayer_s {
 
 /* slave commands */
 typedef enum slave_cmd {
+  SLAVE_DVDNAV,       /* dvdnav int */
   SLAVE_GET_PROPERTY, /* get_property string */
   SLAVE_LOADFILE,     /* loadfile string [int] */
   SLAVE_PAUSE,        /* pause */
@@ -358,6 +366,10 @@ slave_action (player_t *player, slave_cmd_t cmd, void *value)
     return;
 
   switch (cmd) {
+  case SLAVE_DVDNAV:
+    send_to_slave (mplayer, "dvdnav %i", *((int *) value));
+    break;
+
   case SLAVE_LOADFILE:
     if (player->mrl->name)
       send_to_slave (mplayer, "loadfile \"%s\" %i",
@@ -815,6 +827,57 @@ mplayer_playback_seek (player_t *player, int value)
   slave_cmd_int (player, SLAVE_SEEK, value);
 }
 
+static void
+mplayer_playback_dvdnav (player_t *player, player_dvdnav_t value)
+{
+  char log[8];
+  int action;
+
+  switch (value)
+  {
+  case PLAYER_DVDNAV_UP:
+    strcpy (log, "up");
+    action = MPLAYER_DVDNAV_UP;
+    break;
+
+  case PLAYER_DVDNAV_DOWN:
+    strcpy (log, "down");
+    action = MPLAYER_DVDNAV_DOWN;
+    break;
+
+  case PLAYER_DVDNAV_LEFT:
+    strcpy (log, "left");
+    action = MPLAYER_DVDNAV_LEFT;
+    break;
+
+  case PLAYER_DVDNAV_RIGHT:
+    strcpy (log, "right");
+    action = MPLAYER_DVDNAV_RIGHT;
+    break;
+
+  case PLAYER_DVDNAV_MENU:
+    strcpy (log, "menu");
+    action = MPLAYER_DVDNAV_MENU;
+    break;
+
+  case PLAYER_DVDNAV_SELECT:
+    strcpy (log, "select");
+    action = MPLAYER_DVDNAV_SELECT;
+    break;
+
+  default:
+    return;
+  }
+
+  plog (MODULE_NAME, "playback_dvdnav: %s", log);
+
+  if (!player)
+    return;
+
+  if (player->mrl->type == PLAYER_MRL_TYPE_DVD_NAV)
+    slave_cmd_int (player, SLAVE_DVDNAV, action);
+}
+
 static int
 mplayer_get_volume (player_t *player)
 {
@@ -892,6 +955,7 @@ register_functions_mplayer (void)
   funcs->pb_stop = mplayer_playback_stop;
   funcs->pb_pause = mplayer_playback_pause;
   funcs->pb_seek = mplayer_playback_seek;
+  funcs->pb_dvdnav = mplayer_playback_dvdnav;
   funcs->get_volume = mplayer_get_volume;
   funcs->get_mute = mplayer_get_mute;
   funcs->set_volume = mplayer_set_volume;

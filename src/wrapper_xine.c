@@ -149,6 +149,28 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
 }
 
 static void
+send_event (player_t *player, int event)
+{
+  xine_player_t *x = NULL;
+  xine_event_t xine_event;
+
+  if (!player)
+    return;
+
+  x = (xine_player_t *) player->priv;
+
+  if (!x || !x->stream)
+    return;
+
+  xine_event.type = event;
+  xine_event.stream = x->stream;
+  xine_event.data = NULL;
+  xine_event.data_length = 0;
+
+  xine_event_send (x->stream, &xine_event);
+}
+
+static void
 dest_size_cb(void *data, int video_width, int video_height,
              double video_pixel_aspect, int *dest_width,
              int *dest_height, double *dest_pixel_aspect)
@@ -686,6 +708,58 @@ xine_player_playback_seek (player_t *player, int value)
   xine_play (x->stream, 0, pos_time);
 }
 
+static void
+xine_player_playback_dvdnav (player_t *player, player_dvdnav_t value)
+{
+  char log[8];
+  int event;
+
+  switch (value)
+  {
+  case PLAYER_DVDNAV_UP:
+    strcpy (log, "up");
+    event = XINE_EVENT_INPUT_UP;
+    break;
+
+  case PLAYER_DVDNAV_DOWN:
+    strcpy (log, "down");
+    event = XINE_EVENT_INPUT_DOWN;
+    break;
+
+  case PLAYER_DVDNAV_LEFT:
+    strcpy (log, "left");
+    event = XINE_EVENT_INPUT_LEFT;
+    break;
+
+  case PLAYER_DVDNAV_RIGHT:
+    strcpy (log, "right");
+    event = XINE_EVENT_INPUT_RIGHT;
+    break;
+
+  case PLAYER_DVDNAV_MENU:
+    strcpy (log, "menu");
+    /* go to root menu if possible */
+    event = XINE_EVENT_INPUT_MENU3;
+    break;
+
+  case PLAYER_DVDNAV_SELECT:
+    strcpy (log, "select");
+    event = XINE_EVENT_INPUT_SELECT;
+    break;
+
+  default:
+    return;
+  }
+
+  plog (MODULE_NAME, "playback_dvdnav: %s", log);
+
+  if (!player)
+    return;
+
+  if (player->mrl->type == PLAYER_MRL_TYPE_DVD_NAV)
+    send_event (player, event);
+}
+
 static int
 xine_player_get_volume (player_t *player)
 {
@@ -783,6 +857,7 @@ register_functions_xine (void)
   funcs->pb_stop = xine_player_playback_stop;
   funcs->pb_pause = xine_player_playback_pause;
   funcs->pb_seek = xine_player_playback_seek;
+  funcs->pb_dvdnav = xine_player_playback_dvdnav;
   funcs->get_volume = xine_player_get_volume;
   funcs->get_mute = xine_player_get_mute;
   funcs->set_volume = xine_player_set_volume;

@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <inttypes.h>
+#include <string.h>
 #include <vlc/libvlc.h>
 
 #include "player.h"
@@ -140,6 +141,40 @@ vlc_playback_seek (player_t *player, int value)
   plog (MODULE_NAME, "playback_seek: %d", value);
 }
 
+static void
+vlc_playback_dvdnav (player_t *player, player_dvdnav_t value)
+{
+  char log[8] = "unknown";
+
+  switch (value)
+  {
+  case PLAYER_DVDNAV_UP:
+    strcpy (log, "up");
+    break;
+
+  case PLAYER_DVDNAV_DOWN:
+    strcpy (log, "down");
+    break;
+
+  case PLAYER_DVDNAV_LEFT:
+    strcpy (log, "left");
+    break;
+
+  case PLAYER_DVDNAV_RIGHT:
+    strcpy (log, "right");
+    break;
+
+  case PLAYER_DVDNAV_MENU:
+    strcpy (log, "menu");
+    break;
+
+  case PLAYER_DVDNAV_SELECT:
+    strcpy (log, "select");
+  }
+
+  plog (MODULE_NAME, "playback_dvdnav: %s", log);
+}
+
 static int
 vlc_get_volume (player_t *player)
 {
@@ -184,6 +219,7 @@ register_functions_vlc (void)
   funcs->pb_stop = vlc_playback_stop;
   funcs->pb_pause = vlc_playback_pause;
   funcs->pb_seek = vlc_playback_seek;
+  funcs->pb_dvdnav = vlc_playback_dvdnav;
   funcs->get_volume = vlc_get_volume;
   funcs->get_mute = vlc_get_mute;
   funcs->set_volume = vlc_set_volume;

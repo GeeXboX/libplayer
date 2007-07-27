@@ -57,7 +57,9 @@ typedef enum player_mrl_type {
   PLAYER_MRL_TYPE_UNKNOWN,
   PLAYER_MRL_TYPE_FILE_AUDIO,
   PLAYER_MRL_TYPE_FILE_VIDEO,
-  PLAYER_MRL_TYPE_FILE_IMAGE
+  PLAYER_MRL_TYPE_FILE_IMAGE,
+  PLAYER_MRL_TYPE_DVD_SIMPLE,
+  PLAYER_MRL_TYPE_DVD_NAV
 } player_mrl_type_t;
 
 typedef enum player_add_mrl {
@@ -78,6 +80,15 @@ typedef enum player_mute {
   PLAYER_MUTE_ON,
   PLAYER_MUTE_OFF
 } player_mute_t;
+
+typedef enum player_dvdnav {
+  PLAYER_DVDNAV_UP,
+  PLAYER_DVDNAV_DOWN,
+  PLAYER_DVDNAV_RIGHT,
+  PLAYER_DVDNAV_LEFT,
+  PLAYER_DVDNAV_MENU,
+  PLAYER_DVDNAV_SELECT
+} player_dvdnav_t;
 
 typedef struct mrl_properties_audio_s {
   char *codec;
@@ -172,5 +183,6 @@ void player_playback_start (player_t *player);
 void player_playback_stop (player_t *player);
 void player_playback_pause (player_t *player);
 void player_playback_seek (player_t *player, int value);
+void player_playback_dvdnav (player_t *player, player_dvdnav_t value);
 
 #endif /* _PLAYER_H_ */

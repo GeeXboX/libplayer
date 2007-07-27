@@ -209,6 +209,8 @@ mrl_uses_vo (mrl_t *mrl)
   {
   case PLAYER_MRL_TYPE_FILE_VIDEO:
   case PLAYER_MRL_TYPE_FILE_IMAGE:
+  case PLAYER_MRL_TYPE_DVD_SIMPLE:
+  case PLAYER_MRL_TYPE_DVD_NAV:
     return 1;
   default:
     return 0;
@@ -222,6 +224,8 @@ mrl_uses_ao (mrl_t *mrl)
   {
   case PLAYER_MRL_TYPE_FILE_VIDEO:
   case PLAYER_MRL_TYPE_FILE_AUDIO:
+  case PLAYER_MRL_TYPE_DVD_SIMPLE:
+  case PLAYER_MRL_TYPE_DVD_NAV:
     return 1;
   default:
     return 0;

@@ -213,6 +213,17 @@ player_playback_seek (player_t *player, int value)
     player->funcs->pb_seek (player, value);
 }
 
+void
+player_playback_dvdnav (player_t *player, player_dvdnav_t value)
+{
+  if (!player)
+    return;
+
+  /* player specific playback_dvdnav() */
+  if (player->funcs->pb_dvdnav)
+    player->funcs->pb_dvdnav (player, value);
+}
+
 /* get player playback properties */
 int
 player_get_volume (player_t *player)
