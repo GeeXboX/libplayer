@@ -210,7 +210,7 @@ register_functions_vlc (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = (player_funcs_t *) malloc (sizeof (player_funcs_t));
+  funcs = malloc (sizeof (player_funcs_t));
   funcs->init = vlc_init;
   funcs->uninit = vlc_uninit;
   funcs->mrl_get_props = vlc_mrl_get_properties;
@@ -233,7 +233,7 @@ register_private_vlc (void)
 {
   vlc_t *vlc = NULL;
 
-  vlc = (vlc_t *) malloc (sizeof (vlc_t));
+  vlc = malloc (sizeof (vlc_t));
   vlc->core = NULL;
 
   return vlc;

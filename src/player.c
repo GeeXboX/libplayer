@@ -48,7 +48,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   player_t *player = NULL;
   int res = PLAYER_INIT_ERROR;
 
-  player = (player_t *) malloc (sizeof (player_t));
+  player = malloc (sizeof (player_t));
   player->type = type;
   player->mrl = NULL;  
   player->state = PLAYER_STATE_IDLE;

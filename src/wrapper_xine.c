@@ -848,7 +848,7 @@ register_functions_xine (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = (player_funcs_t *) malloc (sizeof (player_funcs_t));
+  funcs = malloc (sizeof (player_funcs_t));
   funcs->init = xine_player_init;
   funcs->uninit = xine_player_uninit;
   funcs->mrl_get_props = xine_player_mrl_get_properties;
@@ -871,7 +871,7 @@ register_private_xine (void)
 {
   xine_player_t *x = NULL;
 
-  x = (xine_player_t *) malloc (sizeof (xine_player_t));
+  x = malloc (sizeof (xine_player_t));
   x->xine = NULL;
   x->stream = NULL;
   x->event_queue = NULL;

@@ -173,7 +173,7 @@ register_functions_dummy (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = (player_funcs_t *) malloc (sizeof (player_funcs_t));
+  funcs = malloc (sizeof (player_funcs_t));
   funcs->init = dummy_init;
   funcs->uninit = dummy_uninit;
   funcs->mrl_get_props = dummy_mrl_get_properties;
@@ -196,7 +196,7 @@ register_private_dummy (void)
 {
   dummy_t *dummy = NULL;
 
-  dummy = (dummy_t *) malloc (sizeof (dummy_t));
+  dummy = malloc (sizeof (dummy_t));
   dummy->dummy_var = 0;
 
   return dummy;

@@ -34,8 +34,7 @@ mrl_properties_audio_new (void)
 {
   mrl_properties_audio_t *audio;
 
-  audio = (mrl_properties_audio_t *)
-    malloc (sizeof (mrl_properties_audio_t));
+  audio = malloc (sizeof (mrl_properties_audio_t));
   audio->codec = NULL;
   audio->bitrate = 0;
   audio->bits = 0;
@@ -61,8 +60,7 @@ mrl_properties_video_new (void)
 {
   mrl_properties_video_t *video;
 
-  video = (mrl_properties_video_t *)
-    malloc (sizeof (mrl_properties_video_t));
+  video = malloc (sizeof (mrl_properties_video_t));
   video->codec = NULL;
   video->bitrate = 0;
   video->width = 0;
@@ -89,8 +87,7 @@ mrl_properties_new (void)
 {
   mrl_properties_t *prop;
 
-  prop = (mrl_properties_t *)
-    malloc (sizeof (mrl_properties_t));
+  prop = malloc (sizeof (mrl_properties_t));
   prop->size = 0;
   prop->seekable = 0;
   prop->audio = NULL;
@@ -117,7 +114,7 @@ mrl_metadata_new (void)
 {
   mrl_metadata_t *meta;
 
-  meta = (mrl_metadata_t *) malloc (sizeof (mrl_metadata_t));
+  meta = malloc (sizeof (mrl_metadata_t));
   meta->title = NULL;
   meta->artist = NULL;
   meta->genre = NULL;
@@ -158,7 +155,7 @@ mrl_new (char *name, player_mrl_type_t type)
   if (!name)
     return NULL;
 
-  mrl = (mrl_t *) malloc (sizeof (mrl_t));
+  mrl = malloc (sizeof (mrl_t));
   mrl->name = strdup (name);
   mrl->cover = NULL;
   mrl->type = type;
