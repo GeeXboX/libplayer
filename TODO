@@ -4,7 +4,6 @@ Some work to make on libplayer (can be incomplete)
 * add framebuffer support to xine
 * add vesa (MPlayer) and vidix support
 * add functions for command subtitles
-* add functions for command dvd navigation
 * add functions for command TV input
 * add functions for command DVB input
 * add functions for switch between audio channels
