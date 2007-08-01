@@ -1,19 +1,30 @@
 Some work to make on libplayer (can be incomplete)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* add framebuffer support to xine
-* add vesa (MPlayer) and vidix support
-* add VCD and SVCD support
-* add CDDA/CDDB support
-* add functions for command subtitles
-* add functions for command TV input
-* add functions for command DVB input
-* add functions for switch between audio channels
-* add functions for set/get playing speed
-* add functions for set/get gamma|brightness|saturation|contrast|hue
-* add functions for set/get video aspect
-* add functions for get time informations on playing stream
-* add functions for load config files (xine and MPlayer)
-* add functions for use OSD (xine and MPlayer)
-* complete playlist manager
-* complete vlc wrapper
+Commons:
+  * add VCD and SVCD support
+  * add CDDA/CDDB support
+  * add functions for command subtitles
+  * add functions for command TV input
+  * add functions for command DVB input
+  * add functions for switch between audio channels
+  * add functions for set/get playing speed
+  * add functions for set/get gamma|brightness|saturation|contrast|hue
+  * add functions for set/get video aspect
+  * add functions for get time informations on playing stream
+  * add functions for load config files
+  * add functions for use OSD
+  * complete playlist manager
+
+MPlayer:
+  * found a way for send a player event when the playback is finished
+    - and unmap the X11 window in this case too
+  * fix -vo xv because -zoom, -aspect and -fs don't work with Xv and -wid
+  * add vesa and vidix support
+
+Xine:
+  * fix pixel aspect
+  * add vidix support
+
+VLC:
+  * complete the wrapper
