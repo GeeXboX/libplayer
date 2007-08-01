@@ -412,6 +412,103 @@ slave_cmd_int (player_t *player, slave_cmd_t cmd, int value)
   slave_action (player, cmd, &value);
 }
 
+/**
+ * Identify a stream for complete player->w and player->h attributes. These
+ * are necessary for that Xv can use a right aspect.
+ */
+static void
+mp_identify (player_t *player)
+{
+  char *params[16];
+  char buffer[SLAVE_CMD_BUFFER];
+  char *its, *ite;
+  int pp = 0;
+  int mp_pipe[2];
+  FILE *mp_fifo;
+  pid_t pid;
+
+  if (!player || !player->mrl || !player->mrl->name)
+    return;
+
+  /* create pipe */
+  if (pipe (mp_pipe) != -1) {
+    /* create the fork */
+    pid = fork ();
+
+    switch (pid) {
+    /* the son (a new hope) */
+    case 0:
+      close (mp_pipe[0]);
+
+      /* connect stdout and stderr to the pipe */
+      dup2 (mp_pipe[1], STDERR_FILENO);
+      dup2 (mp_pipe[1], STDOUT_FILENO);
+
+      params[pp++] = "mplayer";
+      params[pp++] = "-quiet";
+      params[pp++] = "-vo";
+      params[pp++] = "null";
+      params[pp++] = "-ao";
+      params[pp++] = "null";
+      params[pp++] = "-nolirc";
+      params[pp++] = "-nojoystick";
+      params[pp++] = "-noconsolecontrols";
+      params[pp++] = "-frames";
+      params[pp++] = "0";
+      params[pp++] = strdup (player->mrl->name);
+      params[pp++] = "-identify";
+      params[pp] = NULL;
+
+      /* launch MPlayer, if execvp returns there is an error */
+      execvp ("mplayer", params);
+
+    case -1:
+      break;
+
+    /* I'm your father */
+    default:
+      close (mp_pipe[1]);
+
+      mp_fifo = fdopen (mp_pipe[0], "r");
+
+      while (fgets (buffer, SLAVE_CMD_BUFFER, mp_fifo)) {
+        if ((its = strstr (buffer, "ID_VIDEO_WIDTH="))) {
+          /* value start */
+          its += 15;
+          ite = its;
+          while (*ite != '\0' && *ite != '\n')
+            ite++;
+          /* value end */
+          *ite = '\0';
+
+          player->w = atoi (its);
+        }
+        else if ((its = strstr (buffer, "ID_VIDEO_HEIGHT="))) {
+          /* value start */
+          its += 16;
+          ite = its;
+          while (*ite != '\0' && *ite != '\n')
+            ite++;
+          /* value end */
+          *ite = '\0';
+
+          player->h = atoi (its);
+        }
+        /* stop fgets because MPlayer is ended */
+        else if (strstr (buffer, "Exiting"))
+          break;
+      }
+
+      /* wait the death of MPlayer */
+      waitpid (pid, NULL, 0);
+
+      /* close pipe and fifo */
+      close (mp_pipe[0]);
+      fclose (mp_fifo);
+    }
+  }
+}
+
 
 /* Use only these commands for speak with MPlayer!
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -825,6 +922,9 @@ mplayer_playback_start (player_t *player)
 
   if (!player)
     return PLAYER_PB_FATAL;
+
+  /* identify the current stream */
+  mp_identify (player);
 
   // FIXME: playback error if not loaded
   /* 0: new play, 1: append to the current playlist */
