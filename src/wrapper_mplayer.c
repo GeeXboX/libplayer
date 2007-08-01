@@ -470,6 +470,7 @@ mplayer_init (player_t *player)
         params[pp++] = "-quiet";            /* reduce output messages */
         params[pp++] = "-idle";             /* MPlayer stays always alive */
         params[pp++] = "-fs";               /* fullscreen (if possible) */
+        params[pp++] = "-zoom";             /* zoom (if possible) */
         params[pp++] = "-ontop";            /* ontop (if possible) */
         params[pp++] = "-noborder";         /* no border decoration */
         params[pp++] = "-nolirc";
@@ -501,8 +502,6 @@ mplayer_init (player_t *player)
 
         case PLAYER_VO_FB:
           params[pp++] = "fbdev";
-          /* seems to not work with -vo fbdev and -vo fbdev2 */
-          params[pp++] = "-zoom";
         }
 
         /* select the audio output */
