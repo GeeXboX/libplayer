@@ -70,6 +70,7 @@ typedef enum slave_cmd {
   SLAVE_GET_PROPERTY, /* get_property string */
   SLAVE_LOADFILE,     /* loadfile string [int] */
   SLAVE_PAUSE,        /* pause */
+  SLAVE_QUIT,         /* quit [int] */
   SLAVE_SEEK,         /* seek float [int] */
   SLAVE_SET_PROPERTY, /* set_property string string */
   SLAVE_STOP
@@ -381,6 +382,10 @@ slave_action (player_t *player, slave_cmd_t cmd, void *value)
     send_to_slave (mplayer, "pause");
     break;
 
+  case SLAVE_QUIT:
+    send_to_slave (mplayer, "quit");
+    break;
+
   case SLAVE_SEEK:
     send_to_slave (mplayer, "seek %.2f 0", *((float *) value));
     break;
@@ -596,7 +601,7 @@ mplayer_uninit (player_t *player)
 
   if (mplayer && mplayer->fifo_in) {
     /* suicide of MPlayer */
-    send_to_slave (mplayer, "quit");
+    slave_cmd (player, SLAVE_QUIT);
 
     /* wait the death of MPlayer */
     waitpid (mplayer->pid, NULL, 0);
