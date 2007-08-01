@@ -35,6 +35,7 @@
 #include "player_internals.h"
 #include "logs.h"
 #include "wrapper_mplayer.h"
+#include "x11_common.h"
 
 #define MODULE_NAME "mplayer"
 
@@ -428,6 +429,7 @@ mplayer_init (player_t *player)
   struct sigaction action;
   mplayer_t *mplayer = NULL;
   char *params[32];
+  char winid[32];
   int pp = 0;
 
   plog (MODULE_NAME, "init");
@@ -445,6 +447,22 @@ mplayer_init (player_t *player)
   sigemptyset (&action.sa_mask);
   action.sa_flags = 0;
   sigaction (SIGPIPE, &action, NULL);
+
+  /* The video out is sent in our X11 window, winid is used for -wid arg.
+   * The advantage is important, because MPlayer will not create the window
+   * then we take the control on X11 events and only libplayer can send
+   * commands to MPlayer.
+   */
+  switch (player->vo) {
+  case PLAYER_VO_X11:
+  case PLAYER_VO_X11_SDL:
+  case PLAYER_VO_XV:
+    if (!x11_init (player))
+      return PLAYER_INIT_ERROR;
+    sprintf (winid, "%li", (long int) player->x11->window);
+  default:
+    break;
+  }
 
   /* create pipes */
   if (pipe (mplayer->pipe_in) != -1) {
@@ -489,15 +507,27 @@ mplayer_init (player_t *player)
 
         case PLAYER_VO_X11:
           params[pp++] = "x11";
+          /* window ID */
+          params[pp++] = "-wid";
+          params[pp++] = strdup (winid);
           break;
 
         /* with MPlayer, SDL is not specific to X11 */
         case PLAYER_VO_X11_SDL:
           params[pp++] = "sdl";
+          /* window ID */
+          params[pp++] = "-wid";
+          params[pp++] = strdup (winid);
           break;
 
+        /* FIXME: with xv and wid, zoom, fs and aspect have no effect.
+         *        The image is always scaled on all the window.
+         */
         case PLAYER_VO_XV:
           params[pp++] = "xv";
+          /* window ID */
+          params[pp++] = "-wid";
+          params[pp++] = strdup (winid);
           break;
 
         case PLAYER_VO_FB:
@@ -582,6 +612,9 @@ mplayer_uninit (player_t *player)
     fclose (mplayer->fifo_out);
 
     plog (MODULE_NAME, "MPlayer child terminated");
+
+    /* X11 */
+    x11_uninit (player);
   }
 
   free (mplayer);
@@ -791,6 +824,10 @@ mplayer_playback_start (player_t *player)
   /* 0: new play, 1: append to the current playlist */
   slave_cmd_int (player, SLAVE_LOADFILE, 0);
 
+  /* X11 */
+  if (mrl_uses_vo (player->mrl))
+    x11_map (player);
+
   return PLAYER_PB_OK;
 }
 
@@ -801,6 +838,10 @@ mplayer_playback_stop (player_t *player)
 
   if (!player)
     return;
+
+  /* X11 */
+  if (mrl_uses_vo (player->mrl))
+    x11_unmap (player);
 
   slave_cmd (player, SLAVE_STOP);
 }
