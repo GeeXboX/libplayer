@@ -276,6 +276,8 @@ x11_init (player_t *player)
 
   player->x11 = malloc (sizeof (x11_t));
   x11 = player->x11;
+  if (!x11)
+    return 0;
 
   x11->display = NULL;
   x11->data = NULL;
@@ -288,14 +290,19 @@ x11_init (player_t *player)
   screeninfo->win_black = 0;
 
   if (!XInitThreads ()) {
+    free (x11);
+    free (screeninfo);
     plog (MODULE_NAME, "Failed to init for X11");
     return 0;
   }
 
   x11->display = XOpenDisplay (NULL);
 
-  if (!x11->display)
+  if (!x11->display) {
+    free (x11);
+    free (screeninfo);
     return 0;
+  }
 
   screen = XDefaultScreen (x11->display);
 
