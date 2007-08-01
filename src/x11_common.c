@@ -271,7 +271,7 @@ x11_init (player_t *player)
   x11_visual_t *vis = NULL;
   screeninfo_t *screeninfo;
   int screen, width, height;
-  double res_v, res_h;
+  // double res_v, res_h;
   Atom XA_NO_BORDER;
   MWMHints mwmhints;
   XSetWindowAttributes atts;
@@ -363,10 +363,12 @@ x11_init (player_t *player)
                    PROP_MWM_HINTS_ELEMENTS);
 
   /* calcul pixel aspect */
+  /*
   res_h = DisplayWidth (x11->display, screen) * 1000 /
           DisplayWidthMM (x11->display, screen);
   res_v = DisplayHeight (x11->display, screen) * 1000 /
           DisplayHeightMM (x11->display, screen);
+  */
 
   XSync (x11->display, False);
   XUnlockDisplay (x11->display);
@@ -384,7 +386,8 @@ x11_init (player_t *player)
 
       screeninfo->width = width;
       screeninfo->height = height;
-      screeninfo->pixel_aspect = res_v / res_h;
+      // screeninfo->pixel_aspect = res_v / res_h;
+      screeninfo->pixel_aspect = 1.0;
 
       vis->user_data = (void *) screeninfo;
     }
@@ -395,7 +398,8 @@ x11_init (player_t *player)
   else if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
     screeninfo->width = width;
     screeninfo->height = height;
-    screeninfo->pixel_aspect = res_v / res_h;
+    // screeninfo->pixel_aspect = res_v / res_h;
+    screeninfo->pixel_aspect = 1.0;
 
     x11->data = (void *) screeninfo;
   }
