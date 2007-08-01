@@ -622,8 +622,8 @@ mplayer_init (player_t *player)
           params[pp++] = strdup (winid);
           break;
 
-        /* FIXME: with xv and wid, zoom, fs and aspect have no effect.
-         *        The image is always scaled on all the window.
+        /* with xv and wid, zoom, fs and aspect have no effect.
+         * The image is always scaled on all the window.
          */
         case PLAYER_VO_XV:
           params[pp++] = "xv";
