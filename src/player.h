@@ -25,6 +25,7 @@
 #include <inttypes.h>
 
 struct player_funcs_s;
+struct x11_s;
 
 typedef enum player_type {
   PLAYER_TYPE_XINE,
@@ -145,6 +146,7 @@ typedef struct player_s {
   player_vo_t vo;       /* video output driver name */
   int x, y;             /* video position */
   int w, h;             /* video size */
+  struct x11_s *x11;    /* for X11 video out */
   int (*event_cb) (player_event_t e, void *data); /* frontend event callback */
   struct player_funcs_s *funcs; /* bindings to player specific functions */ 
   void *priv;           /* specific configuration related to the player type */

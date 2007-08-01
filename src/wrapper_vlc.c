@@ -71,16 +71,20 @@ vlc_init (player_t *player)
 }
 
 static void
-vlc_uninit (void *priv)
+vlc_uninit (player_t *player)
 {
   vlc_t *vlc = NULL;
 
   plog (MODULE_NAME, "uninit");
 
-  if (!priv)
+  if (!player)
     return;
 
-  vlc = (vlc_t *) priv;
+  vlc = (vlc_t *) player->priv;
+
+  if (!vlc)
+    return;
+
   if (&vlc->ex)
     libvlc_exception_clear (&vlc->ex);
   if (vlc->core)

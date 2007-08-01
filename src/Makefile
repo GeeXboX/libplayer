@@ -5,6 +5,7 @@ LIBNAME = libplayer.so
 SRCS =  player.c \
 	mrl.c \
 	logs.c \
+	x11_common.c \
 	wrapper_dummy.c
 
 CFLAGS += -fPIC

@@ -551,16 +551,19 @@ mplayer_init (player_t *player)
 }
 
 static void
-mplayer_uninit (void *priv)
+mplayer_uninit (player_t *player)
 {
   mplayer_t *mplayer = NULL;
 
   plog (MODULE_NAME, "uninit");
 
-  if (!priv)
+  if (!player)
     return;
 
-  mplayer = (mplayer_t *) priv;
+  mplayer = (mplayer_t *) player->priv;
+
+  if (!mplayer)
+    return;
 
   if (mplayer && mplayer->fifo_in) {
     /* suicide of MPlayer */

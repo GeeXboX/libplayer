@@ -53,16 +53,20 @@ dummy_init (player_t *player)
 }
 
 static void
-dummy_uninit (void *priv)
+dummy_uninit (player_t *player)
 {
   dummy_t *dummy = NULL;
 
   plog (MODULE_NAME, "uninit");
 
-  if (!priv)
+  if (!player)
     return;
 
-  dummy = (dummy_t *) priv;
+  dummy = (dummy_t *) player->priv;
+
+  if (!dummy)
+    return;
+
   free (dummy);
 }
 
