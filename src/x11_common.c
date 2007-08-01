@@ -77,11 +77,11 @@ zoom (int parentwidth, int parentheight,
     convert = (float) *width / (float) *height;
 
     *width = parentwidth;
-    *height = *width / (int) rintf (convert);
+    *height = (int) rintf ((float) *width / convert);
 
     if (*height > parentheight) {
       *height = parentheight;
-      *width = *height * (int) rintf (convert);
+      *width = (int) rintf ((float) *height * convert);
     }
 
     /* move to the center */
