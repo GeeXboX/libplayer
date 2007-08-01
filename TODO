@@ -19,11 +19,10 @@ Commons:
 MPlayer:
   * found a way for send a player event when the playback is finished
     - and unmap the X11 window in this case too
-  * fix -vo xv because -zoom, -aspect and -fs don't work with Xv and -wid
   * add vesa and vidix support
+  * test if the mplayer binary exists
 
 Xine:
-  * fix pixel aspect
   * add vidix support
 
 VLC:
