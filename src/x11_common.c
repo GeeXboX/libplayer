@@ -34,6 +34,12 @@
 
 #define MODULE_NAME "x11"
 
+typedef struct screeninfo_s {
+  int width;
+  int height;
+  double pixel_aspect;
+} screeninfo_t;
+
 /* for no border with a X window */
 typedef struct {
   uint32_t flags;
@@ -45,12 +51,6 @@ typedef struct {
 
 #define MWM_HINTS_DECORATIONS     (1L << 1)
 #define PROP_MWM_HINTS_ELEMENTS   5
-
-/* width and height for the fullscreen */
-static int g_x11_width;
-static int g_x11_height;
-
-static double g_x11_pixel_aspect;
 
 
 /**
@@ -130,9 +130,19 @@ dest_size_cb(void *data, int video_width, int video_height,
              double video_pixel_aspect, int *dest_width,
              int *dest_height, double *dest_pixel_aspect)
 {
-  *dest_width = g_x11_width;
-  *dest_height = g_x11_height;
-  *dest_pixel_aspect = g_x11_pixel_aspect;
+  screeninfo_t *screeninfo;
+  screeninfo = (screeninfo_t *) data;
+
+  if (screeninfo) {
+    *dest_width = screeninfo->width;
+    *dest_height = screeninfo->height;
+    *dest_pixel_aspect = screeninfo->pixel_aspect;
+  }
+  else {
+    *dest_width = video_width;
+    *dest_height = video_height;
+    *dest_pixel_aspect = video_pixel_aspect;
+  }
 }
 
 static void
@@ -141,13 +151,24 @@ frame_output_cb(void *data, int video_width, int video_height,
                 int *dest_width, int *dest_height,
                 double *dest_pixel_aspect, int *win_x, int *win_y)
 {
+  screeninfo_t *screeninfo;
+  screeninfo = (screeninfo_t *) data;
+
   *dest_x = 0;
   *dest_y = 0;
   *win_x = 0;
   *win_y = 0;
-  *dest_width = g_x11_width;
-  *dest_height = g_x11_height;
-  *dest_pixel_aspect = g_x11_pixel_aspect;
+
+  if (screeninfo) {
+    *dest_width = screeninfo->width;
+    *dest_height = screeninfo->height;
+    *dest_pixel_aspect = screeninfo->pixel_aspect;
+  }
+  else {
+    *dest_width = video_width;
+    *dest_height = video_height;
+    *dest_pixel_aspect = video_pixel_aspect;
+  }
 }
 
 /**
@@ -160,7 +181,8 @@ x11_init (player_t *player)
 {
   x11_t *x11 = NULL;
   x11_visual_t *vis = NULL;
-  int screen;
+  screeninfo_t *screeninfo;
+  int screen, width, height;
   double res_v, res_h;
   Atom XA_NO_BORDER;
   MWMHints mwmhints;
@@ -188,8 +210,8 @@ x11_init (player_t *player)
   screen = XDefaultScreen (x11->display);
 
   /* the video will be in fullscreen */
-  g_x11_width = DisplayWidth (x11->display, screen);
-  g_x11_height = DisplayHeight (x11->display, screen);
+  width = DisplayWidth (x11->display, screen);
+  height = DisplayHeight (x11->display, screen);
 
   XLockDisplay (x11->display);
 
@@ -198,8 +220,8 @@ x11_init (player_t *player)
 
   /* create a window for the video out */
   x11->window = XCreateWindow (x11->display, DefaultRootWindow (x11->display),
-                               0, 0, g_x11_width, g_x11_height, 0, 0,
-                               InputOutput, DefaultVisual (x11->display, screen),
+                               0, 0, width, height, 0, 0, InputOutput,
+                               DefaultVisual (x11->display, screen),
                                CWOverrideRedirect | CWBackPixel, &atts);
 
   /* remove borders for the fullscreen */
@@ -215,21 +237,26 @@ x11_init (player_t *player)
           DisplayWidthMM (x11->display, screen);
   res_v = DisplayHeight (x11->display, screen) * 1000 /
           DisplayHeightMM (x11->display, screen);
-  g_x11_pixel_aspect = res_v / res_h;
 
   XSync (x11->display, False);
   XUnlockDisplay (x11->display);
 
   if (player->type == PLAYER_TYPE_XINE) {
     vis = malloc (sizeof (x11_visual_t));
+    screeninfo = malloc (sizeof (screeninfo_t));
 
-    if (vis) {
+    if (vis && screeninfo) {
       vis->display = x11->display;
       vis->screen = screen;
       vis->d = x11->window;
       vis->dest_size_cb = dest_size_cb;
       vis->frame_output_cb = frame_output_cb;
-      vis->user_data = NULL;
+
+      screeninfo->width = width;
+      screeninfo->height = height;
+      screeninfo->pixel_aspect = res_v / res_h;
+
+      vis->user_data = (void *) screeninfo;
     }
 
     x11->data = (void *) vis;
