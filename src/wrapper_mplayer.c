@@ -619,7 +619,8 @@ mplayer_uninit (player_t *player)
     plog (MODULE_NAME, "MPlayer child terminated");
 
     /* X11 */
-    x11_uninit (player);
+    if (player->x11)
+      x11_uninit (player);
   }
 
   free (mplayer);
@@ -830,7 +831,7 @@ mplayer_playback_start (player_t *player)
   slave_cmd_int (player, SLAVE_LOADFILE, 0);
 
   /* X11 */
-  if (mrl_uses_vo (player->mrl))
+  if (player->x11 && mrl_uses_vo (player->mrl))
     x11_map (player);
 
   return PLAYER_PB_OK;
@@ -845,7 +846,7 @@ mplayer_playback_stop (player_t *player)
     return;
 
   /* X11 */
-  if (mrl_uses_vo (player->mrl))
+  if (player->x11 && mrl_uses_vo (player->mrl))
     x11_unmap (player);
 
   slave_cmd (player, SLAVE_STOP);
