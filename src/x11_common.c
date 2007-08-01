@@ -26,7 +26,9 @@
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 
+#ifdef HAVE_XINE
 #include <xine.h>
+#endif /* HAVE_XINE */
 
 #include "player.h"
 #include "player_internals.h"
@@ -213,6 +215,7 @@ x11_uninit (player_t *player)
   plog (MODULE_NAME, "window destroyed");
 }
 
+#ifdef HAVE_XINE
 static void
 dest_size_cb(void *data, int video_width, int video_height,
              double video_pixel_aspect, int *dest_width,
@@ -258,6 +261,7 @@ frame_output_cb(void *data, int video_width, int video_height,
     *dest_pixel_aspect = video_pixel_aspect;
   }
 }
+#endif /* HAVE_XINE */
 
 /**
  * Init and create a window for X11, XV or X11_SDL. Currently this window
@@ -268,7 +272,9 @@ int
 x11_init (player_t *player)
 {
   x11_t *x11 = NULL;
+#ifdef HAVE_XINE
   x11_visual_t *vis = NULL;
+#endif /* HAVE_XINE */
   screeninfo_t *screeninfo;
   int screen, width, height;
   // double res_v, res_h;
@@ -375,6 +381,7 @@ x11_init (player_t *player)
 
   /* only for Xine */
   if (player->type == PLAYER_TYPE_XINE) {
+#ifdef HAVE_XINE
     vis = malloc (sizeof (x11_visual_t));
 
     if (vis) {
@@ -393,6 +400,7 @@ x11_init (player_t *player)
     }
 
     x11->data = (void *) vis;
+#endif /* HAVE_XINE */
   }
   /* only for MPlayer Xv */
   else if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
