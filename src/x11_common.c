@@ -195,14 +195,19 @@ x11_uninit (player_t *player)
   XLockDisplay (x11->display);
   XUnmapWindow (x11->display, x11->window);
   XDestroyWindow (x11->display, x11->window);
-  XUnlockDisplay (x11->display);
-  XCloseDisplay (x11->display);
 
   if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
     screeninfo = (screeninfo_t *) player->x11->data;
-    if (screeninfo && screeninfo->win_black > 0)
+    if (screeninfo && screeninfo->win_black > 0) {
+      XUnmapWindow (x11->display, screeninfo->win_black);
+      XDestroyWindow (x11->display, screeninfo->win_black);
       free (screeninfo);
+    }
   }
+
+  XUnlockDisplay (x11->display);
+  XCloseDisplay (x11->display);
+
   free (x11);
 
   plog (MODULE_NAME, "window destroyed");
