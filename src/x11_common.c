@@ -20,6 +20,7 @@
  */
 
 #include <stdlib.h>
+#include <math.h>
 
 #include <X11/X.h>
 #include <X11/Xatom.h>
@@ -38,6 +39,8 @@ typedef struct screeninfo_s {
   int width;
   int height;
   double pixel_aspect;
+  /* create a black background (only for MPlayer Xv video out) */
+  Window win_black;
 } screeninfo_t;
 
 /* for no border with a X window */
@@ -54,12 +57,49 @@ typedef struct {
 
 
 /**
+ * Center the movie in the parent window and zoom for use the max of surface.
+ */
+void
+zoom (int parentwidth, int parentheight,
+      int *x, int *y, int *width, int *height)
+{
+  float convert;
+
+  /* use all the surface */
+  if (!*width || !*height) {
+    *width = parentwidth;
+    *height = parentheight;
+    *x = 0;
+    *y = 0;
+  }
+  /* or calcul the best size */
+  else {
+    convert = (float) *width / (float) *height;
+
+    *width = parentwidth;
+    *height = *width / (int) rintf (convert);
+
+    if (*height > parentheight) {
+      *height = parentheight;
+      *width = *height * (int) rintf (convert);
+    }
+
+    /* move to the center */
+    *x = parentwidth / 2 - *width / 2;
+    *y = parentheight / 2 - *height / 2;
+  }
+
+  plog (MODULE_NAME, "[zoom] x:%i y:%i w:%i h:%i", *x, *y, *width, *height);
+}
+
+/**
  * Map and raise the window when a video is played.
  */
 void
 x11_map (player_t *player)
 {
   x11_t *x11 = NULL;
+  screeninfo_t *screeninfo;
 
   if (!player || !player->x11)
     return;
@@ -70,7 +110,31 @@ x11_map (player_t *player)
     return;
 
   XLockDisplay (x11->display);
-  XMapRaised (x11->display, x11->window);
+
+  if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
+    screeninfo = (screeninfo_t *) player->x11->data;
+    if (screeninfo && screeninfo->win_black > 0) {
+      XWindowChanges changes;
+      changes.x = 0;
+      changes.y = 0;
+      changes.width = player->w;
+      changes.height = player->h;
+
+      /* fix the size and offset */
+      zoom (screeninfo->width, screeninfo->height, &changes.x,
+            &changes.y, &changes.width, &changes.height);
+
+      XConfigureWindow (x11->display, x11->window,
+                        CWX | CWY | CWWidth | CWHeight, &changes);
+
+      XMapRaised (x11->display, screeninfo->win_black);
+    }
+    else
+      XMapRaised (x11->display, x11->window);
+  }
+  else
+    XMapRaised (x11->display, x11->window);
+
   XSync (x11->display, False);
   XUnlockDisplay (x11->display);
 
@@ -84,6 +148,41 @@ void
 x11_unmap (player_t *player)
 {
   x11_t *x11 = NULL;
+  screeninfo_t *screeninfo;
+
+  if (!player || !player->x11)
+    return;
+
+  x11 = player->x11;
+
+  if (!x11->display)
+    return;
+
+  screeninfo = (screeninfo_t *) player->x11->data;
+
+  XLockDisplay (x11->display);
+
+  if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
+    screeninfo = (screeninfo_t *) player->x11->data;
+    if (screeninfo && screeninfo->win_black > 0)
+      XUnmapWindow (x11->display, screeninfo->win_black);
+    else
+      XUnmapWindow (x11->display, x11->window);
+  }
+  else
+    XUnmapWindow (x11->display, x11->window);
+
+  XSync (x11->display, False);
+  XUnlockDisplay (x11->display);
+
+  plog (MODULE_NAME, "window unmapped");
+}
+
+void
+x11_uninit (player_t *player)
+{
+  x11_t *x11 = NULL;
+  screeninfo_t *screeninfo;
 
   if (!player || !player->x11)
     return;
@@ -95,31 +194,15 @@ x11_unmap (player_t *player)
 
   XLockDisplay (x11->display);
   XUnmapWindow (x11->display, x11->window);
-  XSync (x11->display, False);
-  XUnlockDisplay (x11->display);
-
-  plog (MODULE_NAME, "window unmapped");
-}
-
-void
-x11_uninit (player_t *player)
-{
-  x11_t *x11 = NULL;
-
-  if (!player || !player->x11)
-    return;
-
-  x11 = player->x11;
-
-  if (!x11->display)
-    return;
-
-  XLockDisplay (x11->display);
-  XUnmapWindow (x11->display,  x11->window);
   XDestroyWindow (x11->display, x11->window);
   XUnlockDisplay (x11->display);
   XCloseDisplay (x11->display);
 
+  if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
+    screeninfo = (screeninfo_t *) player->x11->data;
+    if (screeninfo && screeninfo->win_black > 0)
+      free (screeninfo);
+  }
   free (x11);
 
   plog (MODULE_NAME, "window destroyed");
@@ -197,6 +280,13 @@ x11_init (player_t *player)
   x11->display = NULL;
   x11->data = NULL;
 
+  screeninfo = malloc (sizeof (screeninfo_t));
+  if (!screeninfo) {
+    free (x11);
+    return 0;
+  }
+  screeninfo->win_black = 0;
+
   if (!XInitThreads ()) {
     plog (MODULE_NAME, "Failed to init for X11");
     return 0;
@@ -218,16 +308,41 @@ x11_init (player_t *player)
   atts.override_redirect = True;  /* window on top */
   atts.background_pixel = 0;      /* black background */
 
-  /* create a window for the video out */
-  x11->window = XCreateWindow (x11->display, DefaultRootWindow (x11->display),
-                               0, 0, width, height, 0, 0, InputOutput,
-                               DefaultVisual (x11->display, screen),
-                               CWOverrideRedirect | CWBackPixel, &atts);
-
-  /* remove borders for the fullscreen */
+  /* remove borders */
   XA_NO_BORDER = XInternAtom (x11->display, "_MOTIF_WM_HINTS", False);
   mwmhints.flags = MWM_HINTS_DECORATIONS;
   mwmhints.decorations = 0;
+
+  /* MPlayer and Xv use the hardware scale on all the surface. A second
+   * window is then necessary for have a black background.
+   */
+  if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
+    /* create a window for the black background */
+    screeninfo->win_black = XCreateWindow (x11->display,
+                                      DefaultRootWindow (x11->display),
+                                      0, 0, width, height, 0, 0, InputOutput,
+                                      DefaultVisual (x11->display, screen),
+                                      CWOverrideRedirect | CWBackPixel, &atts);
+
+    XChangeProperty (x11->display, screeninfo->win_black, XA_NO_BORDER,
+                     XA_NO_BORDER, 32, PropModeReplace,
+                     (unsigned char *) &mwmhints, PROP_MWM_HINTS_ELEMENTS);
+
+    /* create a window for the video out */
+    x11->window = XCreateWindow (x11->display, screeninfo->win_black,
+                                0, 0, width, height, 0, 0, InputOutput,
+                                DefaultVisual (x11->display, screen),
+                                CWOverrideRedirect | CWBackPixel, &atts);
+    XMapWindow (x11->display,  x11->window);
+  }
+  else {
+    /* create a window for the video out */
+    x11->window = XCreateWindow (x11->display, DefaultRootWindow (x11->display),
+                                0, 0, width, height, 0, 0, InputOutput,
+                                DefaultVisual (x11->display, screen),
+                                CWOverrideRedirect | CWBackPixel, &atts);
+  }
+
   XChangeProperty (x11->display, x11->window, XA_NO_BORDER, XA_NO_BORDER, 32,
                    PropModeReplace, (unsigned char *) &mwmhints,
                    PROP_MWM_HINTS_ELEMENTS);
@@ -241,11 +356,11 @@ x11_init (player_t *player)
   XSync (x11->display, False);
   XUnlockDisplay (x11->display);
 
+  /* only for Xine */
   if (player->type == PLAYER_TYPE_XINE) {
     vis = malloc (sizeof (x11_visual_t));
-    screeninfo = malloc (sizeof (screeninfo_t));
 
-    if (vis && screeninfo) {
+    if (vis) {
       vis->display = x11->display;
       vis->screen = screen;
       vis->d = x11->window;
@@ -261,8 +376,19 @@ x11_init (player_t *player)
 
     x11->data = (void *) vis;
   }
-  else
+  /* only for MPlayer Xv */
+  else if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
+    screeninfo->width = width;
+    screeninfo->height = height;
+    screeninfo->pixel_aspect = res_v / res_h;
+
+    x11->data = (void *) screeninfo;
+  }
+  /* others video out don't use data */
+  else {
+    free (screeninfo);
     x11->data = NULL;
+  }
 
   plog (MODULE_NAME, "window initialized");
 
