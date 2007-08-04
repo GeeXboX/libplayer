@@ -30,6 +30,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>     /* stat */
 #include <signal.h>       /* sigaction */
+#include <pthread.h>      /* pthread_... */
+#include <semaphore.h>    /* sem_post sem_wait sem_init */
 
 #include "player.h"
 #include "player_internals.h"
@@ -54,6 +56,12 @@ typedef enum mplayer_status {
   MPLAYER_IS_DEAD
 } mplayer_status_t;
 
+/* property and value for a search in the fifo_out */
+typedef struct mp_search_s {
+  char *property;
+  char *value;
+} mp_search_t;
+
 /* player specific structure */
 typedef struct mplayer_s {
   mplayer_status_t status;
@@ -62,6 +70,11 @@ typedef struct mplayer_s {
   int pipe_out[2];    /* pipe for receive results */
   FILE *fifo_in;      /* fifo on the pipe_in  (write only) */
   FILE *fifo_out;     /* fifo on the pipe_out (read only) */
+  /* specific to thread */
+  pthread_t th_fifo;      /* thread for the fifo_out parser */
+  pthread_mutex_t mutex;
+  sem_t sem;
+  mp_search_t *search;    /* use when a property is searched */
 } mplayer_t;
 
 /* slave commands */
@@ -166,21 +179,109 @@ send_to_slave (mplayer_t *mplayer, const char *format, ...)
 }
 
 /**
+ * Thread for parse the fifo_out of MPlayer. This thread must be used only
+ * with slave_result() when a property is needed. The rest of the time,
+ * this thread will just respond to some events.
+ */
+static void *
+thread_fifo (void *arg)
+{
+  char buffer[SLAVE_CMD_BUFFER];
+  char *its, *ite;
+  player_t *player;
+  mplayer_t *mplayer;
+
+  player = (player_t *) arg;
+
+  if (player) {
+    mplayer = (mplayer_t *) player->priv;
+
+    if (mplayer && mplayer->fifo_out) {
+      /* MPlayer's stdout parser */
+      while (fgets (buffer, SLAVE_CMD_BUFFER, mplayer->fifo_out))
+      {
+        /* lock the mutex for protect mplayer->search */
+        pthread_mutex_lock (&mplayer->mutex);
+        /* search the result for a property */
+        if (mplayer->search && mplayer->search->property &&
+            (its = strstr(buffer, mplayer->search->property)))
+        {
+          /* value start */
+          its += strlen (mplayer->search->property);
+          ite = its;
+          while (*ite != '\0' && *ite != '\n')
+            ite++;
+
+          /* value end */
+          *ite = '\0';
+
+          if ((mplayer->search->value = malloc (strlen (its) + 1))) {
+            memcpy (mplayer->search->value, its, strlen (its));
+            *(mplayer->search->value + strlen (its)) = '\0';
+          }
+        }
+        /* If this error (from stderr) exists, then we can go out
+        * because there is no result for the real command.
+        */
+        else if (strstr (buffer, "Command loadfile")) {
+          if (mplayer->search) {
+            free (mplayer->search->property);
+            mplayer->search->property = NULL;
+            /* search ended */
+            sem_post (&mplayer->sem);
+          }
+        }
+        pthread_mutex_unlock (&mplayer->mutex);
+
+        if (strstr (buffer, "Exiting")) {
+          mplayer->status = MPLAYER_IS_DEAD;
+          break;
+        }
+      }
+    }
+  }
+
+  pthread_exit (0);
+}
+
+/**
+ * Send a command to slave for get a property. That will return nothing
+ * because the response is grabbed with slave_result().
+ */
+static void
+slave_get_property (player_t *player, slave_property_t property)
+{
+  mplayer_t *mplayer = NULL;
+  char *prop;
+
+  if (!player)
+    return;
+
+  mplayer = (mplayer_t *) player->priv;
+
+  if (!mplayer || !mplayer->fifo_in)
+    return;
+
+  /* get the right property in the global list */
+  prop = get_prop (property);
+  if (prop)
+    send_to_slave (mplayer, "get_property %s", prop);
+  else
+    /* should never going here */
+    return;
+}
+
+/**
  * Get results of commands sent to MPlayer. The MPlayer's stdout and sterr
- * are connected to fifo_out. Because MPlayer doesn't confirm all commands
- * (for example, a get_property with no stream return nothing), that is
- * necessary for send an other command with an output in all cases.
- * Here, this command create an error captured in the stderr for confirm
- * the end of the fifo_out.
+ * are connected to fifo_out. This function uses the thread_fifo for get
+ * the result. That uses semaphore and mutex.
  */
 static char *
 slave_result (slave_property_t property, player_t *player)
 {
   char str[SLAVE_CMD_BUFFER];
-  char *buffer;
   char *prop;
   char *ret = NULL;
-  char *its, *ite;
   mplayer_t *mplayer = NULL;
 
   if (!player)
@@ -199,50 +300,43 @@ slave_result (slave_property_t property, player_t *player)
     /* should never going here */
     return NULL;
 
-  /* NOTE: /!\ That is ugly but it works pretty well :o)
-   * Because MPlayer doesn't confirm commands, that is necessary for
-   * have a text in the fifo_out for know if there is no new message.
-   * Else, the fgets (read) will block on the pipe. NONBLOCK is not a
-   * solution, better for have an information that will to confirm if
-   * MPlayer has no result and then to stop the read.
-   *
-   * An error is created by the command 'loadfile' without arguments. This
-   * error is got with fgets() and the while is break if there is no
-   * result for the real command in var 'str'.
-   */
-  send_to_slave (mplayer, "loadfile");
+  /* lock the mutex for protect mplayer->search */
+  pthread_mutex_lock (&mplayer->mutex);
+  mplayer->search = malloc (sizeof (mp_search_t));
 
-  if ((buffer = malloc (SLAVE_CMD_BUFFER))) {
-    /* MPlayer's stdout parser */
-    while (fgets (buffer, SLAVE_CMD_BUFFER, mplayer->fifo_out))
-    {
-      /* search the result */
-      if ((its = strstr(buffer, str))) {
-        /* value start */
-        its += strlen (str);
-        ite = its;
-        while (*ite != '\0' && *ite != '\n')
-          ite++;
+  if (mplayer->search) {
+    mplayer->search->property = strdup (str);
+    mplayer->search->value = NULL;
+    pthread_mutex_unlock (&mplayer->mutex);
 
-        /* value end */
-        *ite = '\0';
+    /* send the slave command for get a response from MPlayer */
+    slave_get_property (player, property);
 
-        if ((ret = malloc (strlen (its) + 1))) {
-          memcpy (ret, its, strlen (its));
-          *(ret + strlen (its)) = '\0';
-        }
-      }
-      /* If this error (from stderr) exists, then we can go out
-       * because there is no result for the real command.
-       */
-      else if (strstr (buffer, "Command loadfile"))
-        break;
+    /* NOTE: /!\ That is ugly but it works pretty well :o)
+    * Because MPlayer doesn't confirm commands, that is necessary for
+    * have a text in the fifo_out for know if there is no new message
+    * because MPlayer will not response all the time to get_property.
+    *
+    * An error is created by the command 'loadfile' without argument. This
+    * error is got with fgets() and the search is ended if there is no
+    * result for the real command.
+    */
+    send_to_slave (mplayer, "loadfile");
 
-      *buffer = '\0';
-    }
+    /* wait that the thread will found the value */
+    sem_wait (&mplayer->sem);
 
-    free (buffer);
+    /* we take the result */
+    ret = mplayer->search->value;
+
+    /* the search is ended */
+    pthread_mutex_lock (&mplayer->mutex);
+    free (mplayer->search);
+    mplayer->search = NULL;
+    pthread_mutex_unlock (&mplayer->mutex);
   }
+  else
+    pthread_mutex_unlock (&mplayer->mutex);
 
   return ret;
 }
@@ -313,45 +407,22 @@ slave_set_property_int (player_t *player, slave_property_t property, int value)
   }
 }
 
-/**
- * Send a command to slave for get a property. That will return nothing
- * because the response is grabbed with slave_result().
- */
-static void
-slave_get_property (player_t *player, slave_property_t property)
-{
-  mplayer_t *mplayer = NULL;
-  char *prop;
-
-  if (!player)
-    return;
-
-  mplayer = (mplayer_t *) player->priv;
-
-  if (!mplayer || !mplayer->fifo_in)
-    return;
-
-  /* get the right property in the global list */
-  prop = get_prop (property);
-  if (prop)
-    send_to_slave (mplayer, "get_property %s", prop);
-  else
-    /* should never going here */
-    return;
-}
-
 static inline int
 slave_get_property_int (player_t *player, slave_property_t property)
 {
-  slave_get_property (player, property);
-  return slave_result_int (player, property);
+  int res;
+
+  res = slave_result_int (player, property);
+  return res;
 }
 
 static inline char *
 slave_get_property_str (player_t *player, slave_property_t property)
 {
-  slave_get_property (player, property);
-  return slave_result_str (player, property);
+  char *res;
+
+  res = slave_result_str (player, property);
+  return res;
 }
 
 static void
@@ -673,7 +744,14 @@ mplayer_init (player_t *player)
 
         mplayer->status = MPLAYER_IS_IDLE;
 
-        return PLAYER_INIT_OK;
+        /* init semaphore and mutex */
+        sem_init (&mplayer->sem, 0, 0);
+        pthread_mutex_init (&mplayer->mutex, NULL);
+
+        /* create the thread */
+        if (pthread_create (&mplayer->th_fifo, NULL,
+                            thread_fifo, (void *) player) >= 0)
+          return PLAYER_INIT_OK;
       }
     }
   }
@@ -685,6 +763,7 @@ static void
 mplayer_uninit (player_t *player)
 {
   mplayer_t *mplayer = NULL;
+  void *ret;
 
   plog (MODULE_NAME, "uninit");
 
@@ -699,6 +778,9 @@ mplayer_uninit (player_t *player)
   if (mplayer && mplayer->fifo_in) {
     /* suicide of MPlayer */
     slave_cmd (player, SLAVE_QUIT);
+
+    /* wait the death of the thread fifo_out */
+    (void) pthread_join (mplayer->th_fifo, &ret);
 
     /* wait the death of MPlayer */
     waitpid (mplayer->pid, NULL, 0);
@@ -1123,6 +1205,7 @@ register_private_mplayer (void)
   mplayer->status = MPLAYER_IS_DEAD;
   mplayer->fifo_in = NULL;
   mplayer->fifo_out = NULL;
+  mplayer->search = NULL;
 
   return mplayer;
 }
