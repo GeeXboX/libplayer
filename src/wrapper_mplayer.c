@@ -758,10 +758,6 @@ mplayer_init (player_t *player)
 
         mplayer->status = MPLAYER_IS_IDLE;
 
-        /* init semaphore and mutex */
-        sem_init (&mplayer->sem, 0, 0);
-        pthread_mutex_init (&mplayer->mutex, NULL);
-
         /* create the thread */
         if (pthread_create (&mplayer->th_fifo, NULL,
                             thread_fifo, (void *) player) >= 0)
@@ -1238,6 +1234,10 @@ register_private_mplayer (void)
   mplayer->fifo_in = NULL;
   mplayer->fifo_out = NULL;
   mplayer->search = NULL;
+
+  /* init semaphore and mutex */
+  sem_init (&mplayer->sem, 0, 0);
+  pthread_mutex_init (&mplayer->mutex, NULL);
 
   return mplayer;
 }
