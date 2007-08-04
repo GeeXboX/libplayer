@@ -17,10 +17,9 @@ Commons:
   * complete playlist manager
 
 MPlayer:
-  * found a way for send a player event when the playback is finished
-    - and unmap the X11 window in this case too
   * add vesa and vidix support
   * test if the mplayer binary exists
+  * test if a stream is loaded without error
 
 Xine:
   * add vidix support
