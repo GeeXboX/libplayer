@@ -53,6 +53,7 @@
 /* Status of MPlayer child */
 typedef enum mplayer_status {
   MPLAYER_IS_IDLE,
+  MPLAYER_IS_PLAYING,
   MPLAYER_IS_DEAD
 } mplayer_status_t;
 
@@ -233,7 +234,19 @@ thread_fifo (void *arg)
         }
         pthread_mutex_unlock (&mplayer->mutex);
 
-        if (strstr (buffer, "Exiting")) {
+        if (strstr (buffer, "EOF code: 1") &&
+            mplayer->status == MPLAYER_IS_PLAYING)
+        {
+          plog (MODULE_NAME, "Playback of stream has ended");
+          mplayer->status = MPLAYER_IS_IDLE;
+
+          if (player->event_cb)
+            player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+          /* X11 */
+          if (player->x11 && mrl_uses_vo (player->mrl))
+            x11_unmap (player);
+        }
+        else if (strstr (buffer, "Exiting")) {
           mplayer->status = MPLAYER_IS_DEAD;
           break;
         }
@@ -659,6 +672,7 @@ mplayer_init (player_t *player)
         params[pp++] = "mplayer";
         params[pp++] = "-slave";            /* work in slave mode */
         params[pp++] = "-quiet";            /* reduce output messages */
+        params[pp++] = "-v";                /* necessary for detect EOF */
         params[pp++] = "-idle";             /* MPlayer stays always alive */
         params[pp++] = "-fs";               /* fullscreen (if possible) */
         params[pp++] = "-zoom";             /* zoom (if possible) */
@@ -1000,9 +1014,16 @@ mplayer_mrl_get_metadata (player_t *player)
 static playback_status_t
 mplayer_playback_start (player_t *player)
 {
+  mplayer_t *mplayer = NULL;
+
   plog (MODULE_NAME, "playback_start");
 
   if (!player)
+    return PLAYER_PB_FATAL;
+
+  mplayer = (mplayer_t *) player->priv;
+
+  if (!mplayer)
     return PLAYER_PB_FATAL;
 
   /* identify the current stream */
@@ -1011,6 +1032,8 @@ mplayer_playback_start (player_t *player)
   // FIXME: playback error if not loaded
   /* 0: new play, 1: append to the current playlist */
   slave_cmd_int (player, SLAVE_LOADFILE, 0);
+
+  mplayer->status = MPLAYER_IS_PLAYING;
 
   /* X11 */
   if (player->x11 && mrl_uses_vo (player->mrl))
@@ -1022,10 +1045,19 @@ mplayer_playback_start (player_t *player)
 static void
 mplayer_playback_stop (player_t *player)
 {
+  mplayer_t *mplayer = NULL;
+
   plog (MODULE_NAME, "playback_stop");
 
   if (!player)
     return;
+
+  mplayer = (mplayer_t *) player->priv;
+
+  if (!mplayer)
+    return;
+
+  mplayer->status = MPLAYER_IS_IDLE;
 
   /* X11 */
   if (player->x11 && mrl_uses_vo (player->mrl))
