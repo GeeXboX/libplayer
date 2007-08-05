@@ -60,6 +60,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   player->y = 0;
   player->w = 0;
   player->h = 0;
+  player->aspect = 0.0;
   player->x11 = NULL;
   player->event_cb = event_cb;
   player->funcs = NULL;

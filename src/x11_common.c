@@ -62,7 +62,7 @@ typedef struct {
  * Center the movie in the parent window and zoom for use the max of surface.
  */
 void
-zoom (int parentwidth, int parentheight,
+zoom (int parentwidth, int parentheight, float aspect,
       int *x, int *y, int *width, int *height)
 {
   float convert;
@@ -76,7 +76,11 @@ zoom (int parentwidth, int parentheight,
   }
   /* or calcul the best size */
   else {
-    convert = (float) *width / (float) *height;
+    /* fix aspect */
+    if (aspect != 0.0)
+      convert = aspect;
+    else
+      convert = (float) *width / (float) *height;
 
     *width = parentwidth;
     *height = (int) rintf ((float) *width / convert);
@@ -123,8 +127,8 @@ x11_map (player_t *player)
       changes.height = player->h;
 
       /* fix the size and offset */
-      zoom (screeninfo->width, screeninfo->height, &changes.x,
-            &changes.y, &changes.width, &changes.height);
+      zoom (screeninfo->width, screeninfo->height, player->aspect,
+            &changes.x, &changes.y, &changes.width, &changes.height);
 
       XConfigureWindow (x11->display, x11->window,
                         CWX | CWY | CWWidth | CWHeight, &changes);

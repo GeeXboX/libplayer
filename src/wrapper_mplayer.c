@@ -537,7 +537,7 @@ mp_identify (player_t *player)
       params[pp++] = "-nolirc";
       params[pp++] = "-nojoystick";
       params[pp++] = "-noconsolecontrols";
-      params[pp++] = "-frames";
+      params[pp++] = "-endpos";
       params[pp++] = "0";
       params[pp++] = strdup (player->mrl->name);
       params[pp++] = "-identify";
@@ -577,6 +577,20 @@ mp_identify (player_t *player)
           *ite = '\0';
 
           player->h = atoi (its);
+        }
+        /* Maybe this field is got more that one time,
+         * but the last is the right value.
+         */
+        else if ((its = strstr (buffer, "ID_VIDEO_ASPECT="))) {
+          /* value start */
+          its += 16;
+          ite = its;
+          while (*ite != '\0' && *ite != '\n')
+            ite++;
+          /* value end */
+          *ite = '\0';
+
+          player->aspect = (float) atof (its);
         }
         /* stop fgets because MPlayer is ended */
         else if (strstr (buffer, "Exiting"))

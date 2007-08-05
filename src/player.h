@@ -146,6 +146,7 @@ typedef struct player_s {
   player_vo_t vo;       /* video output driver name */
   int x, y;             /* video position */
   int w, h;             /* video size */
+  float aspect;         /* video aspect */
   struct x11_s *x11;    /* for X11 video out */
   int (*event_cb) (player_event_t e, void *data); /* frontend event callback */
   struct player_funcs_s *funcs; /* bindings to player specific functions */ 
