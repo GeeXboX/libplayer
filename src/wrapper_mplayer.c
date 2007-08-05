@@ -179,6 +179,25 @@ send_to_slave (mplayer_t *mplayer, const char *format, ...)
   va_end (va);
 }
 
+static char *
+parse_field (char *line, char *field)
+{
+  char *its, *ite;
+
+  its = line;
+
+  /* value start */
+  its += strlen (field);
+  ite = its;
+  while (*ite != '\0' && *ite != '\n')
+    ite++;
+
+  /* value end */
+  *ite = '\0';
+
+  return its;
+}
+
 /**
  * Thread for parse the fifo_out of MPlayer. This thread must be used only
  * with slave_result() when a property is needed. The rest of the time,
@@ -188,7 +207,7 @@ static void *
 thread_fifo (void *arg)
 {
   char buffer[SLAVE_CMD_BUFFER];
-  char *its, *ite;
+  char *it;
   player_t *player;
   mplayer_t *mplayer;
 
@@ -205,20 +224,13 @@ thread_fifo (void *arg)
         pthread_mutex_lock (&mplayer->mutex);
         /* search the result for a property */
         if (mplayer->search && mplayer->search->property &&
-            (its = strstr(buffer, mplayer->search->property)))
+            (it = strstr(buffer, mplayer->search->property)))
         {
-          /* value start */
-          its += strlen (mplayer->search->property);
-          ite = its;
-          while (*ite != '\0' && *ite != '\n')
-            ite++;
+          it = parse_field (it, mplayer->search->property);
 
-          /* value end */
-          *ite = '\0';
-
-          if ((mplayer->search->value = malloc (strlen (its) + 1))) {
-            memcpy (mplayer->search->value, its, strlen (its));
-            *(mplayer->search->value + strlen (its)) = '\0';
+          if ((mplayer->search->value = malloc (strlen (it) + 1))) {
+            memcpy (mplayer->search->value, it, strlen (it));
+            *(mplayer->search->value + strlen (it)) = '\0';
           }
         }
         /* If this error (from stderr) exists, then we can go out
@@ -505,7 +517,7 @@ mp_identify (player_t *player)
 {
   char *params[16];
   char buffer[SLAVE_CMD_BUFFER];
-  char *its, *ite;
+  char *it;
   int pp = 0;
   int mp_pipe[2];
   FILE *mp_fifo;
@@ -556,42 +568,18 @@ mp_identify (player_t *player)
       mp_fifo = fdopen (mp_pipe[0], "r");
 
       while (fgets (buffer, SLAVE_CMD_BUFFER, mp_fifo)) {
-        if ((its = strstr (buffer, "ID_VIDEO_WIDTH="))) {
-          /* value start */
-          its += 15;
-          ite = its;
-          while (*ite != '\0' && *ite != '\n')
-            ite++;
-          /* value end */
-          *ite = '\0';
+        if ((it = strstr (buffer, "ID_VIDEO_WIDTH=")))
+          player->w = atoi (parse_field (it, "ID_VIDEO_WIDTH="));
 
-          player->w = atoi (its);
-        }
-        else if ((its = strstr (buffer, "ID_VIDEO_HEIGHT="))) {
-          /* value start */
-          its += 16;
-          ite = its;
-          while (*ite != '\0' && *ite != '\n')
-            ite++;
-          /* value end */
-          *ite = '\0';
+        else if ((it = strstr (buffer, "ID_VIDEO_HEIGHT=")))
+          player->h = atoi (parse_field (it, "ID_VIDEO_HEIGHT="));
 
-          player->h = atoi (its);
-        }
         /* Maybe this field is got more that one time,
          * but the last is the right value.
          */
-        else if ((its = strstr (buffer, "ID_VIDEO_ASPECT="))) {
-          /* value start */
-          its += 16;
-          ite = its;
-          while (*ite != '\0' && *ite != '\n')
-            ite++;
-          /* value end */
-          *ite = '\0';
+        else if ((it = strstr (buffer, "ID_VIDEO_ASPECT=")))
+          player->aspect = (float) atof (parse_field (it, "ID_VIDEO_ASPECT="));
 
-          player->aspect = (float) atof (its);
-        }
         /* stop fgets because MPlayer is ended */
         else if (strstr (buffer, "Exiting"))
           break;
