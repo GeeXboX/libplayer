@@ -246,17 +246,22 @@ thread_fifo (void *arg)
         }
         pthread_mutex_unlock (&mplayer->mutex);
 
-        if (strstr (buffer, "EOF code: 1") &&
-            mplayer->status == MPLAYER_IS_PLAYING)
-        {
-          plog (MODULE_NAME, "Playback of stream has ended");
-          mplayer->status = MPLAYER_IS_IDLE;
+        if (strstr (buffer, "EOF code: 1")) {
+          /* when the stream is ended without stop action */
+          if (mplayer->status == MPLAYER_IS_PLAYING) {
+            plog (MODULE_NAME, "Playback of stream has ended");
+            mplayer->status = MPLAYER_IS_IDLE;
 
-          if (player->event_cb)
-            player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
-          /* X11 */
-          if (player->x11 && mrl_uses_vo (player->mrl))
-            x11_unmap (player);
+            if (player->event_cb)
+              player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+            /* X11 */
+            if (player->x11 && mrl_uses_vo (player->mrl))
+              x11_unmap (player);
+          }
+          /* when the stream is ended with stop action */
+          else if (mplayer->status == MPLAYER_IS_IDLE)
+            /* ok, now we can continue */
+            sem_post (&mplayer->sem);
         }
         else if (strstr (buffer, "Exiting")) {
           mplayer->status = MPLAYER_IS_DEAD;
@@ -489,6 +494,9 @@ slave_action (player_t *player, slave_cmd_t cmd, void *value)
   case SLAVE_STOP:
     slave_set_property_int (player, PROPERTY_LOOP, -1);
     send_to_slave (mplayer, "seek 100.00 1");
+
+    /* wait that the thread will found the EOF */
+    sem_wait (&mplayer->sem);
     break;
 
   default:
@@ -1053,6 +1061,9 @@ mplayer_playback_stop (player_t *player)
   mplayer = (mplayer_t *) player->priv;
 
   if (!mplayer)
+    return;
+
+  if (mplayer->status != MPLAYER_IS_PLAYING)
     return;
 
   mplayer->status = MPLAYER_IS_IDLE;
