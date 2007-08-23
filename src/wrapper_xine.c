@@ -703,6 +703,28 @@ xine_player_set_mute (player_t *player, player_mute_t value)
   xine_set_param (x->stream, XINE_PARAM_AUDIO_MUTE, mute);
 }
 
+static void
+xine_player_set_sub_delay (player_t *player, float value)
+{
+  int delay;
+  xine_player_t *x = NULL;
+
+  plog (MODULE_NAME, "set_sub_delay: %.2f", value);
+
+  /* unit is 1/90000 sec */
+  delay = (int) rintf (value * 90000.0);
+
+  if (!player)
+    return;
+
+  x = (xine_player_t *) player->priv;
+
+  if (!x->stream)
+    return;
+
+  xine_set_param (x->stream, XINE_PARAM_SPU_OFFSET, delay);
+}
+
 /* public API */
 player_funcs_t *
 register_functions_xine (void)
@@ -723,6 +745,7 @@ register_functions_xine (void)
   funcs->get_mute = xine_player_get_mute;
   funcs->set_volume = xine_player_set_volume;
   funcs->set_mute = xine_player_set_mute;
+  funcs->set_sub_delay = xine_player_set_sub_delay;
 
   return funcs;
 }
