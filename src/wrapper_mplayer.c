@@ -488,7 +488,7 @@ slave_action (player_t *player, slave_cmd_t cmd, void *value)
     break;
 
   case SLAVE_SEEK:
-    send_to_slave (mplayer, "seek %.2f 0", *((float *) value));
+    send_to_slave (mplayer, "seek %i 0", *((int *) value));
     break;
 
   case SLAVE_STOP:
