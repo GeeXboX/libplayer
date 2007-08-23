@@ -635,11 +635,12 @@ mp_identify (player_t *player)
 
 /* Use only these commands for speak with MPlayer!
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * void  slave_cmd              (player_t, slave_cmd_t)
- * void  slave_cmd_int          (player_t, slave_cmd_t,      int)
- * int   slave_get_property_int (player_t, slave_property_t)
- * char *slave_get_property_str (player_t, slave_property_t)
- * void  slave_set_property_int (player_t, slave_property_t, int)
+ * void  slave_cmd                (player_t, slave_cmd_t)
+ * void  slave_cmd_int            (player_t, slave_cmd_t,      int)
+ * int   slave_get_property_int   (player_t, slave_property_t)
+ * char *slave_get_property_str   (player_t, slave_property_t)
+ * void  slave_set_property_int   (player_t, slave_property_t, int)
+ * void  slave_set_property_float (player_t, slave_property_t, float)
  */
 
 /**
