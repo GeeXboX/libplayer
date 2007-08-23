@@ -87,7 +87,8 @@ typedef enum slave_cmd {
   SLAVE_QUIT,         /* quit [int] */
   SLAVE_SEEK,         /* seek float [int] */
   SLAVE_SET_PROPERTY, /* set_property string string */
-  SLAVE_STOP
+  SLAVE_STOP,
+  SLAVE_SUB_LOAD      /* sub_load string */
 } slave_cmd_t;
 
 /* slave properties */
@@ -105,6 +106,8 @@ typedef enum slave_property {
   PROPERTY_METADATA_YEAR,
   PROPERTY_MUTE,
   PROPERTY_SAMPLERATE,
+  PROPERTY_SUB,
+  PROPERTY_SUB_VISIBILITY,
   PROPERTY_VIDEO_BITRATE,
   PROPERTY_VIDEO_CODEC,
   PROPERTY_VOLUME,
@@ -129,6 +132,8 @@ static const struct {
   {PROPERTY_METADATA_YEAR,    "metadata/year"},
   {PROPERTY_MUTE,             "mute"},
   {PROPERTY_SAMPLERATE,       "samplerate"},
+  {PROPERTY_SUB,              "sub"},
+  {PROPERTY_SUB_VISIBILITY,   "sub_visibility"},
   {PROPERTY_VIDEO_BITRATE,    "video_bitrate"},
   {PROPERTY_VIDEO_CODEC,      "video_codec"},
   {PROPERTY_VOLUME,           "volume"},
@@ -425,6 +430,8 @@ slave_set_property_int (player_t *player, slave_property_t property, int value)
   switch (property) {
   case PROPERTY_LOOP:
   case PROPERTY_MUTE:
+  case PROPERTY_SUB:
+  case PROPERTY_SUB_VISIBILITY:
     send_to_slave (mplayer, "%s %i", cmd, value);
     break;
 
@@ -497,6 +504,14 @@ slave_action (player_t *player, slave_cmd_t cmd, void *value)
 
     /* wait that the thread will found the EOF */
     sem_wait (&mplayer->sem);
+    break;
+
+  case SLAVE_SUB_LOAD:
+    if (player->mrl->subtitle) {
+      slave_set_property_int (player, PROPERTY_SUB_VISIBILITY, 1);
+      send_to_slave (mplayer, "sub_load \"%s\"", player->mrl->subtitle);
+      slave_set_property_int (player, PROPERTY_SUB, 0);
+    }
     break;
 
   default:
@@ -1038,6 +1053,10 @@ mplayer_playback_start (player_t *player)
   // FIXME: playback error if not loaded
   /* 0: new play, 1: append to the current playlist */
   slave_cmd_int (player, SLAVE_LOADFILE, 0);
+
+  /* load subtitle if exists */
+  if (player->mrl->subtitle)
+    slave_cmd (player, SLAVE_SUB_LOAD);
 
   mplayer->status = MPLAYER_IS_PLAYING;
 

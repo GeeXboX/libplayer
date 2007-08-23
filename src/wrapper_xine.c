@@ -21,6 +21,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
 #include <sys/types.h>
@@ -443,6 +444,7 @@ xine_player_mrl_get_metadata (player_t *player)
 static playback_status_t
 xine_player_playback_start (player_t *player)
 {
+  char *mrl = NULL;
   xine_player_t *x = NULL;
 
   plog (MODULE_NAME, "playback_start");
@@ -455,12 +457,30 @@ xine_player_playback_start (player_t *player)
   if (!x->stream)
     return PLAYER_PB_ERROR;
 
+  /* add subtitle to the MRL */
+  if (player->mrl->subtitle) {
+    mrl = malloc (strlen (player->mrl->name) +
+                  strlen (player->mrl->subtitle) + 11);
+
+    if (mrl)
+      sprintf (mrl, "%s#subtitle:%s",
+               player->mrl->name, player->mrl->subtitle);
+  }
+  /* or take only the name */
+  else
+    mrl = strdup (player->mrl->name);
+
+  if (!mrl)
+    return PLAYER_PB_ERROR;
+
   /* X11 */
   if (player->x11 && mrl_uses_vo (player->mrl))
     x11_map (player);
 
-  xine_open (x->stream, player->mrl->name);
+  xine_open (x->stream, mrl);
   xine_play (x->stream, 0, 0);
+
+  free (mrl);
 
   return PLAYER_PB_OK;
 }

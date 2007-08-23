@@ -126,6 +126,7 @@ typedef struct mrl_metadata_s {
 
 typedef struct mrl_s {
   char *name;
+  char *subtitle;
   char *cover;
   player_mrl_type_t type;
   mrl_properties_t *prop;
@@ -159,12 +160,12 @@ player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
 void player_uninit (player_t *player);
 
 /* MRL helpers */
-mrl_t *mrl_new (char *name, player_mrl_type_t type);
+mrl_t *mrl_new (char *name, char *subtitle, player_mrl_type_t type);
 void mrl_free (mrl_t *mrl, int recursive);
 void mrl_list_free (mrl_t *mrl);
 
 void player_mrl_append (player_t *player,
-                        char *location, player_mrl_type_t type,
+                        char *location, char *subtitle, player_mrl_type_t type,
                         player_add_mrl_t when);
 void player_mrl_previous (player_t *player);
 void player_mrl_next (player_t *player);
