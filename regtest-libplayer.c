@@ -74,6 +74,7 @@ do_regression_tests (player_t *player, char *mrl, player_mrl_type_t type)
                                 ? "on" : (mute == PLAYER_MUTE_OFF
                                           ? "off" : "unknown"));
   player_set_mute (player, PLAYER_MUTE_ON);
+  player_set_sub_delay (player, 1.5);
   player_playback_pause (player);
   player_playback_stop (player);
   player_mrl_previous (player);

@@ -297,3 +297,14 @@ player_set_mute (player_t *player, player_mute_t value)
   if (player->funcs->set_mute)
     player->funcs->set_mute (player, value);
 }
+
+void
+player_set_sub_delay (player_t *player, float value)
+{
+  if (!player)
+    return;
+
+  /* player specific set_sub_delay() */
+  if (player->funcs->set_sub_delay)
+    player->funcs->set_sub_delay (player, value);
+}

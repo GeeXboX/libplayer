@@ -107,6 +107,7 @@ typedef enum slave_property {
   PROPERTY_MUTE,
   PROPERTY_SAMPLERATE,
   PROPERTY_SUB,
+  PROPERTY_SUB_DELAY,
   PROPERTY_SUB_VISIBILITY,
   PROPERTY_VIDEO_BITRATE,
   PROPERTY_VIDEO_CODEC,
@@ -133,6 +134,7 @@ static const struct {
   {PROPERTY_MUTE,             "mute"},
   {PROPERTY_SAMPLERATE,       "samplerate"},
   {PROPERTY_SUB,              "sub"},
+  {PROPERTY_SUB_DELAY,        "sub_delay"},
   {PROPERTY_SUB_VISIBILITY,   "sub_visibility"},
   {PROPERTY_VIDEO_BITRATE,    "video_bitrate"},
   {PROPERTY_VIDEO_CODEC,      "video_codec"},
@@ -428,6 +430,10 @@ slave_set_property (player_t *player, slave_property_t property, void *value)
   case PROPERTY_SUB:
   case PROPERTY_SUB_VISIBILITY:
     send_to_slave (mplayer, "%s %i", cmd, *((int *) value));
+    break;
+
+  case PROPERTY_SUB_DELAY:
+    send_to_slave (mplayer, "%s %.2f", cmd, *((float *) value));
     break;
 
   case PROPERTY_VOLUME:
@@ -1239,6 +1245,17 @@ mplayer_set_mute (player_t *player, player_mute_t value)
   slave_set_property_int (player, PROPERTY_MUTE, mute);
 }
 
+static void
+mplayer_set_sub_delay (player_t *player, float value)
+{
+  plog (MODULE_NAME, "set_sub_delay: %.2f", value);
+
+  if (!player)
+    return;
+
+  slave_set_property_float (player, PROPERTY_SUB_DELAY, value);
+}
+
 /* public API */
 player_funcs_t *
 register_functions_mplayer (void)
@@ -1259,6 +1276,7 @@ register_functions_mplayer (void)
   funcs->get_mute = mplayer_get_mute;
   funcs->set_volume = mplayer_set_volume;
   funcs->set_mute = mplayer_set_mute;
+  funcs->set_sub_delay = mplayer_set_sub_delay;
 
   return funcs;
 }

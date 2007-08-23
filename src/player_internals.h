@@ -47,6 +47,7 @@ typedef struct player_funcs_s {
   player_mute_t (* get_mute) (player_t *player);
   void (* set_volume) (player_t *player, int value);
   void (* set_mute) (player_t *player, player_mute_t value);
+  void (* set_sub_delay) (player_t *player, float value);
 } player_funcs_t;
 
 void mrl_list_free (mrl_t *mrl);

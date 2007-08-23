@@ -181,6 +181,7 @@ void player_set_loop (player_t *player, int value);
 void player_set_shuffle (player_t *player, int value);
 void player_set_volume (player_t *player, int value);
 void player_set_mute (player_t *player, player_mute_t value);
+void player_set_sub_delay (player_t *player, float value);
 
 /* player controls */
 void player_playback_start (player_t *player);
