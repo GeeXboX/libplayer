@@ -399,13 +399,8 @@ slave_result_str (player_t *player, slave_property_t property)
   return slave_result (property, player);
 }
 
-/**
- * Set a value for a property. Currently, only integer can be used as value.
- * If a string must be set a day, then this function must be split like
- * slave_get_property() and use two inlined functions for set int or str.
- */
 static void
-slave_set_property_int (player_t *player, slave_property_t property, int value)
+slave_set_property (player_t *player, slave_property_t property, void *value)
 {
   mplayer_t *mplayer = NULL;
   char *prop;
@@ -432,16 +427,29 @@ slave_set_property_int (player_t *player, slave_property_t property, int value)
   case PROPERTY_MUTE:
   case PROPERTY_SUB:
   case PROPERTY_SUB_VISIBILITY:
-    send_to_slave (mplayer, "%s %i", cmd, value);
+    send_to_slave (mplayer, "%s %i", cmd, *((int *) value));
     break;
 
   case PROPERTY_VOLUME:
-    send_to_slave (mplayer, "%s %.2f", cmd, (float) value);
+    send_to_slave (mplayer, "%s %i", cmd, *((int *) value));
     break;
 
   default:
     return;
   }
+}
+
+static inline void
+slave_set_property_int (player_t *player, slave_property_t property, int value)
+{
+  slave_set_property (player, property, &value);
+}
+
+static inline void
+slave_set_property_float (player_t *player, slave_property_t property,
+                          float value)
+{
+  slave_set_property (player, property, &value);
 }
 
 static inline int
