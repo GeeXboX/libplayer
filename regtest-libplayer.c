@@ -132,7 +132,7 @@ player_test_thread (void *cookie)
 int
 main (int argc, char **argv)
 {
-  printf ("*** libplayer regression tool ***\n");
+  printf ("*** libplayer %s regression tool ***\n", LIBPLAYER_VERSION);
 
   if (argc > 1)
   {
