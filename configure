@@ -317,6 +317,7 @@ wrapper_xine="yes"
 wrapper_mplayer="yes"
 wrapper_vlc="yes"
 INSTALL="install"
+libplayer_major_version=`grep '#define LIBPLAYER_VERSION_MAJOR' src/player.h | sed 's/[^0-9\.]//g'`
 
 #################################################
 #   set cpu variable and specific cpu flags
@@ -710,6 +711,8 @@ append_config "RANLIB=$ranlib"
 
 append_config "BUILD_STATIC=$static"
 append_config "BUILD_SHARED=$shared"
+
+append_config "LIBPLAYER_VERSION_MAJOR=$libplayer_major_version"
 
 if enabled dostrip; then
   append_config "STRIP=$strip"

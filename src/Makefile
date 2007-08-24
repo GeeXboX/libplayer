@@ -9,7 +9,7 @@ endif
 
 LIBNAME = libplayer
 STATIC_LIBNAME = ${LIBNAME}.a
-SHARED_LIBNAME = ${LIBNAME}.so
+SHARED_LIBNAME = ${LIBNAME}.so.${LIBPLAYER_VERSION_MAJOR}
 
 SRCS =  player.c \
 	mrl.c \
