@@ -171,6 +171,12 @@ dummy_set_mute (player_t *player, player_mute_t value)
   plog (MODULE_NAME, "set_mute: %s", value == PLAYER_MUTE_ON ? "on" : "off");
 }
 
+static void
+dummy_set_sub_delay (player_t *player, float value)
+{
+  plog (MODULE_NAME, "set_sub_delay: %.2f", value);
+}
+
 /* public API */
 player_funcs_t *
 register_functions_dummy (void)
@@ -191,6 +197,7 @@ register_functions_dummy (void)
   funcs->get_mute = dummy_get_mute;
   funcs->set_volume = dummy_set_volume;
   funcs->set_mute = dummy_set_mute;
+  funcs->set_sub_delay = dummy_set_sub_delay;
 
   return funcs;
 }

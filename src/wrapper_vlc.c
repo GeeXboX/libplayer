@@ -208,6 +208,12 @@ vlc_set_mute (player_t *player, player_mute_t value)
   plog (MODULE_NAME, "set_mute: %s", value == PLAYER_MUTE_ON ? "on" : "off");
 }
 
+static void
+vlc_set_sub_delay (player_t *player, float value)
+{
+  plog (MODULE_NAME, "set_sub_delay: %.2f", value);
+}
+
 /* public API */
 player_funcs_t *
 register_functions_vlc (void)
@@ -228,6 +234,7 @@ register_functions_vlc (void)
   funcs->get_mute = vlc_get_mute;
   funcs->set_volume = vlc_set_volume;
   funcs->set_mute = vlc_set_mute;
+  funcs->set_sub_delay = vlc_set_sub_delay;
 
   return funcs;
 }
