@@ -2,3 +2,5 @@ syntax: regexp
 \.o
 \.so
 \.depend
+config.log
+config.mak
