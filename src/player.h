@@ -24,6 +24,11 @@
 
 #include <inttypes.h>
 
+#define LIBPLAYER_VERSION_MAJOR 0
+#define LIBPLAYER_VERSION_MINOR 0
+#define LIBPLAYER_VERSION_MICRO 1
+#define LIBPLAYER_VERSION "0.0.1"
+
 struct player_funcs_s;
 struct x11_s;
 

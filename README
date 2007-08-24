@@ -6,8 +6,8 @@ Its goal is to interact with GeeXboX Open Media Center (OMC).
 
 libplayer provides a generic A/V API that relies on various
 multimedia player for Linux systems.
-It currently supports xine and VLC only.
-More bindings (MPlayer, GStreamer, ...) are bound to come some day.
+It currently supports MPlayer, xine and VLC only.
+More bindings (GStreamer, ...) are bound to come some day.
 
 DEVELOPERS
 ~~~~~~~~~~
@@ -36,3 +36,4 @@ AUTHORS
 ~~~~~~~
 
 Benjamin Zores <ben@geexbox.org>
+Mathieu Schroeter <mathieu.schroeter@mycable.ch>

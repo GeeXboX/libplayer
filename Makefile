@@ -6,6 +6,10 @@ SRCS = regtest-libplayer.c
 CFLAGS += -Isrc
 LDFLAGS += -Lsrc -lplayer -lpthread
 
+ifeq ($(BUILD_STATIC),yes)
+  LDFLAGS += $(EXTRALIBS)
+endif
+
 all: lib test
 
 lib:
