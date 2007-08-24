@@ -1,6 +1,8 @@
 syntax: regexp
 \.o
+\.a
 \.so
 \.depend
 config.log
 config.mak
+regtest-libplayer$
