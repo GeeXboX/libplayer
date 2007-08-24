@@ -32,6 +32,10 @@ show_help(){
   echo "  --bindir=DIR                install bins in DIR [PREFIX/bin]"
   echo "  --libdir=DIR                install libs in DIR [PREFIX/lib]"
   echo "  --includedir=DIR            install includes in DIR [PREFIX/include]"
+  echo "  --enable-static             build static libraries [default=yes]"
+  echo "  --disable-static            do not build static libraries [default=no]"
+  echo "  --enable-shared             build shared libraries [default=yes]"
+  echo "  --disable-shared            do not build shared libraries [default=no]"
   echo ""
   echo "Wrappers options:"
   echo "  --enable-xine               build xine wrapper"
@@ -295,6 +299,8 @@ PREFIX="/usr/local"
 bindir='${PREFIX}/bin'
 libdir='${PREFIX}/lib'
 includedir='${PREFIX}/include'
+static="yes"
+shared="yes"
 cc="gcc"
 ar="ar"
 ranlib="ranlib"
@@ -389,6 +395,14 @@ for opt do
   ;;
   --includedir=*) includedir="$optval"
   ;;
+  --enable-static) static="yes"
+  ;;
+  --disable-static) static="no"
+  ;;
+  --enable-shared) shared="yes"
+  ;;
+  --disable-shared) shared="no"
+  ;;
   --disable-debug) debug="no"
   ;;
   --disable-strip) dostrip="no"
@@ -426,6 +440,14 @@ for opt do
   ;;
   esac
 done
+
+# Check for conflictual build options
+if [ "$shared" = no -a "$static" = no ]; then
+  echo "At least one library type must be built."
+  echo "Specify --enable-static to build the static libraries or"
+  echo "--enable-shared to build the shared libraries as well."
+  exit 1
+fi
 
 if [ -n "$cross_prefix" ]; then
   cross_compile="yes"
@@ -589,6 +611,15 @@ if enabled optimize; then
 fi
 
 #################################################
+#   check for shared library build
+#################################################
+if enabled shared; then
+  case "$arch" in
+    x86_64|ia64|alpha|sparc*|power*) add_cflags "-fPIC" ;;
+  esac
+fi
+
+#################################################
 #   check for libxine
 #################################################
 if test "$wrapper_xine" = "yes"; then
@@ -651,6 +682,8 @@ echolog "  CPU                $cpu ($tune)"
 echolog "  debug symbols      $debug"
 echolog "  strip symbols      $dostrip"
 echolog "  optimize           $optimize"
+echolog "  static             ${static}"
+echolog "  shared             ${shared}"
 echolog ""
 echolog "  CFLAGS             $CFLAGS"
 echolog "  LDFLAGS            $LDFLAGS"
@@ -674,6 +707,10 @@ append_config "MAKE=$make"
 append_config "CC=$cc"
 append_config "AR=$ar"
 append_config "RANLIB=$ranlib"
+
+append_config "BUILD_STATIC=$static"
+append_config "BUILD_SHARED=$shared"
+
 if enabled dostrip; then
   append_config "STRIP=$strip"
   append_config "INSTALLSTRIP=$installstrip"
