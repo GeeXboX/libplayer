@@ -5,6 +5,11 @@ Commons:
   * add VCD and SVCD support
   * add CDDA/CDDB support
   * add functions for command subtitles
+    - select a subtitle
+    - get list of all available subtitles
+    - show forced only subtitles
+    - change font size
+    - change subtitle alignment
   * add functions for command TV input
   * add functions for command DVB input
   * add functions for switch between audio channels
@@ -14,6 +19,7 @@ Commons:
   * add functions for get time informations on playing stream
   * add functions for load config files
   * add functions for use OSD
+  * add functions for take a screenshot
   * complete playlist manager
 
 MPlayer:
