@@ -78,6 +78,12 @@ typedef struct mplayer_s {
   mp_search_t *search;    /* use when a property is searched */
 } mplayer_t;
 
+/* union for set_property */
+typedef union slave_value {
+  int i_val;
+  float f_val;
+} slave_value_t;
+
 /* slave commands */
 typedef enum slave_cmd {
   SLAVE_DVDNAV,       /* dvdnav int */
@@ -402,7 +408,8 @@ slave_result_str (player_t *player, slave_property_t property)
 }
 
 static void
-slave_set_property (player_t *player, slave_property_t property, void *value)
+slave_set_property (player_t *player, slave_property_t property,
+                    slave_value_t value)
 {
   mplayer_t *mplayer = NULL;
   char *prop;
@@ -429,15 +436,12 @@ slave_set_property (player_t *player, slave_property_t property, void *value)
   case PROPERTY_MUTE:
   case PROPERTY_SUB:
   case PROPERTY_SUB_VISIBILITY:
-    send_to_slave (mplayer, "%s %i", cmd, *((int *) value));
+  case PROPERTY_VOLUME:
+    send_to_slave (mplayer, "%s %i", cmd, value.i_val);
     break;
 
   case PROPERTY_SUB_DELAY:
-    send_to_slave (mplayer, "%s %.2f", cmd, *((float *) value));
-    break;
-
-  case PROPERTY_VOLUME:
-    send_to_slave (mplayer, "%s %i", cmd, *((int *) value));
+    send_to_slave (mplayer, "%s %.2f", cmd, value.f_val);
     break;
 
   default:
@@ -448,14 +452,20 @@ slave_set_property (player_t *player, slave_property_t property, void *value)
 static inline void
 slave_set_property_int (player_t *player, slave_property_t property, int value)
 {
-  slave_set_property (player, property, &value);
+  slave_value_t param;
+
+  param.i_val = value;
+  slave_set_property (player, property, param);
 }
 
 static inline void
 slave_set_property_float (player_t *player, slave_property_t property,
                           float value)
 {
-  slave_set_property (player, property, &value);
+  slave_value_t param;
+
+  param.f_val = value;
+  slave_set_property (player, property, param);
 }
 
 static inline int
