@@ -52,7 +52,7 @@ clean:
 
 install: $(BUILD_RULES)
 	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir)
-	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(SHARED_LIBNAME) $(libdir)
+	[ $(BUILD_SHARED) = yes ] && $(INSTALL) -c $(SHARED_LIBNAME) $(libdir)
 	$(INSTALL) -c -m 644 player.h $(includedir)
 
 depend:
