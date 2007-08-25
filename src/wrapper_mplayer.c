@@ -487,7 +487,7 @@ slave_get_property_str (player_t *player, slave_property_t property)
 }
 
 static void
-slave_action (player_t *player, slave_cmd_t cmd, void *value)
+slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
 {
   mplayer_t *mplayer = NULL;
 
@@ -501,13 +501,13 @@ slave_action (player_t *player, slave_cmd_t cmd, void *value)
 
   switch (cmd) {
   case SLAVE_DVDNAV:
-    send_to_slave (mplayer, "dvdnav %i", *((int *) value));
+    send_to_slave (mplayer, "dvdnav %i", value->i_val);
     break;
 
   case SLAVE_LOADFILE:
     if (player->mrl->name)
       send_to_slave (mplayer, "loadfile \"%s\" %i",
-                     player->mrl->name, *((int *) value));
+                     player->mrl->name, value->i_val);
     break;
 
   case SLAVE_PAUSE:
@@ -519,7 +519,7 @@ slave_action (player_t *player, slave_cmd_t cmd, void *value)
     break;
 
   case SLAVE_SEEK:
-    send_to_slave (mplayer, "seek %i 0", *((int *) value));
+    send_to_slave (mplayer, "seek %i 0", value->i_val);
     break;
 
   case SLAVE_STOP:
@@ -552,7 +552,10 @@ slave_cmd (player_t *player, slave_cmd_t cmd)
 static inline void
 slave_cmd_int (player_t *player, slave_cmd_t cmd, int value)
 {
-  slave_action (player, cmd, &value);
+  slave_value_t param;
+
+  param.i_val = value;
+  slave_action (player, cmd, &param);
 }
 
 /**
