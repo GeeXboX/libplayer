@@ -501,11 +501,12 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
 
   switch (cmd) {
   case SLAVE_DVDNAV:
-    send_to_slave (mplayer, "dvdnav %i", value->i_val);
+    if (value)
+      send_to_slave (mplayer, "dvdnav %i", value->i_val);
     break;
 
   case SLAVE_LOADFILE:
-    if (player->mrl->name)
+    if (player->mrl->name && value)
       send_to_slave (mplayer, "loadfile \"%s\" %i",
                      player->mrl->name, value->i_val);
     break;
@@ -519,7 +520,8 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
     break;
 
   case SLAVE_SEEK:
-    send_to_slave (mplayer, "seek %i 0", value->i_val);
+    if (value)
+      send_to_slave (mplayer, "seek %i 0", value->i_val);
     break;
 
   case SLAVE_STOP:
