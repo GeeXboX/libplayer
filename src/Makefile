@@ -17,16 +17,16 @@ SRCS =  player.c \
 	x11_common.c \
 	wrapper_dummy.c
 
-ifeq ($(WRAPPER_XINE),yes)
-  SRCS += wrapper_xine.c
+ifeq ($(WRAPPER_MPLAYER),yes)
+  SRCS += wrapper_mplayer.c
 endif
 
 ifeq ($(WRAPPER_VLC),yes)
   SRCS += wrapper_vlc.c
 endif
 
-ifeq ($(WRAPPER_MPLAYER),yes)
-  SRCS += wrapper_mplayer.c
+ifeq ($(WRAPPER_XINE),yes)
+  SRCS += wrapper_xine.c
 endif
 
 OBJS = $(SRCS:.c=.o)
