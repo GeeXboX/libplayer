@@ -73,7 +73,7 @@ typedef struct mplayer_s {
   FILE *fifo_out;     /* fifo on the pipe_out (read only) */
   /* specific to thread */
   pthread_t th_fifo;      /* thread for the fifo_out parser */
-  pthread_mutex_t mutex;
+  pthread_mutex_t mutex_search;
   pthread_mutex_t mutex_status;
   sem_t sem;
   mp_search_t *search;    /* use when a property is searched */
@@ -235,7 +235,7 @@ thread_fifo (void *arg)
       while (fgets (buffer, SLAVE_CMD_BUFFER, mplayer->fifo_out))
       {
         /* lock the mutex for protect mplayer->search */
-        pthread_mutex_lock (&mplayer->mutex);
+        pthread_mutex_lock (&mplayer->mutex_search);
         /* search the result for a property */
         if (mplayer->search && mplayer->search->property &&
             (it = strstr(buffer, mplayer->search->property)))
@@ -258,7 +258,7 @@ thread_fifo (void *arg)
             sem_post (&mplayer->sem);
           }
         }
-        pthread_mutex_unlock (&mplayer->mutex);
+        pthread_mutex_unlock (&mplayer->mutex_search);
 
         if (strstr (buffer, "EOF code: 1")) {
           pthread_mutex_lock (&mplayer->mutex_status);
@@ -353,13 +353,13 @@ slave_result (slave_property_t property, player_t *player)
     return NULL;
 
   /* lock the mutex for protect mplayer->search */
-  pthread_mutex_lock (&mplayer->mutex);
+  pthread_mutex_lock (&mplayer->mutex_search);
   mplayer->search = malloc (sizeof (mp_search_t));
 
   if (mplayer->search) {
     mplayer->search->property = strdup (str);
     mplayer->search->value = NULL;
-    pthread_mutex_unlock (&mplayer->mutex);
+    pthread_mutex_unlock (&mplayer->mutex_search);
 
     /* send the slave command for get a response from MPlayer */
     slave_get_property (player, property);
@@ -382,13 +382,13 @@ slave_result (slave_property_t property, player_t *player)
     ret = mplayer->search->value;
 
     /* the search is ended */
-    pthread_mutex_lock (&mplayer->mutex);
+    pthread_mutex_lock (&mplayer->mutex_search);
     free (mplayer->search);
     mplayer->search = NULL;
-    pthread_mutex_unlock (&mplayer->mutex);
+    pthread_mutex_unlock (&mplayer->mutex_search);
   }
   else
-    pthread_mutex_unlock (&mplayer->mutex);
+    pthread_mutex_unlock (&mplayer->mutex_search);
 
   return ret;
 }
@@ -1344,7 +1344,7 @@ register_private_mplayer (void)
 
   /* init semaphore and mutex */
   sem_init (&mplayer->sem, 0, 0);
-  pthread_mutex_init (&mplayer->mutex, NULL);
+  pthread_mutex_init (&mplayer->mutex_search, NULL);
   pthread_mutex_init (&mplayer->mutex_status, NULL);
 
   return mplayer;
