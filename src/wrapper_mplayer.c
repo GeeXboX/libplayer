@@ -74,6 +74,7 @@ typedef struct mplayer_s {
   /* specific to thread */
   pthread_t th_fifo;      /* thread for the fifo_out parser */
   pthread_mutex_t mutex;
+  pthread_mutex_t mutex_status;
   sem_t sem;
   mp_search_t *search;    /* use when a property is searched */
 } mplayer_t;
@@ -260,10 +261,12 @@ thread_fifo (void *arg)
         pthread_mutex_unlock (&mplayer->mutex);
 
         if (strstr (buffer, "EOF code: 1")) {
+          pthread_mutex_lock (&mplayer->mutex_status);
           /* when the stream is ended without stop action */
           if (mplayer->status == MPLAYER_IS_PLAYING) {
             plog (MODULE_NAME, "Playback of stream has ended");
             mplayer->status = MPLAYER_IS_IDLE;
+            pthread_mutex_unlock (&mplayer->mutex_status);
 
             if (player->event_cb)
               player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
@@ -272,12 +275,18 @@ thread_fifo (void *arg)
               x11_unmap (player);
           }
           /* when the stream is ended with stop action */
-          else if (mplayer->status == MPLAYER_IS_IDLE)
+          else if (mplayer->status == MPLAYER_IS_IDLE) {
+            pthread_mutex_unlock (&mplayer->mutex_status);
             /* ok, now we can continue */
             sem_post (&mplayer->sem);
+          }
+          else
+            pthread_mutex_unlock (&mplayer->mutex_status);
         }
         else if (strstr (buffer, "Exiting")) {
+          pthread_mutex_lock (&mplayer->mutex_status);
           mplayer->status = MPLAYER_IS_DEAD;
+          pthread_mutex_unlock (&mplayer->mutex_status);
           break;
         }
       }
@@ -883,8 +892,12 @@ mplayer_mrl_get_audio_properties (player_t *player,
 
   mplayer = (mplayer_t *) player->priv;
   /* FIXME: test for know if it's playing or not will be better */
-  if (mplayer->status == MPLAYER_IS_DEAD)
+  pthread_mutex_lock (&mplayer->mutex_status);
+  if (mplayer->status == MPLAYER_IS_DEAD) {
+    pthread_mutex_unlock (&mplayer->mutex_status);
     return;
+  }
+  pthread_mutex_unlock (&mplayer->mutex_status);
 
   buffer_c = slave_get_property_str (player, PROPERTY_AUDIO_CODEC);
   if (buffer_c) {
@@ -928,8 +941,12 @@ mplayer_mrl_get_video_properties (player_t *player,
 
   mplayer = (mplayer_t *) player->priv;
   /* FIXME: test for know if it's playing or not will be better */
-  if (mplayer->status == MPLAYER_IS_DEAD)
+  pthread_mutex_lock (&mplayer->mutex_status);
+  if (mplayer->status == MPLAYER_IS_DEAD) {
+    pthread_mutex_unlock (&mplayer->mutex_status);
     return;
+  }
+  pthread_mutex_unlock (&mplayer->mutex_status);
 
   buffer_c = slave_get_property_str (player, PROPERTY_VIDEO_CODEC);
   if (buffer_c) {
@@ -975,8 +992,13 @@ mplayer_mrl_get_properties (player_t *player)
     return;
 
   mplayer = (mplayer_t *) player->priv;
-  if (mplayer->status == MPLAYER_IS_DEAD)
+
+  pthread_mutex_lock (&mplayer->mutex_status);
+  if (mplayer->status == MPLAYER_IS_DEAD) {
+    pthread_mutex_unlock (&mplayer->mutex_status);
     return;
+  }
+  pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* now fetch properties */
   stat (mrl->name, &st);
@@ -1009,8 +1031,13 @@ mplayer_mrl_get_metadata (player_t *player)
     return;
 
   mplayer = (mplayer_t *) player->priv;
-  if (mplayer->status == MPLAYER_IS_DEAD)
+
+  pthread_mutex_lock (&mplayer->mutex_status);
+  if (mplayer->status == MPLAYER_IS_DEAD) {
+    pthread_mutex_unlock (&mplayer->mutex_status);
     return;
+  }
+  pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* now fetch metadata */
   buffer_c = slave_get_property_str (player, PROPERTY_METADATA_TITLE);
@@ -1088,7 +1115,9 @@ mplayer_playback_start (player_t *player)
   if (player->mrl->subtitle)
     slave_cmd (player, SLAVE_SUB_LOAD);
 
+  pthread_mutex_lock (&mplayer->mutex_status);
   mplayer->status = MPLAYER_IS_PLAYING;
+  pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* X11 */
   if (player->x11 && mrl_uses_vo (player->mrl))
@@ -1112,10 +1141,14 @@ mplayer_playback_stop (player_t *player)
   if (!mplayer)
     return;
 
-  if (mplayer->status != MPLAYER_IS_PLAYING)
+  pthread_mutex_lock (&mplayer->mutex_status);
+  if (mplayer->status != MPLAYER_IS_PLAYING) {
+    pthread_mutex_unlock (&mplayer->mutex_status);
     return;
+  }
 
   mplayer->status = MPLAYER_IS_IDLE;
+  pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* X11 */
   if (player->x11 && mrl_uses_vo (player->mrl))
@@ -1312,6 +1345,7 @@ register_private_mplayer (void)
   /* init semaphore and mutex */
   sem_init (&mplayer->sem, 0, 0);
   pthread_mutex_init (&mplayer->mutex, NULL);
+  pthread_mutex_init (&mplayer->mutex_status, NULL);
 
   return mplayer;
 }
