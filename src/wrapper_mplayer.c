@@ -75,6 +75,7 @@ typedef struct mplayer_s {
   pthread_t th_fifo;      /* thread for the fifo_out parser */
   pthread_mutex_t mutex_search;
   pthread_mutex_t mutex_status;
+  pthread_mutex_t mutex_x11;
   sem_t sem;
   mp_search_t *search;    /* use when a property is searched */
 } mplayer_t;
@@ -271,8 +272,10 @@ thread_fifo (void *arg)
             if (player->event_cb)
               player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
             /* X11 */
+            pthread_mutex_lock (&mplayer->mutex_x11);
             if (player->x11 && mrl_uses_vo (player->mrl))
               x11_unmap (player);
+            pthread_mutex_unlock (&mplayer->mutex_x11);
           }
           /* when the stream is ended with stop action */
           else if (mplayer->status == MPLAYER_IS_IDLE) {
@@ -1120,8 +1123,10 @@ mplayer_playback_start (player_t *player)
   pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* X11 */
+  pthread_mutex_lock (&mplayer->mutex_x11);
   if (player->x11 && mrl_uses_vo (player->mrl))
     x11_map (player);
+  pthread_mutex_unlock (&mplayer->mutex_x11);
 
   return PLAYER_PB_OK;
 }
@@ -1151,8 +1156,10 @@ mplayer_playback_stop (player_t *player)
   pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* X11 */
+  pthread_mutex_lock (&mplayer->mutex_x11);
   if (player->x11 && mrl_uses_vo (player->mrl))
     x11_unmap (player);
+  pthread_mutex_unlock (&mplayer->mutex_x11);
 
   slave_cmd (player, SLAVE_STOP);
 }
@@ -1346,6 +1353,7 @@ register_private_mplayer (void)
   sem_init (&mplayer->sem, 0, 0);
   pthread_mutex_init (&mplayer->mutex_search, NULL);
   pthread_mutex_init (&mplayer->mutex_status, NULL);
+  pthread_mutex_init (&mplayer->mutex_x11, NULL);
 
   return mplayer;
 }
