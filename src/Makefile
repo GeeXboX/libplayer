@@ -48,7 +48,7 @@ lib_static: $(OBJS)
 	$(RANLIB) $(STATIC_LIBNAME)
 
 lib_shared: $(OBJS)
-	$(CC) -shared -Wl,-soname,$(SHARED_LIBNAME_VERSION) \
+	$(CC) -shared -Wl,-soname,$(SHARED_LIBNAME_MAJOR) \
 	  $(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(SHARED_LIBNAME_VERSION)
 	$(LN) -sf $(SHARED_LIBNAME_VERSION) $(SHARED_LIBNAME_MAJOR)
 	$(LN) -sf $(SHARED_LIBNAME_MAJOR) $(SHARED_LIBNAME)
