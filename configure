@@ -672,6 +672,7 @@ fi
 #################################################
 echolog ""
 echolog "libplayer: configure is OK"
+echolog "  version            $libplayer_version"
 echolog "configuration:"
 echolog "  install prefix     $PREFIX"
 echolog "  C compiler         $cc"
