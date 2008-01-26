@@ -195,6 +195,9 @@ mrl_free (mrl_t *mrl, int recursive)
 void
 mrl_list_free (mrl_t *mrl)
 {
+  if (!mrl)
+    return;
+
   /* go to the very begining of the playlist in case of recursive free() */
   while (mrl->prev)
     mrl = mrl->prev;
