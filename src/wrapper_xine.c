@@ -216,10 +216,10 @@ xine_player_init (player_t *player)
 
   /* X11 */
   if (player->x11 && player->x11->display) {
-    xine_gui_send_vo_data(x->stream,
-                          XINE_GUI_SEND_DRAWABLE_CHANGED, (void *) player->x11->window);
-    xine_gui_send_vo_data(x->stream,
-                          XINE_GUI_SEND_VIDEOWIN_VISIBLE, (void *) 1);
+    xine_gui_send_vo_data (x->stream, XINE_GUI_SEND_DRAWABLE_CHANGED,
+                           (void *) player->x11->window);
+    xine_gui_send_vo_data (x->stream, XINE_GUI_SEND_VIDEOWIN_VISIBLE,
+                           (void *) 1);
   }
 
   return PLAYER_INIT_OK;
