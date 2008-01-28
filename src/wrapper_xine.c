@@ -184,7 +184,6 @@ xine_player_init (player_t *player)
 
   switch (player->ao) {
   case PLAYER_AO_NULL:
-    id_ao = NULL;
     break;
 
   case PLAYER_AO_ALSA:
