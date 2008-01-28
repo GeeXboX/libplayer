@@ -19,8 +19,8 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef _X11_COMMON_H_
-#define _X11_COMMON_H_
+#ifndef X11_COMMON_H_
+#define X11_COMMON_H_
 
 #include <X11/Xlib.h>
 
@@ -37,4 +37,4 @@ void x11_uninit (player_t *player);
 void x11_map (player_t *player);
 void x11_unmap (player_t *player);
 
-#endif /* _X11_COMMON_H_ */
+#endif /* X11_COMMON_H_ */

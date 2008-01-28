@@ -19,8 +19,8 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef _PLAYER_INTERNALS_H_
-#define _PLAYER_INTERNALS_H_
+#ifndef PLAYER_INTERNALS_H_
+#define PLAYER_INTERNALS_H_
 
 typedef enum init_status {
   PLAYER_INIT_OK,
@@ -64,4 +64,4 @@ void mrl_metadata_free (mrl_metadata_t *meta);
 int mrl_uses_vo (mrl_t *mrl);
 int mrl_uses_ao (mrl_t *mrl);
 
-#endif /* _PLAYER_INTERNALS_H_ */
+#endif /* PLAYER_INTERNALS_H_ */

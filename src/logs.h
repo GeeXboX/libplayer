@@ -19,9 +19,9 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef _PLAYER_LOGS_H_
-#define _PLAYER_LOGS_H_
+#ifndef PLAYER_LOGS_H_
+#define PLAYER_LOGS_H_
 
 void plog (const char *module, const char *format, ...);
 
-#endif /* _PLAYER_LOGS_H_ */
+#endif /* PLAYER_LOGS_H_ */

@@ -19,8 +19,8 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef PLAYER_H_
+#define PLAYER_H_
 
 #include <inttypes.h>
 
@@ -195,4 +195,4 @@ void player_playback_pause (player_t *player);
 void player_playback_seek (player_t *player, int value);
 void player_playback_dvdnav (player_t *player, player_dvdnav_t value);
 
-#endif /* _PLAYER_H_ */
+#endif /* PLAYER_H_ */
