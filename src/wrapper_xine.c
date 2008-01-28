@@ -125,6 +125,9 @@ xine_player_init (player_t *player)
 
   x = (xine_player_t *) player->priv;
 
+  if (!x)
+    return PLAYER_INIT_ERROR;
+
   x->xine = xine_new ();
   xine_init (x->xine);
   xine_engine_set_param (x->xine, XINE_ENGINE_PARAM_VERBOSITY, verbosity);
