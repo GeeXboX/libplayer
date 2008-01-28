@@ -110,6 +110,7 @@ xine_player_init (player_t *player)
 
   char *id_vo = NULL;
   char *id_ao = NULL;
+  int use_x11 = 0;
   int visual = XINE_VISUAL_TYPE_NONE;
   void *data = NULL;
 
@@ -136,33 +137,21 @@ xine_player_init (player_t *player)
     break;
 
   case PLAYER_VO_X11:
+    use_x11 = 1;
     id_vo = strdup ("x11");
     visual = XINE_VISUAL_TYPE_X11;
-    if (!x11_init (player))
-      return PLAYER_INIT_ERROR;
-    data = player->x11->data;
-    if (!data)
-      return PLAYER_INIT_ERROR;
     break;
 
   case PLAYER_VO_X11_SDL:
+    use_x11 = 1;
     id_vo = strdup ("sdl");
     visual = XINE_VISUAL_TYPE_X11;
-    if (!x11_init (player))
-      return PLAYER_INIT_ERROR;
-    data = player->x11->data;
-    if (!data)
-      return PLAYER_INIT_ERROR;
     break;
 
   case PLAYER_VO_XV:
+    use_x11 = 1;
     id_vo = strdup ("xv");
     visual = XINE_VISUAL_TYPE_X11;
-    if (!x11_init (player))
-      return PLAYER_INIT_ERROR;
-    data = player->x11->data;
-    if (!data)
-      return PLAYER_INIT_ERROR;
     break;
 
   /* TODO, not implemented */
@@ -171,6 +160,15 @@ xine_player_init (player_t *player)
     visual = XINE_VISUAL_TYPE_FB;
     data = NULL;
   }
+
+  if (use_x11 && (!x11_init (player) || !player->x11->data)) {
+    if (id_vo)
+      free (id_vo);
+
+    return PLAYER_INIT_ERROR;
+  }
+  else if (use_x11)
+    data = player->x11->data;
 
   /* init video output driver */
   if (!(x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data))) {
