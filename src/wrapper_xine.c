@@ -151,7 +151,6 @@ xine_player_init (player_t *player)
     visual = XINE_VISUAL_TYPE_X11;
     break;
 
-  /* TODO, not implemented */
   case PLAYER_VO_FB:
     id_vo = strdup ("fb");
     visual = XINE_VISUAL_TYPE_FB;
