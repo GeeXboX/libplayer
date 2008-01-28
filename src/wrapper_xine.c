@@ -49,6 +49,7 @@ typedef struct xine_player_s {
 } xine_player_t;
 
 
+/* private functions */
 static void
 xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
 {
@@ -101,7 +102,6 @@ send_event (player_t *player, int event)
   xine_event_send (x->stream, &xine_event);
 }
 
-/* private functions */
 static init_status_t
 xine_player_init (player_t *player)
 {
