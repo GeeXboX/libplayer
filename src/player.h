@@ -65,7 +65,8 @@ typedef enum player_mrl_type {
   PLAYER_MRL_TYPE_FILE_VIDEO,
   PLAYER_MRL_TYPE_FILE_IMAGE,
   PLAYER_MRL_TYPE_DVD_SIMPLE,
-  PLAYER_MRL_TYPE_DVD_NAV
+  PLAYER_MRL_TYPE_DVD_NAV,
+  PLAYER_MRL_TYPE_CDDA
 } player_mrl_type_t;
 
 typedef enum player_add_mrl {

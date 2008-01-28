@@ -229,6 +229,7 @@ mrl_uses_ao (mrl_t *mrl)
   case PLAYER_MRL_TYPE_FILE_AUDIO:
   case PLAYER_MRL_TYPE_DVD_SIMPLE:
   case PLAYER_MRL_TYPE_DVD_NAV:
+  case PLAYER_MRL_TYPE_CDDA:
     return 1;
   default:
     return 0;
