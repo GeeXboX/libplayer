@@ -131,9 +131,6 @@ xine_player_init (player_t *player)
 
   switch (player->vo) {
   case PLAYER_VO_NULL:
-    id_vo = NULL;
-    visual = XINE_VISUAL_TYPE_NONE;
-    data = NULL;
     break;
 
   case PLAYER_VO_X11:
@@ -158,7 +155,6 @@ xine_player_init (player_t *player)
   case PLAYER_VO_FB:
     id_vo = strdup ("fb");
     visual = XINE_VISUAL_TYPE_FB;
-    data = NULL;
   }
 
   if (use_x11 && (!x11_init (player) || !player->x11->data)) {
