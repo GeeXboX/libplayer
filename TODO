@@ -3,7 +3,7 @@ Some work to make on libplayer (can be incomplete)
 
 Commons:
   * add VCD and SVCD support
-  * add CDDA/CDDB support
+  * add CDDB support
   * add functions for command subtitles
     - select a subtitle
     - get list of all available subtitles
