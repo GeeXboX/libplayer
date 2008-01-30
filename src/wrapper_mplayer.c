@@ -659,6 +659,32 @@ mp_identify (player_t *player)
   }
 }
 
+static int
+is_available (const char *bin)
+{
+  char *p, *fp;
+  char prog[256];
+
+  fp = strdup (getenv ("PATH"));
+  p = fp;
+
+  if (!fp)
+    return 0;
+
+  for (p = strtok (p, ":"); p; p = strtok (NULL, ":")) {
+    snprintf (prog, sizeof (prog), "%s/%s", p, bin);
+    if (!access (prog, X_OK)) {
+      free (fp);
+      return 1;
+    }
+  }
+
+  plog (MODULE_NAME, "%s executable not found in the PATH", bin);
+
+  free (fp);
+  return 0;
+}
+
 
 /* Use only these commands for speak with MPlayer!
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -693,6 +719,10 @@ mplayer_init (player_t *player)
   mplayer = (mplayer_t *) player->priv;
 
   if (!mplayer)
+    return PLAYER_INIT_ERROR;
+
+  /* test if MPlayer is available */
+  if (!is_available ("mplayer"))
     return PLAYER_INIT_ERROR;
 
   /* action for SIGPIPE */
