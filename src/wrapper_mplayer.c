@@ -662,10 +662,15 @@ mp_identify (player_t *player)
 static int
 is_available (const char *bin)
 {
-  char *p, *fp;
+  char *p, *fp, *env;
   char prog[256];
 
-  fp = strdup (getenv ("PATH"));
+  env = getenv ("PATH");
+
+  if (!env)
+    return 0;
+
+  fp = strdup (env);
   p = fp;
 
   if (!fp)
