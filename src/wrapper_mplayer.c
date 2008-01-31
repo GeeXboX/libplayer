@@ -31,7 +31,7 @@
 #include <sys/stat.h>     /* stat */
 #include <signal.h>       /* sigaction */
 #include <pthread.h>      /* pthread_... */
-#include <semaphore.h>    /* sem_post sem_wait sem_init */
+#include <semaphore.h>    /* sem_post sem_wait sem_init sem_destroy */
 
 #include "player.h"
 #include "player_internals.h"
@@ -922,6 +922,11 @@ mplayer_uninit (player_t *player)
     if (player->x11)
       x11_uninit (player);
   }
+
+  pthread_mutex_destroy (&mplayer->mutex_search);
+  pthread_mutex_destroy (&mplayer->mutex_status);
+  pthread_mutex_destroy (&mplayer->mutex_x11);
+  sem_destroy (&mplayer->sem);
 
   free (mplayer);
 }
