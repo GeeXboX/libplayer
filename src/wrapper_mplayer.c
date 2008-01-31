@@ -715,6 +715,7 @@ mplayer_init (player_t *player)
   char *params[32];
   char winid[32];
   int pp = 0;
+  pthread_attr_t attr;
 
   plog (MODULE_NAME, "init");
 
@@ -860,10 +861,18 @@ mplayer_init (player_t *player)
 
         mplayer->status = MPLAYER_IS_IDLE;
 
+        pthread_attr_init (&attr);
+        pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
+
         /* create the thread */
-        if (pthread_create (&mplayer->th_fifo, NULL,
+        if (pthread_create (&mplayer->th_fifo, &attr,
                             thread_fifo, (void *) player) >= 0)
+        {
+          pthread_attr_destroy (&attr);
           return PLAYER_INIT_OK;
+        }
+
+        pthread_attr_destroy (&attr);
       }
     }
   }
