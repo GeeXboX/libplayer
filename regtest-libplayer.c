@@ -80,6 +80,7 @@ do_regression_tests (player_t *player, char *mrl, player_mrl_type_t type)
   player_mrl_previous (player);
   player_mrl_next (player);
   player_mrl_remove (player);
+  player_mrl_remove_all (player);
 }
 
 static void
