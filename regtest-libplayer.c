@@ -79,6 +79,7 @@ do_regression_tests (player_t *player, char *mrl, player_mrl_type_t type)
   player_playback_stop (player);
   player_mrl_previous (player);
   player_mrl_next (player);
+  player_mrl_remove (player);
 }
 
 static void
