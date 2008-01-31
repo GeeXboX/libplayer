@@ -276,6 +276,46 @@ player_mrl_append (player_t *player,
 }
 
 void
+player_mrl_remove (player_t *player)
+{
+  mrl_t *mrl, *mrl_p = NULL, *mrl_n = NULL;
+
+  plog (MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  mrl = player->mrl;
+  if (!mrl)
+    return;
+
+  mrl_p = mrl->prev;
+  mrl_n = mrl->next;
+
+  player_playback_stop (player);
+  mrl_free (mrl, 0);
+
+  /* link previous with the next and use the next as the current MRL */
+  if (mrl_p && mrl_n) {
+    mrl_p->next = mrl_n;
+    mrl_n->prev = mrl_p;
+    player->mrl = mrl_n;
+  }
+  /* use the previous as the current MRL */
+  else if (mrl_p) {
+    mrl_p->next = NULL;
+    player->mrl = mrl_p;
+  }
+  /* use the next as the current MRL */
+  else if (mrl_n) {
+    mrl_n->prev = NULL;
+    player->mrl = mrl_n;
+  }
+  else
+    player->mrl = NULL;
+}
+
+void
 player_mrl_previous (player_t *player)
 {
   mrl_t *mrl;
