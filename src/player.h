@@ -174,6 +174,7 @@ void player_mrl_append (player_t *player,
                         char *location, char *subtitle, player_mrl_type_t type,
                         player_add_mrl_t when);
 void player_mrl_remove (player_t *player);
+void player_mrl_remove_all (player_t *player);
 void player_mrl_previous (player_t *player);
 void player_mrl_next (player_t *player);
 void player_mrl_get_properties (player_t *player);

@@ -316,6 +316,26 @@ player_mrl_remove (player_t *player)
 }
 
 void
+player_mrl_remove_all (player_t *player)
+{
+  mrl_t *mrl;
+
+  plog (MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  mrl = player->mrl;
+  if (!mrl)
+    return;
+
+  player_playback_stop (player);
+
+  mrl_list_free (mrl);
+  player->mrl = NULL;
+}
+
+void
 player_mrl_previous (player_t *player)
 {
   mrl_t *mrl;
