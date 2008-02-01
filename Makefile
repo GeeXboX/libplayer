@@ -4,7 +4,9 @@ endif
 include config.mak
 
 LIBTEST = regtest-libplayer
-SRCS = regtest-libplayer.c
+LIBTEST_SRCS = regtest-libplayer.c
+TESTPLAYER = test-player
+TESTPLAYER_SRCS = test-player.c
 
 CFLAGS += -Isrc
 LDFLAGS += -Lsrc -lplayer -lpthread
@@ -19,11 +21,13 @@ lib:
 	$(MAKE) -C src
 
 test:
-	$(CC) $(SRCS) $(OPTFLAGS) $(CFLAGS) $(LDFLAGS) -o $(LIBTEST)
+	$(CC) $(LIBTEST_SRCS) $(OPTFLAGS) $(CFLAGS) $(LDFLAGS) -o $(LIBTEST)
+	$(CC) $(TESTPLAYER_SRCS) $(OPTFLAGS) $(CFLAGS) $(LDFLAGS) -o $(TESTPLAYER)
 
 clean:
 	$(MAKE) -C src clean
 	rm -f $(LIBTEST)
+	rm -f $(TESTPLAYER)
 
 distclean: clean
 	rm -f config.log
@@ -32,5 +36,6 @@ distclean: clean
 install:
 	$(MAKE) -C src install
 	$(INSTALL) -c -m 755 $(LIBTEST) $(bindir)
+	$(INSTALL) -c -m 755 $(TESTPLAYER) $(bindir)
 
 .phony: clean distclean
