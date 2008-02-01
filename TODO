@@ -24,7 +24,6 @@ Commons:
 
 MPlayer:
   * add vesa and vidix support
-  * test if a stream is loaded without error
 
 Xine:
   * add vidix support
