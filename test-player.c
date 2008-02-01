@@ -62,13 +62,13 @@
   "\n"
 #define TESTPLAYER_HELP TESTPLAYER_OPTIONS TESTPLAYER_COMMANDS
 
-int
+static int
 event_cb (player_event_t e, void *data)
 {
   return 0;
 }
 
-int
+static int
 getch (void)
 {
   struct termios oldt, newt;
@@ -88,7 +88,7 @@ getch (void)
   return ch;
 }
 
-void
+static void
 load_media (player_t *player)
 {
   player_mrl_type_t type = PLAYER_MRL_TYPE_UNKNOWN;
