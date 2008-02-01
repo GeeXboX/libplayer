@@ -283,6 +283,17 @@ thread_fifo (void *arg)
           else
             pthread_mutex_unlock (&mplayer->mutex_status);
         }
+        /* when the stream is successfully started with action "play" */
+        else if (strstr (buffer, "Starting playback")) {
+            pthread_mutex_lock (&mplayer->mutex_status);
+            mplayer->status = MPLAYER_IS_PLAYING;
+            pthread_mutex_unlock (&mplayer->mutex_status);
+        }
+        /* Same as "Command loadfile", it is detected for continue
+         * but here only with the action "play".
+         */
+        else if (strstr (buffer, "Command loadlist"))
+          sem_post (&mplayer->sem);
         else if (strstr (buffer, "Exiting")) {
           pthread_mutex_lock (&mplayer->mutex_status);
           mplayer->status = MPLAYER_IS_DEAD;
@@ -518,6 +529,10 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
     if (player->mrl->name && value)
       send_to_slave (mplayer, "loadfile \"%s\" %i",
                      player->mrl->name, value->i_val);
+
+    send_to_slave (mplayer, "loadlist");
+    /* wait that the thread will confirm "loadlist" */
+    sem_wait (&mplayer->sem);
     break;
 
   case SLAVE_PAUSE:
@@ -1155,17 +1170,19 @@ mplayer_playback_start (player_t *player)
   /* identify the current stream */
   mp_identify (player);
 
-  // FIXME: playback error if not loaded
   /* 0: new play, 1: append to the current playlist */
   slave_cmd_int (player, SLAVE_LOADFILE, 0);
+
+  pthread_mutex_lock (&mplayer->mutex_status);
+  if (mplayer->status != MPLAYER_IS_PLAYING) {
+    pthread_mutex_unlock (&mplayer->mutex_status);
+    return PLAYER_PB_ERROR;
+  }
+  pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* load subtitle if exists */
   if (player->mrl->subtitle)
     slave_cmd (player, SLAVE_SUB_LOAD);
-
-  pthread_mutex_lock (&mplayer->mutex_status);
-  mplayer->status = MPLAYER_IS_PLAYING;
-  pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* X11 */
   if (player->x11 && mrl_uses_vo (player->mrl))
