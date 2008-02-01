@@ -1318,15 +1318,26 @@ mplayer_get_volume (player_t *player)
 static player_mute_t
 mplayer_get_mute (player_t *player)
 {
+  player_mute_t mute = PLAYER_MUTE_UNKNOWN;
+  char *buffer;
+
   plog (MODULE_NAME, "get_mute");
 
   if (!player)
-    return PLAYER_MUTE_UNKNOWN;
+    return mute;
 
-  if (slave_get_property_int (player, PROPERTY_MUTE))
-    return PLAYER_MUTE_ON;
+  buffer = slave_get_property_str (player, PROPERTY_MUTE);
 
-  return PLAYER_MUTE_OFF;
+  if (buffer) {
+    if (!strcmp (buffer, "yes"))
+      mute = PLAYER_MUTE_ON;
+    else
+      mute = PLAYER_MUTE_OFF;
+
+    free (buffer);
+  }
+
+  return mute;
 }
 
 static void
