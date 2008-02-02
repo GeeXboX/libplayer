@@ -38,6 +38,9 @@
 #ifdef HAVE_VLC
 #include "wrapper_vlc.h"
 #endif /* HAVE_VLC */
+#ifdef HAVE_GSTREAMER
+#include "wrapper_gstreamer.h"
+#endif /* HAVE_GSTREAMER */
 
 #define MODULE_NAME "player"
 
@@ -84,6 +87,12 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   case PLAYER_TYPE_VLC:
     player->funcs = register_functions_vlc ();
     player->priv = register_private_vlc ();
+    break;
+#endif /* HAVE_VLC */
+#ifdef HAVE_GSTREAMER
+  case PLAYER_TYPE_GSTREAMER:
+    player->funcs = register_functions_gstreamer ();
+    player->priv = register_private_gstreamer ();
     break;
 #endif /* HAVE_VLC */
   case PLAYER_TYPE_DUMMY:

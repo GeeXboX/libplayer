@@ -172,6 +172,11 @@ main (int argc, char **argv)
 #else
         printf ("VLC not supported, dummy player used instead!\n");
 #endif /* HAVE_VLC */
+#ifdef HAVE_GSTREAMER
+        type = PLAYER_TYPE_GSTREAMER;
+#else
+        printf ("GStreamer not supported, dummy player used instead!\n");
+#endif /* HAVE_GSTREAMER */
     }
     else if (!strcmp (argv[argc], "-ao")) {
       if (!strcmp (argv[argc + 1], "alsa"))

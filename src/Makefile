@@ -34,6 +34,10 @@ ifeq ($(WRAPPER_XINE),yes)
   SRCS += wrapper_xine.c
 endif
 
+ifeq ($(WRAPPER_GSTREAMER),yes)
+  SRCS += wrapper_gstreamer.c
+endif
+
 OBJS = $(SRCS:.c=.o)
 
 .SUFFIXES: .c .o

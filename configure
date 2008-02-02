@@ -44,11 +44,14 @@ show_help(){
   echo "  --disable-vlc               do not build VLC wrapper"
   echo "  --enable-xine               build xine wrapper"
   echo "  --disable-xine              do not build xine wrapper"
+  echo "  --enable-gstreamer          build GStreamer wrapper"
+  echo "  --disable-gstreamer         do not build GStreamer wrapper"
 
   echo ""
   echo "Search paths:"
   echo "  --with-vlc-dir=DIR          check for libvlc installed in DIR"
   echo "  --with-xine-dir=DIR         check for libxine installed in DIR"
+  echo "  --with-gstreamer-dir=DIR    check for libgstreamer installed in DIR"
   echo "  --with-X11-dir=DIR          check for libX11 installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
@@ -316,6 +319,7 @@ cross_compile="no"
 wrapper_xine="yes"
 wrapper_mplayer="yes"
 wrapper_vlc="yes"
+wrapper_gstreamer="yes"
 INSTALL="install"
 libplayer_version=`grep '#define LIBPLAYER_VERSION[[:space:]]' src/player.h | sed 's/[^0-9\.]//g'`
 
@@ -429,6 +433,12 @@ for opt do
   --disable-vlc) wrapper_vlc="no";
   ;;
   --with-vlc-dir=*) libvlcdir="$optval";
+  ;;
+  --enable-gstreamer) wrapper_gstreamer="yes";
+  ;;
+  --disable-gstreamer) wrapper_gstreamer="no";
+  ;;
+  --with-gstreamer-dir=*) libgstreamerdir="$optval";
   ;;
   --with-X11-dir=*) libX11dir="$optval";
   ;;
@@ -668,6 +678,22 @@ if test "$wrapper_vlc" = "yes"; then
 fi
 
 #################################################
+#   check for libgstreamer
+#################################################
+if test "$wrapper_gstreamer" = "yes"; then
+  echolog "Checking for libgstreamer ..."
+  check_cflags `pkg-config gstreamer-0.10 --cflags`
+  check_ldflags `pkg-config gstreamer-0.10 --libs`
+  if [ -n "$libgstreamerdir" ]; then
+    check_cflags -I$libgstreamerdir
+    check_ldflags -L$libgstreamerdir
+  fi
+  check_lib gst/gst.h gst_init -lgstreamer-0.10 || die "Error, can't find libgstreamer !"
+  add_cflags -DHAVE_GSTREAMER
+  add_extralibs -lpthread
+fi
+
+#################################################
 #   logging result
 #################################################
 echolog ""
@@ -733,6 +759,7 @@ append_config "DEBUG=$debug"
 append_config "WRAPPER_XINE=$wrapper_xine"
 append_config "WRAPPER_MPLAYER=$wrapper_mplayer"
 append_config "WRAPPER_VLC=$wrapper_vlc"
+append_config "WRAPPER_GSTREAMER=$wrapper_gstreamer"
 
 clean
 exit 0
