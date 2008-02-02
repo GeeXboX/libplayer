@@ -36,7 +36,7 @@
   " -h                this help\n" \
   "\n" \
   "Options:\n" \
-  " -p <player>       specify the player (mplayer|xine|vlc)\n" \
+  " -p <player>       specify the player (mplayer|xine|vlc|gstreamer)\n" \
   " -ao <audio_out>   specify the audio output (alsa|oss)\n" \
   " -vo <video_out>   specify the video output (x11|sdl:x11|xv|fb)\n" \
   "\n" \
@@ -172,6 +172,7 @@ main (int argc, char **argv)
 #else
         printf ("VLC not supported, dummy player used instead!\n");
 #endif /* HAVE_VLC */
+      if (!strcmp (argv[argc + 1], "gstreamer"))
 #ifdef HAVE_GSTREAMER
         type = PLAYER_TYPE_GSTREAMER;
 #else
