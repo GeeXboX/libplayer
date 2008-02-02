@@ -6,3 +6,4 @@ syntax: regexp
 config.log
 config.mak
 regtest-libplayer$
+test-player$
