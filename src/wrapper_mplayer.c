@@ -946,7 +946,6 @@ static void
 mplayer_mrl_get_audio_properties (player_t *player,
                                   mrl_properties_audio_t *audio)
 {
-  char *buffer_c;
   int buffer_i;
   mplayer_t *mplayer = NULL;
 
@@ -962,11 +961,7 @@ mplayer_mrl_get_audio_properties (player_t *player,
   }
   pthread_mutex_unlock (&mplayer->mutex_status);
 
-  buffer_c = slave_get_property_str (player, PROPERTY_AUDIO_CODEC);
-  if (buffer_c) {
-    audio->codec = strdup (buffer_c);
-    free (buffer_c);
-  }
+  audio->codec = slave_get_property_str (player, PROPERTY_AUDIO_CODEC);
   if (audio->codec)
     plog (MODULE_NAME, "Audio Codec: %s", audio->codec);
 
@@ -995,7 +990,6 @@ static void
 mplayer_mrl_get_video_properties (player_t *player,
                                   mrl_properties_video_t *video)
 {
-  char *buffer_c;
   int buffer_i;
   mplayer_t *mplayer = NULL;
 
@@ -1011,11 +1005,7 @@ mplayer_mrl_get_video_properties (player_t *player,
   }
   pthread_mutex_unlock (&mplayer->mutex_status);
 
-  buffer_c = slave_get_property_str (player, PROPERTY_VIDEO_CODEC);
-  if (buffer_c) {
-    video->codec = strdup (buffer_c);
-    free (buffer_c);
-  }
+  video->codec = slave_get_property_str (player, PROPERTY_VIDEO_CODEC);
   if (video->codec)
     plog (MODULE_NAME, "Video Codec: %s", video->codec);
 
@@ -1082,7 +1072,6 @@ mplayer_mrl_get_properties (player_t *player)
 static void
 mplayer_mrl_get_metadata (player_t *player)
 {
-  char *buffer_c;
   mplayer_t *mplayer = NULL;
   mrl_t *mrl;
 
@@ -1103,51 +1092,27 @@ mplayer_mrl_get_metadata (player_t *player)
   pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* now fetch metadata */
-  buffer_c = slave_get_property_str (player, PROPERTY_METADATA_TITLE);
-  if (buffer_c) {
-    mrl->meta->title = strdup (buffer_c);
-    free (buffer_c);
-  }
+  mrl->meta->title = slave_get_property_str (player, PROPERTY_METADATA_TITLE);
   if (mrl->meta->title)
     plog (MODULE_NAME, "Meta Title: %s", mrl->meta->title);
 
-  buffer_c = slave_get_property_str (player, PROPERTY_METADATA_ARTIST);
-  if (buffer_c) {
-    mrl->meta->artist = strdup (buffer_c);
-    free (buffer_c);
-  }
+  mrl->meta->artist = slave_get_property_str (player, PROPERTY_METADATA_ARTIST);
   if (mrl->meta->artist)
     plog (MODULE_NAME, "Meta Artist: %s", mrl->meta->artist);
 
-  buffer_c = slave_get_property_str (player, PROPERTY_METADATA_GENRE);
-  if (buffer_c) {
-    mrl->meta->genre = strdup (buffer_c);
-    free (buffer_c);
-  }
+  mrl->meta->genre = slave_get_property_str (player, PROPERTY_METADATA_GENRE);
   if (mrl->meta->genre)
     plog (MODULE_NAME, "Meta Genre: %s", mrl->meta->genre);
 
-  buffer_c = slave_get_property_str (player, PROPERTY_METADATA_ALBUM);
-  if (buffer_c) {
-    mrl->meta->album = strdup (buffer_c);
-    free (buffer_c);
-  }
+  mrl->meta->album = slave_get_property_str (player, PROPERTY_METADATA_ALBUM);
   if (mrl->meta->album)
     plog (MODULE_NAME, "Meta Album: %s", mrl->meta->album);
 
-  buffer_c = slave_get_property_str (player, PROPERTY_METADATA_YEAR);
-  if (buffer_c) {
-    mrl->meta->year = strdup (buffer_c);
-    free (buffer_c);
-  }
+  mrl->meta->year = slave_get_property_str (player, PROPERTY_METADATA_YEAR);
   if (mrl->meta->year)
     plog (MODULE_NAME, "Meta Year: %s", mrl->meta->year);
 
-  buffer_c = slave_get_property_str (player, PROPERTY_METADATA_TRACK);
-  if (buffer_c) {
-    mrl->meta->track = strdup (buffer_c);
-    free (buffer_c);
-  }
+  mrl->meta->track = slave_get_property_str (player, PROPERTY_METADATA_TRACK);
   if (mrl->meta->track)
     plog (MODULE_NAME, "Meta Track: %s", mrl->meta->track);
 }
