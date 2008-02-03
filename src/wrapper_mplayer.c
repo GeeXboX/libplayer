@@ -860,6 +860,11 @@ mplayer_init (player_t *player)
         case PLAYER_AO_OSS:
           params[pp++] = "oss";
           break;
+
+        default:
+          plog (player, PLAYER_MSG_WARNING,
+                MODULE_NAME, "Unsupported audio output type\n");
+          break;
         }
 
         params[pp] = NULL;

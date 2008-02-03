@@ -198,6 +198,11 @@ xine_player_init (player_t *player)
   case PLAYER_AO_OSS:
     id_ao = strdup ("oss");
     break;
+
+  default:
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "Unsupported audio output type\n");
+    break;
   }
 
   /* init audio output driver */
