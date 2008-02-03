@@ -221,21 +221,21 @@ register_functions_vlc (void)
   player_funcs_t *funcs = NULL;
 
   funcs = malloc (sizeof (player_funcs_t));
-  funcs->init = vlc_init;
-  funcs->uninit = vlc_uninit;
-  funcs->set_verbosity = NULL;
-  funcs->mrl_get_props = vlc_mrl_get_properties;
-  funcs->mrl_get_meta = vlc_mrl_get_metadata;
-  funcs->pb_start = vlc_playback_start;
-  funcs->pb_stop = vlc_playback_stop;
-  funcs->pb_pause = vlc_playback_pause;
-  funcs->pb_seek = vlc_playback_seek;
-  funcs->pb_dvdnav = vlc_playback_dvdnav;
-  funcs->get_volume = vlc_get_volume;
-  funcs->get_mute = vlc_get_mute;
-  funcs->set_volume = vlc_set_volume;
-  funcs->set_mute = vlc_set_mute;
-  funcs->set_sub_delay = vlc_set_sub_delay;
+  funcs->init             = vlc_init;
+  funcs->uninit           = vlc_uninit;
+  funcs->set_verbosity    = NULL;
+  funcs->mrl_get_props    = vlc_mrl_get_properties;
+  funcs->mrl_get_meta     = vlc_mrl_get_metadata;
+  funcs->pb_start         = vlc_playback_start;
+  funcs->pb_stop          = vlc_playback_stop;
+  funcs->pb_pause         = vlc_playback_pause;
+  funcs->pb_seek          = vlc_playback_seek;
+  funcs->pb_dvdnav        = vlc_playback_dvdnav;
+  funcs->get_volume       = vlc_get_volume;
+  funcs->get_mute         = vlc_get_mute;
+  funcs->set_volume       = vlc_set_volume;
+  funcs->set_mute         = vlc_set_mute;
+  funcs->set_sub_delay    = vlc_set_sub_delay;
 
   return funcs;
 }

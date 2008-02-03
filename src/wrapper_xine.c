@@ -732,21 +732,21 @@ register_functions_xine (void)
   player_funcs_t *funcs = NULL;
 
   funcs = malloc (sizeof (player_funcs_t));
-  funcs->init = xine_player_init;
-  funcs->uninit = xine_player_uninit;
-  funcs->set_verbosity = NULL;
-  funcs->mrl_get_props = xine_player_mrl_get_properties;
-  funcs->mrl_get_meta = xine_player_mrl_get_metadata;
-  funcs->pb_start = xine_player_playback_start;
-  funcs->pb_stop = xine_player_playback_stop;
-  funcs->pb_pause = xine_player_playback_pause;
-  funcs->pb_seek = xine_player_playback_seek;
-  funcs->pb_dvdnav = xine_player_playback_dvdnav;
-  funcs->get_volume = xine_player_get_volume;
-  funcs->get_mute = xine_player_get_mute;
-  funcs->set_volume = xine_player_set_volume;
-  funcs->set_mute = xine_player_set_mute;
-  funcs->set_sub_delay = xine_player_set_sub_delay;
+  funcs->init            = xine_player_init;
+  funcs->uninit          = xine_player_uninit;
+  funcs->set_verbosity   = NULL;
+  funcs->mrl_get_props   = xine_player_mrl_get_properties;
+  funcs->mrl_get_meta    = xine_player_mrl_get_metadata;
+  funcs->pb_start        = xine_player_playback_start;
+  funcs->pb_stop         = xine_player_playback_stop;
+  funcs->pb_pause        = xine_player_playback_pause;
+  funcs->pb_seek         = xine_player_playback_seek;
+  funcs->pb_dvdnav       = xine_player_playback_dvdnav;
+  funcs->get_volume      = xine_player_get_volume;
+  funcs->get_mute        = xine_player_get_mute;
+  funcs->set_volume      = xine_player_set_volume;
+  funcs->set_mute        = xine_player_set_mute;
+  funcs->set_sub_delay   = xine_player_set_sub_delay;
 
   return funcs;
 }
