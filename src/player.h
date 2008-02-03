@@ -45,6 +45,7 @@ typedef enum player_vo {
   PLAYER_VO_X11,
   PLAYER_VO_X11_SDL,
   PLAYER_VO_XV,
+  PLAYER_VO_GL,
   PLAYER_VO_FB
 } player_vo_t;
 
