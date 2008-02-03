@@ -223,6 +223,7 @@ register_functions_vlc (void)
   funcs = malloc (sizeof (player_funcs_t));
   funcs->init = vlc_init;
   funcs->uninit = vlc_uninit;
+  funcs->set_verbosity = NULL;
   funcs->mrl_get_props = vlc_mrl_get_properties;
   funcs->mrl_get_meta = vlc_mrl_get_metadata;
   funcs->pb_start = vlc_playback_start;

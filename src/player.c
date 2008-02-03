@@ -147,6 +147,10 @@ player_set_verbosity (player_t *player, player_verbosity_level_t level)
     return;
 
   player->verbosity = level;
+
+  /* player specific verbosity level */
+  if (player->funcs->set_verbosity)
+    player->funcs->set_verbosity (player, level);
 }
 
 void

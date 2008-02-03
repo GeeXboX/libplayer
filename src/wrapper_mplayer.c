@@ -1360,6 +1360,7 @@ register_functions_mplayer (void)
   funcs = malloc (sizeof (player_funcs_t));
   funcs->init = mplayer_init;
   funcs->uninit = mplayer_uninit;
+  funcs->set_verbosity = NULL;
   funcs->mrl_get_props = mplayer_mrl_get_properties;
   funcs->mrl_get_meta = mplayer_mrl_get_metadata;
   funcs->pb_start = mplayer_playback_start;

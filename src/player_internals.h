@@ -36,6 +36,7 @@ typedef enum playback_status {
 typedef struct player_funcs_s {
   init_status_t (* init) (player_t *player);
   void (* uninit) (player_t *player);
+  void (* set_verbosity) (player_t *player, player_verbosity_level_t level);
   void (* mrl_get_props) (player_t *player);
   void (* mrl_get_meta) (player_t *player);
   playback_status_t (* pb_start) (player_t *player);

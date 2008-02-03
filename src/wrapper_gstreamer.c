@@ -279,6 +279,7 @@ register_functions_gstreamer (void)
   funcs = malloc (sizeof (player_funcs_t));
   funcs->init            = gstreamer_player_init;
   funcs->uninit          = gstreamer_player_uninit;
+  funcs->set_verbosity   = NULL;
   funcs->mrl_get_props   = NULL;
   funcs->mrl_get_meta    = NULL;
   funcs->pb_start        = gstreamer_player_playback_start;
