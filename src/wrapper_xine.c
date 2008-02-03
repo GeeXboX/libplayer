@@ -241,6 +241,7 @@ static void
 xine_set_verbosity (player_t *player, player_verbosity_level_t level)
 {
   xine_player_t *x;
+  int verbosity = -1;
   
   if (!player)
     return;
@@ -252,22 +253,22 @@ xine_set_verbosity (player_t *player, player_verbosity_level_t level)
   switch (level)
   {
   case PLAYER_MSG_NONE:
-    xine_engine_set_param (x->xine,
-                           XINE_ENGINE_PARAM_VERBOSITY, XINE_VERBOSITY_NONE);
+    verbosity = XINE_VERBOSITY_NONE;
     break;
   case PLAYER_MSG_INFO:
   case PLAYER_MSG_WARNING:
-    xine_engine_set_param (x->xine,
-                           XINE_ENGINE_PARAM_VERBOSITY, XINE_VERBOSITY_LOG);
+    verbosity = XINE_VERBOSITY_LOG;
     break;
   case PLAYER_MSG_ERROR:
   case PLAYER_MSG_CRITICAL:
-    xine_engine_set_param (x->xine,
-                           XINE_ENGINE_PARAM_VERBOSITY, XINE_VERBOSITY_DEBUG);
+    verbosity = XINE_VERBOSITY_DEBUG;
     break;
   default:
     break;
   }
+
+  if (verbosity != -1)
+    xine_engine_set_param (x->xine, XINE_ENGINE_PARAM_VERBOSITY, verbosity);
 }
 
 static void
