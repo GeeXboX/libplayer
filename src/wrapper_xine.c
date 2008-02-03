@@ -108,7 +108,6 @@ static init_status_t
 xine_player_init (player_t *player)
 {
   xine_player_t *x = NULL;
-  int verbosity = XINE_VERBOSITY_LOG;
 
   char *id_vo = NULL;
   char *id_ao = NULL;
@@ -128,7 +127,8 @@ xine_player_init (player_t *player)
 
   x->xine = xine_new ();
   xine_init (x->xine);
-  xine_engine_set_param (x->xine, XINE_ENGINE_PARAM_VERBOSITY, verbosity);
+  xine_engine_set_param (x->xine,
+                         XINE_ENGINE_PARAM_VERBOSITY, XINE_VERBOSITY_LOG);
 
   switch (player->vo) {
   case PLAYER_VO_NULL:
