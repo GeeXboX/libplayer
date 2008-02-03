@@ -22,6 +22,7 @@
 #ifndef PLAYER_LOGS_H_
 #define PLAYER_LOGS_H_
 
-void plog (const char *module, const char *format, ...);
+void plog (player_t *player, player_verbosity_level_t level,
+           const char *module, const char *format, ...);
 
 #endif /* PLAYER_LOGS_H_ */

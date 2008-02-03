@@ -45,7 +45,7 @@ vlc_init (player_t *player)
   char *vlc_argv[32] = { "vlc" };
   int vlc_argc = 1;
 
-  plog (MODULE_NAME, "init");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
   if (!player)
     return PLAYER_INIT_ERROR;
@@ -63,7 +63,8 @@ vlc_init (player_t *player)
 
   if (libvlc_exception_raised (&vlc->ex))
   {
-    plog (MODULE_NAME, libvlc_exception_get_message (&vlc->ex));
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, libvlc_exception_get_message (&vlc->ex));
     libvlc_exception_clear (&vlc->ex);
   }
 
@@ -75,7 +76,7 @@ vlc_uninit (player_t *player)
 {
   vlc_t *vlc = NULL;
 
-  plog (MODULE_NAME, "uninit");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "uninit");
 
   if (!player)
     return;
@@ -95,13 +96,13 @@ vlc_uninit (player_t *player)
 static void
 vlc_mrl_get_properties (player_t *player)
 {
-  plog (MODULE_NAME, "mrl_get_properties");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
 }
 
 static void
 vlc_mrl_get_metadata (player_t *player)
 {
-  plog (MODULE_NAME, "mrl_get_metadata");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
 }
 
 static playback_status_t
@@ -110,7 +111,7 @@ vlc_playback_start (player_t *player)
   vlc_t *vlc;
   int id;
 
-  plog (MODULE_NAME, "playback_start");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -129,20 +130,20 @@ vlc_playback_start (player_t *player)
 static void
 vlc_playback_stop (player_t *player)
 {
-  plog (MODULE_NAME, "playback_stop");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
 }
 
 static playback_status_t
 vlc_playback_pause (player_t *player)
 {
-  plog (MODULE_NAME, "playback_pause");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
   return PLAYER_PB_OK;
 }
 
 static void
 vlc_playback_seek (player_t *player, int value)
 {
-  plog (MODULE_NAME, "playback_seek: %d", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_seek: %d", value);
 }
 
 static void
@@ -176,27 +177,27 @@ vlc_playback_dvdnav (player_t *player, player_dvdnav_t value)
     strcpy (log, "select");
   }
 
-  plog (MODULE_NAME, "playback_dvdnav: %s", log);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_dvdnav: %s", log);
 }
 
 static int
 vlc_get_volume (player_t *player)
 {
-  plog (MODULE_NAME, "get_volume");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_volume");
   return 0;
 }
 
 static player_mute_t
 vlc_get_mute (player_t *player)
 {
-  plog (MODULE_NAME, "get_mute");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_mute");
   return PLAYER_MUTE_OFF;
 }
 
 static void
 vlc_set_volume (player_t *player, int value)
 {
-  plog (MODULE_NAME, "set_volume: %d", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_volume: %d", value);
 }
 
 static void
@@ -205,13 +206,14 @@ vlc_set_mute (player_t *player, player_mute_t value)
   if (value == PLAYER_MUTE_UNKNOWN)
     return;
 
-  plog (MODULE_NAME, "set_mute: %s", value == PLAYER_MUTE_ON ? "on" : "off");
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "set_mute: %s", value == PLAYER_MUTE_ON ? "on" : "off");
 }
 
 static void
 vlc_set_sub_delay (player_t *player, float value)
 {
-  plog (MODULE_NAME, "set_sub_delay: %.2f", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %.2f", value);
 }
 
 /* public API */

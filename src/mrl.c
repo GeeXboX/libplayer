@@ -244,7 +244,7 @@ player_mrl_append (player_t *player,
 {
   mrl_t *mrl = NULL;
 
-  plog (MODULE_NAME, __FUNCTION__);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player || !location)
     return;
@@ -281,7 +281,7 @@ player_mrl_remove (player_t *player)
 {
   mrl_t *mrl, *mrl_p = NULL, *mrl_n = NULL;
 
-  plog (MODULE_NAME, __FUNCTION__);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -321,7 +321,7 @@ player_mrl_remove_all (player_t *player)
 {
   mrl_t *mrl;
 
-  plog (MODULE_NAME, __FUNCTION__);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -341,7 +341,7 @@ player_mrl_previous (player_t *player)
 {
   mrl_t *mrl;
 
-  plog (MODULE_NAME, __FUNCTION__);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -360,7 +360,7 @@ player_mrl_next (player_t *player)
 {
   mrl_t *mrl;
 
-  plog (MODULE_NAME, __FUNCTION__);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -379,7 +379,7 @@ player_mrl_get_properties (player_t *player)
 {
   mrl_t *mrl;
 
-  plog (MODULE_NAME, __FUNCTION__);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   mrl = player->mrl;
 
@@ -401,7 +401,7 @@ player_mrl_get_metadata (player_t *player)
 {
   mrl_t *mrl;
 
-  plog (MODULE_NAME, __FUNCTION__);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   mrl = player->mrl;
 

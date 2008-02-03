@@ -23,16 +23,28 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "player.h"
+#include "player_internals.h"
+
 void
-plog (const char *module, const char *format, ...)
+plog (player_t *player, player_verbosity_level_t level,
+      const char *module, const char *format, ...)
 {
-#ifdef HAVE_DEBUG
   va_list va;
 
+  if (!player || !format)
+    return;
+
+  /* do we really want loging ? */
+  if (player->verbosity == PLAYER_MSG_NONE)
+    return;
+  
+  if (level < player->verbosity)
+    return;
+  
   va_start (va, format);
   fprintf (stderr, "[%s]: ", module);
   vfprintf (stderr, format, va);
   fprintf (stderr, "\n");
   va_end (va);
-#endif /* HAVE_DEBUG */
 }

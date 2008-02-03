@@ -62,7 +62,7 @@ typedef struct {
  * Center the movie in the parent window and zoom for use the max of surface.
  */
 void
-zoom (int parentwidth, int parentheight, float aspect,
+zoom (player_t *player, int parentwidth, int parentheight, float aspect,
       int *x, int *y, int *width, int *height)
 {
   float convert;
@@ -95,7 +95,8 @@ zoom (int parentwidth, int parentheight, float aspect,
     *y = parentheight / 2 - *height / 2;
   }
 
-  plog (MODULE_NAME, "[zoom] x:%i y:%i w:%i h:%i", *x, *y, *width, *height);
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "[zoom] x:%i y:%i w:%i h:%i", *x, *y, *width, *height);
 }
 
 /**
@@ -127,7 +128,7 @@ x11_map (player_t *player)
       changes.height = player->h;
 
       /* fix the size and offset */
-      zoom (screeninfo->width, screeninfo->height, player->aspect,
+      zoom (player, screeninfo->width, screeninfo->height, player->aspect,
             &changes.x, &changes.y, &changes.width, &changes.height);
 
       XConfigureWindow (x11->display, x11->window,
@@ -144,7 +145,7 @@ x11_map (player_t *player)
   XSync (x11->display, False);
   XUnlockDisplay (x11->display);
 
-  plog (MODULE_NAME, "window mapped");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window mapped");
 }
 
 /**
@@ -181,7 +182,7 @@ x11_unmap (player_t *player)
   XSync (x11->display, False);
   XUnlockDisplay (x11->display);
 
-  plog (MODULE_NAME, "window unmapped");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window unmapped");
 }
 
 void
@@ -216,7 +217,7 @@ x11_uninit (player_t *player)
 
   free (x11);
 
-  plog (MODULE_NAME, "window destroyed");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window destroyed");
 }
 
 #ifdef HAVE_XINE
@@ -309,7 +310,7 @@ x11_init (player_t *player)
     free (x11);
     player->x11 = NULL;
     free (screeninfo);
-    plog (MODULE_NAME, "Failed to init for X11");
+    plog (player, PLAYER_MSG_ERROR, MODULE_NAME, "Failed to init for X11");
     return 0;
   }
 
@@ -421,7 +422,7 @@ x11_init (player_t *player)
     x11->data = NULL;
   }
 
-  plog (MODULE_NAME, "window initialized");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
 
   return 1;
 }

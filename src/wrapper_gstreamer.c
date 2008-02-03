@@ -61,7 +61,8 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
   {
   case GST_MESSAGE_EOS:
   {
-    plog (MODULE_NAME, "Playback of stream has ended"); 
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Playback of stream has ended"); 
 
     /* properly shutdown playback engine */
     g_main_loop_quit (loop);
@@ -81,7 +82,8 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
     gst_message_parse_error (msg, &err, &debug);
     g_free (debug);
 
-    plog (MODULE_NAME, "Error: %s\n", err->message);
+    plog (player, PLAYER_MSG_ERROR,
+          MODULE_NAME, "Error: %s\n", err->message);
     g_error_free (err);
 
     /* properly shutdown playback engine */
@@ -102,7 +104,7 @@ gstreamer_player_init (player_t *player)
   gstreamer_player_t *g = NULL;
   GError *error;
   
-  plog (MODULE_NAME, "init");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
   if (!player)
     return PLAYER_INIT_ERROR;
@@ -171,7 +173,7 @@ gstreamer_player_uninit (player_t *player)
 {
   gstreamer_player_t *g = NULL;
 
-  plog (MODULE_NAME, "uninit");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "uninit");
 
   if (!player)
     return;
@@ -210,7 +212,7 @@ gstreamer_player_playback_start (player_t *player)
   pthread_attr_t attr;
   pthread_t th;
   
-  plog (MODULE_NAME, "playback_start");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -259,7 +261,7 @@ gstreamer_player_playback_stop (player_t *player)
 {
   gstreamer_player_t *g = NULL;
 
-  plog (MODULE_NAME, "playback_stop");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
 
   if (!player)
     return;

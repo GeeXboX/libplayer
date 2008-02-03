@@ -154,7 +154,7 @@ static void
 sig_handler (int signal)
 {
   if (signal == SIGPIPE)
-    plog (MODULE_NAME, "SIGPIPE detected by the death of MPlayer");
+    fprintf (stderr, "SIGPIPE detected by the death of MPlayer");
 }
 
 /**
@@ -264,7 +264,8 @@ thread_fifo (void *arg)
           pthread_mutex_lock (&mplayer->mutex_status);
           /* when the stream is ended without stop action */
           if (mplayer->status == MPLAYER_IS_PLAYING) {
-            plog (MODULE_NAME, "Playback of stream has ended");
+            plog (player, PLAYER_MSG_INFO,
+                  MODULE_NAME, "Playback of stream has ended");
             mplayer->status = MPLAYER_IS_IDLE;
             pthread_mutex_unlock (&mplayer->mutex_status);
 
@@ -672,7 +673,7 @@ mp_identify (player_t *player)
 }
 
 static int
-is_available (const char *bin)
+is_available (player_t *player, const char *bin)
 {
   char *p, *fp, *env;
   char prog[256];
@@ -696,7 +697,8 @@ is_available (const char *bin)
     }
   }
 
-  plog (MODULE_NAME, "%s executable not found in the PATH", bin);
+  plog (player, PLAYER_MSG_ERROR,
+        MODULE_NAME, "%s executable not found in the PATH", bin);
 
   free (fp);
   return 0;
@@ -729,7 +731,7 @@ mplayer_init (player_t *player)
   int pp = 0;
   pthread_attr_t attr;
 
-  plog (MODULE_NAME, "init");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
   if (!player)
     return PLAYER_INIT_ERROR;
@@ -740,7 +742,7 @@ mplayer_init (player_t *player)
     return PLAYER_INIT_ERROR;
 
   /* test if MPlayer is available */
-  if (!is_available ("mplayer"))
+  if (!is_available (player, "mplayer"))
     return PLAYER_INIT_ERROR;
 
   /* action for SIGPIPE */
@@ -837,7 +839,8 @@ mplayer_init (player_t *player)
           break;
 
         default:
-          plog (MODULE_NAME, "Unsupported video output type\n");
+          plog (player, PLAYER_MSG_WARNING,
+                MODULE_NAME, "Unsupported video output type\n");
           break;
         }
 
@@ -874,7 +877,7 @@ mplayer_init (player_t *player)
         mplayer->fifo_in = fdopen (mplayer->pipe_in[1], "w");
         mplayer->fifo_out = fdopen (mplayer->pipe_out[0], "r");
 
-        plog (MODULE_NAME, "MPlayer child loaded");
+        plog (player, PLAYER_MSG_INFO, MODULE_NAME, "MPlayer child loaded");
 
         mplayer->status = MPLAYER_IS_IDLE;
 
@@ -903,7 +906,7 @@ mplayer_uninit (player_t *player)
   mplayer_t *mplayer = NULL;
   void *ret;
 
-  plog (MODULE_NAME, "uninit");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "uninit");
 
   if (!player)
     return;
@@ -933,7 +936,7 @@ mplayer_uninit (player_t *player)
     fclose (mplayer->fifo_in);
     fclose (mplayer->fifo_out);
 
-    plog (MODULE_NAME, "MPlayer child terminated");
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "MPlayer child terminated");
 
     /* X11 */
     if (player->x11)
@@ -968,12 +971,14 @@ mplayer_mrl_get_audio_properties (player_t *player,
 
   audio->codec = slave_get_property_str (player, PROPERTY_AUDIO_CODEC);
   if (audio->codec)
-    plog (MODULE_NAME, "Audio Codec: %s", audio->codec);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Audio Codec: %s", audio->codec);
 
   buffer_i = slave_get_property_int (player, PROPERTY_AUDIO_BITRATE);
   if (buffer_i > -1) {
     audio->bitrate = buffer_i;
-    plog (MODULE_NAME, "Audio Bitrate: %i kbps", audio->bitrate / 1000);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Audio Bitrate: %i kbps", audio->bitrate / 1000);
   }
 
   // TODO: autio->bits
@@ -981,13 +986,15 @@ mplayer_mrl_get_audio_properties (player_t *player,
   buffer_i = slave_get_property_int (player, PROPERTY_CHANNELS);
   if (buffer_i > -1) {
     audio->channels = buffer_i;
-    plog (MODULE_NAME, "Audio Channels: %i", audio->channels);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Audio Channels: %i", audio->channels);
   }
 
   buffer_i = slave_get_property_int (player, PROPERTY_SAMPLERATE);
   if (buffer_i > -1) {
     audio->samplerate = buffer_i;
-    plog (MODULE_NAME, "Audio Sample Rate: %i Hz", audio->samplerate);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Audio Sample Rate: %i Hz", audio->samplerate);
   }
 }
 
@@ -1012,24 +1019,28 @@ mplayer_mrl_get_video_properties (player_t *player,
 
   video->codec = slave_get_property_str (player, PROPERTY_VIDEO_CODEC);
   if (video->codec)
-    plog (MODULE_NAME, "Video Codec: %s", video->codec);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Codec: %s", video->codec);
 
   buffer_i = slave_get_property_int (player, PROPERTY_VIDEO_BITRATE);
   if (buffer_i > -1) {
     video->bitrate = buffer_i;
-    plog (MODULE_NAME, "Video Bitrate: %i kbps", video->bitrate / 1000);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Bitrate: %i kbps", video->bitrate / 1000);
   }
 
   buffer_i = slave_get_property_int (player, PROPERTY_WIDTH);
   if (buffer_i > -1) {
     video->width = buffer_i;
-    plog (MODULE_NAME, "Video Width: %i", video->width);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Width: %i", video->width);
   }
 
   buffer_i = slave_get_property_int (player, PROPERTY_HEIGHT);
   if (buffer_i > -1) {
     video->height = buffer_i;
-    plog (MODULE_NAME, "Video Height: %i", video->height);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Height: %i", video->height);
   }
 
   // TODO: audio->channels and audio->streams
@@ -1042,7 +1053,7 @@ mplayer_mrl_get_properties (player_t *player)
   struct stat st;
   mrl_t *mrl;
 
-  plog (MODULE_NAME, "mrl_get_properties");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
 
   mrl = player->mrl;
 
@@ -1061,7 +1072,7 @@ mplayer_mrl_get_properties (player_t *player)
   /* now fetch properties */
   stat (mrl->name, &st);
   mrl->prop->size = st.st_size;
-  plog (MODULE_NAME, "File Size: %.2f MB",
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
         (float) mrl->prop->size / 1024 / 1024);
 
   /* FIXME: no idea how implement */
@@ -1080,7 +1091,7 @@ mplayer_mrl_get_metadata (player_t *player)
   mplayer_t *mplayer = NULL;
   mrl_t *mrl;
 
-  plog (MODULE_NAME, "mrl_get_metadata");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
 
   mrl = player->mrl;
 
@@ -1099,27 +1110,33 @@ mplayer_mrl_get_metadata (player_t *player)
   /* now fetch metadata */
   mrl->meta->title = slave_get_property_str (player, PROPERTY_METADATA_TITLE);
   if (mrl->meta->title)
-    plog (MODULE_NAME, "Meta Title: %s", mrl->meta->title);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Title: %s", mrl->meta->title);
 
   mrl->meta->artist = slave_get_property_str (player, PROPERTY_METADATA_ARTIST);
   if (mrl->meta->artist)
-    plog (MODULE_NAME, "Meta Artist: %s", mrl->meta->artist);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Artist: %s", mrl->meta->artist);
 
   mrl->meta->genre = slave_get_property_str (player, PROPERTY_METADATA_GENRE);
   if (mrl->meta->genre)
-    plog (MODULE_NAME, "Meta Genre: %s", mrl->meta->genre);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Genre: %s", mrl->meta->genre);
 
   mrl->meta->album = slave_get_property_str (player, PROPERTY_METADATA_ALBUM);
   if (mrl->meta->album)
-    plog (MODULE_NAME, "Meta Album: %s", mrl->meta->album);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Album: %s", mrl->meta->album);
 
   mrl->meta->year = slave_get_property_str (player, PROPERTY_METADATA_YEAR);
   if (mrl->meta->year)
-    plog (MODULE_NAME, "Meta Year: %s", mrl->meta->year);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Year: %s", mrl->meta->year);
 
   mrl->meta->track = slave_get_property_str (player, PROPERTY_METADATA_TRACK);
   if (mrl->meta->track)
-    plog (MODULE_NAME, "Meta Track: %s", mrl->meta->track);
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Track: %s", mrl->meta->track);
 }
 
 static playback_status_t
@@ -1127,7 +1144,7 @@ mplayer_playback_start (player_t *player)
 {
   mplayer_t *mplayer = NULL;
 
-  plog (MODULE_NAME, "playback_start");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -1166,7 +1183,7 @@ mplayer_playback_stop (player_t *player)
 {
   mplayer_t *mplayer = NULL;
 
-  plog (MODULE_NAME, "playback_stop");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
 
   if (!player)
     return;
@@ -1195,7 +1212,7 @@ mplayer_playback_stop (player_t *player)
 static playback_status_t
 mplayer_playback_pause (player_t *player)
 {
-  plog (MODULE_NAME, "playback_pause");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -1208,7 +1225,7 @@ mplayer_playback_pause (player_t *player)
 static void
 mplayer_playback_seek (player_t *player, int value)
 {
-  plog (MODULE_NAME, "playback_seek: %d", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_seek: %d", value);
 
   if (!player)
     return;
@@ -1258,7 +1275,7 @@ mplayer_playback_dvdnav (player_t *player, player_dvdnav_t value)
     return;
   }
 
-  plog (MODULE_NAME, "playback_dvdnav: %s", log);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_dvdnav: %s", log);
 
   if (!player)
     return;
@@ -1272,7 +1289,7 @@ mplayer_get_volume (player_t *player)
 {
   int volume = 0;
 
-  plog (MODULE_NAME, "get_volume");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_volume");
 
   if (!player)
     return volume;
@@ -1291,7 +1308,7 @@ mplayer_get_mute (player_t *player)
   player_mute_t mute = PLAYER_MUTE_UNKNOWN;
   char *buffer;
 
-  plog (MODULE_NAME, "get_mute");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_mute");
 
   if (!player)
     return mute;
@@ -1313,7 +1330,7 @@ mplayer_get_mute (player_t *player)
 static void
 mplayer_set_volume (player_t *player, int value)
 {
-  plog (MODULE_NAME, "set_volume: %d", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_volume: %d", value);
 
   if (!player)
     return;
@@ -1332,7 +1349,8 @@ mplayer_set_mute (player_t *player, player_mute_t value)
   if (value == PLAYER_MUTE_ON)
     mute = 1;
 
-  plog (MODULE_NAME, "set_mute: %s", mute ? "on" : "off");
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "set_mute: %s", mute ? "on" : "off");
 
   if (!player)
     return;
@@ -1343,7 +1361,7 @@ mplayer_set_mute (player_t *player, player_mute_t value)
 static void
 mplayer_set_sub_delay (player_t *player, float value)
 {
-  plog (MODULE_NAME, "set_sub_delay: %.2f", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %.2f", value);
 
   if (!player)
     return;
