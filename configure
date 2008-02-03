@@ -315,10 +315,10 @@ dostrip="yes"
 extralibs=""
 installstrip="-s"
 cross_compile="no"
-wrapper_xine="yes"
-wrapper_mplayer="yes"
-wrapper_vlc="yes"
-wrapper_gstreamer="yes"
+wrapper_xine="auto"
+wrapper_mplayer="auto"
+wrapper_vlc="auto"
+wrapper_gstreamer="auto"
 INSTALL="install"
 libplayer_version=`grep '#define LIBPLAYER_VERSION[[:space:]]' src/player.h | sed 's/[^0-9\.]//g'`
 
@@ -632,15 +632,19 @@ fi
 #################################################
 #   check for libxine
 #################################################
-if test "$wrapper_xine" = "yes"; then
+if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
+  wrapper_xine="no"
   echolog "Checking for libxine ..."
   if [ -n "$libxinedir" ]; then
     check_cflags -I$libxinedir
     check_ldflags -L$libxinedir
   fi
-  check_lib xine.h xine_init -lxine || die "Error, can't find libxine !"
-  add_cflags -DHAVE_XINE
-  add_extralibs -lpthread
+  check_lib xine.h xine_init -lxine
+  if [ "$?" = 0 ]; then
+    add_cflags -DHAVE_XINE
+    add_extralibs -lpthread
+    wrapper_xine="yes"
+  fi
 fi
 
 #################################################
@@ -657,29 +661,39 @@ add_extralibs -lX11
 #################################################
 #   check for mplayer
 #################################################
-if test "$wrapper_mplayer" = "yes"; then
-  add_cflags -DHAVE_MPLAYER
-  add_extralibs -lpthread
+if test "$wrapper_mplayer" = "auto" -o "$wrapper_mplayer" = "yes"; then
+  wrapper_mplayer="no"
+  which mplayer 2>&1 > /dev/null
+  if [ "$?" = 0 ]; then
+    add_cflags -DHAVE_MPLAYER
+    add_extralibs -lpthread
+    wrapper_mplayer="yes"
+  fi
 fi
 
 #################################################
 #   check for libvlc
 #################################################
-if test "$wrapper_vlc" = "yes"; then
+if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
+  wrapper_vlc="no"
   echolog "Checking for libvlc ..."
   if [ -n "$libvlcdir" ]; then
     check_cflags -I$libvlcdir
     check_ldflags -L$libvlcdir
   fi
-  check_lib vlc/libvlc.h libvlc_new -lvlc || die "Error, can't find libvlc !"
-  add_cflags -DHAVE_VLC
-  add_extralibs -lpthread
+  check_lib vlc/libvlc.h libvlc_new -lvlc
+  if [ "$?" = 0 ]; then
+    add_cflags -DHAVE_VLC
+    add_extralibs -lpthread
+    wrapper_vlc="yes"
+  fi
 fi
 
 #################################################
 #   check for libgstreamer
 #################################################
-if test "$wrapper_gstreamer" = "yes"; then
+if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
+  wrapper_gstreamer="no"
   echolog "Checking for libgstreamer ..."
   check_cflags `pkg-config gstreamer-0.10 --cflags`
   check_ldflags `pkg-config gstreamer-0.10 --libs`
@@ -687,9 +701,12 @@ if test "$wrapper_gstreamer" = "yes"; then
     check_cflags -I$libgstreamerdir
     check_ldflags -L$libgstreamerdir
   fi
-  check_lib gst/gst.h gst_init -lgstreamer-0.10 || die "Error, can't find libgstreamer !"
-  add_cflags -DHAVE_GSTREAMER
-  add_extralibs -lpthread
+  check_lib gst/gst.h gst_init -lgstreamer-0.10
+  if [ "$?" = 0 ]; then
+    add_cflags -DHAVE_GSTREAMER
+    add_extralibs -lpthread
+    wrapper_gstreamer="yes"
+  fi
 fi
 
 #################################################
