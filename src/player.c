@@ -53,6 +53,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
 
   player = malloc (sizeof (player_t));
   player->type = type;
+  player->verbosity = PLAYER_MSG_ERROR;
   player->mrl = NULL;  
   player->state = PLAYER_STATE_IDLE;
   player->loop = 0;
@@ -137,6 +138,15 @@ player_uninit (player_t *player)
 
   free (player->funcs);
   free (player);
+}
+
+void
+player_set_verbosity (player_t *player, player_verbosity_level_t level)
+{
+  if (!player)
+    return;
+
+  player->verbosity = level;
 }
 
 void

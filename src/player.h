@@ -32,6 +32,14 @@
 struct player_funcs_s;
 struct x11_s;
 
+typedef enum {
+  PLAYER_MSG_NONE,          /* no error messages */
+  PLAYER_MSG_INFO,          /* working operations */
+  PLAYER_MSG_WARNING,       /* harmless failures */
+  PLAYER_MSG_ERROR,         /* may result in hazardous behavior */
+  PLAYER_MSG_CRITICAL,      /* prevents lib from working */
+} player_verbosity_level_t;
+
 typedef enum player_type {
   PLAYER_TYPE_XINE,
   PLAYER_TYPE_MPLAYER,
@@ -147,6 +155,7 @@ typedef struct mrl_s {
 
 typedef struct player_s {
   player_type_t type;   /* the type of player we'll use */
+  player_verbosity_level_t verbosity;
   mrl_t *mrl;    /* current MRL */
   player_state_t state; /* state of the playback */
   int loop;             /* loop elements from playlist */
@@ -166,6 +175,7 @@ typedef struct player_s {
 player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
                               int event_cb (player_event_t e, void *data));
 void player_uninit (player_t *player);
+void player_set_verbosity (player_t *player, player_verbosity_level_t level);
 
 /* MRL helpers */
 mrl_t *mrl_new (char *name, char *subtitle, player_mrl_type_t type);
