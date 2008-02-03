@@ -91,6 +91,7 @@ player_run_test (player_type_t player_type)
 
   player = player_init (player_type, PLAYER_AO_ALSA, PLAYER_VO_XV,
                         frontend_event_cb);
+  player_set_verbosity (player, PLAYER_MSG_INFO);
   do_regression_tests (player, AUDIO_TEST_FILE, PLAYER_MRL_TYPE_FILE_AUDIO);
   do_regression_tests (player, VIDEO_TEST_FILE, PLAYER_MRL_TYPE_FILE_VIDEO);
   player_uninit (player);
