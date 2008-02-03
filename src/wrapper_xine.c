@@ -108,17 +108,13 @@ static init_status_t
 xine_player_init (player_t *player)
 {
   xine_player_t *x = NULL;
-  int verbosity = XINE_VERBOSITY_NONE;
+  int verbosity = XINE_VERBOSITY_LOG;
 
   char *id_vo = NULL;
   char *id_ao = NULL;
   int use_x11 = 0;
   int visual = XINE_VISUAL_TYPE_NONE;
   void *data = NULL;
-
-#ifdef HAVE_DEBUG
-  verbosity = XINE_VERBOSITY_LOG;
-#endif /* HAVE_DEBUG */
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
