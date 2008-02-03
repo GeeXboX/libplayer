@@ -717,6 +717,12 @@ echolog "  CFLAGS             $CFLAGS"
 echolog "  LDFLAGS            $LDFLAGS"
 echolog "  extralibs          $extralibs"
 echolog ""
+echolog "built-in wrappers:"
+echolog "  GStreamer:         $wrapper_gstreamer"
+echolog "  MPlayer:           $wrapper_mplayer"
+echolog "  VLC:               $wrapper_vlc"
+echolog "  Xine:              $wrapper_xine"
+echolog ""
 
 #################################################
 #   save configs attributes
