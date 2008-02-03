@@ -197,6 +197,7 @@ xine_player_init (player_t *player)
 
   case PLAYER_AO_OSS:
     id_ao = strdup ("oss");
+    break;
   }
 
   /* init audio output driver */
