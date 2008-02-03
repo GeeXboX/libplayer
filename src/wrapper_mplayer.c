@@ -834,6 +834,11 @@ mplayer_init (player_t *player)
 
         case PLAYER_VO_FB:
           params[pp++] = "fbdev";
+          break;
+
+        default:
+          plog (MODULE_NAME, "Unsupported video output type\n");
+          break;
         }
 
         /* select the audio output */
