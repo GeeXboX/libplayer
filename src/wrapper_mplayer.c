@@ -1357,7 +1357,7 @@ register_functions_mplayer (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = malloc (sizeof (player_funcs_t));
+  funcs = calloc (1, sizeof (player_funcs_t));
   funcs->init             = mplayer_init;
   funcs->uninit           = mplayer_uninit;
   funcs->set_verbosity    = NULL;
@@ -1382,7 +1382,7 @@ register_private_mplayer (void)
 {
   mplayer_t *mplayer = NULL;
 
-  mplayer = malloc (sizeof (mplayer_t));
+  mplayer = calloc (1, sizeof (mplayer_t));
 
   mplayer->status = MPLAYER_IS_DEAD;
   mplayer->fifo_in = NULL;

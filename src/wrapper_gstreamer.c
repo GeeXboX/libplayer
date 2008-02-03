@@ -276,7 +276,7 @@ register_functions_gstreamer (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = malloc (sizeof (player_funcs_t));
+  funcs = calloc (1, sizeof (player_funcs_t));
   funcs->init            = gstreamer_player_init;
   funcs->uninit          = gstreamer_player_uninit;
   funcs->set_verbosity   = NULL;
@@ -301,7 +301,7 @@ register_private_gstreamer (void)
 {
   gstreamer_player_t *g = NULL;
 
-  g = malloc (sizeof (gstreamer_player_t));
+  g = calloc (1, sizeof (gstreamer_player_t));
   g->loop = NULL;
   g->bin = NULL;
   g->bus = NULL;

@@ -731,7 +731,7 @@ register_functions_xine (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = malloc (sizeof (player_funcs_t));
+  funcs = calloc (1, sizeof (player_funcs_t));
   funcs->init            = xine_player_init;
   funcs->uninit          = xine_player_uninit;
   funcs->set_verbosity   = NULL;
@@ -756,7 +756,7 @@ register_private_xine (void)
 {
   xine_player_t *x = NULL;
 
-  x = malloc (sizeof (xine_player_t));
+  x = calloc (1, sizeof (xine_player_t));
   x->xine = NULL;
   x->stream = NULL;
   x->event_queue = NULL;
