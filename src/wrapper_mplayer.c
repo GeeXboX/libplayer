@@ -859,6 +859,7 @@ mplayer_init (player_t *player)
 
         case PLAYER_AO_OSS:
           params[pp++] = "oss";
+          break;
         }
 
         params[pp] = NULL;
