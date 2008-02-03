@@ -257,7 +257,7 @@ main (int argc, char **argv)
       player_playback_stop (player);
       break;
     case 't':   /* remove all streams of the playlist */
-      player_mrl_remove (player);
+      player_mrl_remove_all (player);
       break;
     default:
       fprintf (stderr, "ERROR: Command unknown!\n");
