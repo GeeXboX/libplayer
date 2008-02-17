@@ -840,7 +840,7 @@ mplayer_init (player_t *player)
 
         default:
           plog (player, PLAYER_MSG_WARNING,
-                MODULE_NAME, "Unsupported video output type\n");
+                MODULE_NAME, "Unsupported video output type");
           break;
         }
 
@@ -863,7 +863,7 @@ mplayer_init (player_t *player)
 
         default:
           plog (player, PLAYER_MSG_WARNING,
-                MODULE_NAME, "Unsupported audio output type\n");
+                MODULE_NAME, "Unsupported audio output type");
           break;
         }
 

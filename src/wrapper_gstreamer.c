@@ -83,7 +83,7 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
     g_free (debug);
 
     plog (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "Error: %s\n", err->message);
+          MODULE_NAME, "Error: %s", err->message);
     g_error_free (err);
 
     /* properly shutdown playback engine */
