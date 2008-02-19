@@ -122,6 +122,12 @@ typedef enum slave_property {
   PROPERTY_WIDTH
 } slave_property_t;
 
+typedef enum identify_flags {
+  IDENTIFY_AUDIO    = (1 << 0),
+  IDENTIFY_VIDEO    = (1 << 1),
+  IDENTIFY_METADATA = (1 << 2),
+} identify_flags_t;
+
 
 static const struct {
   slave_property_t property;
@@ -585,18 +591,50 @@ slave_cmd_int (player_t *player, slave_cmd_t cmd, int value)
   slave_action (player, cmd, &param);
 }
 
+static int
+mp_identify_video (player_t *player, const char *buffer)
+{
+  char *it;
+
+  if (!player || !strstr (buffer, "ID_VIDEO"))
+    return 0;
+
+  it = strstr (buffer, "WIDTH=");
+  if (it) {
+    player->w = atoi (parse_field (it, "WIDTH="));
+    return 1;
+  }
+
+  it = strstr (buffer, "HEIGHT=");
+  if (it) {
+    player->h = atoi (parse_field (it, "HEIGHT="));
+    return 1;
+  }
+
+  /* Maybe this field is got more that one time,
+   * but the last is the right value.
+   */
+  it = strstr (buffer, "ASPECT=");
+  if (it) {
+    player->aspect = (float) atof (parse_field (it, "ASPECT="));
+    return 1;
+  }
+
+  return 0;
+}
+
 /**
  * Identify a stream for complete player->w and player->h attributes. These
  * are necessary for that Xv can use a right aspect.
  */
 static void
-mp_identify (player_t *player)
+mp_identify (player_t *player, int flags)
 {
   char *params[16];
   char buffer[SLAVE_CMD_BUFFER];
-  char *it;
   int pp = 0;
   int mp_pipe[2];
+  int found;
   FILE *mp_fifo;
   pid_t pid;
 
@@ -645,20 +683,13 @@ mp_identify (player_t *player)
       mp_fifo = fdopen (mp_pipe[0], "r");
 
       while (fgets (buffer, SLAVE_CMD_BUFFER, mp_fifo)) {
-        if ((it = strstr (buffer, "ID_VIDEO_WIDTH=")))
-          player->w = atoi (parse_field (it, "ID_VIDEO_WIDTH="));
+        found = 0;
 
-        else if ((it = strstr (buffer, "ID_VIDEO_HEIGHT=")))
-          player->h = atoi (parse_field (it, "ID_VIDEO_HEIGHT="));
-
-        /* Maybe this field is got more that one time,
-         * but the last is the right value.
-         */
-        else if ((it = strstr (buffer, "ID_VIDEO_ASPECT=")))
-          player->aspect = (float) atof (parse_field (it, "ID_VIDEO_ASPECT="));
+        if (flags & IDENTIFY_VIDEO)
+          found = mp_identify_video (player, buffer);
 
         /* stop fgets because MPlayer is ended */
-        else if (strstr (buffer, "Exiting"))
+        if (!found && strstr (buffer, "Exiting"))
           break;
       }
 
@@ -1161,7 +1192,7 @@ mplayer_playback_start (player_t *player)
     return PLAYER_PB_FATAL;
 
   /* identify the current stream */
-  mp_identify (player);
+  mp_identify (player, IDENTIFY_VIDEO);
 
   /* 0: new play, 1: append to the current playlist */
   slave_cmd_int (player, SLAVE_LOADFILE, 0);
