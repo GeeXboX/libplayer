@@ -602,6 +602,20 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
 
   video = mrl->prop->video;
 
+  it = strstr (buffer, "CODEC=");
+  if (it) {
+    if (video->codec)
+      free (video->codec);
+    video->codec = strdup (parse_field (it, "CODEC="));
+    return 1;
+  }
+
+  it = strstr (buffer, "BITRATE=");
+  if (it) {
+    video->bitrate = atoi (parse_field (it, "BITRATE="));
+    return 1;
+  }
+
   it = strstr (buffer, "WIDTH=");
   if (it) {
     video->width = atoi (parse_field (it, "WIDTH="));
