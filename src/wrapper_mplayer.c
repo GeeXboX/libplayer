@@ -592,6 +592,46 @@ slave_cmd_int (player_t *player, slave_cmd_t cmd, int value)
 }
 
 static int
+mp_identify_audio (mrl_t *mrl, const char *buffer)
+{
+  char *it;
+  mrl_properties_audio_t *audio;
+
+  if (!mrl || !mrl->prop || !mrl->prop->audio || !strstr (buffer, "ID_AUDIO"))
+    return 0;
+
+  audio = mrl->prop->audio;
+
+  it = strstr (buffer, "CODEC=");
+  if (it) {
+    if (audio->codec)
+      free (audio->codec);
+    audio->codec = strdup (parse_field (it, "CODEC="));
+    return 1;
+  }
+
+  it = strstr (buffer, "BITRATE=");
+  if (it) {
+    audio->bitrate = atoi (parse_field (it, "BITRATE="));
+    return 1;
+  }
+
+  it = strstr (buffer, "NCH=");
+  if (it) {
+    audio->channels = atoi (parse_field (it, "NCH="));
+    return 1;
+  }
+
+  it = strstr (buffer, "RATE=");
+  if (it) {
+    audio->samplerate = atoi (parse_field (it, "RATE="));
+    return 1;
+  }
+
+  return 0;
+}
+
+static int
 mp_identify_video (mrl_t *mrl, const char *buffer)
 {
   char *it;
@@ -704,6 +744,9 @@ mp_identify (mrl_t *mrl, int flags)
 
         if (flags & IDENTIFY_VIDEO)
           found = mp_identify_video (mrl, buffer);
+
+        if (!found && (flags & IDENTIFY_AUDIO))
+          found = mp_identify_audio (mrl, buffer);
 
         /* stop fgets because MPlayer is ended */
         if (!found && strstr (buffer, "Exiting"))
