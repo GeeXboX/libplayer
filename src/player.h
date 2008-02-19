@@ -122,6 +122,7 @@ typedef struct mrl_properties_video_s {
   uint32_t bitrate;
   uint32_t width;
   uint32_t height;
+  float aspect;
   uint32_t channels;
   uint32_t streams;
 } mrl_properties_video_t;
