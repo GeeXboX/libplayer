@@ -592,22 +592,25 @@ slave_cmd_int (player_t *player, slave_cmd_t cmd, int value)
 }
 
 static int
-mp_identify_video (player_t *player, const char *buffer)
+mp_identify_video (mrl_t *mrl, const char *buffer)
 {
   char *it;
+  mrl_properties_video_t *video;
 
-  if (!player || !strstr (buffer, "ID_VIDEO"))
+  if (!mrl || !mrl->prop || !mrl->prop->video || !strstr (buffer, "ID_VIDEO"))
     return 0;
+
+  video = mrl->prop->video;
 
   it = strstr (buffer, "WIDTH=");
   if (it) {
-    player->w = atoi (parse_field (it, "WIDTH="));
+    video->width = atoi (parse_field (it, "WIDTH="));
     return 1;
   }
 
   it = strstr (buffer, "HEIGHT=");
   if (it) {
-    player->h = atoi (parse_field (it, "HEIGHT="));
+    video->height = atoi (parse_field (it, "HEIGHT="));
     return 1;
   }
 
@@ -616,7 +619,7 @@ mp_identify_video (player_t *player, const char *buffer)
    */
   it = strstr (buffer, "ASPECT=");
   if (it) {
-    player->aspect = (float) atof (parse_field (it, "ASPECT="));
+    video->aspect = (float) atof (parse_field (it, "ASPECT="));
     return 1;
   }
 
@@ -628,7 +631,7 @@ mp_identify_video (player_t *player, const char *buffer)
  * are necessary for that Xv can use a right aspect.
  */
 static void
-mp_identify (player_t *player, int flags)
+mp_identify (mrl_t *mrl, int flags)
 {
   char *params[16];
   char buffer[SLAVE_CMD_BUFFER];
@@ -638,7 +641,7 @@ mp_identify (player_t *player, int flags)
   FILE *mp_fifo;
   pid_t pid;
 
-  if (!player || !player->mrl || !player->mrl->name)
+  if (!mrl || !mrl->name)
     return;
 
   /* create pipe */
@@ -666,7 +669,7 @@ mp_identify (player_t *player, int flags)
       params[pp++] = "-noconsolecontrols";
       params[pp++] = "-endpos";
       params[pp++] = "0";
-      params[pp++] = strdup (player->mrl->name);
+      params[pp++] = strdup (mrl->name);
       params[pp++] = "-identify";
       params[pp] = NULL;
 
@@ -686,7 +689,7 @@ mp_identify (player_t *player, int flags)
         found = 0;
 
         if (flags & IDENTIFY_VIDEO)
-          found = mp_identify_video (player, buffer);
+          found = mp_identify_video (mrl, buffer);
 
         /* stop fgets because MPlayer is ended */
         if (!found && strstr (buffer, "Exiting"))
@@ -1190,9 +1193,6 @@ mplayer_playback_start (player_t *player)
 
   if (!mplayer)
     return PLAYER_PB_FATAL;
-
-  /* identify the current stream */
-  mp_identify (player, IDENTIFY_VIDEO);
 
   /* 0: new play, 1: append to the current playlist */
   slave_cmd_int (player, SLAVE_LOADFILE, 0);
