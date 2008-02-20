@@ -100,6 +100,7 @@ typedef enum slave_cmd {
 
 /* slave properties */
 typedef enum slave_property {
+  PROPERTY_UNKNOWN,
   PROPERTY_AUDIO_BITRATE,
   PROPERTY_AUDIO_CODEC,
   PROPERTY_CHANNELS,
@@ -592,6 +593,100 @@ slave_cmd_int (player_t *player, slave_cmd_t cmd, int value)
 }
 
 static int
+mp_identify_metadata (mrl_t *mrl, const char *buffer)
+{
+  static int cnt;
+  static slave_property_t property = PROPERTY_UNKNOWN;
+  char *it;
+  char str[256];
+  mrl_metadata_t *meta;
+
+  if (!mrl || !mrl->meta || !strstr (buffer, "ID_CLIP_INFO"))
+    return 0;
+
+  /* no new metadata */
+  if (strstr (buffer, "ID_CLIP_INFO_N=")) {
+    cnt = 0;
+    property = PROPERTY_UNKNOWN;
+    return 0;
+  }
+
+  meta = mrl->meta;
+
+  snprintf (str, sizeof (str), "NAME%i=", cnt);
+  it = strstr (buffer, str);
+  if (it) {
+    if (!strcasecmp (parse_field (it, str), "title"))
+      property = PROPERTY_METADATA_TITLE;
+    else if (!strcasecmp (parse_field (it, str), "artist"))
+      property = PROPERTY_METADATA_ARTIST;
+    else if (!strcasecmp (parse_field (it, str), "genre"))
+      property = PROPERTY_METADATA_GENRE;
+    else if (!strcasecmp (parse_field (it, str), "album"))
+      property = PROPERTY_METADATA_ALBUM;
+    else if (!strcasecmp (parse_field (it, str), "year"))
+      property = PROPERTY_METADATA_YEAR;
+    else if (!strcasecmp (parse_field (it, str), "track"))
+      property = PROPERTY_METADATA_TRACK;
+    else
+      property = PROPERTY_UNKNOWN;
+
+    return 1;
+  }
+
+  snprintf (str, sizeof (str), "VALUE%i=", cnt);
+  it = strstr (buffer, str);
+  if (it) {
+    switch (property) {
+    case PROPERTY_METADATA_TITLE:
+      if (meta->title)
+        free (meta->title);
+      meta->title = strdup (parse_field (it, str));
+      break;
+
+    case PROPERTY_METADATA_ARTIST:
+      if (meta->artist)
+        free (meta->artist);
+      meta->artist = strdup (parse_field (it, str));
+      break;
+
+    case PROPERTY_METADATA_GENRE:
+      if (meta->genre)
+        free (meta->genre);
+      meta->genre = strdup (parse_field (it, str));
+      break;
+
+    case PROPERTY_METADATA_ALBUM:
+      if (meta->album)
+        free (meta->album);
+      meta->album = strdup (parse_field (it, str));
+      break;
+
+    case PROPERTY_METADATA_YEAR:
+      if (meta->year)
+        free (meta->year);
+      meta->year = strdup (parse_field (it, str));
+      break;
+
+    case PROPERTY_METADATA_TRACK:
+      if (meta->track)
+        free (meta->track);
+      meta->track = strdup (parse_field (it, str));
+      break;
+
+    default:
+      break;
+    }
+
+    cnt++;
+    property = PROPERTY_UNKNOWN;
+    return 1;
+  }
+
+  return 0;
+}
+
+static int
 mp_identify_audio (mrl_t *mrl, const char *buffer)
 {
   char *it;
@@ -747,6 +842,9 @@ mp_identify (mrl_t *mrl, int flags)
 
         if (!found && (flags & IDENTIFY_AUDIO))
           found = mp_identify_audio (mrl, buffer);
+
+        if (!found && (flags & IDENTIFY_METADATA))
+          found = mp_identify_metadata (mrl, buffer);
 
         /* stop fgets because MPlayer is ended */
         if (!found && strstr (buffer, "Exiting"))
