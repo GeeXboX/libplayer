@@ -1146,105 +1146,10 @@ mplayer_uninit (player_t *player)
 }
 
 static void
-mplayer_mrl_get_audio_properties (player_t *player,
-                                  mrl_properties_audio_t *audio)
-{
-  int buffer_i;
-  mplayer_t *mplayer = NULL;
-
-  if (!player || !audio)
-    return;
-
-  mplayer = (mplayer_t *) player->priv;
-  /* FIXME: test for know if it's playing or not will be better */
-  pthread_mutex_lock (&mplayer->mutex_status);
-  if (mplayer->status == MPLAYER_IS_DEAD) {
-    pthread_mutex_unlock (&mplayer->mutex_status);
-    return;
-  }
-  pthread_mutex_unlock (&mplayer->mutex_status);
-
-  audio->codec = slave_get_property_str (player, PROPERTY_AUDIO_CODEC);
-  if (audio->codec)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Audio Codec: %s", audio->codec);
-
-  buffer_i = slave_get_property_int (player, PROPERTY_AUDIO_BITRATE);
-  if (buffer_i > -1) {
-    audio->bitrate = buffer_i;
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Audio Bitrate: %i kbps", audio->bitrate / 1000);
-  }
-
-  // TODO: autio->bits
-
-  buffer_i = slave_get_property_int (player, PROPERTY_CHANNELS);
-  if (buffer_i > -1) {
-    audio->channels = buffer_i;
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Audio Channels: %i", audio->channels);
-  }
-
-  buffer_i = slave_get_property_int (player, PROPERTY_SAMPLERATE);
-  if (buffer_i > -1) {
-    audio->samplerate = buffer_i;
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Audio Sample Rate: %i Hz", audio->samplerate);
-  }
-}
-
-static void
-mplayer_mrl_get_video_properties (player_t *player,
-                                  mrl_properties_video_t *video)
-{
-  int buffer_i;
-  mplayer_t *mplayer = NULL;
-
-  if (!player || !video)
-    return;
-
-  mplayer = (mplayer_t *) player->priv;
-  /* FIXME: test for know if it's playing or not will be better */
-  pthread_mutex_lock (&mplayer->mutex_status);
-  if (mplayer->status == MPLAYER_IS_DEAD) {
-    pthread_mutex_unlock (&mplayer->mutex_status);
-    return;
-  }
-  pthread_mutex_unlock (&mplayer->mutex_status);
-
-  video->codec = slave_get_property_str (player, PROPERTY_VIDEO_CODEC);
-  if (video->codec)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Video Codec: %s", video->codec);
-
-  buffer_i = slave_get_property_int (player, PROPERTY_VIDEO_BITRATE);
-  if (buffer_i > -1) {
-    video->bitrate = buffer_i;
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Video Bitrate: %i kbps", video->bitrate / 1000);
-  }
-
-  buffer_i = slave_get_property_int (player, PROPERTY_WIDTH);
-  if (buffer_i > -1) {
-    video->width = buffer_i;
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Video Width: %i", video->width);
-  }
-
-  buffer_i = slave_get_property_int (player, PROPERTY_HEIGHT);
-  if (buffer_i > -1) {
-    video->height = buffer_i;
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Video Height: %i", video->height);
-  }
-
-  // TODO: audio->channels and audio->streams
-}
-
-static void
 mplayer_mrl_get_properties (player_t *player)
 {
-  mplayer_t *mplayer = NULL;
+  mrl_properties_video_t *video;
+  mrl_properties_audio_t *audio;
   struct stat st;
   mrl_t *mrl;
 
@@ -1254,15 +1159,6 @@ mplayer_mrl_get_properties (player_t *player)
 
   if (!player || !mrl || !mrl->prop)
     return;
-
-  mplayer = (mplayer_t *) player->priv;
-
-  pthread_mutex_lock (&mplayer->mutex_status);
-  if (mplayer->status == MPLAYER_IS_DEAD) {
-    pthread_mutex_unlock (&mplayer->mutex_status);
-    return;
-  }
-  pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* now fetch properties */
   stat (mrl->name, &st);
@@ -1274,10 +1170,52 @@ mplayer_mrl_get_properties (player_t *player)
   // mrl->prop->seekable =
 
   mrl->prop->audio = mrl_properties_audio_new ();
-  mplayer_mrl_get_audio_properties (player, mrl->prop->audio);
-
   mrl->prop->video = mrl_properties_video_new ();
-  mplayer_mrl_get_video_properties (player, mrl->prop->video);
+
+  mp_identify (mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO);
+
+  audio = mrl->prop->audio;
+  video = mrl->prop->video;
+
+  if (video) {
+    if (video->codec)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Codec: %s", video->codec);
+
+    if (video->bitrate)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Bitrate: %i kbps", video->bitrate / 1000);
+
+    if (video->width)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Width: %i", video->width);
+
+    if (video->height)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Height: %i", video->height);
+
+    if (video->aspect)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Aspect: %.2f", video->aspect);
+  }
+
+  if (audio) {
+    if (audio->codec)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Codec: %s", audio->codec);
+
+    if (audio->bitrate)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Bitrate: %i kbps", audio->bitrate / 1000);
+
+    if (audio->channels)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Channels: %i", audio->channels);
+
+    if (audio->samplerate)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Sample Rate: %i Hz", audio->samplerate);
+  }
 }
 
 static void
