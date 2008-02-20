@@ -35,12 +35,7 @@ mrl_properties_audio_new (void)
 {
   mrl_properties_audio_t *audio;
 
-  audio = malloc (sizeof (mrl_properties_audio_t));
-  audio->codec = NULL;
-  audio->bitrate = 0;
-  audio->bits = 0;
-  audio->channels = 0;
-  audio->samplerate = 0;
+  audio = calloc (1, sizeof (mrl_properties_audio_t));
 
   return audio;
 }
@@ -61,13 +56,7 @@ mrl_properties_video_new (void)
 {
   mrl_properties_video_t *video;
 
-  video = malloc (sizeof (mrl_properties_video_t));
-  video->codec = NULL;
-  video->bitrate = 0;
-  video->width = 0;
-  video->height = 0;
-  video->channels = 0;
-  video->streams = 0;
+  video = calloc (1, sizeof (mrl_properties_video_t));
 
   return video;
 }
