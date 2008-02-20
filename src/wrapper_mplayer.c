@@ -1221,8 +1221,8 @@ mplayer_mrl_get_properties (player_t *player)
 static void
 mplayer_mrl_get_metadata (player_t *player)
 {
-  mplayer_t *mplayer = NULL;
   mrl_t *mrl;
+  mrl_metadata_t *meta;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
 
@@ -1231,45 +1231,33 @@ mplayer_mrl_get_metadata (player_t *player)
   if (!player || !mrl || !mrl->meta)
     return;
 
-  mplayer = (mplayer_t *) player->priv;
+  mp_identify (mrl, IDENTIFY_METADATA);
 
-  pthread_mutex_lock (&mplayer->mutex_status);
-  if (mplayer->status == MPLAYER_IS_DEAD) {
-    pthread_mutex_unlock (&mplayer->mutex_status);
-    return;
-  }
-  pthread_mutex_unlock (&mplayer->mutex_status);
+  meta = mrl->meta;
 
-  /* now fetch metadata */
-  mrl->meta->title = slave_get_property_str (player, PROPERTY_METADATA_TITLE);
-  if (mrl->meta->title)
+  if (meta->title)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Title: %s", mrl->meta->title);
+          MODULE_NAME, "Meta Title: %s", meta->title);
 
-  mrl->meta->artist = slave_get_property_str (player, PROPERTY_METADATA_ARTIST);
-  if (mrl->meta->artist)
+  if (meta->artist)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Artist: %s", mrl->meta->artist);
+          MODULE_NAME, "Meta Artist: %s", meta->artist);
 
-  mrl->meta->genre = slave_get_property_str (player, PROPERTY_METADATA_GENRE);
-  if (mrl->meta->genre)
+  if (meta->genre)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Genre: %s", mrl->meta->genre);
+          MODULE_NAME, "Meta Genre: %s", meta->genre);
 
-  mrl->meta->album = slave_get_property_str (player, PROPERTY_METADATA_ALBUM);
-  if (mrl->meta->album)
+  if (meta->album)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Album: %s", mrl->meta->album);
+          MODULE_NAME, "Meta Album: %s", meta->album);
 
-  mrl->meta->year = slave_get_property_str (player, PROPERTY_METADATA_YEAR);
-  if (mrl->meta->year)
+  if (meta->year)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Year: %s", mrl->meta->year);
+          MODULE_NAME, "Meta Year: %s", meta->year);
 
-  mrl->meta->track = slave_get_property_str (player, PROPERTY_METADATA_TRACK);
-  if (mrl->meta->track)
+  if (meta->track)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Track: %s", mrl->meta->track);
+          MODULE_NAME, "Meta Track: %s", meta->track);
 }
 
 static playback_status_t
