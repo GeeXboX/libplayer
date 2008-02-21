@@ -33,6 +33,12 @@ typedef enum playback_status {
   PLAYER_PB_ERROR
 } playback_status_t;
 
+typedef enum identify_flags {
+  IDENTIFY_AUDIO    = (1 << 0),
+  IDENTIFY_VIDEO    = (1 << 1),
+  IDENTIFY_METADATA = (1 << 2),
+} identify_flags_t;
+
 typedef struct player_funcs_s {
   init_status_t (* init) (player_t *player);
   void (* uninit) (player_t *player);

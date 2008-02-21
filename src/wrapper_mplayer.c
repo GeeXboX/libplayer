@@ -123,12 +123,6 @@ typedef enum slave_property {
   PROPERTY_WIDTH
 } slave_property_t;
 
-typedef enum identify_flags {
-  IDENTIFY_AUDIO    = (1 << 0),
-  IDENTIFY_VIDEO    = (1 << 1),
-  IDENTIFY_METADATA = (1 << 2),
-} identify_flags_t;
-
 
 static const struct {
   slave_property_t property;
