@@ -601,7 +601,7 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
   char str[256];
   mrl_metadata_t *meta;
 
-  if (!mrl || !mrl->meta || !strstr (buffer, "ID_CLIP_INFO"))
+  if (!mrl || !mrl->meta || !buffer || !strstr (buffer, "ID_CLIP_INFO"))
     return 0;
 
   /* no new metadata */
@@ -692,8 +692,11 @@ mp_identify_audio (mrl_t *mrl, const char *buffer)
   char *it;
   mrl_properties_audio_t *audio;
 
-  if (!mrl || !mrl->prop || !mrl->prop->audio || !strstr (buffer, "ID_AUDIO"))
+  if (!mrl || !mrl->prop || !mrl->prop->audio
+      || !buffer || !strstr (buffer, "ID_AUDIO"))
+  {
     return 0;
+  }
 
   audio = mrl->prop->audio;
 
@@ -732,8 +735,11 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   char *it;
   mrl_properties_video_t *video;
 
-  if (!mrl || !mrl->prop || !mrl->prop->video || !strstr (buffer, "ID_VIDEO"))
+  if (!mrl || !mrl->prop || !mrl->prop->video
+      || !buffer || !strstr (buffer, "ID_VIDEO"))
+  {
     return 0;
+  }
 
   video = mrl->prop->video;
 
