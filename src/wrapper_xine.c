@@ -227,20 +227,14 @@ xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
 }
 
 static void
-xine_identify (player_t *player, int flags)
+xine_identify (player_t *player, mrl_t *mrl, int flags)
 {
   xine_player_t *x;
   xine_stream_t *stream;
-  mrl_t *mrl;
   xine_video_port_t *vo;
   xine_audio_port_t *ao;
 
-  if (!player)
-    return;
-
-  mrl = player->mrl;
-
-  if (!mrl || !mrl->name)
+  if (!player || !mrl || !mrl->name)
     return;
 
   x = (xine_player_t *) player->priv;
