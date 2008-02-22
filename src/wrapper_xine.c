@@ -502,19 +502,16 @@ xine_player_uninit (player_t *player)
 }
 
 static void
-xine_player_mrl_get_properties (player_t *player)
+xine_player_mrl_get_properties (player_t *player, mrl_t *mrl)
 {
   mrl_properties_video_t *video;
   mrl_properties_audio_t *audio;
   struct stat st;
-  mrl_t *mrl;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
 
-  if (!player || !player->mrl || !player->mrl->prop)
+  if (!player || !mrl || !mrl->prop)
     return;
-
-  mrl = player->mrl;
 
   /* now fetch properties */
   stat (mrl->name, &st);
@@ -525,7 +522,7 @@ xine_player_mrl_get_properties (player_t *player)
   mrl->prop->audio = mrl_properties_audio_new ();
   mrl->prop->video = mrl_properties_video_new ();
 
-  xine_identify (player, player->mrl,
+  xine_identify (player, mrl,
                  IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
 
   audio = mrl->prop->audio;
@@ -588,17 +585,14 @@ xine_player_mrl_get_properties (player_t *player)
 }
 
 static void
-xine_player_mrl_get_metadata (player_t *player)
+xine_player_mrl_get_metadata (player_t *player, mrl_t *mrl)
 {
-  mrl_t *mrl;
   mrl_metadata_t *meta;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
 
-  if (!player || !player->mrl || !player->mrl->meta)
+  if (!player || !mrl || !mrl->meta)
     return;
-
-  mrl = player->mrl;
 
   xine_identify (player, mrl, IDENTIFY_METADATA);
 

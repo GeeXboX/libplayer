@@ -364,16 +364,12 @@ player_mrl_next (player_t *player)
 }
 
 void
-player_mrl_get_properties (player_t *player)
+player_mrl_get_properties (player_t *player, mrl_t *mrl)
 {
-  mrl_t *mrl;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  if (!player || !player->mrl)
+  if (!player || !mrl)
     return;
-
-  mrl = player->mrl;
 
   if (mrl->prop) /* already retrieved */
     return;
@@ -382,20 +378,16 @@ player_mrl_get_properties (player_t *player)
 
   /* player specific init */
   if (player->funcs->mrl_get_props)
-    player->funcs->mrl_get_props (player);
+    player->funcs->mrl_get_props (player, mrl);
 }
 
 void
-player_mrl_get_metadata (player_t *player)
+player_mrl_get_metadata (player_t *player, mrl_t *mrl)
 {
-  mrl_t *mrl;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  if (!player || !player->mrl)
+  if (!player || !mrl)
     return;
-
-  mrl = player->mrl;
 
   if (mrl->meta) /* already retrieved */
     return;
@@ -404,5 +396,5 @@ player_mrl_get_metadata (player_t *player)
 
   /* player specific init */
   if (player->funcs->mrl_get_meta)
-    player->funcs->mrl_get_meta (player);
+    player->funcs->mrl_get_meta (player, mrl);
 }

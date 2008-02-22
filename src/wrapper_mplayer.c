@@ -1146,19 +1146,16 @@ mplayer_uninit (player_t *player)
 }
 
 static void
-mplayer_mrl_get_properties (player_t *player)
+mplayer_mrl_get_properties (player_t *player, mrl_t *mrl)
 {
   mrl_properties_video_t *video;
   mrl_properties_audio_t *audio;
   struct stat st;
-  mrl_t *mrl;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
 
-  if (!player || !player->mrl || !player->mrl->prop)
+  if (!player || !mrl || !mrl->prop)
     return;
-
-  mrl = player->mrl;
 
   /* now fetch properties */
   stat (mrl->name, &st);
@@ -1219,17 +1216,14 @@ mplayer_mrl_get_properties (player_t *player)
 }
 
 static void
-mplayer_mrl_get_metadata (player_t *player)
+mplayer_mrl_get_metadata (player_t *player, mrl_t *mrl)
 {
-  mrl_t *mrl;
   mrl_metadata_t *meta;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
 
-  if (!player || !player->mrl || !player->mrl->meta)
+  if (!player || !mrl || !mrl->meta)
     return;
-
-  mrl = player->mrl;
 
   mp_identify (mrl, IDENTIFY_METADATA);
 

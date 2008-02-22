@@ -71,13 +71,13 @@ dummy_uninit (player_t *player)
 }
 
 static void
-dummy_mrl_get_properties (player_t *player)
+dummy_mrl_get_properties (player_t *player, mrl_t *mrl)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
 }
 
 static void
-dummy_mrl_get_metadata (player_t *player)
+dummy_mrl_get_metadata (player_t *player, mrl_t *mrl)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
 }
