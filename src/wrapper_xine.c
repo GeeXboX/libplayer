@@ -489,104 +489,10 @@ xine_player_uninit (player_t *player)
 }
 
 static void
-xine_player_mrl_get_audio_properties (player_t *player,
-                                      mrl_properties_audio_t *audio)
-{
-  xine_player_t *x = NULL;
-
-  if (!player || !audio)
-    return;
-
-  x = (xine_player_t *) player->priv;
-  if (!x->stream)
-    return;
-
-  if (xine_get_meta_info (x->stream, XINE_META_INFO_AUDIOCODEC))
-    audio->codec =
-      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_AUDIOCODEC));
-  if (audio->codec)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Audio Codec: %s", audio->codec);
-
-  audio->bitrate =
-    xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_BITRATE);
-  if (audio->bitrate)
-    plog (player, PLAYER_MSG_INFO, MODULE_NAME, "Audio Bitrate: %d kbps",
-        (int) (audio->bitrate / 1000));
-
-  audio->bits =
-    xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_BITS);
-  if (audio->bits)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Audio Bits: %d bps", audio->bits);
-
-  audio->channels =
-    xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_CHANNELS);
-  if (audio->channels)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Audio Channels: %d", audio->channels);
-
-  audio->samplerate =
-    xine_get_stream_info (x->stream, XINE_STREAM_INFO_AUDIO_SAMPLERATE);
-  if (audio->samplerate)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Audio Sample Rate: %d Hz", audio->samplerate);
-}
-
-static void
-xine_player_mrl_get_video_properties (player_t *player,
-                                      mrl_properties_video_t *video)
-{
-  xine_player_t *x = NULL;
-
-  if (!player || !video)
-    return;
-
-  x = (xine_player_t *) player->priv;
-  if (!x->stream)
-    return;
-
-  if (xine_get_meta_info (x->stream, XINE_META_INFO_VIDEOCODEC))
-    video->codec =
-      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_VIDEOCODEC));
-  if (video->codec)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Video Codec: %s", video->codec);
-
-  video->bitrate =
-    xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_BITRATE);
-  if (video->bitrate)
-    plog (player, PLAYER_MSG_INFO, MODULE_NAME, "Video Bitrate: %d kbps",
-        (int) (video->bitrate / 1000));
-
-  video->width =
-    xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_WIDTH);
-  if (video->width)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Video Width: %d", video->width);
-
-  video->height =
-    xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_HEIGHT);
-  if (video->height)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Video Height: %d", video->height);
-
-  video->channels =
-    xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_CHANNELS);
-  if (video->channels)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Video Channels: %d", video->channels);
-
-  video->streams =
-    xine_get_stream_info (x->stream, XINE_STREAM_INFO_VIDEO_STREAMS);
-  if (video->streams)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Video Streams: %d", video->streams);
-}
-
-static void
 xine_player_mrl_get_properties (player_t *player)
 {
+  mrl_properties_video_t *video;
+  mrl_properties_audio_t *audio;
   xine_player_t *x = NULL;
   struct stat st;
   mrl_t *mrl;
@@ -613,16 +519,64 @@ xine_player_mrl_get_properties (player_t *player)
   plog (player, PLAYER_MSG_INFO,
         MODULE_NAME, "Seekable: %d", mrl->prop->seekable);
 
-  if (xine_get_stream_info (x->stream, XINE_STREAM_INFO_HAS_AUDIO))
-  {
-    mrl->prop->audio = mrl_properties_audio_new ();
-    xine_player_mrl_get_audio_properties (player, mrl->prop->audio);
+  mrl->prop->audio = mrl_properties_audio_new ();
+  mrl->prop->video = mrl_properties_video_new ();
+
+  xine_identify (player, player->mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO);
+
+  audio = mrl->prop->audio;
+  video = mrl->prop->video;
+
+  if (video) {
+    if (video->codec)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Codec: %s", video->codec);
+
+    if (video->bitrate)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Bitrate: %i kbps", video->bitrate / 1000);
+
+    if (video->width)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Width: %i", video->width);
+
+    if (video->height)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Height: %i", video->height);
+
+    if (video->aspect)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Aspect: %.2f", video->aspect);
+
+    if (video->channels)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Channels: %i", video->channels);
+
+    if (video->streams)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Streams: %i", video->streams);
   }
 
-  if (xine_get_stream_info (x->stream, XINE_STREAM_INFO_HAS_VIDEO))
-  {
-    mrl->prop->video = mrl_properties_video_new ();
-    xine_player_mrl_get_video_properties (player, mrl->prop->video);
+  if (audio) {
+    if (audio->codec)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Codec: %s", audio->codec);
+
+    if (audio->bitrate)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Bitrate: %i kbps", audio->bitrate / 1000);
+
+    if (audio->bits)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Bits: %i bps", audio->bits);
+
+    if (audio->channels)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Channels: %i", audio->channels);
+
+    if (audio->samplerate)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Sample Rate: %i Hz", audio->samplerate);
   }
 }
 
