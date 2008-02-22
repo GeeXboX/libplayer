@@ -227,6 +227,16 @@ xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
 }
 
 static void
+xine_identify_properties (mrl_t *mrl, xine_stream_t *stream)
+{
+  if (!mrl || !mrl->prop || !stream)
+    return;
+
+  mrl->prop->seekable =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_SEEKABLE);
+}
+
+static void
 xine_identify (player_t *player, mrl_t *mrl, int flags)
 {
   xine_player_t *x;
@@ -273,6 +283,9 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
 
     if (flags & IDENTIFY_METADATA)
       xine_identify_metadata (mrl, stream);
+
+    if (flags & IDENTIFY_PROPERTIES)
+      xine_identify_properties (mrl, stream);
 
     xine_close (stream);
     xine_dispose (stream);
@@ -493,7 +506,6 @@ xine_player_mrl_get_properties (player_t *player)
 {
   mrl_properties_video_t *video;
   mrl_properties_audio_t *audio;
-  xine_player_t *x = NULL;
   struct stat st;
   mrl_t *mrl;
 
@@ -504,28 +516,23 @@ xine_player_mrl_get_properties (player_t *player)
 
   mrl = player->mrl;
 
-  x = (xine_player_t *) player->priv;
-  if (!x->stream)
-    return;
-
   /* now fetch properties */
   stat (mrl->name, &st);
   mrl->prop->size = st.st_size;
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
         (float) mrl->prop->size / 1024 / 1024);
 
-  mrl->prop->seekable =
-    xine_get_stream_info (x->stream, XINE_STREAM_INFO_SEEKABLE);
-  plog (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "Seekable: %d", mrl->prop->seekable);
-
   mrl->prop->audio = mrl_properties_audio_new ();
   mrl->prop->video = mrl_properties_video_new ();
 
-  xine_identify (player, player->mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO);
+  xine_identify (player, player->mrl,
+                 IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
 
   audio = mrl->prop->audio;
   video = mrl->prop->video;
+
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "Seekable: %d", mrl->prop->seekable);
 
   if (video) {
     if (video->codec)
