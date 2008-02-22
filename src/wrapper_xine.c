@@ -104,6 +104,190 @@ send_event (player_t *player, int event)
   xine_event_send (x->stream, &xine_event);
 }
 
+static void
+xine_identify_metadata (mrl_t *mrl, xine_stream_t *stream)
+{
+  const char *s;
+  mrl_metadata_t *meta;
+
+  if (!mrl || !mrl->meta || !stream)
+    return;
+
+  meta = mrl->meta;
+
+  s = xine_get_meta_info (stream, XINE_META_INFO_TITLE);
+  if (s) {
+    if (meta->title)
+      free (meta->title);
+    meta->title = strdup (s);
+  }
+
+  s = xine_get_meta_info (stream, XINE_META_INFO_ARTIST);
+  if (s) {
+    if (meta->artist)
+      free (meta->artist);
+    meta->artist = strdup (s);
+  }
+
+  s = xine_get_meta_info (stream, XINE_META_INFO_GENRE);
+  if (s) {
+    if (meta->genre)
+      free (meta->genre);
+    meta->genre = strdup (s);
+  }
+
+  s = xine_get_meta_info (stream, XINE_META_INFO_ALBUM);
+  if (s) {
+    if (meta->album)
+      free (meta->album);
+    meta->album = strdup (s);
+  }
+
+  s = xine_get_meta_info (stream, XINE_META_INFO_YEAR);
+  if (s) {
+    if (meta->year)
+      free (meta->year);
+    meta->year = strdup (s);
+  }
+
+  s = xine_get_meta_info (stream, XINE_META_INFO_TRACK_NUMBER);
+  if (s) {
+    if (meta->track)
+      free (meta->track);
+    meta->track = strdup (s);
+  }
+}
+
+static void
+xine_identify_audio (mrl_t *mrl, xine_stream_t *stream)
+{
+  const char *s;
+  mrl_properties_audio_t *audio;
+
+  if (!mrl || !mrl->prop || !mrl->prop->audio || !stream)
+    return;
+
+  audio = mrl->prop->audio;
+
+  s = xine_get_meta_info (stream, XINE_META_INFO_AUDIOCODEC);
+  if (s) {
+    if (audio->codec)
+      free (audio->codec);
+    audio->codec = strdup (s);
+  }
+
+  audio->bitrate =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_AUDIO_BITRATE);
+
+  audio->bits =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_AUDIO_BITS);
+
+  audio->channels =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_AUDIO_CHANNELS);
+
+  audio->samplerate =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_AUDIO_SAMPLERATE);
+}
+
+static void
+xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
+{
+  const char *s;
+  mrl_properties_video_t *video;
+
+  if (!mrl || !mrl->prop || !mrl->prop->video || !stream)
+    return;
+
+  video = mrl->prop->video;
+
+  s = xine_get_meta_info (stream, XINE_META_INFO_VIDEOCODEC);
+  if (s) {
+    if (video->codec)
+      free (video->codec);
+    video->codec = strdup (s);
+  }
+
+  video->bitrate =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_BITRATE);
+
+  video->width =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_WIDTH);
+
+  video->height =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_HEIGHT);
+
+  video->aspect =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_RATIO) / 10000.0;
+
+  video->channels =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_CHANNELS);
+
+  video->streams =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_STREAMS);
+}
+
+static void
+xine_identify (player_t *player, int flags)
+{
+  xine_player_t *x;
+  xine_stream_t *stream;
+  mrl_t *mrl;
+  xine_video_port_t *vo;
+  xine_audio_port_t *ao;
+
+  if (!player)
+    return;
+
+  mrl = player->mrl;
+
+  if (!mrl || !mrl->name)
+    return;
+
+  x = (xine_player_t *) player->priv;
+
+  if (!x)
+    return;
+
+  ao = xine_open_audio_driver (x->xine, "none", NULL);
+
+  if (!ao)
+    return;
+
+  vo = xine_open_video_driver (x->xine, "none", XINE_VISUAL_TYPE_NONE, NULL);
+
+  if (!vo) {
+    xine_close_audio_driver (x->xine, ao);
+    return;
+  }
+
+  stream = xine_stream_new (x->xine, ao, vo);
+
+  if (stream) {
+    xine_open (stream, mrl->name);
+
+    if ((flags & IDENTIFY_VIDEO)
+        && xine_get_stream_info (stream, XINE_STREAM_INFO_HAS_VIDEO))
+    {
+      xine_identify_video (mrl, stream);
+    }
+
+    if ((flags & IDENTIFY_AUDIO)
+        && xine_get_stream_info (stream, XINE_STREAM_INFO_HAS_AUDIO))
+    {
+      xine_identify_audio (mrl, stream);
+    }
+
+    if (flags & IDENTIFY_METADATA)
+      xine_identify_metadata (mrl, stream);
+
+    xine_close (stream);
+    xine_dispose (stream);
+  }
+
+  xine_close_audio_driver (x->xine, ao);
+  xine_close_video_driver (x->xine, vo);
+}
+
 static init_status_t
 xine_player_init (player_t *player)
 {
