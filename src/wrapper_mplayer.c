@@ -1154,7 +1154,7 @@ mplayer_mrl_get_properties (player_t *player, mrl_t *mrl)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
 
-  if (!player || !mrl || !mrl->prop)
+  if (!player || !mrl || !mrl->prop || !mrl->name)
     return;
 
   /* now fetch properties */
