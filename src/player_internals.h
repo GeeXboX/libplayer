@@ -34,9 +34,9 @@ typedef enum playback_status {
 } playback_status_t;
 
 typedef enum identify_flags {
-  IDENTIFY_AUDIO    = (1 << 0),
-  IDENTIFY_VIDEO    = (1 << 1),
-  IDENTIFY_METADATA = (1 << 2),
+  IDENTIFY_AUDIO      = (1 << 0),
+  IDENTIFY_VIDEO      = (1 << 1),
+  IDENTIFY_METADATA   = (1 << 2),
   IDENTIFY_PROPERTIES = (1 << 3),
 } identify_flags_t;
 
