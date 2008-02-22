@@ -21,8 +21,6 @@ Commons:
   * add functions for use OSD
   * add functions for take a screenshot
   * complete playlist manager
-  * update functions for get properties and metadatas of any stream,
-    even if a stream is playing at the same time.
 
 MPlayer:
   * add vesa and vidix support
