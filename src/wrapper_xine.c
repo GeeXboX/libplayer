@@ -599,10 +599,10 @@ xine_player_mrl_get_properties (player_t *player)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
 
-  mrl = player->mrl;
-
-  if (!player || !mrl || !mrl->prop)
+  if (!player || !player->mrl || !player->mrl->prop)
     return;
+
+  mrl = player->mrl;
 
   x = (xine_player_t *) player->priv;
   if (!x->stream)
@@ -640,10 +640,10 @@ xine_player_mrl_get_metadata (player_t *player)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
 
-  mrl = player->mrl;
-
-  if (!player || !mrl || !mrl->meta)
+  if (!player || !player->mrl || !player->mrl->meta)
     return;
+
+  mrl = player->mrl;
 
   x = (xine_player_t *) player->priv; 
   if (!x->stream)

@@ -370,10 +370,10 @@ player_mrl_get_properties (player_t *player)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  mrl = player->mrl;
-
-  if (!player || !mrl)
+  if (!player || !player->mrl)
     return;
+
+  mrl = player->mrl;
 
   if (mrl->prop) /* already retrieved */
     return;
@@ -392,10 +392,10 @@ player_mrl_get_metadata (player_t *player)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  mrl = player->mrl;
-
-  if (!player || !mrl)
+  if (!player || !player->mrl)
     return;
+
+  mrl = player->mrl;
 
   if (mrl->meta) /* already retrieved */
     return;
