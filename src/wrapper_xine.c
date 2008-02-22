@@ -590,8 +590,8 @@ xine_player_mrl_get_properties (player_t *player)
 static void
 xine_player_mrl_get_metadata (player_t *player)
 {
-  xine_player_t *x = NULL;
   mrl_t *mrl;
+  mrl_metadata_t *meta;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
 
@@ -600,52 +600,33 @@ xine_player_mrl_get_metadata (player_t *player)
 
   mrl = player->mrl;
 
-  x = (xine_player_t *) player->priv; 
-  if (!x->stream)
-    return;
+  xine_identify (player, mrl, IDENTIFY_METADATA);
 
-  /* now fetch metadata */
-  if (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST))
-    mrl->meta->title =
-      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST));
-  if (mrl->meta->title)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Title: %s", mrl->meta->title);
+  meta = mrl->meta;
 
-  if (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST))
-    mrl->meta->artist =
-      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ARTIST));
-  if (mrl->meta->artist)
+  if (meta->title)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Artist: %s", mrl->meta->artist);
+          MODULE_NAME, "Meta Title: %s", meta->title);
 
-  if (xine_get_meta_info (x->stream, XINE_META_INFO_GENRE))
-    mrl->meta->genre =
-      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_GENRE));
-  if (mrl->meta->genre)
+  if (meta->artist)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Genre: %s", mrl->meta->genre);
+          MODULE_NAME, "Meta Artist: %s", meta->artist);
 
-  if (xine_get_meta_info (x->stream, XINE_META_INFO_ALBUM))
-    mrl->meta->album =
-      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_ALBUM));
-  if (mrl->meta->album)
+  if (meta->genre)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Album: %s", mrl->meta->album);
+          MODULE_NAME, "Meta Genre: %s", meta->genre);
 
-  if (xine_get_meta_info (x->stream, XINE_META_INFO_YEAR))
-    mrl->meta->year =
-      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_YEAR));
-  if (mrl->meta->year)
+  if (meta->album)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Year: %s", mrl->meta->year);
+          MODULE_NAME, "Meta Album: %s", meta->album);
 
-  if (xine_get_meta_info (x->stream, XINE_META_INFO_TRACK_NUMBER))
-    mrl->meta->track =
-      strdup (xine_get_meta_info (x->stream, XINE_META_INFO_TRACK_NUMBER));
-  if (mrl->meta->track)
+  if (meta->year)
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Track: %s", mrl->meta->track);
+          MODULE_NAME, "Meta Year: %s", meta->year);
+
+  if (meta->track)
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Track: %s", meta->track);
 }
 
 static playback_status_t
