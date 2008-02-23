@@ -170,7 +170,7 @@ player_playback_start (player_t *player)
     return;
 
   mrl = player->mrl;
-  if (mrl && mrl->prop && mrl->prop->video) {
+  if (mrl->prop && mrl->prop->video) {
     video = mrl->prop->video;
     player->w = video->width;
     player->h = video->height;
