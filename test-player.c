@@ -175,6 +175,8 @@ show_info (mrl_t *mrl)
       printf (" Video Channels: %i\n", video->channels);
     if (video->streams)
       printf (" Video Streams: %i\n", video->streams);
+    if (video->framerate)
+      printf (" Video Framerate: %.2f\n", video->framerate);
   }
 
   if (audio) {

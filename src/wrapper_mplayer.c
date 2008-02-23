@@ -772,6 +772,12 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
     return 1;
   }
 
+  it = strstr (buffer, "FPS=");
+  if (it) {
+    video->framerate = (float) atof (parse_field (it, "FPS="));
+    return 1;
+  }
+
   return 0;
 }
 
@@ -1194,6 +1200,10 @@ mplayer_mrl_get_properties (player_t *player, mrl_t *mrl)
     if (video->aspect)
       plog (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Video Aspect: %.2f", video->aspect);
+
+    if (video->framerate)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Framerate: %.2f", video->framerate);
   }
 
   if (audio) {
