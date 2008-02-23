@@ -97,7 +97,8 @@ load_media (player_t *player)
   char media;
 
   printf ("Media to load (MRL|file): ");
-  scanf ("%s", file);
+  fgets (file, sizeof (file), stdin);
+  *(file + strlen (file) - 1) = '\0';
   putchar ('\n');
 
   printf ("Media type :\n" \
