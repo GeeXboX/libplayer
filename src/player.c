@@ -156,6 +156,8 @@ player_set_verbosity (player_t *player, player_verbosity_level_t level)
 void
 player_playback_start (player_t *player)
 {
+  mrl_t *mrl;
+  mrl_properties_video_t *video;
   int res = PLAYER_PB_ERROR;
 
   if (!player)
@@ -166,6 +168,14 @@ player_playback_start (player_t *player)
 
   if (!player->mrl) /* nothing to playback */
     return;
+
+  mrl = player->mrl;
+  if (mrl && mrl->prop && mrl->prop->video) {
+    video = mrl->prop->video;
+    player->w = video->width;
+    player->h = video->height;
+    player->aspect = video->aspect;
+  }
 
   /* player specific playback_start() */
   if (player->funcs->pb_start)
