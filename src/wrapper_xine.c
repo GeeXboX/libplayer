@@ -450,11 +450,11 @@ xine_set_verbosity (player_t *player, player_verbosity_level_t level)
     break;
   case PLAYER_MSG_INFO:
   case PLAYER_MSG_WARNING:
-    verbosity = XINE_VERBOSITY_LOG;
+    verbosity = XINE_VERBOSITY_DEBUG;
     break;
   case PLAYER_MSG_ERROR:
   case PLAYER_MSG_CRITICAL:
-    verbosity = XINE_VERBOSITY_DEBUG;
+    verbosity = XINE_VERBOSITY_LOG;
     break;
   default:
     break;
