@@ -280,6 +280,8 @@ main (int argc, char **argv)
 
   /* main loop */
   while (run) {
+    printf ("action> ");
+    fflush (stdout);
     input = getch ();
 
     switch (input) {
