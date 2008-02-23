@@ -323,6 +323,7 @@ xine_player_init (player_t *player)
 
   switch (player->vo) {
   case PLAYER_VO_NULL:
+    id_vo = strdup ("none");
     break;
 
   case PLAYER_VO_X11:
@@ -380,6 +381,7 @@ xine_player_init (player_t *player)
 
   switch (player->ao) {
   case PLAYER_AO_NULL:
+    id_ao = strdup ("none");
     break;
 
   case PLAYER_AO_ALSA:
