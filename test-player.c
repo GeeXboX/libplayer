@@ -274,6 +274,7 @@ main (int argc, char **argv)
   if (!player)
     return -1;
 
+  player_set_verbosity (player, PLAYER_MSG_ERROR);
   player_set_volume (player, volume);
   printf (TESTPLAYER_COMMANDS);
 
