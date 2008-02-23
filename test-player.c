@@ -66,6 +66,9 @@
 static int
 event_cb (player_event_t e, void *data)
 {
+  if (e == PLAYER_EVENT_PLAYBACK_FINISHED)
+    printf ("PLAYBACK FINISHED\n");
+
   return 0;
 }
 
@@ -283,50 +286,66 @@ main (int argc, char **argv)
       if (++volume > 100)
         volume = 100;
       player_set_volume (player, volume);
+      printf ("VOLUME %i\n", volume);
       break;
     case '1':   /* 5s backward */
       player_playback_seek (player, -5);
+      printf ("SEEK -5 sec.\n");
       break;
     case '2':   /* 5s forward */
       player_playback_seek (player, 5);
+      printf ("SEEK +5 sec.\n");
       break;
     case '9':   /* decrease volume */
       if (--volume < 0)
         volume = 0;
       player_set_volume (player, volume);
+      printf ("VOLUME %i\n", volume);
       break;
     case 'b':   /* start the previous stream in the playlist */
       player_mrl_previous (player);
+      printf ("PREVIOUS STREAM\n");
       break;
     case 'l':   /* load a stream in the playlist */
       load_media (player);
       break;
     case 'm':   /* set/unset mute */
-      if (player_get_mute (player) != PLAYER_MUTE_ON)
+      if (player_get_mute (player) != PLAYER_MUTE_ON) {
         player_set_mute (player, PLAYER_MUTE_ON);
-      else
+        printf ("MUTE\n");
+      }
+      else {
         player_set_mute (player, PLAYER_MUTE_OFF);
+        printf ("UNMUTE\n");
+      }
       break;
     case 'n':   /* start the next stream in the playlist */
       player_mrl_next (player);
+      printf ("NEXT STREAM\n");
       break;
     case 'o':   /* pause the current playback */
       player_playback_pause (player);
+      printf ("PAUSE\n");
       break;
     case 'p':   /* start a new playback */
       player_playback_start (player);
+      printf ("START PLAYBACK\n");
       break;
     case 'q':   /* quit test-player */
       run = 0;
+      printf ("QUIT\n");
       break;
     case 'r':   /* remove the current stream of the playlist */
       player_mrl_remove (player);
+      printf ("REMOVE STREAM OF THE PLAYLIST\n");
       break;
     case 's':   /* stop the current playback */
       player_playback_stop (player);
+      printf ("STOP PLAYBACK\n");
       break;
     case 't':   /* remove all streams of the playlist */
       player_mrl_remove_all (player);
+      printf ("ERASE PLAYLIST\n");
       break;
     case 'v':   /* print properties and metadata */
       show_info (player->mrl);
