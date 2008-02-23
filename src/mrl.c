@@ -242,6 +242,10 @@ player_mrl_append (player_t *player,
   if (!mrl)
     return;
 
+  /* get properties and metadata for this mrl */
+  player_mrl_get_properties (player, mrl);
+  player_mrl_get_metadata (player, mrl);
+
   /* create/expand the playlist */
   if (!player->mrl) /* empty list */
     player->mrl = mrl;
