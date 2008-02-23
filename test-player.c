@@ -51,6 +51,7 @@
   " 1 : 5s backward\n" \
   " 2 : 5s forward\n" \
   " l : load a stream in the playlist\n" \
+  " v : print properties and metadata of the current stream\n" \
   " p : start a new playback\n" \
   " o : pause the current playback\n" \
   " s : stop the current playback\n" \
@@ -134,6 +135,73 @@ load_media (player_t *player)
 
   player_mrl_append (player, file, NULL, type, PLAYER_ADD_MRL_QUEUE);
   printf ("Media added to the playlist!\n");
+}
+
+static void
+show_info (mrl_t *mrl)
+{
+  mrl_properties_video_t *video = NULL;
+  mrl_properties_audio_t *audio = NULL;
+  mrl_metadata_t *meta = NULL;
+
+  if (!mrl || !mrl->name)
+    return;
+
+  printf ("Properties and metadata:\n");
+  printf (" Name: %s\n", mrl->name);
+
+  if (mrl->prop) {
+    printf (" Size: %.2f MB\n", mrl->prop->size / 1024.0 / 1024.0);
+    video = mrl->prop->video;
+    audio = mrl->prop->audio;
+  }
+
+  if (video) {
+    if (video->codec)
+      printf (" Video Codec: %s\n", video->codec);
+    if (video->bitrate)
+      printf (" Video Bitrate: %i kbps\n", video->bitrate / 1000);
+    if (video->width)
+      printf (" Video Width: %i\n", video->width);
+    if (video->height)
+      printf (" Video Height: %i\n", video->height);
+    if (video->aspect)
+      printf (" Video Aspect: %.2f\n", video->aspect);
+    if (video->channels)
+      printf (" Video Channels: %i\n", video->channels);
+    if (video->streams)
+      printf (" Video Streams: %i\n", video->streams);
+  }
+
+  if (audio) {
+    if (audio->codec)
+      printf (" Audio Codec: %s\n", audio->codec);
+    if (audio->bitrate)
+      printf (" Audio Bitrate: %i kbps\n", audio->bitrate / 1000);
+    if (audio->bits)
+      printf (" Audio Bits: %i bps\n", audio->bits);
+    if (audio->channels)
+      printf (" Audio Channels: %i\n", audio->channels);
+    if (audio->samplerate)
+      printf (" Audio Sample Rate: %i Hz\n", audio->samplerate);
+  }
+
+  meta = mrl->meta;
+
+  if (meta) {
+    if (meta->title)
+      printf (" Meta Title: %s\n", meta->title);
+    if (meta->artist)
+      printf (" Meta Artist: %s\n", meta->artist);
+    if (meta->genre)
+      printf (" Meta Genre: %s\n", meta->genre);
+    if (meta->album)
+      printf (" Meta Album: %s\n", meta->album);
+    if (meta->year)
+      printf (" Meta Year: %s\n", meta->year);
+    if (meta->track)
+      printf (" Meta Track: %s\n", meta->track);
+  }
 }
 
 int
@@ -258,6 +326,9 @@ main (int argc, char **argv)
       break;
     case 't':   /* remove all streams of the playlist */
       player_mrl_remove_all (player);
+      break;
+    case 'v':   /* print properties and metadata */
+      show_info (player->mrl);
       break;
     default:
       fprintf (stderr, "ERROR: Command unknown!\n");
