@@ -686,11 +686,13 @@ mp_identify_audio (mrl_t *mrl, const char *buffer)
   char *it;
   mrl_properties_audio_t *audio;
 
-  if (!mrl || !mrl->prop || !mrl->prop->audio
-      || !buffer || !strstr (buffer, "ID_AUDIO"))
+  if (!mrl || !mrl->prop || !buffer || !strstr (buffer, "ID_AUDIO"))
   {
     return 0;
   }
+
+  if (!mrl->prop->audio)
+    mrl->prop->audio = mrl_properties_audio_new ();
 
   audio = mrl->prop->audio;
 
@@ -729,11 +731,13 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   char *it;
   mrl_properties_video_t *video;
 
-  if (!mrl || !mrl->prop || !mrl->prop->video
-      || !buffer || !strstr (buffer, "ID_VIDEO"))
+  if (!mrl || !mrl->prop || !buffer || !strstr (buffer, "ID_VIDEO"))
   {
     return 0;
   }
+
+  if (!mrl->prop->video)
+    mrl->prop->video = mrl_properties_video_new ();
 
   video = mrl->prop->video;
 
@@ -1171,9 +1175,6 @@ mplayer_mrl_get_properties (player_t *player, mrl_t *mrl)
 
   /* FIXME: no idea how implement */
   // mrl->prop->seekable =
-
-  mrl->prop->audio = mrl_properties_audio_new ();
-  mrl->prop->video = mrl_properties_video_new ();
 
   mp_identify (mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO);
 
