@@ -164,8 +164,11 @@ xine_identify_audio (mrl_t *mrl, xine_stream_t *stream)
   const char *s;
   mrl_properties_audio_t *audio;
 
-  if (!mrl || !mrl->prop || !mrl->prop->audio || !stream)
+  if (!mrl || !mrl->prop || !stream)
     return;
+
+  if (!mrl->prop->audio)
+    mrl->prop->audio = mrl_properties_audio_new ();
 
   audio = mrl->prop->audio;
 
@@ -196,8 +199,11 @@ xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
   const char *s;
   mrl_properties_video_t *video;
 
-  if (!mrl || !mrl->prop || !mrl->prop->video || !stream)
+  if (!mrl || !mrl->prop || !stream)
     return;
+
+  if (!mrl->prop->video)
+    mrl->prop->video = mrl_properties_video_new ();
 
   video = mrl->prop->video;
 
@@ -524,9 +530,6 @@ xine_player_mrl_get_properties (player_t *player, mrl_t *mrl)
   mrl->prop->size = st.st_size;
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
         (float) mrl->prop->size / 1024 / 1024);
-
-  mrl->prop->audio = mrl_properties_audio_new ();
-  mrl->prop->video = mrl_properties_video_new ();
 
   xine_identify (player, mrl,
                  IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
