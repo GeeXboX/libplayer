@@ -785,6 +785,23 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   return 0;
 }
 
+static int
+mp_identify_properties (mrl_t *mrl, const char *buffer)
+{
+  char *it;
+
+  if (!mrl || !mrl->prop || !buffer)
+    return 0;
+
+  it = strstr (buffer, "ID_SEEKABLE=");
+  if (it) {
+    mrl->prop->seekable = atoi (parse_field (it, "ID_SEEKABLE="));
+    return 1;
+  }
+
+  return 0;
+}
+
 /**
  * Identify a stream for complete player->w and player->h attributes. These
  * are necessary for that Xv can use a right aspect.
@@ -855,6 +872,9 @@ mp_identify (mrl_t *mrl, int flags)
 
         if (!found && (flags & IDENTIFY_METADATA))
           found = mp_identify_metadata (mrl, buffer);
+
+        if (!found && (flags & IDENTIFY_PROPERTIES))
+          found = mp_identify_properties (mrl, buffer);
 
         /* stop fgets because MPlayer is ended */
         if (!found && strstr (buffer, "Exiting"))
@@ -1173,13 +1193,13 @@ mplayer_mrl_get_properties (player_t *player, mrl_t *mrl)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
         (float) mrl->prop->size / 1024 / 1024);
 
-  /* FIXME: no idea how implement */
-  // mrl->prop->seekable =
-
-  mp_identify (mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO);
+  mp_identify (mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
 
   audio = mrl->prop->audio;
   video = mrl->prop->video;
+
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "Seekable: %i", mrl->prop->seekable);
 
   if (video) {
     if (video->codec)
