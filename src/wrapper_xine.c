@@ -167,6 +167,9 @@ xine_identify_audio (mrl_t *mrl, xine_stream_t *stream)
   if (!mrl || !mrl->prop || !stream)
     return;
 
+  if (!xine_get_stream_info (stream, XINE_STREAM_INFO_HAS_AUDIO))
+    return;
+
   if (!mrl->prop->audio)
     mrl->prop->audio = mrl_properties_audio_new ();
 
@@ -200,6 +203,9 @@ xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
   mrl_properties_video_t *video;
 
   if (!mrl || !mrl->prop || !stream)
+    return;
+
+  if (!xine_get_stream_info (stream, XINE_STREAM_INFO_HAS_VIDEO))
     return;
 
   if (!mrl->prop->video)
@@ -279,17 +285,11 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   if (stream) {
     xine_open (stream, mrl->name);
 
-    if ((flags & IDENTIFY_VIDEO)
-        && xine_get_stream_info (stream, XINE_STREAM_INFO_HAS_VIDEO))
-    {
+    if ((flags & IDENTIFY_VIDEO))
       xine_identify_video (mrl, stream);
-    }
 
-    if ((flags & IDENTIFY_AUDIO)
-        && xine_get_stream_info (stream, XINE_STREAM_INFO_HAS_AUDIO))
-    {
+    if ((flags & IDENTIFY_AUDIO))
       xine_identify_audio (mrl, stream);
-    }
 
     if (flags & IDENTIFY_METADATA)
       xine_identify_metadata (mrl, stream);
