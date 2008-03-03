@@ -687,9 +687,7 @@ mp_identify_audio (mrl_t *mrl, const char *buffer)
   mrl_properties_audio_t *audio;
 
   if (!mrl || !mrl->prop || !buffer || !strstr (buffer, "ID_AUDIO"))
-  {
     return 0;
-  }
 
   if (!mrl->prop->audio)
     mrl->prop->audio = mrl_properties_audio_new ();
@@ -732,9 +730,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   mrl_properties_video_t *video;
 
   if (!mrl || !mrl->prop || !buffer || !strstr (buffer, "ID_VIDEO"))
-  {
     return 0;
-  }
 
   if (!mrl->prop->video)
     mrl->prop->video = mrl_properties_video_new ();
