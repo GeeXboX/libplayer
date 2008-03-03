@@ -198,32 +198,25 @@ mrl_list_free (mrl_t *mrl)
 int
 mrl_uses_vo (mrl_t *mrl)
 {
-  switch (mrl->type)
-  {
-  case PLAYER_MRL_TYPE_FILE_VIDEO:
-  case PLAYER_MRL_TYPE_FILE_IMAGE:
-  case PLAYER_MRL_TYPE_DVD_SIMPLE:
-  case PLAYER_MRL_TYPE_DVD_NAV:
-    return 1;
-  default:
+  if (!mrl || !mrl->prop)
+    return -1;
+
+  if (mrl->prop->video)
     return 0;
-  }
+
+  return 1;
 }
 
 int
 mrl_uses_ao (mrl_t *mrl)
 {
-  switch (mrl->type)
-  {
-  case PLAYER_MRL_TYPE_FILE_VIDEO:
-  case PLAYER_MRL_TYPE_FILE_AUDIO:
-  case PLAYER_MRL_TYPE_DVD_SIMPLE:
-  case PLAYER_MRL_TYPE_DVD_NAV:
-  case PLAYER_MRL_TYPE_CDDA:
-    return 1;
-  default:
+  if (!mrl || !mrl->prop)
+    return -1;
+
+  if (mrl->prop->audio)
     return 0;
-  }
+
+  return 1;
 }
 
 void

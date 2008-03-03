@@ -1295,7 +1295,7 @@ mplayer_playback_start (player_t *player)
     slave_cmd (player, SLAVE_SUB_LOAD);
 
   /* X11 */
-  if (player->x11 && mrl_uses_vo (player->mrl))
+  if (player->x11 && !mrl_uses_vo (player->mrl))
     x11_map (player);
 
   return PLAYER_PB_OK;
@@ -1326,7 +1326,7 @@ mplayer_playback_stop (player_t *player)
   pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* X11 */
-  if (player->x11 && mrl_uses_vo (player->mrl))
+  if (player->x11 && !mrl_uses_vo (player->mrl))
     x11_unmap (player);
 
   slave_cmd (player, SLAVE_STOP);
