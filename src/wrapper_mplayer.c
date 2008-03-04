@@ -147,7 +147,8 @@ static const struct {
   {PROPERTY_VIDEO_BITRATE,    "video_bitrate"},
   {PROPERTY_VIDEO_CODEC,      "video_codec"},
   {PROPERTY_VOLUME,           "volume"},
-  {PROPERTY_WIDTH,            "width"}
+  {PROPERTY_WIDTH,            "width"},
+  {PROPERTY_UNKNOWN,          NULL}
 };
 
 
@@ -166,11 +167,13 @@ sig_handler (int signal)
 static char *
 get_prop (slave_property_t property)
 {
-  int i;
+  int i = 0;
 
-  for (i = 0; i < sizeof (g_slave_props) / sizeof (g_slave_props[0]); i++)
+  while (g_slave_props[i].text) {
     if (g_slave_props[i].property == property)
       return g_slave_props[i].text;
+    i++;
+  }
 
   return NULL;
 }
