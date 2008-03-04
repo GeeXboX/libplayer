@@ -95,49 +95,14 @@ getch (void)
 static void
 load_media (player_t *player)
 {
-  player_mrl_type_t type = PLAYER_MRL_TYPE_UNKNOWN;
   char file[1024];
-  char media;
 
   printf ("Media to load (MRL|file): ");
   fgets (file, sizeof (file), stdin);
   *(file + strlen (file) - 1) = '\0';
   putchar ('\n');
 
-  printf ("Media type :\n" \
-          " 1. Audio file\n" \
-          " 2. Video file\n" \
-          " 3. Image file (unimplemented)\n" \
-          " 4. DVD\n" \
-          " 5. DVD navigation\n" \
-          " 6. CD Audio\n");
-  media = getch ();
-
-  switch (media) {
-  case '1':
-    type = PLAYER_MRL_TYPE_FILE_AUDIO;
-    break;
-  case '2':
-    type = PLAYER_MRL_TYPE_FILE_VIDEO;
-    break;
-  case '3':
-    type = PLAYER_MRL_TYPE_FILE_IMAGE;
-    break;
-  case '4':
-    type = PLAYER_MRL_TYPE_DVD_SIMPLE;
-    break;
-  case '5':
-    type = PLAYER_MRL_TYPE_DVD_NAV;
-    break;
-  case '6':
-    type = PLAYER_MRL_TYPE_CDDA;
-    break;
-  default:
-    fprintf (stderr, "ERROR: Media type unknown!\n");
-    return;
-  }
-
-  player_mrl_append (player, file, NULL, type, PLAYER_ADD_MRL_QUEUE);
+  player_mrl_append (player, file, NULL, PLAYER_ADD_MRL_QUEUE);
   printf ("Media added to the playlist!\n");
 }
 

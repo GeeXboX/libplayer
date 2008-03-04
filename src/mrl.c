@@ -127,7 +127,7 @@ mrl_metadata_free (mrl_metadata_t *meta)
 }
 
 mrl_t *
-mrl_new (char *name, char *subtitle, player_mrl_type_t type)
+mrl_new (char *name, char *subtitle)
 {
   mrl_t *mrl = NULL;
 
@@ -138,7 +138,6 @@ mrl_new (char *name, char *subtitle, player_mrl_type_t type)
   mrl = calloc (1, sizeof (mrl_t));
   mrl->name = strdup (name);
   mrl->subtitle = subtitle ? strdup (subtitle) : NULL;
-  mrl->type = type;
 
   return mrl;
 }
@@ -206,8 +205,7 @@ mrl_uses_ao (mrl_t *mrl)
 
 void
 player_mrl_append (player_t *player,
-                   char *location, char *subtitle, player_mrl_type_t type,
-                   player_add_mrl_t when)
+                   char *location, char *subtitle, player_add_mrl_t when)
 {
   mrl_t *mrl = NULL;
 
@@ -216,7 +214,7 @@ player_mrl_append (player_t *player,
   if (!player || !location)
     return;
 
-  mrl = mrl_new (location, subtitle, type);
+  mrl = mrl_new (location, subtitle);
   if (!mrl)
     return;
 

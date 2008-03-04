@@ -206,13 +206,12 @@ void player_uninit (player_t *player);
 void player_set_verbosity (player_t *player, player_verbosity_level_t level);
 
 /* MRL helpers */
-mrl_t *mrl_new (char *name, char *subtitle, player_mrl_type_t type);
+mrl_t *mrl_new (char *name, char *subtitle);
 void mrl_free (mrl_t *mrl, int recursive);
 void mrl_list_free (mrl_t *mrl);
 
 void player_mrl_append (player_t *player,
-                        char *location, char *subtitle, player_mrl_type_t type,
-                        player_add_mrl_t when);
+                        char *location, char *subtitle, player_add_mrl_t when);
 void player_mrl_remove (player_t *player);
 void player_mrl_remove_all (player_t *player);
 void player_mrl_previous (player_t *player);

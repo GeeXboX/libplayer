@@ -57,12 +57,12 @@ frontend_event_cb (player_event_t e, void *data)
 }
 
 static void
-do_regression_tests (player_t *player, char *mrl, player_mrl_type_t type)
+do_regression_tests (player_t *player, char *mrl)
 {
   if (!player || !mrl)
     return;
 
-  player_mrl_append (player, mrl, NULL, type, PLAYER_ADD_MRL_NOW);
+  player_mrl_append (player, mrl, NULL, PLAYER_ADD_MRL_NOW);
   player_mrl_get_properties (player, player->mrl);
   player_mrl_get_metadata (player, player->mrl);
   printf ("Current volume: %d\n", player_get_volume (player));
@@ -92,8 +92,8 @@ player_run_test (player_type_t player_type)
   player = player_init (player_type, PLAYER_AO_ALSA, PLAYER_VO_XV,
                         frontend_event_cb);
   player_set_verbosity (player, PLAYER_MSG_INFO);
-  do_regression_tests (player, AUDIO_TEST_FILE, PLAYER_MRL_TYPE_FILE_AUDIO);
-  do_regression_tests (player, VIDEO_TEST_FILE, PLAYER_MRL_TYPE_FILE_VIDEO);
+  do_regression_tests (player, AUDIO_TEST_FILE);
+  do_regression_tests (player, VIDEO_TEST_FILE);
   player_uninit (player);
 }
 
