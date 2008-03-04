@@ -264,7 +264,7 @@ thread_fifo (void *arg)
         }
         pthread_mutex_unlock (&mplayer->mutex_search);
 
-        if (strstr (buffer, "EOF code: 1")) {
+        if (strstr (buffer, "EOF code:")) {
           pthread_mutex_lock (&mplayer->mutex_status);
           /* when the stream is ended without stop action */
           if (mplayer->status == MPLAYER_IS_PLAYING) {
