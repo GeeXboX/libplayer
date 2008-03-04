@@ -141,22 +141,6 @@ mrl_metadata_free (mrl_metadata_t *meta)
   free (meta);
 }
 
-mrl_t *
-mrl_new (char *name, char *subtitle)
-{
-  mrl_t *mrl = NULL;
-
-  /* check for minimal requirements */
-  if (!name)
-    return NULL;
-
-  mrl = calloc (1, sizeof (mrl_t));
-  mrl->name = strdup (name);
-  mrl->subtitle = subtitle ? strdup (subtitle) : NULL;
-
-  return mrl;
-}
-
 void
 mrl_free (mrl_t *mrl, int recursive)
 {
