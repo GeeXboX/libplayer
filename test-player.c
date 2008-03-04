@@ -107,6 +107,32 @@ load_media (player_t *player)
 }
 
 static void
+show_type (mrl_t *mrl)
+{
+  printf (" Type: ");
+
+  if (!mrl)
+    printf ("unknown\n");
+
+  switch (mrl->type) {
+  case PLAYER_MRL_TYPE_AUDIO:
+    printf ("audio\n");
+    break;
+
+  case PLAYER_MRL_TYPE_VIDEO:
+    printf ("video\n");
+    break;
+
+  case PLAYER_MRL_TYPE_IMAGE:
+    printf ("image\n");
+    break;
+
+  default:
+    printf ("unknown\n");
+  }
+}
+
+static void
 show_info (mrl_t *mrl)
 {
   mrl_properties_video_t *video = NULL;
@@ -118,6 +144,8 @@ show_info (mrl_t *mrl)
 
   printf ("Properties and metadata:\n");
   printf (" Name: %s\n", mrl->name);
+
+  show_type (mrl);
 
   if (mrl->prop) {
     printf (" Size: %.2f MB\n", mrl->prop->size / 1024.0 / 1024.0);
