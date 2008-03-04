@@ -218,6 +218,26 @@ mrl_uses_ao (mrl_t *mrl)
   return 1;
 }
 
+mrl_t *
+player_mrl_new (player_t *player, char *name, char *subtitle)
+{
+  mrl_t *mrl = NULL;
+
+  if (!player || !name)
+    return NULL;
+
+  mrl = calloc (1, sizeof (mrl_t));
+  mrl->name = strdup (name);
+  mrl->subtitle = subtitle ? strdup (subtitle) : NULL;
+
+  player_mrl_get_properties (player, mrl);
+  player_mrl_get_metadata (player, mrl);
+
+  mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */
+
+  return mrl;
+}
+
 void
 player_mrl_append (player_t *player,
                    char *location, char *subtitle, player_add_mrl_t when)
