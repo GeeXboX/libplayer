@@ -81,6 +81,29 @@ typedef enum player_mrl_type {
   PLAYER_MRL_TYPE_CDDA
 } player_mrl_type_t;
 
+typedef enum player_mrl_resource {
+  PLAYER_MRL_RESOURCE_UNKNOWN,
+  PLAYER_MRL_RESOURCE_CDDA,
+  PLAYER_MRL_RESOURCE_CDDB,
+  PLAYER_MRL_RESOURCE_DVB,
+  PLAYER_MRL_RESOURCE_DVD,
+  PLAYER_MRL_RESOURCE_DVDNAV,
+  PLAYER_MRL_RESOURCE_FIFO,
+  PLAYER_MRL_RESOURCE_FILE,
+  PLAYER_MRL_RESOURCE_FTP,
+  PLAYER_MRL_RESOURCE_HTTP,
+  PLAYER_MRL_RESOURCE_MMS,
+  PLAYER_MRL_RESOURCE_RADIO,
+  PLAYER_MRL_RESOURCE_RTP,
+  PLAYER_MRL_RESOURCE_RTSP,
+  PLAYER_MRL_RESOURCE_SMB,
+  PLAYER_MRL_RESOURCE_STDIN,
+  PLAYER_MRL_RESOURCE_TCP,
+  PLAYER_MRL_RESOURCE_TV,
+  PLAYER_MRL_RESOURCE_UDP,
+  PLAYER_MRL_RESOURCE_VCD,
+} player_mrl_resource_t;
+
 typedef enum player_add_mrl {
   PLAYER_ADD_MRL_NOW,
   PLAYER_ADD_MRL_QUEUE
@@ -149,6 +172,7 @@ typedef struct mrl_s {
   char *subtitle;
   char *cover;
   player_mrl_type_t type;
+  player_mrl_resource_t resource;
   mrl_properties_t *prop;
   mrl_metadata_t *meta;
 
