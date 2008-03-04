@@ -30,6 +30,21 @@
 
 #define MODULE_NAME "player"
 
+static player_mrl_type_t
+mrl_guess_type (mrl_t *mrl)
+{
+  if (!mrl || !mrl->prop)
+    return PLAYER_MRL_TYPE_UNKNOWN;
+
+  if (mrl->prop->video)
+    return PLAYER_MRL_TYPE_VIDEO;
+
+  if (mrl->prop->audio)
+    return PLAYER_MRL_TYPE_AUDIO;
+
+  return PLAYER_MRL_TYPE_UNKNOWN;
+}
+
 mrl_properties_audio_t *
 mrl_properties_audio_new (void)
 {
