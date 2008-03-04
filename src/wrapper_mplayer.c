@@ -554,8 +554,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
     break;
 
   case SLAVE_STOP:
-    slave_set_property_int (player, PROPERTY_LOOP, -1);
-    send_to_slave (mplayer, "seek 100.00 1");
+    send_to_slave (mplayer, "loadfile \"\"");
 
     /* wait that the thread will found the EOF */
     sem_wait (&mplayer->sem);
