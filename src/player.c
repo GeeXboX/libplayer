@@ -95,7 +95,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
     player->funcs = register_functions_gstreamer ();
     player->priv = register_private_gstreamer ();
     break;
-#endif /* HAVE_VLC */
+#endif /* HAVE_GSTREAMER */
   case PLAYER_TYPE_DUMMY:
     player->funcs = register_functions_dummy ();
     player->priv = register_private_dummy ();
