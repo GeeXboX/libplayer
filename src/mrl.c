@@ -135,15 +135,10 @@ mrl_new (char *name, char *subtitle, player_mrl_type_t type)
   if (!name)
     return NULL;
 
-  mrl = malloc (sizeof (mrl_t));
+  mrl = calloc (1, sizeof (mrl_t));
   mrl->name = strdup (name);
   mrl->subtitle = subtitle ? strdup (subtitle) : NULL;
-  mrl->cover = NULL;
   mrl->type = type;
-  mrl->prop = NULL;
-  mrl->meta = NULL;
-  mrl->prev = NULL;
-  mrl->next = NULL;
 
   return mrl;
 }
