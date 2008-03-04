@@ -220,11 +220,9 @@ gstreamer_player_playback_start (player_t *player)
   g = (gstreamer_player_t *) player->priv;
   memset (mrl, '\0', PATH_MAX + 16);
   
-  switch (player->mrl->type)
+  switch (player->mrl->resource)
   {
-  case PLAYER_MRL_TYPE_FILE_AUDIO:
-  case PLAYER_MRL_TYPE_FILE_VIDEO:
-  case PLAYER_MRL_TYPE_FILE_IMAGE:
+  case PLAYER_MRL_RESOURCE_FILE:
   {
     /* check if given MRL is a relative path */
     if (player->mrl->name[0] != '/')

@@ -1419,7 +1419,7 @@ mplayer_playback_dvdnav (player_t *player, player_dvdnav_t value)
   if (!player)
     return;
 
-  if (player->mrl->type == PLAYER_MRL_TYPE_DVD_NAV)
+  if (player->mrl->resource == PLAYER_MRL_RESOURCE_DVDNAV)
     slave_cmd_int (player, SLAVE_DVDNAV, action);
 }
 
