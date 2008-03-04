@@ -100,13 +100,7 @@ mrl_metadata_new (void)
 {
   mrl_metadata_t *meta;
 
-  meta = malloc (sizeof (mrl_metadata_t));
-  meta->title = NULL;
-  meta->artist = NULL;
-  meta->genre = NULL;
-  meta->album = NULL;
-  meta->year = NULL;
-  meta->track = NULL;
+  meta = calloc (1, sizeof (mrl_metadata_t));
 
   return meta;
 }
