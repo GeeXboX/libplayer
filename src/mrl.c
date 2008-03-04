@@ -77,11 +77,7 @@ mrl_properties_new (void)
 {
   mrl_properties_t *prop;
 
-  prop = malloc (sizeof (mrl_properties_t));
-  prop->size = 0;
-  prop->seekable = 0;
-  prop->audio = NULL;
-  prop->video = NULL;
+  prop = calloc (1, sizeof (mrl_properties_t));
 
   return prop;
 }
