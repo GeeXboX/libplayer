@@ -441,7 +441,7 @@ xine_player_init (player_t *player)
 }
 
 static void
-xine_set_verbosity (player_t *player, player_verbosity_level_t level)
+xine_player_set_verbosity (player_t *player, player_verbosity_level_t level)
 {
   xine_player_t *x;
   int verbosity = -1;
@@ -920,7 +920,7 @@ register_functions_xine (void)
   funcs = calloc (1, sizeof (player_funcs_t));
   funcs->init            = xine_player_init;
   funcs->uninit          = xine_player_uninit;
-  funcs->set_verbosity   = xine_set_verbosity;
+  funcs->set_verbosity   = xine_player_set_verbosity;
   funcs->mrl_get_props   = xine_player_mrl_get_properties;
   funcs->mrl_get_meta    = xine_player_mrl_get_metadata;
   funcs->pb_start        = xine_player_playback_start;
