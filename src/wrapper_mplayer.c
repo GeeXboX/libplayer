@@ -297,9 +297,9 @@ thread_fifo (void *arg)
         else if (strstr (buffer, "Starting playback") ||  /* for local */
                  strstr (buffer, "Connecting to server")) /* for network */
         {
-            pthread_mutex_lock (&mplayer->mutex_status);
-            mplayer->status = MPLAYER_IS_PLAYING;
-            pthread_mutex_unlock (&mplayer->mutex_status);
+          pthread_mutex_lock (&mplayer->mutex_status);
+          mplayer->status = MPLAYER_IS_PLAYING;
+          pthread_mutex_unlock (&mplayer->mutex_status);
         }
         /* Same as "Command loadfile", it is detected for continue
          * but here only with the action "play".
