@@ -364,12 +364,11 @@ main (int argc, char **argv)
     }
   }
 
-  player = player_init (type, ao, vo, event_cb);
+  player = player_init (type, ao, vo, verbosity, event_cb);
 
   if (!player)
     return -1;
 
-  player_set_verbosity (player, verbosity);
   player_set_volume (player, volume);
   printf (TESTPLAYER_COMMANDS);
 
