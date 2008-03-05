@@ -279,8 +279,13 @@ thread_fifo (void *arg)
             if (player->x11)
               x11_unmap (player);
           }
+          else
+            pthread_mutex_unlock (&mplayer->mutex_status);
+        }
+        else if (strstr (buffer, "File not found: ''")) {
           /* when the stream is ended with stop action */
-          else if (mplayer->status == MPLAYER_IS_IDLE) {
+          pthread_mutex_lock (&mplayer->mutex_status);
+          if (mplayer->status == MPLAYER_IS_IDLE) {
             pthread_mutex_unlock (&mplayer->mutex_status);
             /* ok, now we can continue */
             sem_post (&mplayer->sem);
@@ -289,7 +294,9 @@ thread_fifo (void *arg)
             pthread_mutex_unlock (&mplayer->mutex_status);
         }
         /* when the stream is successfully started with action "play" */
-        else if (strstr (buffer, "Starting playback")) {
+        else if (strstr (buffer, "Starting playback") ||  /* for local */
+                 strstr (buffer, "Connecting to server")) /* for network */
+        {
             pthread_mutex_lock (&mplayer->mutex_status);
             mplayer->status = MPLAYER_IS_PLAYING;
             pthread_mutex_unlock (&mplayer->mutex_status);
