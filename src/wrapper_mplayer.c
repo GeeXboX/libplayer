@@ -71,10 +71,12 @@ typedef struct mplayer_s {
   int pipe_out[2];    /* pipe for receive results */
   FILE *fifo_in;      /* fifo on the pipe_in  (write only) */
   FILE *fifo_out;     /* fifo on the pipe_out (read only) */
+  int verbosity;
   /* specific to thread */
   pthread_t th_fifo;      /* thread for the fifo_out parser */
   pthread_mutex_t mutex_search;
   pthread_mutex_t mutex_status;
+  pthread_mutex_t mutex_verbosity;
   sem_t sem;
   mp_search_t *search;    /* use when a property is searched */
 } mplayer_t;
@@ -224,7 +226,7 @@ parse_field (char *line, char *field)
 static void *
 thread_fifo (void *arg)
 {
-  char buffer[SLAVE_CMD_BUFFER];
+  char buffer[SLAVE_CMD_BUFFER], log[SLAVE_CMD_BUFFER];
   char *it;
   player_t *player;
   mplayer_t *mplayer;
@@ -238,6 +240,14 @@ thread_fifo (void *arg)
       /* MPlayer's stdout parser */
       while (fgets (buffer, SLAVE_CMD_BUFFER, mplayer->fifo_out))
       {
+        pthread_mutex_lock (&mplayer->mutex_verbosity);
+        if (mplayer->verbosity) {
+          strcpy (log, buffer);
+          *(log + strlen (log) - 1) = '\0';
+          plog (player, PLAYER_MSG_INFO, MODULE_NAME, "[process] %s", log);
+        }
+        pthread_mutex_unlock (&mplayer->mutex_verbosity);
+
         /* lock the mutex for protect mplayer->search */
         pthread_mutex_lock (&mplayer->mutex_search);
         /* search the result for a property */
@@ -1175,9 +1185,45 @@ mplayer_uninit (player_t *player)
 
   pthread_mutex_destroy (&mplayer->mutex_search);
   pthread_mutex_destroy (&mplayer->mutex_status);
+  pthread_mutex_destroy (&mplayer->mutex_verbosity);
   sem_destroy (&mplayer->sem);
 
   free (mplayer);
+}
+
+static void
+mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
+{
+  mplayer_t *mplayer;
+  int verbosity = -1;
+
+  if (!player)
+    return;
+
+  mplayer = (mplayer_t *) player->priv;
+
+  if (!mplayer)
+    return;
+
+  switch (level) {
+  case PLAYER_MSG_NONE:
+  case PLAYER_MSG_INFO:
+  case PLAYER_MSG_WARNING:
+    verbosity = 1;
+    break;
+  case PLAYER_MSG_ERROR:
+  case PLAYER_MSG_CRITICAL:
+    verbosity = 0;
+    break;
+  default:
+    break;
+  }
+
+  if (verbosity != -1) {
+    pthread_mutex_lock (&mplayer->mutex_verbosity);
+    mplayer->verbosity = 1;
+    pthread_mutex_unlock (&mplayer->mutex_verbosity);
+  }
 }
 
 static void
@@ -1526,7 +1572,7 @@ register_functions_mplayer (void)
   funcs = calloc (1, sizeof (player_funcs_t));
   funcs->init             = mplayer_init;
   funcs->uninit           = mplayer_uninit;
-  funcs->set_verbosity    = NULL;
+  funcs->set_verbosity    = mplayer_set_verbosity;
   funcs->mrl_get_props    = mplayer_mrl_get_properties;
   funcs->mrl_get_meta     = mplayer_mrl_get_metadata;
   funcs->pb_start         = mplayer_playback_start;
@@ -1559,6 +1605,7 @@ register_private_mplayer (void)
   sem_init (&mplayer->sem, 0, 0);
   pthread_mutex_init (&mplayer->mutex_search, NULL);
   pthread_mutex_init (&mplayer->mutex_status, NULL);
+  pthread_mutex_init (&mplayer->mutex_verbosity, NULL);
 
   return mplayer;
 }
