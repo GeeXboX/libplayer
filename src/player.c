@@ -46,6 +46,7 @@
 
 player_t *
 player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
+             player_verbosity_level_t verbosity,
              int event_cb (player_event_t e, void *data))
 {
   player_t *player = NULL;
@@ -53,7 +54,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
 
   player = malloc (sizeof (player_t));
   player->type = type;
-  player->verbosity = PLAYER_MSG_ERROR;
+  player->verbosity = verbosity;
   player->mrl = NULL;  
   player->state = PLAYER_STATE_IDLE;
   player->loop = 0;
