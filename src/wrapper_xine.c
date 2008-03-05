@@ -445,7 +445,7 @@ xine_player_set_verbosity (player_t *player, player_verbosity_level_t level)
 {
   xine_player_t *x;
   int verbosity = -1;
-  
+
   if (!player)
     return;
 
