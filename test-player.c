@@ -39,6 +39,7 @@
   " -p <player>       specify the player (mplayer|xine|vlc|gstreamer)\n" \
   " -ao <audio_out>   specify the audio output (alsa|oss)\n" \
   " -vo <video_out>   specify the video output (x11|sdl:x11|xv|fb)\n" \
+  " -v                increase verbosity\n" \
   "\n" \
   "Default values are dummy player, null video and audio output.\n" \
   "\n"
@@ -305,13 +306,14 @@ main (int argc, char **argv)
   char input;
   int run = 1;
   int volume = 85;
+  player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
 
   if (argc > 1 && !strcmp (argv[1], "-h")) {
     printf (TESTPLAYER_HELP);
     return 0;
   }
 
-  while ((argc -= 2) > 0) {
+  while ((argc -= 2) >= 0) {
     if (!strcmp (argv[argc], "-p")) {
       if (!strcmp (argv[argc + 1], "mplayer"))
 #ifdef HAVE_MPLAYER
@@ -354,6 +356,12 @@ main (int argc, char **argv)
       else if (!strcmp (argv[argc + 1], "fb"))
         vo = PLAYER_VO_FB;
     }
+    else if (!strcmp (argv[argc], "-v") ||
+             !strcmp (argv[argc + 1], "-v"))
+    {
+      verbosity = PLAYER_MSG_INFO;
+      argc++;
+    }
   }
 
   player = player_init (type, ao, vo, event_cb);
@@ -361,7 +369,7 @@ main (int argc, char **argv)
   if (!player)
     return -1;
 
-  player_set_verbosity (player, PLAYER_MSG_ERROR);
+  player_set_verbosity (player, verbosity);
   player_set_volume (player, volume);
   printf (TESTPLAYER_COMMANDS);
 
