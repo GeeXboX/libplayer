@@ -136,91 +136,36 @@ show_type (mrl_t *mrl)
 static void
 show_resource (mrl_t *mrl)
 {
+  const char const resource_desc[][64] = {
+    [PLAYER_MRL_RESOURCE_UNKNOWN] = "unknown",
+    [PLAYER_MRL_RESOURCE_CDDA]    = "Compact Disc Digital Audio",
+    [PLAYER_MRL_RESOURCE_CDDB]    = "Compact Disc Database",
+    [PLAYER_MRL_RESOURCE_DVB]     = "Digital Video Broadcasting",
+    [PLAYER_MRL_RESOURCE_DVD]     = "Digital Versatile Disc",
+    [PLAYER_MRL_RESOURCE_DVDNAV]  = "Digital Versatile Disc with menu navigation",
+    [PLAYER_MRL_RESOURCE_FIFO]    = "FIFO",
+    [PLAYER_MRL_RESOURCE_FILE]    = "file",
+    [PLAYER_MRL_RESOURCE_FTP]     = "File Transfer Protocol",
+    [PLAYER_MRL_RESOURCE_HTTP]    = "Hypertext Transfer Protocol",
+    [PLAYER_MRL_RESOURCE_MMS]     = "Microsoft Media Services",
+    [PLAYER_MRL_RESOURCE_RADIO]   = "radio analog",
+    [PLAYER_MRL_RESOURCE_RTP]     = "Real-time Transport Protocol",
+    [PLAYER_MRL_RESOURCE_RTSP]    = "Real Time Streaming Protocol",
+    [PLAYER_MRL_RESOURCE_SMB]     = "Samba",
+    [PLAYER_MRL_RESOURCE_STDIN]   = "standard input",
+    [PLAYER_MRL_RESOURCE_TCP]     = "Transmission Control Protocol",
+    [PLAYER_MRL_RESOURCE_TV]      = "Television analog",
+    [PLAYER_MRL_RESOURCE_UDP]     = "User Datagram Protocol",
+    [PLAYER_MRL_RESOURCE_VCD]     = "Video Compact Disc",
+  };
+  const int resource_size = sizeof (resource_desc) / sizeof (resource_desc[0]);
+
   printf (" Resource: ");
 
-  if (!mrl)
+  if (mrl && mrl->resource < resource_size && mrl->resource >= 0)
+    printf ("%s\n", resource_desc[mrl->resource]);
+  else
     printf ("unknown\n");
-
-  switch (mrl->resource) {
-  case PLAYER_MRL_RESOURCE_CDDA:
-    printf ("Compact Disc Digital Audio\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_CDDB:
-    printf ("Compact Disc Database\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_DVB:
-    printf ("Digital Video Broadcasting\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_DVD:
-    printf ("Digital Versatile Disc\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_DVDNAV:
-    printf ("Digital Versatile Disc with menu navigation\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_FIFO:
-    printf ("FIFO\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_FILE:
-    printf ("file\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_FTP:
-    printf ("File Transfer Protocol\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_HTTP:
-    printf ("Hypertext Transfer Protocol\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_MMS:
-    printf ("Microsoft Media Services\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_RADIO:
-    printf ("radio analog\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_RTP:
-    printf ("Real-time Transport Protocol\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_RTSP:
-    printf ("Real Time Streaming Protocol\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_SMB:
-    printf ("Samba\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_STDIN:
-    printf ("standard input\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_TCP:
-    printf ("Transmission Control Protocol\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_TV:
-    printf ("Television analog\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_UDP:
-    printf ("User Datagram Protocol\n");
-    break;
-
-  case PLAYER_MRL_RESOURCE_VCD:
-    printf ("Video Compact Disc\n");
-    break;
-
-  default:
-    printf ("unknown\n");
-  }
 }
 
 static void
