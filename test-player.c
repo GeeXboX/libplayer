@@ -159,13 +159,12 @@ show_resource (mrl_t *mrl)
     [PLAYER_MRL_RESOURCE_VCD]     = "Video Compact Disc",
   };
   const int resource_size = sizeof (resource_desc) / sizeof (resource_desc[0]);
-
-  printf (" Resource: ");
+  int resource = PLAYER_MRL_RESOURCE_UNKNOWN;
 
   if (mrl && mrl->resource < resource_size && mrl->resource >= 0)
-    printf ("%s\n", resource_desc[mrl->resource]);
-  else
-    printf ("unknown\n");
+    resource = mrl->resource;
+
+  printf (" Resource: %s\n", resource_desc[mrl->resource]);
 }
 
 static void
