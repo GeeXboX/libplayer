@@ -126,31 +126,28 @@ typedef enum slave_property {
 } slave_property_t;
 
 
-static const struct {
-  slave_property_t property;
-  char *text;
-} g_slave_props[] = {
-  {PROPERTY_AUDIO_BITRATE,    "audio_bitrate"},
-  {PROPERTY_AUDIO_CODEC,      "audio_codec"},
-  {PROPERTY_CHANNELS,         "channels"},
-  {PROPERTY_HEIGHT,           "height"},
-  {PROPERTY_LOOP,             "loop"},
-  {PROPERTY_METADATA_ALBUM,   "metadata/album"},
-  {PROPERTY_METADATA_ARTIST,  "metadata/artist"},
-  {PROPERTY_METADATA_GENRE,   "metadata/genre"},
-  {PROPERTY_METADATA_TITLE,   "metadata/title"},
-  {PROPERTY_METADATA_TRACK,   "metadata/track"},
-  {PROPERTY_METADATA_YEAR,    "metadata/year"},
-  {PROPERTY_MUTE,             "mute"},
-  {PROPERTY_SAMPLERATE,       "samplerate"},
-  {PROPERTY_SUB,              "sub"},
-  {PROPERTY_SUB_DELAY,        "sub_delay"},
-  {PROPERTY_SUB_VISIBILITY,   "sub_visibility"},
-  {PROPERTY_VIDEO_BITRATE,    "video_bitrate"},
-  {PROPERTY_VIDEO_CODEC,      "video_codec"},
-  {PROPERTY_VOLUME,           "volume"},
-  {PROPERTY_WIDTH,            "width"},
-  {PROPERTY_UNKNOWN,          NULL}
+static char *g_slave_props[] = {
+  [PROPERTY_AUDIO_BITRATE]    = "audio_bitrate",
+  [PROPERTY_AUDIO_CODEC]      = "audio_codec",
+  [PROPERTY_CHANNELS]         = "channels",
+  [PROPERTY_HEIGHT]           = "height",
+  [PROPERTY_LOOP]             = "loop",
+  [PROPERTY_METADATA_ALBUM]   = "metadata/album",
+  [PROPERTY_METADATA_ARTIST]  = "metadata/artist",
+  [PROPERTY_METADATA_GENRE]   = "metadata/genre",
+  [PROPERTY_METADATA_TITLE]   = "metadata/title",
+  [PROPERTY_METADATA_TRACK]   = "metadata/track",
+  [PROPERTY_METADATA_YEAR]    = "metadata/year",
+  [PROPERTY_MUTE]             = "mute",
+  [PROPERTY_SAMPLERATE]       = "samplerate",
+  [PROPERTY_SUB]              = "sub",
+  [PROPERTY_SUB_DELAY]        = "sub_delay",
+  [PROPERTY_SUB_VISIBILITY]   = "sub_visibility",
+  [PROPERTY_VIDEO_BITRATE]    = "video_bitrate",
+  [PROPERTY_VIDEO_CODEC]      = "video_codec",
+  [PROPERTY_VOLUME]           = "volume",
+  [PROPERTY_WIDTH]            = "width",
+  [PROPERTY_UNKNOWN]          = NULL
 };
 
 
@@ -169,15 +166,13 @@ sig_handler (int signal)
 static char *
 get_prop (slave_property_t property)
 {
-  int i = 0;
+  const int size = sizeof (g_slave_props) / sizeof (g_slave_props[0]);
+  int prop = PROPERTY_UNKNOWN;
 
-  while (g_slave_props[i].text) {
-    if (g_slave_props[i].property == property)
-      return g_slave_props[i].text;
-    i++;
-  }
+  if (property < size && property >= 0)
+    prop = property;
 
-  return NULL;
+  return g_slave_props[prop];
 }
 
 /**
