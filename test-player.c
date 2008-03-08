@@ -136,7 +136,7 @@ show_type (mrl_t *mrl)
 static void
 show_resource (mrl_t *mrl)
 {
-  const char const resource_desc[][64] = {
+  const char const *resource_desc[] = {
     [PLAYER_MRL_RESOURCE_UNKNOWN] = "unknown",
     [PLAYER_MRL_RESOURCE_CDDA]    = "Compact Disc Digital Audio",
     [PLAYER_MRL_RESOURCE_CDDB]    = "Compact Disc Database",
