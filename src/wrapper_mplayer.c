@@ -126,7 +126,7 @@ typedef enum slave_property {
 } slave_property_t;
 
 
-static char *g_slave_props[] = {
+static const char const *g_slave_props[] = {
   [PROPERTY_AUDIO_BITRATE]    = "audio_bitrate",
   [PROPERTY_AUDIO_CODEC]      = "audio_codec",
   [PROPERTY_CHANNELS]         = "channels",
@@ -163,7 +163,7 @@ sig_handler (int signal)
  * should never return NULL. If that is the case, then a property is missed
  * in the table.
  */
-static char *
+static const char *
 get_prop (slave_property_t property)
 {
   const int size = sizeof (g_slave_props) / sizeof (g_slave_props[0]);
@@ -332,7 +332,7 @@ static void
 slave_get_property (player_t *player, slave_property_t property)
 {
   mplayer_t *mplayer = NULL;
-  char *prop;
+  const char *prop;
 
   if (!player)
     return;
@@ -360,7 +360,7 @@ static char *
 slave_result (slave_property_t property, player_t *player)
 {
   char str[SLAVE_CMD_BUFFER];
-  char *prop;
+  const char *prop;
   char *ret = NULL;
   mplayer_t *mplayer = NULL;
 
@@ -449,7 +449,7 @@ slave_set_property (player_t *player, slave_property_t property,
                     slave_value_t value)
 {
   mplayer_t *mplayer = NULL;
-  char *prop;
+  const char *prop;
   char cmd[SLAVE_CMD_BUFFER];
 
   if (!player)
