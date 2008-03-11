@@ -261,7 +261,6 @@ player_mrl_new (player_t *player, char *name, char *subtitle)
   mrl->subtitle = subtitle ? strdup (subtitle) : NULL;
 
   player_mrl_get_properties (player, mrl);
-  player_mrl_get_metadata (player, mrl);
 
   mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */
   mrl->resource = mrl_guess_resource (mrl);
