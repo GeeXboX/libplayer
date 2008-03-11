@@ -104,6 +104,7 @@ load_media (player_t *player)
   putchar ('\n');
 
   player_mrl_append (player, file, NULL, PLAYER_ADD_MRL_QUEUE);
+  player_mrl_get_metadata (player, player->mrl);
   printf ("Media added to the playlist!\n");
 }
 
