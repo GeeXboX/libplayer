@@ -58,8 +58,6 @@ typedef struct player_funcs_s {
   void (* set_sub_delay) (player_t *player, float value);
 } player_funcs_t;
 
-void mrl_list_free (mrl_t *mrl);
-
 mrl_properties_audio_t *mrl_properties_audio_new (void);
 void mrl_properties_audio_free (mrl_properties_audio_t *audio);
 mrl_properties_video_t *mrl_properties_video_new (void);
