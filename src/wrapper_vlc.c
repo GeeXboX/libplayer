@@ -93,18 +93,6 @@ vlc_uninit (player_t *player)
   free (vlc);
 }
 
-static void
-vlc_mrl_get_properties (player_t *player, mrl_t *mrl)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
-}
-
-static void
-vlc_mrl_get_metadata (player_t *player, mrl_t *mrl)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
-}
-
 static playback_status_t
 vlc_playback_start (player_t *player)
 {
@@ -127,95 +115,6 @@ vlc_playback_start (player_t *player)
   return PLAYER_PB_OK;
 }
 
-static void
-vlc_playback_stop (player_t *player)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
-}
-
-static playback_status_t
-vlc_playback_pause (player_t *player)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
-  return PLAYER_PB_OK;
-}
-
-static void
-vlc_playback_seek (player_t *player, int value)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_seek: %d", value);
-}
-
-static void
-vlc_playback_dvdnav (player_t *player, player_dvdnav_t value)
-{
-  char log[8] = "unknown";
-
-  switch (value)
-  {
-  case PLAYER_DVDNAV_UP:
-    strcpy (log, "up");
-    break;
-
-  case PLAYER_DVDNAV_DOWN:
-    strcpy (log, "down");
-    break;
-
-  case PLAYER_DVDNAV_LEFT:
-    strcpy (log, "left");
-    break;
-
-  case PLAYER_DVDNAV_RIGHT:
-    strcpy (log, "right");
-    break;
-
-  case PLAYER_DVDNAV_MENU:
-    strcpy (log, "menu");
-    break;
-
-  case PLAYER_DVDNAV_SELECT:
-    strcpy (log, "select");
-  }
-
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_dvdnav: %s", log);
-}
-
-static int
-vlc_get_volume (player_t *player)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_volume");
-  return 0;
-}
-
-static player_mute_t
-vlc_get_mute (player_t *player)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_mute");
-  return PLAYER_MUTE_OFF;
-}
-
-static void
-vlc_set_volume (player_t *player, int value)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_volume: %d", value);
-}
-
-static void
-vlc_set_mute (player_t *player, player_mute_t value)
-{
-  if (value == PLAYER_MUTE_UNKNOWN)
-    return;
-
-  plog (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "set_mute: %s", value == PLAYER_MUTE_ON ? "on" : "off");
-}
-
-static void
-vlc_set_sub_delay (player_t *player, float value)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %.2f", value);
-}
-
 /* public API */
 player_funcs_t *
 register_functions_vlc (void)
@@ -226,18 +125,18 @@ register_functions_vlc (void)
   funcs->init             = vlc_init;
   funcs->uninit           = vlc_uninit;
   funcs->set_verbosity    = NULL;
-  funcs->mrl_get_props    = vlc_mrl_get_properties;
-  funcs->mrl_get_meta     = vlc_mrl_get_metadata;
+  funcs->mrl_get_props    = NULL;
+  funcs->mrl_get_meta     = NULL;
   funcs->pb_start         = vlc_playback_start;
-  funcs->pb_stop          = vlc_playback_stop;
-  funcs->pb_pause         = vlc_playback_pause;
-  funcs->pb_seek          = vlc_playback_seek;
-  funcs->pb_dvdnav        = vlc_playback_dvdnav;
-  funcs->get_volume       = vlc_get_volume;
-  funcs->get_mute         = vlc_get_mute;
-  funcs->set_volume       = vlc_set_volume;
-  funcs->set_mute         = vlc_set_mute;
-  funcs->set_sub_delay    = vlc_set_sub_delay;
+  funcs->pb_stop          = NULL;
+  funcs->pb_pause         = NULL;
+  funcs->pb_seek          = NULL;
+  funcs->pb_dvdnav        = NULL;
+  funcs->get_volume       = NULL;
+  funcs->get_mute         = NULL;
+  funcs->set_volume       = NULL;
+  funcs->set_mute         = NULL;
+  funcs->set_sub_delay    = NULL;
 
   return funcs;
 }
