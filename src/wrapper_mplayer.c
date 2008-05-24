@@ -231,97 +231,96 @@ thread_fifo (void *arg)
   if (!player)
     pthread_exit (0);
 
-    mplayer = (mplayer_t *) player->priv;
+  mplayer = (mplayer_t *) player->priv;
 
-    if (!mplayer || !mplayer->fifo_out)
+  if (!mplayer || !mplayer->fifo_out)
     pthread_exit (0);
 
-      /* MPlayer's stdout parser */
-      while (fgets (buffer, SLAVE_CMD_BUFFER, mplayer->fifo_out))
-      {
-        pthread_mutex_lock (&mplayer->mutex_verbosity);
-        if (mplayer->verbosity) {
-          strcpy (log, buffer);
-          *(log + strlen (log) - 1) = '\0';
-          plog (player, PLAYER_MSG_INFO, MODULE_NAME, "[process] %s", log);
-        }
-        pthread_mutex_unlock (&mplayer->mutex_verbosity);
+  /* MPlayer's stdout parser */
+  while (fgets (buffer, SLAVE_CMD_BUFFER, mplayer->fifo_out)) {
+    pthread_mutex_lock (&mplayer->mutex_verbosity);
+    if (mplayer->verbosity) {
+      strcpy (log, buffer);
+      *(log + strlen (log) - 1) = '\0';
+      plog (player, PLAYER_MSG_INFO, MODULE_NAME, "[process] %s", log);
+    }
+    pthread_mutex_unlock (&mplayer->mutex_verbosity);
 
-        /* lock the mutex for protect mplayer->search */
-        pthread_mutex_lock (&mplayer->mutex_search);
-        /* search the result for a property */
-        if (mplayer->search && mplayer->search->property &&
-            (it = strstr(buffer, mplayer->search->property)))
-        {
-          it = parse_field (it, mplayer->search->property);
+    /* lock the mutex for protect mplayer->search */
+    pthread_mutex_lock (&mplayer->mutex_search);
+    /* search the result for a property */
+    if (mplayer->search && mplayer->search->property &&
+        (it = strstr(buffer, mplayer->search->property)))
+    {
+      it = parse_field (it, mplayer->search->property);
 
-          if ((mplayer->search->value = malloc (strlen (it) + 1))) {
-            memcpy (mplayer->search->value, it, strlen (it));
-            *(mplayer->search->value + strlen (it)) = '\0';
-          }
-        }
-        /* If this error (from stderr) exists, then we can go out
-        * because there is no result for the real command.
-        */
-        else if (strstr (buffer, "Command loadfile")) {
-          if (mplayer->search) {
-            free (mplayer->search->property);
-            mplayer->search->property = NULL;
-            /* search ended */
-            sem_post (&mplayer->sem);
-          }
-        }
-        pthread_mutex_unlock (&mplayer->mutex_search);
-
-        if (strstr (buffer, "EOF code:")) {
-          pthread_mutex_lock (&mplayer->mutex_status);
-          /* when the stream is ended without stop action */
-          if (mplayer->status == MPLAYER_IS_PLAYING) {
-            plog (player, PLAYER_MSG_INFO,
-                  MODULE_NAME, "Playback of stream has ended");
-            mplayer->status = MPLAYER_IS_IDLE;
-            pthread_mutex_unlock (&mplayer->mutex_status);
-
-            if (player->event_cb)
-              player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
-            /* X11 */
-            if (player->x11)
-              x11_unmap (player);
-          }
-          else
-            pthread_mutex_unlock (&mplayer->mutex_status);
-        }
-        else if (strstr (buffer, "File not found: ''")) {
-          /* when the stream is ended with stop action */
-          pthread_mutex_lock (&mplayer->mutex_status);
-          if (mplayer->status == MPLAYER_IS_IDLE) {
-            pthread_mutex_unlock (&mplayer->mutex_status);
-            /* ok, now we can continue */
-            sem_post (&mplayer->sem);
-          }
-          else
-            pthread_mutex_unlock (&mplayer->mutex_status);
-        }
-        /* when the stream is successfully started with action "play" */
-        else if (strstr (buffer, "Starting playback") ||  /* for local */
-                 strstr (buffer, "Connecting to server")) /* for network */
-        {
-          pthread_mutex_lock (&mplayer->mutex_status);
-          mplayer->status = MPLAYER_IS_PLAYING;
-          pthread_mutex_unlock (&mplayer->mutex_status);
-        }
-        /* Same as "Command loadfile", it is detected for continue
-         * but here only with the action "play".
-         */
-        else if (strstr (buffer, "Command loadlist"))
-          sem_post (&mplayer->sem);
-        else if (strstr (buffer, "Exiting")) {
-          pthread_mutex_lock (&mplayer->mutex_status);
-          mplayer->status = MPLAYER_IS_DEAD;
-          pthread_mutex_unlock (&mplayer->mutex_status);
-          break;
-        }
+      if ((mplayer->search->value = malloc (strlen (it) + 1))) {
+        memcpy (mplayer->search->value, it, strlen (it));
+        *(mplayer->search->value + strlen (it)) = '\0';
       }
+    }
+    /* If this error (from stderr) exists, then we can go out
+     * because there is no result for the real command.
+     */
+    else if (strstr (buffer, "Command loadfile")) {
+      if (mplayer->search) {
+        free (mplayer->search->property);
+        mplayer->search->property = NULL;
+        /* search ended */
+        sem_post (&mplayer->sem);
+      }
+    }
+    pthread_mutex_unlock (&mplayer->mutex_search);
+
+    if (strstr (buffer, "EOF code:")) {
+      pthread_mutex_lock (&mplayer->mutex_status);
+      /* when the stream is ended without stop action */
+      if (mplayer->status == MPLAYER_IS_PLAYING) {
+        plog (player, PLAYER_MSG_INFO,
+              MODULE_NAME, "Playback of stream has ended");
+        mplayer->status = MPLAYER_IS_IDLE;
+        pthread_mutex_unlock (&mplayer->mutex_status);
+
+        if (player->event_cb)
+          player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+        /* X11 */
+        if (player->x11)
+          x11_unmap (player);
+      }
+      else
+        pthread_mutex_unlock (&mplayer->mutex_status);
+    }
+    else if (strstr (buffer, "File not found: ''")) {
+      /* when the stream is ended with stop action */
+      pthread_mutex_lock (&mplayer->mutex_status);
+      if (mplayer->status == MPLAYER_IS_IDLE) {
+        pthread_mutex_unlock (&mplayer->mutex_status);
+        /* ok, now we can continue */
+        sem_post (&mplayer->sem);
+      }
+      else
+        pthread_mutex_unlock (&mplayer->mutex_status);
+    }
+    /* when the stream is successfully started with action "play" */
+    else if (strstr (buffer, "Starting playback") ||  /* for local */
+             strstr (buffer, "Connecting to server")) /* for network */
+    {
+      pthread_mutex_lock (&mplayer->mutex_status);
+      mplayer->status = MPLAYER_IS_PLAYING;
+      pthread_mutex_unlock (&mplayer->mutex_status);
+    }
+    /* Same as "Command loadfile", it is detected for continue
+     * but here only with the action "play".
+     */
+    else if (strstr (buffer, "Command loadlist"))
+      sem_post (&mplayer->sem);
+    else if (strstr (buffer, "Exiting")) {
+      pthread_mutex_lock (&mplayer->mutex_status);
+      mplayer->status = MPLAYER_IS_DEAD;
+      pthread_mutex_unlock (&mplayer->mutex_status);
+      break;
+    }
+  }
 
   pthread_exit (0);
 }
