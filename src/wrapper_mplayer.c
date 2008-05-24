@@ -835,72 +835,72 @@ mp_identify (mrl_t *mrl, int flags)
   if (pipe (mp_pipe))
     return;
 
-    /* create the fork */
-    pid = fork ();
+  /* create the fork */
+  pid = fork ();
 
-    switch (pid) {
-    /* the son (a new hope) */
-    case 0:
-      close (mp_pipe[0]);
+  switch (pid) {
+  /* the son (a new hope) */
+  case 0:
+    close (mp_pipe[0]);
 
-      /* connect stdout and stderr to the pipe */
-      dup2 (mp_pipe[1], STDERR_FILENO);
-      dup2 (mp_pipe[1], STDOUT_FILENO);
+    /* connect stdout and stderr to the pipe */
+    dup2 (mp_pipe[1], STDERR_FILENO);
+    dup2 (mp_pipe[1], STDOUT_FILENO);
 
-      params[pp++] = "mplayer";
-      params[pp++] = "-quiet";
-      params[pp++] = "-vo";
-      params[pp++] = "null";
-      params[pp++] = "-ao";
-      params[pp++] = "null";
-      params[pp++] = "-nolirc";
-      params[pp++] = "-nojoystick";
-      params[pp++] = "-noconsolecontrols";
-      params[pp++] = "-endpos";
-      params[pp++] = "0";
-      params[pp++] = strdup (mrl->name);
-      params[pp++] = "-identify";
-      params[pp] = NULL;
+    params[pp++] = "mplayer";
+    params[pp++] = "-quiet";
+    params[pp++] = "-vo";
+    params[pp++] = "null";
+    params[pp++] = "-ao";
+    params[pp++] = "null";
+    params[pp++] = "-nolirc";
+    params[pp++] = "-nojoystick";
+    params[pp++] = "-noconsolecontrols";
+    params[pp++] = "-endpos";
+    params[pp++] = "0";
+    params[pp++] = strdup (mrl->name);
+    params[pp++] = "-identify";
+    params[pp] = NULL;
 
-      /* launch MPlayer, if execvp returns there is an error */
-      execvp ("mplayer", params);
+    /* launch MPlayer, if execvp returns there is an error */
+    execvp ("mplayer", params);
 
-    case -1:
-      break;
+  case -1:
+    break;
 
-    /* I'm your father */
-    default:
-      close (mp_pipe[1]);
+  /* I'm your father */
+  default:
+    close (mp_pipe[1]);
 
-      mp_fifo = fdopen (mp_pipe[0], "r");
+    mp_fifo = fdopen (mp_pipe[0], "r");
 
-      while (fgets (buffer, SLAVE_CMD_BUFFER, mp_fifo)) {
-        found = 0;
+    while (fgets (buffer, SLAVE_CMD_BUFFER, mp_fifo)) {
+      found = 0;
 
-        if (flags & IDENTIFY_VIDEO)
-          found = mp_identify_video (mrl, buffer);
+      if (flags & IDENTIFY_VIDEO)
+        found = mp_identify_video (mrl, buffer);
 
-        if (!found && (flags & IDENTIFY_AUDIO))
-          found = mp_identify_audio (mrl, buffer);
+      if (!found && (flags & IDENTIFY_AUDIO))
+        found = mp_identify_audio (mrl, buffer);
 
-        if (!found && (flags & IDENTIFY_METADATA))
-          found = mp_identify_metadata (mrl, buffer);
+      if (!found && (flags & IDENTIFY_METADATA))
+        found = mp_identify_metadata (mrl, buffer);
 
-        if (!found && (flags & IDENTIFY_PROPERTIES))
-          found = mp_identify_properties (mrl, buffer);
+      if (!found && (flags & IDENTIFY_PROPERTIES))
+        found = mp_identify_properties (mrl, buffer);
 
-        /* stop fgets because MPlayer is ended */
-        if (!found && strstr (buffer, "Exiting"))
-          break;
-      }
-
-      /* wait the death of MPlayer */
-      waitpid (pid, NULL, 0);
-
-      /* close pipe and fifo */
-      close (mp_pipe[0]);
-      fclose (mp_fifo);
+      /* stop fgets because MPlayer is ended */
+      if (!found && strstr (buffer, "Exiting"))
+        break;
     }
+
+    /* wait the death of MPlayer */
+    waitpid (pid, NULL, 0);
+
+    /* close pipe and fifo */
+    close (mp_pipe[0]);
+    fclose (mp_fifo);
+  }
 }
 
 static int
@@ -1002,142 +1002,142 @@ mplayer_init (player_t *player)
   if (pipe (mplayer->pipe_in))
     return PLAYER_INIT_ERROR;
 
-    if (pipe (mplayer->pipe_out)) {
+  if (pipe (mplayer->pipe_out)) {
     close (mplayer->pipe_in[0]);
     close (mplayer->pipe_in[1]);
     return PLAYER_INIT_ERROR;
   }
 
-      /* create the fork */
-      mplayer->pid = fork ();
+  /* create the fork */
+  mplayer->pid = fork ();
 
-      switch (mplayer->pid) {
-      /* the son (a new hope) */
-      case 0:
-        close (mplayer->pipe_in[1]);
-        close (mplayer->pipe_out[0]);
+  switch (mplayer->pid) {
+  /* the son (a new hope) */
+  case 0:
+    close (mplayer->pipe_in[1]);
+    close (mplayer->pipe_out[0]);
 
-        /* connect the pipe to MPlayer's stdin */
-        dup2 (mplayer->pipe_in[0], STDIN_FILENO);
-        /* connect stdout and stderr to the second pipe */
-        dup2 (mplayer->pipe_out[1], STDERR_FILENO);
-        dup2 (mplayer->pipe_out[1], STDOUT_FILENO);
+    /* connect the pipe to MPlayer's stdin */
+    dup2 (mplayer->pipe_in[0], STDIN_FILENO);
+    /* connect stdout and stderr to the second pipe */
+    dup2 (mplayer->pipe_out[1], STDERR_FILENO);
+    dup2 (mplayer->pipe_out[1], STDOUT_FILENO);
 
-        /* default MPlayer arguments */
-        params[pp++] = "mplayer";
-        params[pp++] = "-slave";            /* work in slave mode */
-        params[pp++] = "-quiet";            /* reduce output messages */
-        params[pp++] = "-v";                /* necessary for detect EOF */
-        params[pp++] = "-idle";             /* MPlayer stays always alive */
-        params[pp++] = "-fs";               /* fullscreen (if possible) */
-        params[pp++] = "-zoom";             /* zoom (if possible) */
-        params[pp++] = "-ontop";            /* ontop (if possible) */
-        params[pp++] = "-noborder";         /* no border decoration */
-        params[pp++] = "-nolirc";
-        params[pp++] = "-nojoystick";
-        params[pp++] = "-nomouseinput";
-        params[pp++] = "-nograbpointer";
-        params[pp++] = "-noconsolecontrols";
+    /* default MPlayer arguments */
+    params[pp++] = "mplayer";
+    params[pp++] = "-slave";            /* work in slave mode */
+    params[pp++] = "-quiet";            /* reduce output messages */
+    params[pp++] = "-v";                /* necessary for detect EOF */
+    params[pp++] = "-idle";             /* MPlayer stays always alive */
+    params[pp++] = "-fs";               /* fullscreen (if possible) */
+    params[pp++] = "-zoom";             /* zoom (if possible) */
+    params[pp++] = "-ontop";            /* ontop (if possible) */
+    params[pp++] = "-noborder";         /* no border decoration */
+    params[pp++] = "-nolirc";
+    params[pp++] = "-nojoystick";
+    params[pp++] = "-nomouseinput";
+    params[pp++] = "-nograbpointer";
+    params[pp++] = "-noconsolecontrols";
 
-        /* select the video output */
-        params[pp++] = "-vo";
-        /* TODO: possibility to add parameters for each video output */
-        switch (player->vo) {
-        case PLAYER_VO_NULL:
-          params[pp++] = "null";
-          break;
+    /* select the video output */
+    params[pp++] = "-vo";
+    /* TODO: possibility to add parameters for each video output */
+    switch (player->vo) {
+    case PLAYER_VO_NULL:
+      params[pp++] = "null";
+      break;
 
-        case PLAYER_VO_X11:
-          params[pp++] = "x11";
-          /* window ID */
-          params[pp++] = "-wid";
-          params[pp++] = strdup (winid);
-          break;
+    case PLAYER_VO_X11:
+      params[pp++] = "x11";
+      /* window ID */
+      params[pp++] = "-wid";
+      params[pp++] = strdup (winid);
+      break;
 
-        /* with MPlayer, SDL is not specific to X11 */
-        case PLAYER_VO_X11_SDL:
-          params[pp++] = "sdl";
-          /* window ID */
-          params[pp++] = "-wid";
-          params[pp++] = strdup (winid);
-          break;
+    /* with MPlayer, SDL is not specific to X11 */
+    case PLAYER_VO_X11_SDL:
+      params[pp++] = "sdl";
+      /* window ID */
+      params[pp++] = "-wid";
+      params[pp++] = strdup (winid);
+      break;
 
-        /* with xv and wid, zoom, fs and aspect have no effect.
-         * The image is always scaled on all the window.
-         */
-        case PLAYER_VO_XV:
-          params[pp++] = "xv";
-          /* window ID */
-          params[pp++] = "-wid";
-          params[pp++] = strdup (winid);
-          break;
+    /* with xv and wid, zoom, fs and aspect have no effect.
+     * The image is always scaled on all the window.
+     */
+    case PLAYER_VO_XV:
+      params[pp++] = "xv";
+      /* window ID */
+      params[pp++] = "-wid";
+      params[pp++] = strdup (winid);
+      break;
 
-        case PLAYER_VO_FB:
-          params[pp++] = "fbdev";
-          break;
+    case PLAYER_VO_FB:
+      params[pp++] = "fbdev";
+      break;
 
-        default:
-          plog (player, PLAYER_MSG_WARNING,
-                MODULE_NAME, "Unsupported video output type");
-          break;
-        }
+    default:
+      plog (player, PLAYER_MSG_WARNING,
+            MODULE_NAME, "Unsupported video output type");
+      break;
+    }
 
-        /* select the audio output */
-        params[pp++] = "-ao";
-        /* TODO: possibility to add parameters for each audio output */
-        switch (player->ao) {
-        /* 'null' output seems to be bugged (MPlayer crash in some cases) */
-        case PLAYER_AO_NULL:
-          params[pp++] = "null";
-          break;
+    /* select the audio output */
+    params[pp++] = "-ao";
+    /* TODO: possibility to add parameters for each audio output */
+    switch (player->ao) {
+    /* 'null' output seems to be bugged (MPlayer crash in some cases) */
+    case PLAYER_AO_NULL:
+      params[pp++] = "null";
+      break;
 
-        case PLAYER_AO_ALSA:
-          params[pp++] = "alsa";
-          break;
+    case PLAYER_AO_ALSA:
+      params[pp++] = "alsa";
+      break;
 
-        case PLAYER_AO_OSS:
-          params[pp++] = "oss";
-          break;
+    case PLAYER_AO_OSS:
+      params[pp++] = "oss";
+      break;
 
-        default:
-          plog (player, PLAYER_MSG_WARNING,
-                MODULE_NAME, "Unsupported audio output type");
-          break;
-        }
+    default:
+      plog (player, PLAYER_MSG_WARNING,
+            MODULE_NAME, "Unsupported audio output type");
+      break;
+    }
 
-        params[pp] = NULL;
+    params[pp] = NULL;
 
-        /* launch MPlayer, if execvp returns there is an error */
-        execvp ("mplayer", params);
+    /* launch MPlayer, if execvp returns there is an error */
+    execvp ("mplayer", params);
 
-      case -1:
-        break;
+  case -1:
+    break;
 
-      /* I'm your father */
-      default:
-        close (mplayer->pipe_in[0]);
-        close (mplayer->pipe_out[1]);
+  /* I'm your father */
+  default:
+    close (mplayer->pipe_in[0]);
+    close (mplayer->pipe_out[1]);
 
-        mplayer->fifo_in = fdopen (mplayer->pipe_in[1], "w");
-        mplayer->fifo_out = fdopen (mplayer->pipe_out[0], "r");
+    mplayer->fifo_in = fdopen (mplayer->pipe_in[1], "w");
+    mplayer->fifo_out = fdopen (mplayer->pipe_out[0], "r");
 
-        plog (player, PLAYER_MSG_INFO, MODULE_NAME, "MPlayer child loaded");
+    plog (player, PLAYER_MSG_INFO, MODULE_NAME, "MPlayer child loaded");
 
-        mplayer->status = MPLAYER_IS_IDLE;
+    mplayer->status = MPLAYER_IS_IDLE;
 
-        pthread_attr_init (&attr);
-        pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
+    pthread_attr_init (&attr);
+    pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
-        /* create the thread */
-        if (pthread_create (&mplayer->th_fifo, &attr,
-                            thread_fifo, (void *) player) >= 0)
-        {
-          pthread_attr_destroy (&attr);
-          return PLAYER_INIT_OK;
-        }
+    /* create the thread */
+    if (pthread_create (&mplayer->th_fifo, &attr,
+                        thread_fifo, (void *) player) >= 0)
+    {
+      pthread_attr_destroy (&attr);
+      return PLAYER_INIT_OK;
+    }
 
-        pthread_attr_destroy (&attr);
-      }
+    pthread_attr_destroy (&attr);
+  }
 
   return PLAYER_INIT_ERROR;
 }
