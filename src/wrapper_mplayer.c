@@ -832,7 +832,9 @@ mp_identify (mrl_t *mrl, int flags)
     return;
 
   /* create pipe */
-  if (pipe (mp_pipe) != -1) {
+  if (pipe (mp_pipe))
+    return;
+
     /* create the fork */
     pid = fork ();
 
@@ -899,7 +901,6 @@ mp_identify (mrl_t *mrl, int flags)
       close (mp_pipe[0]);
       fclose (mp_fifo);
     }
-  }
 }
 
 static int
@@ -998,8 +999,15 @@ mplayer_init (player_t *player)
   }
 
   /* create pipes */
-  if (pipe (mplayer->pipe_in) != -1) {
-    if (pipe (mplayer->pipe_out) != -1) {
+  if (pipe (mplayer->pipe_in))
+    return PLAYER_INIT_ERROR;
+
+    if (pipe (mplayer->pipe_out)) {
+    close (mplayer->pipe_in[0]);
+    close (mplayer->pipe_in[1]);
+    return PLAYER_INIT_ERROR;
+  }
+
       /* create the fork */
       mplayer->pid = fork ();
 
@@ -1130,8 +1138,6 @@ mplayer_init (player_t *player)
 
         pthread_attr_destroy (&attr);
       }
-    }
-  }
 
   return PLAYER_INIT_ERROR;
 }
