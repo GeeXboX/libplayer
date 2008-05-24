@@ -228,10 +228,14 @@ thread_fifo (void *arg)
 
   player = (player_t *) arg;
 
-  if (player) {
+  if (!player)
+    pthread_exit (0);
+
     mplayer = (mplayer_t *) player->priv;
 
-    if (mplayer && mplayer->fifo_out) {
+    if (!mplayer || !mplayer->fifo_out)
+    pthread_exit (0);
+
       /* MPlayer's stdout parser */
       while (fgets (buffer, SLAVE_CMD_BUFFER, mplayer->fifo_out))
       {
@@ -318,8 +322,6 @@ thread_fifo (void *arg)
           break;
         }
       }
-    }
-  }
 
   pthread_exit (0);
 }
