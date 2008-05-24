@@ -813,10 +813,6 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
   return 0;
 }
 
-/**
- * Identify a stream for complete player->w and player->h attributes. These
- * are necessary for that Xv can use a right aspect.
- */
 static void
 mp_identify (mrl_t *mrl, int flags)
 {
