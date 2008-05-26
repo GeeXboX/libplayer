@@ -104,7 +104,7 @@ load_media (player_t *player)
   putchar ('\n');
 
   player_mrl_append (player, file, NULL, PLAYER_ADD_MRL_QUEUE);
-  player_mrl_get_metadata (player, player->mrl);
+  player_mrl_get_metadata (player, player_get_mrl (player));
   printf ("Media added to the playlist!\n");
 }
 
@@ -391,7 +391,7 @@ main (int argc, char **argv)
       printf ("ERASE PLAYLIST\n");
       break;
     case 'v':   /* print properties and metadata */
-      show_info (player->mrl);
+      show_info (player_get_mrl (player));
       break;
     default:
       fprintf (stderr, "ERROR: Command unknown!\n");
