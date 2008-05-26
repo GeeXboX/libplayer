@@ -804,6 +804,13 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
   if (!mrl || !mrl->prop || !buffer)
     return 0;
 
+  it = strstr (buffer, "ID_LENGTH=");
+  if (it) {
+    mrl->prop->length
+      = (uint32_t) (atof (parse_field (it, "ID_LENGTH=")) * 1000.0);
+    return 1;
+  }
+
   it = strstr (buffer, "ID_SEEKABLE=");
   if (it) {
     mrl->prop->seekable = atoi (parse_field (it, "ID_SEEKABLE="));
