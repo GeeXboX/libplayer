@@ -29,9 +29,6 @@
 #define LIBPLAYER_VERSION_MICRO 1
 #define LIBPLAYER_VERSION "0.0.1"
 
-struct player_funcs_s;
-struct x11_s;
-
 typedef enum {
   PLAYER_MSG_NONE,          /* no error messages */
   PLAYER_MSG_INFO,          /* working operations */
@@ -179,23 +176,8 @@ typedef struct mrl_s {
   struct mrl_s *next;
 } mrl_t;
 
-typedef struct player_s {
-  player_type_t type;   /* the type of player we'll use */
-  player_verbosity_level_t verbosity;
-  mrl_t *mrl;    /* current MRL */
-  player_state_t state; /* state of the playback */
-  int loop;             /* loop elements from playlist */
-  int shuffle;          /* shuffle MRLs from playlist */
-  player_ao_t ao;       /* audio output driver name */
-  player_vo_t vo;       /* video output driver name */
-  int x, y;             /* video position */
-  int w, h;             /* video size */
-  float aspect;         /* video aspect */
-  struct x11_s *x11;    /* for X11 video out */
-  int (*event_cb) (player_event_t e, void *data); /* frontend event callback */
-  struct player_funcs_s *funcs; /* bindings to player specific functions */ 
-  void *priv;           /* specific configuration related to the player type */
-} player_t;
+/* opaque data type */
+typedef struct player_s player_t;
 
 /* player init/uninit prototypes */
 player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
