@@ -268,6 +268,15 @@ player_mrl_new (player_t *player, char *name, char *subtitle)
   return mrl;
 }
 
+mrl_t *
+player_get_mrl (player_t *player)
+{
+  if (!player)
+    return NULL;
+
+  return player->mrl;
+}
+
 void
 player_mrl_append (player_t *player,
                    char *location, char *subtitle, player_add_mrl_t when)
