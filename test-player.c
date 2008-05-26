@@ -187,6 +187,7 @@ show_info (mrl_t *mrl)
   if (mrl->prop) {
     printf (" Size: %.2f MB\n", mrl->prop->size / 1024.0 / 1024.0);
     printf (" Seekable: %i\n", mrl->prop->seekable);
+    printf (" Length: %.2f sec\n", (float) mrl->prop->length / 1000.0);
     video = mrl->prop->video;
     audio = mrl->prop->audio;
   }
