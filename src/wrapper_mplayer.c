@@ -1273,6 +1273,9 @@ mplayer_mrl_get_properties (player_t *player, mrl_t *mrl)
   plog (player, PLAYER_MSG_INFO,
         MODULE_NAME, "Seekable: %i", mrl->prop->seekable);
 
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "Length: %i ms", mrl->prop->length);
+
   if (video) {
     if (video->codec)
       plog (player, PLAYER_MSG_INFO,
