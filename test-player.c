@@ -53,6 +53,7 @@
   " 2 : 5s forward\n" \
   " l : load a stream in the playlist\n" \
   " v : print properties and metadata of the current stream\n" \
+  " i : print current time position\n" \
   " p : start a new playback\n" \
   " o : pause the current playback\n" \
   " s : stop the current playback\n" \
@@ -252,6 +253,7 @@ main (int argc, char **argv)
   char input;
   int run = 1;
   int volume = 85;
+  int time_pos;
   player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
 
   if (argc > 1 && !strcmp (argv[1], "-h")) {
@@ -348,6 +350,11 @@ main (int argc, char **argv)
     case 'b':   /* start the previous stream in the playlist */
       player_mrl_previous (player);
       printf ("PREVIOUS STREAM\n");
+      break;
+    case 'i':   /* print current time position */
+      time_pos = player_get_time_pos (player);
+      printf ("TIME POSITION: %.2f sec\n",
+              time_pos < 0 ? 0.0 : (float) time_pos / 1000.0);
       break;
     case 'l':   /* load a stream in the playlist */
       load_media (player);
