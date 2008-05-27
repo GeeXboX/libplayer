@@ -74,6 +74,7 @@ do_regression_tests (player_t *player, char *mrl)
   printf ("Current mute: %s\n", mute == PLAYER_MUTE_ON
                                 ? "on" : (mute == PLAYER_MUTE_OFF
                                           ? "off" : "unknown"));
+  printf ("Current time position: %d [ms]\n", player_get_time_pos (player));
   player_set_mute (player, PLAYER_MUTE_ON);
   player_set_sub_delay (player, 1.5);
   player_playback_pause (player);
