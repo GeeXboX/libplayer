@@ -629,6 +629,8 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
   if (it) {
     if (!strcasecmp (parse_field (it, str), "title"))
       property = PROPERTY_METADATA_TITLE;
+    else if (!strcasecmp (parse_field (it, str), "name"))
+      property = PROPERTY_METADATA_TITLE;
     else if (!strcasecmp (parse_field (it, str), "artist"))
       property = PROPERTY_METADATA_ARTIST;
     else if (!strcasecmp (parse_field (it, str), "genre"))
