@@ -242,6 +242,8 @@ show_info (mrl_t *mrl)
       printf (" Meta Year: %s\n", meta->year);
     if (meta->track)
       printf (" Meta Track: %s\n", meta->track);
+    if (meta->comment)
+      printf (" Meta Comment: %s\n", meta->comment);
   }
 }
 
