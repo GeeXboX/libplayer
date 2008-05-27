@@ -34,7 +34,7 @@
 #define TESTPLAYER_OPTIONS \
   "test-player for libplayer\n" \
   "\n" \
-  "Usage: test-player [options ...]\n" \
+  "Usage: test-player [options ...] [MRLs|files ...]\n" \
   "\n" \
   "Options:\n" \
   " -h --help               this help\n" \
@@ -345,6 +345,16 @@ main (int argc, char **argv)
 
   if (!player)
     return -1;
+
+  /* these arguments are MRLs|files */
+  if (optind < argc) {
+    do {
+      printf (" > %s added to the playlist!\n", argv[optind]);
+      player_mrl_append (player, argv[optind], NULL, PLAYER_ADD_MRL_QUEUE);
+      player_mrl_get_metadata (player, player_get_mrl (player));
+    } while (++optind < argc);
+    putchar ('\n');
+  }
 
   player_set_volume (player, volume);
   printf (TESTPLAYER_COMMANDS);
