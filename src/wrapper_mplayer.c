@@ -119,6 +119,7 @@ typedef enum slave_property {
   PROPERTY_SUB,
   PROPERTY_SUB_DELAY,
   PROPERTY_SUB_VISIBILITY,
+  PROPERTY_TIME_POS,
   PROPERTY_VIDEO_BITRATE,
   PROPERTY_VIDEO_CODEC,
   PROPERTY_VOLUME,
@@ -143,6 +144,7 @@ static const char const *g_slave_props[] = {
   [PROPERTY_SUB]              = "sub",
   [PROPERTY_SUB_DELAY]        = "sub_delay",
   [PROPERTY_SUB_VISIBILITY]   = "sub_visibility",
+  [PROPERTY_TIME_POS]         = "time_pos",
   [PROPERTY_VIDEO_BITRATE]    = "video_bitrate",
   [PROPERTY_VIDEO_CODEC]      = "video_codec",
   [PROPERTY_VOLUME]           = "volume",
@@ -439,6 +441,22 @@ slave_result_int (player_t *player, slave_property_t property)
   return value;
 }
 
+static float
+slave_result_float (player_t *player, slave_property_t property)
+{
+  float value = -1.0;
+  char *result;
+
+  result = slave_result (property, player);
+
+  if (result) {
+    value = atof (result);
+    free (result);
+  }
+
+  return value;
+}
+
 static inline char *
 slave_result_str (player_t *player, slave_property_t property)
 {
@@ -512,6 +530,15 @@ slave_get_property_int (player_t *player, slave_property_t property)
   int res;
 
   res = slave_result_int (player, property);
+  return res;
+}
+
+static inline float
+slave_get_property_float (player_t *player, slave_property_t property)
+{
+  float res;
+
+  res = slave_result_float (player, property);
   return res;
 }
 
@@ -944,6 +971,7 @@ is_available (player_t *player, const char *bin)
  * void  slave_cmd                (player_t, slave_cmd_t)
  * void  slave_cmd_int            (player_t, slave_cmd_t,      int)
  * int   slave_get_property_int   (player_t, slave_property_t)
+ * float slave_get_property_float (player_t, slave_property_t)
  * char *slave_get_property_str   (player_t, slave_property_t)
  * void  slave_set_property_int   (player_t, slave_property_t, int)
  * void  slave_set_property_float (player_t, slave_property_t, float)
