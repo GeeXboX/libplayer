@@ -134,6 +134,7 @@ register_functions_vlc (void)
   funcs->pb_dvdnav        = NULL;
   funcs->get_volume       = NULL;
   funcs->get_mute         = NULL;
+  funcs->get_time_pos     = NULL;
   funcs->set_volume       = NULL;
   funcs->set_mute         = NULL;
   funcs->set_sub_delay    = NULL;

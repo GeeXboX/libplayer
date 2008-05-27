@@ -930,6 +930,7 @@ register_functions_xine (void)
   funcs->pb_dvdnav       = xine_player_playback_dvdnav;
   funcs->get_volume      = xine_player_get_volume;
   funcs->get_mute        = xine_player_get_mute;
+  funcs->get_time_pos    = NULL;
   funcs->set_volume      = xine_player_set_volume;
   funcs->set_mute        = xine_player_set_mute;
   funcs->set_sub_delay   = xine_player_set_sub_delay;
