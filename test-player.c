@@ -25,21 +25,23 @@
 #include <unistd.h>
 #include <termios.h>
 
+#define _GNU_SOURCE
+#include <getopt.h>
+
 #include "player.h"
 
 
 #define TESTPLAYER_OPTIONS \
   "test-player for libplayer\n" \
   "\n" \
-  "Usage: test-player [-h|options]\n" \
-  "\n" \
-  " -h                this help\n" \
+  "Usage: test-player [options ...]\n" \
   "\n" \
   "Options:\n" \
-  " -p <player>       specify the player (mplayer|xine|vlc|gstreamer)\n" \
-  " -ao <audio_out>   specify the audio output (alsa|oss)\n" \
-  " -vo <video_out>   specify the video output (x11|sdl:x11|xv|fb)\n" \
-  " -v                increase verbosity\n" \
+  " -h --help               this help\n" \
+  " -p --player <player>    specify the player (mplayer|xine|vlc|gstreamer)\n" \
+  " -a --audio  <audioout>  specify the audio output (alsa|oss)\n" \
+  " -g --video  <videoout>  specify the video output (x11|sdl:x11|xv|fb)\n" \
+  " -v --verbose            increase verbosity\n" \
   "\n" \
   "Default values are dummy player, null video and audio output.\n" \
   "\n"
@@ -256,59 +258,86 @@ main (int argc, char **argv)
   int time_pos;
   player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
 
-  if (argc > 1 && !strcmp (argv[1], "-h")) {
-    printf (TESTPLAYER_HELP);
-    return 0;
-  }
+  int c, index;
+  const char *const short_options = "hvp:a:g:";
+  const struct option long_options [] = {
+    {"help",    no_argument,       0, 'h' },
+    {"verbose", no_argument,       0, 'v' },
+    {"player",  required_argument, 0, 'p' },
+    {"audio",   required_argument, 0, 'a' },
+    {"video",   required_argument, 0, 'g' },
+    {0,         0,                 0,  0  }
+  };
 
-  while ((argc -= 2) >= 0) {
-    if (!strcmp (argv[argc], "-p")) {
-      if (!strcmp (argv[argc + 1], "mplayer"))
+  /* command line argument processing */
+  while (1) {
+    c = getopt_long (argc, argv, short_options, long_options, &index);
+
+    if (c == EOF)
+      break;
+
+    switch (c) {
+    case 0:
+      /* opt = long_options[index].name; */
+      break;
+
+    case '?':
+    case 'h':
+      printf (TESTPLAYER_HELP);
+      return 0;
+
+    case 'v':
+      verbosity = PLAYER_MSG_INFO;
+      break;
+
+    case 'p':
+      if (!strcmp (optarg, "mplayer"))
 #ifdef HAVE_MPLAYER
         type = PLAYER_TYPE_MPLAYER;
 #else
         printf ("MPlayer not supported, dummy player used instead!\n");
 #endif /* HAVE_MPLAYER */
-      if (!strcmp (argv[argc + 1], "xine"))
+      if (!strcmp (optarg, "xine"))
 #ifdef HAVE_XINE
         type = PLAYER_TYPE_XINE;
 #else
         printf ("Xine not supported, dummy player used instead!\n");
 #endif /* HAVE_XINE */
-      if (!strcmp (argv[argc + 1], "vlc"))
+      if (!strcmp (optarg, "vlc"))
 #ifdef HAVE_VLC
         type = PLAYER_TYPE_VLC;
 #else
         printf ("VLC not supported, dummy player used instead!\n");
 #endif /* HAVE_VLC */
-      if (!strcmp (argv[argc + 1], "gstreamer"))
+      if (!strcmp (optarg, "gstreamer"))
 #ifdef HAVE_GSTREAMER
         type = PLAYER_TYPE_GSTREAMER;
 #else
         printf ("GStreamer not supported, dummy player used instead!\n");
 #endif /* HAVE_GSTREAMER */
-    }
-    else if (!strcmp (argv[argc], "-ao")) {
-      if (!strcmp (argv[argc + 1], "alsa"))
+      break;
+
+    case 'a':
+      if (!strcmp (optarg, "alsa"))
         ao = PLAYER_AO_ALSA;
-      else if (!strcmp (argv[argc + 1], "oss"))
+      else if (!strcmp (optarg, "oss"))
         ao = PLAYER_AO_OSS;
-    }
-    else if (!strcmp (argv[argc], "-vo")) {
-      if (!strcmp (argv[argc + 1], "x11"))
+      break;
+
+    case 'g':
+      if (!strcmp (optarg, "x11"))
         vo = PLAYER_VO_X11;
-      else if (!strcmp (argv[argc + 1], "sdl:x11"))
+      else if (!strcmp (optarg, "sdl:x11"))
         vo = PLAYER_VO_X11_SDL;
-      else if (!strcmp (argv[argc + 1], "xv"))
+      else if (!strcmp (optarg, "xv"))
         vo = PLAYER_VO_XV;
-      else if (!strcmp (argv[argc + 1], "fb"))
+      else if (!strcmp (optarg, "fb"))
         vo = PLAYER_VO_FB;
-    }
-    else if (!strcmp (argv[argc], "-v") ||
-             !strcmp (argv[argc + 1], "-v"))
-    {
-      verbosity = PLAYER_MSG_INFO;
-      argc++;
+      break;
+
+    default:
+      printf (TESTPLAYER_HELP);
+      return -1;
     }
   }
 
