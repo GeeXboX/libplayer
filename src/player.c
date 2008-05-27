@@ -294,6 +294,21 @@ player_get_mute (player_t *player)
   return res;
 }
 
+int
+player_get_time_pos (player_t *player)
+{
+  int res = -1;
+
+  if (!player)
+    return -1;
+
+  /* player specific get_time_pos() */
+  if (player->funcs->get_time_pos)
+    res = player->funcs->get_time_pos (player);
+
+  return res;
+}
+
 /* tune player playback properties */
 void
 player_set_loop (player_t *player, int value)

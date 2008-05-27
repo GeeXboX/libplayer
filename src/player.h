@@ -204,6 +204,7 @@ void player_mrl_get_metadata (player_t *player, mrl_t *mrl);
 /* get player playback properties */
 int player_get_volume (player_t *player);
 player_mute_t player_get_mute (player_t *player);
+int player_get_time_pos (player_t *player);
 
 /* tune player playback properties */
 void player_set_loop (player_t *player, int value);

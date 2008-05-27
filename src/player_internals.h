@@ -55,6 +55,7 @@ typedef struct player_funcs_s {
   void (* pb_dvdnav) (player_t *player, player_dvdnav_t value);
   int (* get_volume) (player_t *player);
   player_mute_t (* get_mute) (player_t *player);
+  int (* get_time_pos) (player_t *player);
   void (* set_volume) (player_t *player, int value);
   void (* set_mute) (player_t *player, player_mute_t value);
   void (* set_sub_delay) (player_t *player, float value);
