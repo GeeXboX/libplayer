@@ -160,6 +160,7 @@ typedef struct mrl_metadata_s {
   char *album;
   char *year;
   char *track;
+  char *comment;
 } mrl_metadata_t;
 
 typedef struct mrl_s {
