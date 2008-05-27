@@ -666,7 +666,7 @@ if test "$wrapper_mplayer" = "auto" -o "$wrapper_mplayer" = "yes"; then
   which mplayer 2>&1 > /dev/null
   if [ "$?" = 0 ]; then
     add_cflags -DHAVE_MPLAYER
-    add_extralibs -lpthread
+    add_extralibs -lpthread -lm
     wrapper_mplayer="yes"
   fi
 fi
