@@ -112,6 +112,7 @@ typedef enum slave_property {
   PROPERTY_METADATA_ARTIST,
   PROPERTY_METADATA_COMMENT,
   PROPERTY_METADATA_GENRE,
+  PROPERTY_METADATA_NAME,
   PROPERTY_METADATA_TITLE,
   PROPERTY_METADATA_TRACK,
   PROPERTY_METADATA_YEAR,
@@ -138,6 +139,7 @@ static const char const *g_slave_props[] = {
   [PROPERTY_METADATA_ARTIST]  = "metadata/artist",
   [PROPERTY_METADATA_COMMENT] = "metadata/comment",
   [PROPERTY_METADATA_GENRE]   = "metadata/genre",
+  [PROPERTY_METADATA_NAME]    = "metadata/name",
   [PROPERTY_METADATA_TITLE]   = "metadata/title",
   [PROPERTY_METADATA_TRACK]   = "metadata/track",
   [PROPERTY_METADATA_YEAR]    = "metadata/year",
@@ -630,7 +632,7 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
     if (!strcasecmp (parse_field (it, str), "title"))
       property = PROPERTY_METADATA_TITLE;
     else if (!strcasecmp (parse_field (it, str), "name"))
-      property = PROPERTY_METADATA_TITLE;
+      property = PROPERTY_METADATA_NAME;
     else if (!strcasecmp (parse_field (it, str), "artist"))
       property = PROPERTY_METADATA_ARTIST;
     else if (!strcasecmp (parse_field (it, str), "genre"))
@@ -653,6 +655,7 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, str);
   if (it) {
     switch (property) {
+    case PROPERTY_METADATA_NAME:
     case PROPERTY_METADATA_TITLE:
       if (meta->title)
         free (meta->title);
