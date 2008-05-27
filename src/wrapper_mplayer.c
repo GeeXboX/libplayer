@@ -1554,6 +1554,24 @@ mplayer_get_mute (player_t *player)
   return mute;
 }
 
+static int
+mplayer_get_time_pos (player_t *player)
+{
+  float time_pos = 0.0;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
+
+  if (!player)
+    return 0;
+
+  time_pos = slave_get_property_float (player, PROPERTY_TIME_POS);
+
+  if (time_pos < 0.0)
+    return -1;
+
+  return (int) (time_pos * 1000.0);
+}
+
 static void
 mplayer_set_volume (player_t *player, int value)
 {
@@ -1615,6 +1633,7 @@ register_functions_mplayer (void)
   funcs->pb_dvdnav        = mplayer_playback_dvdnav;
   funcs->get_volume       = mplayer_get_volume;
   funcs->get_mute         = mplayer_get_mute;
+  funcs->get_time_pos     = mplayer_get_time_pos;
   funcs->set_volume       = mplayer_set_volume;
   funcs->set_mute         = mplayer_set_mute;
   funcs->set_sub_delay    = mplayer_set_sub_delay;
