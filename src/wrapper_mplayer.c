@@ -110,6 +110,7 @@ typedef enum slave_property {
   PROPERTY_LOOP,
   PROPERTY_METADATA_ALBUM,
   PROPERTY_METADATA_ARTIST,
+  PROPERTY_METADATA_COMMENT,
   PROPERTY_METADATA_GENRE,
   PROPERTY_METADATA_TITLE,
   PROPERTY_METADATA_TRACK,
@@ -135,6 +136,7 @@ static const char const *g_slave_props[] = {
   [PROPERTY_LOOP]             = "loop",
   [PROPERTY_METADATA_ALBUM]   = "metadata/album",
   [PROPERTY_METADATA_ARTIST]  = "metadata/artist",
+  [PROPERTY_METADATA_COMMENT] = "metadata/comment",
   [PROPERTY_METADATA_GENRE]   = "metadata/genre",
   [PROPERTY_METADATA_TITLE]   = "metadata/title",
   [PROPERTY_METADATA_TRACK]   = "metadata/track",
@@ -637,6 +639,8 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
       property = PROPERTY_METADATA_YEAR;
     else if (!strcasecmp (parse_field (it, str), "track"))
       property = PROPERTY_METADATA_TRACK;
+    else if (!strcasecmp (parse_field (it, str), "comment"))
+      property = PROPERTY_METADATA_COMMENT;
     else
       property = PROPERTY_UNKNOWN;
 
@@ -681,6 +685,12 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
       if (meta->track)
         free (meta->track);
       meta->track = strdup (parse_field (it, str));
+      break;
+
+    case PROPERTY_METADATA_COMMENT:
+      if (meta->comment)
+        free (meta->comment);
+      meta->comment = strdup (parse_field (it, str));
       break;
 
     default:
@@ -1340,6 +1350,10 @@ mplayer_mrl_get_metadata (player_t *player, mrl_t *mrl)
   if (meta->track)
     plog (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Track: %s", meta->track);
+
+  if (meta->comment)
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Comment: %s", meta->comment);
 }
 
 static playback_status_t
