@@ -425,7 +425,7 @@ slave_result (slave_property_t property, player_t *player)
 }
 
 static int
-slave_result_int (player_t *player, slave_property_t property)
+slave_get_property_int (player_t *player, slave_property_t property)
 {
   int value = -1;
   char *result;
@@ -442,7 +442,7 @@ slave_result_int (player_t *player, slave_property_t property)
 }
 
 static float
-slave_result_float (player_t *player, slave_property_t property)
+slave_get_property_float (player_t *player, slave_property_t property)
 {
   float value = -1.0;
   char *result;
@@ -458,7 +458,7 @@ slave_result_float (player_t *player, slave_property_t property)
 }
 
 static inline char *
-slave_result_str (player_t *player, slave_property_t property)
+slave_get_property_str (player_t *player, slave_property_t property)
 {
   return slave_result (property, player);
 }
@@ -522,33 +522,6 @@ slave_set_property_float (player_t *player, slave_property_t property,
 
   param.f_val = value;
   slave_set_property (player, property, param);
-}
-
-static inline int
-slave_get_property_int (player_t *player, slave_property_t property)
-{
-  int res;
-
-  res = slave_result_int (player, property);
-  return res;
-}
-
-static inline float
-slave_get_property_float (player_t *player, slave_property_t property)
-{
-  float res;
-
-  res = slave_result_float (player, property);
-  return res;
-}
-
-static inline char *
-slave_get_property_str (player_t *player, slave_property_t property)
-{
-  char *res;
-
-  res = slave_result_str (player, property);
-  return res;
 }
 
 static void
