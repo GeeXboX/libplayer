@@ -184,6 +184,8 @@ mrl_metadata_free (mrl_metadata_t *meta)
     free (meta->year);
   if (meta->track)
     free (meta->track);
+  if (meta->comment)
+    free (meta->comment);
   free (meta);
 }
 
