@@ -316,6 +316,30 @@ player_mrl_append (player_t *player,
 }
 
 void
+player_mrl_set (player_t *player, char *location, char *subtitle)
+{
+  mrl_t *mrl = NULL;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player || !location)
+    return;
+
+  mrl = player_mrl_new (player, location, subtitle);
+  if (!mrl)
+    return;
+
+  if (player->mrl) {
+    player_playback_stop (player);
+    mrl->prev = player->mrl->prev;
+    mrl->next = player->mrl->next;
+    mrl_free (player->mrl, 0);
+  }
+
+  player->mrl = mrl;
+}
+
+void
 player_mrl_remove (player_t *player)
 {
   mrl_t *mrl, *mrl_p = NULL, *mrl_n = NULL;
