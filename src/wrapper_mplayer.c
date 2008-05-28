@@ -43,12 +43,14 @@
 
 #define SLAVE_CMD_BUFFER 256
 
-#define MPLAYER_DVDNAV_UP     1
-#define MPLAYER_DVDNAV_DOWN   2
-#define MPLAYER_DVDNAV_LEFT   3
-#define MPLAYER_DVDNAV_RIGHT  4
-#define MPLAYER_DVDNAV_MENU   5
-#define MPLAYER_DVDNAV_SELECT 6
+typedef enum {
+  MPLAYER_DVDNAV_UP     = 1,
+  MPLAYER_DVDNAV_DOWN   = 2,
+  MPLAYER_DVDNAV_LEFT   = 3,
+  MPLAYER_DVDNAV_RIGHT  = 4,
+  MPLAYER_DVDNAV_MENU   = 5,
+  MPLAYER_DVDNAV_SELECT = 6,
+} mplayer_dvdnav_t;
 
 /* Status of MPlayer child */
 typedef enum mplayer_status {
