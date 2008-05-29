@@ -365,14 +365,14 @@ xine_player_init (player_t *player)
     break;
   }
 
-  if (use_x11 && (!x11_init (player) || !player->x11->data)) {
+  if (use_x11 && (!x11_init (player) || !x11_get_data (player->x11))) {
     if (id_vo)
       free (id_vo);
 
     return PLAYER_INIT_ERROR;
   }
   else if (use_x11)
-    data = player->x11->data;
+    data = x11_get_data (player->x11);
 
   /* init video output driver */
   if (!(x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data))) {
@@ -430,9 +430,9 @@ xine_player_init (player_t *player)
                                      xine_player_event_listener_cb, player);
 
   /* X11 */
-  if (player->x11 && player->x11->display) {
+  if (player->x11 && x11_get_display (player->x11)) {
     xine_gui_send_vo_data (x->stream, XINE_GUI_SEND_DRAWABLE_CHANGED,
-                           (void *) player->x11->window);
+                           (void *) x11_get_window (player->x11));
     xine_gui_send_vo_data (x->stream, XINE_GUI_SEND_VIDEOWIN_VISIBLE,
                            (void *) 1);
   }
