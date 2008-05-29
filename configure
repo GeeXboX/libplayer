@@ -656,7 +656,7 @@ if [ -n "$libX11dir" ]; then
   check_ldflags -L$libX11dir
 fi
 check_lib X11/X.h XInitThreads -lX11 || die "Error, can't find libX11 !"
-add_extralibs -lX11
+add_extralibs -lX11 -lpthread
 
 #################################################
 #   check for mplayer

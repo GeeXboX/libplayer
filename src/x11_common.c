@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <pthread.h>
 
 #include <X11/X.h>
 #include <X11/Xatom.h>
@@ -41,6 +42,7 @@ struct x11_s {
   Display *display;
   Window window;
   void *data;
+  pthread_mutex_t mutex_display;
 };
 
 typedef struct screeninfo_s {
@@ -149,7 +151,7 @@ x11_map (player_t *player)
   if (!x11->display)
     return;
 
-  XLockDisplay (x11->display);
+  pthread_mutex_lock (&x11->mutex_display);
 
   if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
     screeninfo = (screeninfo_t *) player->x11->data;
@@ -176,7 +178,7 @@ x11_map (player_t *player)
     XMapRaised (x11->display, x11->window);
 
   XSync (x11->display, False);
-  XUnlockDisplay (x11->display);
+  pthread_mutex_unlock (&x11->mutex_display);
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window mapped");
 }
@@ -200,7 +202,7 @@ x11_unmap (player_t *player)
 
   screeninfo = (screeninfo_t *) player->x11->data;
 
-  XLockDisplay (x11->display);
+  pthread_mutex_lock (&x11->mutex_display);
 
   if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
     screeninfo = (screeninfo_t *) player->x11->data;
@@ -213,7 +215,7 @@ x11_unmap (player_t *player)
     XUnmapWindow (x11->display, x11->window);
 
   XSync (x11->display, False);
-  XUnlockDisplay (x11->display);
+  pthread_mutex_unlock (&x11->mutex_display);
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window unmapped");
 }
@@ -232,7 +234,7 @@ x11_uninit (player_t *player)
   if (!x11->display)
     return;
 
-  XLockDisplay (x11->display);
+  pthread_mutex_lock (&x11->mutex_display);
   XUnmapWindow (x11->display, x11->window);
   XDestroyWindow (x11->display, x11->window);
 
@@ -245,9 +247,10 @@ x11_uninit (player_t *player)
     }
   }
 
-  XUnlockDisplay (x11->display);
+  pthread_mutex_unlock (&x11->mutex_display);
   XCloseDisplay (x11->display);
 
+  pthread_mutex_destroy (&x11->mutex_display);
   free (x11);
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window destroyed");
@@ -330,6 +333,7 @@ x11_init (player_t *player)
 
   x11->display = NULL;
   x11->data = NULL;
+  pthread_mutex_init (&x11->mutex_display, NULL);
 
   screeninfo = malloc (sizeof (screeninfo_t));
   if (!screeninfo) {
@@ -338,14 +342,6 @@ x11_init (player_t *player)
     return 0;
   }
   screeninfo->win_black = 0;
-
-  if (!XInitThreads ()) {
-    free (x11);
-    player->x11 = NULL;
-    free (screeninfo);
-    plog (player, PLAYER_MSG_ERROR, MODULE_NAME, "Failed to init for X11");
-    return 0;
-  }
 
   x11->display = XOpenDisplay (NULL);
 
@@ -363,7 +359,7 @@ x11_init (player_t *player)
   width = DisplayWidth (x11->display, screen);
   height = DisplayHeight (x11->display, screen);
 
-  XLockDisplay (x11->display);
+  pthread_mutex_lock (&x11->mutex_display);
 
   atts.override_redirect = True;  /* window on top */
   atts.background_pixel = 0;      /* black background */
@@ -416,7 +412,7 @@ x11_init (player_t *player)
   */
 
   XSync (x11->display, False);
-  XUnlockDisplay (x11->display);
+  pthread_mutex_unlock (&x11->mutex_display);
 
   /* only for Xine */
   if (player->type == PLAYER_TYPE_XINE) {
