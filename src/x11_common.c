@@ -99,6 +99,33 @@ zoom (player_t *player, int parentwidth, int parentheight, float aspect,
         MODULE_NAME, "[zoom] x:%i y:%i w:%i h:%i", *x, *y, *width, *height);
 }
 
+Display *
+x11_get_display (x11_t *x11)
+{
+  if (!x11)
+    return NULL;
+
+  return x11->display;
+}
+
+Window
+x11_get_window (x11_t *x11)
+{
+  if (!x11)
+    return 0;
+
+  return x11->window;
+}
+
+void *
+x11_get_data (x11_t *x11)
+{
+  if (!x11)
+    return NULL;
+
+  return x11->data;
+}
+
 /**
  * Map and raise the window when a video is played.
  */
