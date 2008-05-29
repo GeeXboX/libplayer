@@ -1014,7 +1014,7 @@ mplayer_init (player_t *player)
   case PLAYER_VO_XV:
     if (!x11_init (player))
       return PLAYER_INIT_ERROR;
-    sprintf (winid, "%li", (long int) player->x11->window);
+    sprintf (winid, "%lu", (unsigned long) player->x11->window);
   default:
     break;
   }
