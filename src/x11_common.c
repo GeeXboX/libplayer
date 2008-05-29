@@ -37,6 +37,12 @@
 
 #define MODULE_NAME "x11"
 
+struct x11_s {
+  Display *display;
+  Window window;
+  void *data;
+};
+
 typedef struct screeninfo_s {
   int width;
   int height;

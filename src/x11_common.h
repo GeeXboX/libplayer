@@ -24,11 +24,8 @@
 
 #include <X11/Xlib.h>
 
-typedef struct x11_s {
-  Display *display;
-  Window window;
-  void *data;
-} x11_t;
+/* opaque data type */
+typedef struct x11_s x11_t;
 
 
 int x11_init (player_t *player);
