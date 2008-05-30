@@ -1297,7 +1297,7 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 
     if (video->aspect)
       plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Aspect: %.2f", video->aspect);
+            MODULE_NAME, "Video Aspect: %i", video->aspect);
 
     if (video->framerate)
       plog (player, PLAYER_MSG_INFO,
