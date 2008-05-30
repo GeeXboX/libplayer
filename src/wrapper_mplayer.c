@@ -759,6 +759,7 @@ static int
 mp_identify_video (mrl_t *mrl, const char *buffer)
 {
   char *it;
+  float val;
   mrl_properties_video_t *video;
 
   if (!mrl || !mrl->prop || !buffer || !strstr (buffer, "ID_VIDEO"))
@@ -806,7 +807,8 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
 
   it = strstr (buffer, "FPS=");
   if (it) {
-    video->frameduration = (uint32_t) (90000.0 / atof (parse_field (it, "FPS=")));
+    val = atof (parse_field (it, "FPS="));
+    video->frameduration = (uint32_t) (val ? 90000.0 / val : 0);
     return 1;
   }
 
