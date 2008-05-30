@@ -457,6 +457,60 @@ player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
     player->funcs->mrl_retrieve_props (player, mrl);
 }
 
+uint32_t
+player_mrl_get_properties (player_t *player, mrl_t *mrl, player_properties_t p)
+{
+  mrl_properties_t *prop;
+
+  if (!player || !mrl)
+    return 0;
+
+  if (!mrl->prop)
+    player_mrl_retrieve_properties (player, mrl);
+
+  prop = mrl->prop;
+  if (!prop)
+    return 0;
+
+  switch (p) {
+  case PLAYER_AUDIO_PROPERTY_BITRATE:
+    return prop->audio ? prop->audio->bitrate : 0;
+
+  case PLAYER_AUDIO_PROPERTY_BITS:
+    return prop->audio ? prop->audio->bits : 0;
+
+  case PLAYER_AUDIO_PROPERTY_CHANNELS:
+    return prop->audio ? prop->audio->channels : 0;
+
+  case PLAYER_AUDIO_PROPERTY_SAMPLERATE:
+    return prop->audio ? prop->audio->samplerate : 0;
+
+  case PLAYER_VIDEO_PROPERTY_BITRATE:
+    return prop->video ? prop->video->bitrate : 0;
+
+  case PLAYER_VIDEO_PROPERTY_WIDTH:
+    return prop->video ? prop->video->width : 0;
+
+  case PLAYER_VIDEO_PROPERTY_HEIGHT:
+    return prop->video ? prop->video->height : 0;
+
+  case PLAYER_VIDEO_PROPERTY_ASPECT:
+    return prop->video ? prop->video->aspect : 0;
+
+  case PLAYER_VIDEO_PROPERTY_CHANNELS:
+    return prop->video ? prop->video->channels : 0;
+
+  case PLAYER_VIDEO_PROPERTY_STREAMS:
+    return prop->video ? prop->video->streams : 0;
+
+  case PLAYER_VIDEO_PROPERTY_FRAMEDURATION:
+    return prop->video ? prop->video->frameduration : 0;
+
+  default:
+    return 0;
+  }
+}
+
 static void
 player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {

@@ -134,6 +134,20 @@ typedef enum player_metadata {
   PLAYER_METADATA_COMMENT,
 } player_metadata_t;
 
+typedef enum player_properties {
+  PLAYER_AUDIO_PROPERTY_BITRATE,
+  PLAYER_AUDIO_PROPERTY_BITS,
+  PLAYER_AUDIO_PROPERTY_CHANNELS,
+  PLAYER_AUDIO_PROPERTY_SAMPLERATE,
+  PLAYER_VIDEO_PROPERTY_BITRATE,
+  PLAYER_VIDEO_PROPERTY_WIDTH,
+  PLAYER_VIDEO_PROPERTY_HEIGHT,
+  PLAYER_VIDEO_PROPERTY_ASPECT,
+  PLAYER_VIDEO_PROPERTY_CHANNELS,
+  PLAYER_VIDEO_PROPERTY_STREAMS,
+  PLAYER_VIDEO_PROPERTY_FRAMEDURATION,
+} player_properties_t;
+
 typedef struct mrl_properties_audio_s {
   char *codec;
   uint32_t bitrate;
@@ -198,6 +212,8 @@ void player_mrl_previous (player_t *player);
 void player_mrl_next (player_t *player);
 void player_mrl_retrieve_properties (player_t *player, mrl_t *mrl);
 char *player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m);
+uint32_t player_mrl_get_properties (player_t *player,
+                                    mrl_t *mrl, player_properties_t p);
 
 /* get player playback properties */
 int player_get_volume (player_t *player);
