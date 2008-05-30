@@ -309,45 +309,6 @@ player_get_time_pos (player_t *player)
   return res;
 }
 
-char *
-player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
-{
-  mrl_metadata_t *meta;
-
-  if (!player || !mrl)
-    return NULL;
-
-  meta = mrl->meta;
-  if (!meta)
-    return NULL;
-
-  switch (m) {
-  case PLAYER_METADATA_TITLE:
-    return meta->title ? strdup (meta->title) : NULL;
-
-  case PLAYER_METADATA_ARTIST:
-    return meta->artist ? strdup (meta->artist) : NULL;
-
-  case PLAYER_METADATA_GENRE:
-    return meta->genre ? strdup (meta->genre) : NULL;
-
-  case PLAYER_METADATA_ALBUM:
-    return meta->album ? strdup (meta->album) : NULL;
-
-  case PLAYER_METADATA_YEAR:
-    return meta->year ? strdup (meta->year) : NULL;
-
-  case PLAYER_METADATA_TRACK:
-    return meta->track ? strdup (meta->track) : NULL;
-
-  case PLAYER_METADATA_COMMENT:
-    return meta->comment ? strdup (meta->comment) : NULL;
-
-  default:
-    return NULL;
-  }
-}
-
 /* tune player playback properties */
 void
 player_set_loop (player_t *player, int value)
