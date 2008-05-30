@@ -251,26 +251,6 @@ mrl_uses_ao (mrl_t *mrl)
 }
 
 mrl_t *
-mrl_new (player_t *player, char *name, char *subtitle)
-{
-  mrl_t *mrl = NULL;
-
-  if (!player || !name)
-    return NULL;
-
-  mrl = calloc (1, sizeof (mrl_t));
-  mrl->name = strdup (name);
-  mrl->subtitle = subtitle ? strdup (subtitle) : NULL;
-
-  player_mrl_retrieve_properties (player, mrl);
-
-  mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */
-  mrl->resource = mrl_guess_resource (mrl);
-
-  return mrl;
-}
-
-mrl_t *
 player_get_mrl (player_t *player)
 {
   if (!player)
@@ -633,4 +613,24 @@ player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
   default:
     return NULL;
   }
+}
+
+mrl_t *
+mrl_new (player_t *player, char *name, char *subtitle)
+{
+  mrl_t *mrl = NULL;
+
+  if (!player || !name)
+    return NULL;
+
+  mrl = calloc (1, sizeof (mrl_t));
+  mrl->name = strdup (name);
+  mrl->subtitle = subtitle ? strdup (subtitle) : NULL;
+
+  player_mrl_retrieve_properties (player, mrl);
+
+  mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */
+  mrl->resource = mrl_guess_resource (mrl);
+
+  return mrl;
 }
