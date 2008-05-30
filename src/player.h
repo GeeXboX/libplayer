@@ -120,6 +120,16 @@ typedef enum player_dvdnav {
   PLAYER_DVDNAV_SELECT
 } player_dvdnav_t;
 
+typedef enum player_metadata {
+  PLAYER_METADATA_TITLE,
+  PLAYER_METADATA_ARTIST,
+  PLAYER_METADATA_GENRE,
+  PLAYER_METADATA_ALBUM,
+  PLAYER_METADATA_YEAR,
+  PLAYER_METADATA_TRACK,
+  PLAYER_METADATA_COMMENT,
+} player_metadata_t;
+
 typedef struct mrl_properties_audio_s {
   char *codec;
   uint32_t bitrate;
@@ -201,6 +211,7 @@ void player_mrl_get_metadata (player_t *player, mrl_t *mrl);
 int player_get_volume (player_t *player);
 player_mute_t player_get_mute (player_t *player);
 int player_get_time_pos (player_t *player);
+char *player_get_metadata (player_t *player, player_metadata_t m);
 
 /* tune player playback properties */
 void player_set_loop (player_t *player, int value);
