@@ -214,6 +214,8 @@ void player_mrl_retrieve_properties (player_t *player, mrl_t *mrl);
 char *player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m);
 uint32_t player_mrl_get_properties (player_t *player,
                                     mrl_t *mrl, player_properties_t p);
+char *player_mrl_get_audio_codec (player_t *player, mrl_t *mrl);
+char *player_mrl_get_video_codec (player_t *player, mrl_t *mrl);
 
 /* get player playback properties */
 int player_get_volume (player_t *player);

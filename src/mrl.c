@@ -511,6 +511,46 @@ player_mrl_get_properties (player_t *player, mrl_t *mrl, player_properties_t p)
   }
 }
 
+char *
+player_mrl_get_audio_codec (player_t *player, mrl_t *mrl)
+{
+  mrl_properties_t *prop;
+  mrl_properties_audio_t *audio;
+
+  if (!player || !mrl)
+    return NULL;
+
+  if (!mrl->prop)
+    player_mrl_retrieve_properties (player, mrl);
+
+  prop = mrl->prop;
+  if (!prop)
+    return NULL;
+
+  audio = prop->audio;
+  return audio ? strdup (audio->codec) : NULL;
+}
+
+char *
+player_mrl_get_video_codec (player_t *player, mrl_t *mrl)
+{
+  mrl_properties_t *prop;
+  mrl_properties_video_t *video;
+
+  if (!player || !mrl)
+    return NULL;
+
+  if (!mrl->prop)
+    player_mrl_retrieve_properties (player, mrl);
+
+  prop = mrl->prop;
+  if (!prop)
+    return NULL;
+
+  video = prop->video;
+  return video ? strdup (video->codec) : NULL;
+}
+
 static void
 player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
