@@ -32,6 +32,8 @@
 /* opaque data type */
 typedef struct player_s player_t;
 typedef struct mrl_metadata_s mrl_metadata_t;
+typedef struct mrl_properties_audio_s mrl_properties_audio_t;
+typedef struct mrl_properties_video_s mrl_properties_video_t;
 
 typedef enum {
   PLAYER_MSG_NONE,          /* no error messages */
@@ -147,25 +149,6 @@ typedef enum player_properties {
   PLAYER_VIDEO_PROPERTY_STREAMS,
   PLAYER_VIDEO_PROPERTY_FRAMEDURATION,
 } player_properties_t;
-
-typedef struct mrl_properties_audio_s {
-  char *codec;
-  uint32_t bitrate;
-  uint32_t bits;
-  uint32_t channels;
-  uint32_t samplerate;
-} mrl_properties_audio_t;
-
-typedef struct mrl_properties_video_s {
-  char *codec;
-  uint32_t bitrate;
-  uint32_t width;
-  uint32_t height;
-  uint32_t aspect;          /* *10000 */
-  uint32_t channels;
-  uint32_t streams;
-  uint32_t frameduration;   /* 1/90000 sec */
-} mrl_properties_video_t;
 
 typedef struct mrl_properties_s {
   off_t size;
