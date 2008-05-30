@@ -473,6 +473,12 @@ player_mrl_get_properties (player_t *player, mrl_t *mrl, player_properties_t p)
     return 0;
 
   switch (p) {
+  case PLAYER_PROPERTY_SEEKABLE:
+    return prop->seekable;
+
+  case PLAYER_PROPERTY_LENGTH:
+    return prop->length;
+
   case PLAYER_AUDIO_PROPERTY_BITRATE:
     return prop->audio ? prop->audio->bitrate : 0;
 

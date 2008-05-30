@@ -137,6 +137,8 @@ typedef enum player_metadata {
 } player_metadata_t;
 
 typedef enum player_properties {
+  PLAYER_PROPERTY_SEEKABLE,
+  PLAYER_PROPERTY_LENGTH,
   PLAYER_AUDIO_PROPERTY_BITRATE,
   PLAYER_AUDIO_PROPERTY_BITS,
   PLAYER_AUDIO_PROPERTY_CHANNELS,
