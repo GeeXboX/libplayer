@@ -184,7 +184,7 @@ register_functions_dummy (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = malloc (sizeof (player_funcs_t));
+  funcs = calloc (1, sizeof (player_funcs_t));
   funcs->init               = dummy_init;
   funcs->uninit             = dummy_uninit;
   funcs->mrl_retrieve_props = dummy_mrl_retrieve_properties;
