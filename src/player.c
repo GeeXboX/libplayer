@@ -310,7 +310,7 @@ player_get_time_pos (player_t *player)
 }
 
 char *
-player_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
+player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
 {
   mrl_metadata_t *meta;
 
