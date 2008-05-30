@@ -204,7 +204,7 @@ show_info (player_t *player, mrl_t *mrl)
     if (video->height)
       printf (" Video Height: %i\n", video->height);
     if (video->aspect)
-      printf (" Video Aspect: %.2f\n", video->aspect);
+      printf (" Video Aspect: %.2f\n", video->aspect / 10000.0);
     if (video->channels)
       printf (" Video Channels: %i\n", video->channels);
     if (video->streams)

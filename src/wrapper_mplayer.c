@@ -800,7 +800,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
    */
   it = strstr (buffer, "ASPECT=");
   if (it) {
-    video->aspect = (float) atof (parse_field (it, "ASPECT="));
+    video->aspect = (uint32_t) (atof (parse_field (it, "ASPECT=")) * 10000.0);
     return 1;
   }
 

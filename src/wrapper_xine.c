@@ -230,7 +230,7 @@ xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
     xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_HEIGHT);
 
   video->aspect =
-    xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_RATIO) / 10000.0;
+    xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_RATIO);
 
   video->channels =
     xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_CHANNELS);
