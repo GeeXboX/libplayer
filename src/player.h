@@ -29,6 +29,9 @@
 #define LIBPLAYER_VERSION_MICRO 1
 #define LIBPLAYER_VERSION "0.0.1"
 
+/* opaque data type */
+typedef struct player_s player_t;
+
 typedef enum {
   PLAYER_MSG_NONE,          /* no error messages */
   PLAYER_MSG_INFO,          /* working operations */
@@ -181,8 +184,6 @@ typedef struct mrl_s {
   struct mrl_s *next;
 } mrl_t;
 
-/* opaque data type */
-typedef struct player_s player_t;
 
 /* player init/uninit prototypes */
 player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
