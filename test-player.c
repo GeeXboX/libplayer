@@ -173,9 +173,9 @@ show_resource (mrl_t *mrl)
 static void
 show_info (player_t *player, mrl_t *mrl)
 {
-  mrl_properties_video_t *video = NULL;
-  mrl_properties_audio_t *audio = NULL;
   char *meta;
+  char *codec;
+  uint32_t prop;
 
   if (!player || !mrl || !mrl->name)
     return;
@@ -190,41 +190,63 @@ show_info (player_t *player, mrl_t *mrl)
     printf (" Size: %.2f MB\n", mrl->prop->size / 1024.0 / 1024.0);
     printf (" Seekable: %i\n", mrl->prop->seekable);
     printf (" Length: %.2f sec\n", (float) mrl->prop->length / 1000.0);
-    video = mrl->prop->video;
-    audio = mrl->prop->audio;
   }
 
-  if (video) {
-    if (video->codec)
-      printf (" Video Codec: %s\n", video->codec);
-    if (video->bitrate)
-      printf (" Video Bitrate: %i kbps\n", video->bitrate / 1000);
-    if (video->width)
-      printf (" Video Width: %i\n", video->width);
-    if (video->height)
-      printf (" Video Height: %i\n", video->height);
-    if (video->aspect)
-      printf (" Video Aspect: %.2f\n", video->aspect / 10000.0);
-    if (video->channels)
-      printf (" Video Channels: %i\n", video->channels);
-    if (video->streams)
-      printf (" Video Streams: %i\n", video->streams);
-    if (video->frameduration)
-      printf (" Video Framerate: %.2f\n", 90000.0 / video->frameduration);
+  codec = player_mrl_get_video_codec (player, mrl);
+  if (codec) {
+    printf (" Video Codec: %s\n", codec);
+    free (codec);
   }
 
-  if (audio) {
-    if (audio->codec)
-      printf (" Audio Codec: %s\n", audio->codec);
-    if (audio->bitrate)
-      printf (" Audio Bitrate: %i kbps\n", audio->bitrate / 1000);
-    if (audio->bits)
-      printf (" Audio Bits: %i bps\n", audio->bits);
-    if (audio->channels)
-      printf (" Audio Channels: %i\n", audio->channels);
-    if (audio->samplerate)
-      printf (" Audio Sample Rate: %i Hz\n", audio->samplerate);
+  prop = player_mrl_get_properties (player, mrl, PLAYER_VIDEO_PROPERTY_BITRATE);
+  if (prop)
+    printf (" Video Bitrate: %i kbps\n", prop / 1000);
+
+  prop = player_mrl_get_properties (player, mrl, PLAYER_VIDEO_PROPERTY_WIDTH);
+  if (prop)
+    printf (" Video Width: %i\n", prop);
+
+  prop = player_mrl_get_properties (player, mrl, PLAYER_VIDEO_PROPERTY_HEIGHT);
+  if (prop)
+    printf (" Video Height: %i\n", prop);
+
+  prop = player_mrl_get_properties (player, mrl, PLAYER_VIDEO_PROPERTY_ASPECT);
+  if (prop)
+    printf (" Video Aspect: %.2f\n", prop / 10000.0);
+
+  prop = player_mrl_get_properties (player, mrl, PLAYER_VIDEO_PROPERTY_CHANNELS);
+  if (prop)
+    printf (" Video Channels: %i\n", prop);
+
+  prop = player_mrl_get_properties (player, mrl, PLAYER_VIDEO_PROPERTY_STREAMS);
+  if (prop)
+    printf (" Video Streams: %i\n", prop);
+
+  prop = player_mrl_get_properties (player, mrl, PLAYER_VIDEO_PROPERTY_FRAMEDURATION);
+  if (prop)
+    printf (" Video Framerate: %.2f\n", 90000.0 / prop);
+
+  codec = player_mrl_get_audio_codec (player, mrl);
+  if (codec) {
+    printf (" Audio Codec: %s\n", codec);
+    free (codec);
   }
+
+  prop = player_mrl_get_properties (player, mrl, PLAYER_AUDIO_PROPERTY_BITRATE);
+  if (prop)
+    printf (" Audio Bitrate: %i kbps\n", prop / 1000);
+
+  prop = player_mrl_get_properties (player, mrl, PLAYER_AUDIO_PROPERTY_BITS);
+  if (prop)
+    printf (" Audio Bits: %i bps\n", prop);
+
+  prop = player_mrl_get_properties (player, mrl, PLAYER_AUDIO_PROPERTY_CHANNELS);
+  if (prop)
+    printf (" Audio Channels: %i\n", prop);
+
+  prop = player_mrl_get_properties (player, mrl, PLAYER_AUDIO_PROPERTY_SAMPLERATE);
+  if (prop)
+    printf (" Audio Sample Rate: %i Hz\n", prop);
 
   meta = player_mrl_get_metadata (player, mrl, PLAYER_METADATA_TITLE);
   if (meta) {
