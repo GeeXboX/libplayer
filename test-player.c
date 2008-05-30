@@ -107,7 +107,6 @@ load_media (player_t *player)
   putchar ('\n');
 
   player_mrl_append (player, file, NULL, PLAYER_ADD_MRL_QUEUE);
-  player_mrl_retrieve_metadata (player, player_get_mrl (player));
   printf ("Media added to the playlist!\n");
 }
 
@@ -172,13 +171,13 @@ show_resource (mrl_t *mrl)
 }
 
 static void
-show_info (mrl_t *mrl)
+show_info (player_t *player, mrl_t *mrl)
 {
   mrl_properties_video_t *video = NULL;
   mrl_properties_audio_t *audio = NULL;
-  mrl_metadata_t *meta = NULL;
+  char *meta;
 
-  if (!mrl || !mrl->name)
+  if (!player || !mrl || !mrl->name)
     return;
 
   printf ("Properties and metadata:\n");
@@ -227,23 +226,46 @@ show_info (mrl_t *mrl)
       printf (" Audio Sample Rate: %i Hz\n", audio->samplerate);
   }
 
-  meta = mrl->meta;
-
+  meta = player_mrl_get_metadata (player, mrl, PLAYER_METADATA_TITLE);
   if (meta) {
-    if (meta->title)
-      printf (" Meta Title: %s\n", meta->title);
-    if (meta->artist)
-      printf (" Meta Artist: %s\n", meta->artist);
-    if (meta->genre)
-      printf (" Meta Genre: %s\n", meta->genre);
-    if (meta->album)
-      printf (" Meta Album: %s\n", meta->album);
-    if (meta->year)
-      printf (" Meta Year: %s\n", meta->year);
-    if (meta->track)
-      printf (" Meta Track: %s\n", meta->track);
-    if (meta->comment)
-      printf (" Meta Comment: %s\n", meta->comment);
+    printf (" Meta Title: %s\n", meta);
+    free (meta);
+  }
+
+  meta = player_mrl_get_metadata (player, mrl, PLAYER_METADATA_ARTIST);
+  if (meta) {
+    printf (" Meta Artist: %s\n", meta);
+    free (meta);
+  }
+
+  meta = player_mrl_get_metadata (player, mrl, PLAYER_METADATA_GENRE);
+  if (meta) {
+    printf (" Meta Genre: %s\n", meta);
+    free (meta);
+  }
+
+  meta = player_mrl_get_metadata (player, mrl, PLAYER_METADATA_ALBUM);
+  if (meta) {
+    printf (" Meta Album: %s\n", meta);
+    free (meta);
+  }
+
+  meta = player_mrl_get_metadata (player, mrl, PLAYER_METADATA_YEAR);
+  if (meta) {
+    printf (" Meta Year: %s\n", meta);
+    free (meta);
+  }
+
+  meta = player_mrl_get_metadata (player, mrl, PLAYER_METADATA_TRACK);
+  if (meta) {
+    printf (" Meta Track: %s\n", meta);
+    free (meta);
+  }
+
+  meta = player_mrl_get_metadata (player, mrl, PLAYER_METADATA_COMMENT);
+  if (meta) {
+    printf (" Meta Comment: %s\n", meta);
+    free (meta);
   }
 }
 
@@ -439,7 +461,7 @@ main (int argc, char **argv)
       printf ("ERASE PLAYLIST\n");
       break;
     case 'v':   /* print properties and metadata */
-      show_info (player_get_mrl (player));
+      show_info (player, player_get_mrl (player));
       break;
     default:
       fprintf (stderr, "ERROR: Command unknown!\n");
