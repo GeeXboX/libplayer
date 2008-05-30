@@ -459,37 +459,37 @@ player_mrl_get_properties (player_t *player, mrl_t *mrl, player_properties_t p)
   case PLAYER_PROPERTY_LENGTH:
     return prop->length;
 
-  case PLAYER_AUDIO_PROPERTY_BITRATE:
+  case PLAYER_PROPERTY_AUDIO_BITRATE:
     return prop->audio ? prop->audio->bitrate : 0;
 
-  case PLAYER_AUDIO_PROPERTY_BITS:
+  case PLAYER_PROPERTY_AUDIO_BITS:
     return prop->audio ? prop->audio->bits : 0;
 
-  case PLAYER_AUDIO_PROPERTY_CHANNELS:
+  case PLAYER_PROPERTY_AUDIO_CHANNELS:
     return prop->audio ? prop->audio->channels : 0;
 
-  case PLAYER_AUDIO_PROPERTY_SAMPLERATE:
+  case PLAYER_PROPERTY_AUDIO_SAMPLERATE:
     return prop->audio ? prop->audio->samplerate : 0;
 
-  case PLAYER_VIDEO_PROPERTY_BITRATE:
+  case PLAYER_PROPERTY_VIDEO_BITRATE:
     return prop->video ? prop->video->bitrate : 0;
 
-  case PLAYER_VIDEO_PROPERTY_WIDTH:
+  case PLAYER_PROPERTY_VIDEO_WIDTH:
     return prop->video ? prop->video->width : 0;
 
-  case PLAYER_VIDEO_PROPERTY_HEIGHT:
+  case PLAYER_PROPERTY_VIDEO_HEIGHT:
     return prop->video ? prop->video->height : 0;
 
-  case PLAYER_VIDEO_PROPERTY_ASPECT:
+  case PLAYER_PROPERTY_VIDEO_ASPECT:
     return prop->video ? prop->video->aspect : 0;
 
-  case PLAYER_VIDEO_PROPERTY_CHANNELS:
+  case PLAYER_PROPERTY_VIDEO_CHANNELS:
     return prop->video ? prop->video->channels : 0;
 
-  case PLAYER_VIDEO_PROPERTY_STREAMS:
+  case PLAYER_PROPERTY_VIDEO_STREAMS:
     return prop->video ? prop->video->streams : 0;
 
-  case PLAYER_VIDEO_PROPERTY_FRAMEDURATION:
+  case PLAYER_PROPERTY_VIDEO_FRAMEDURATION:
     return prop->video ? prop->video->frameduration : 0;
 
   default:
