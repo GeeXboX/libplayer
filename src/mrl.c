@@ -457,7 +457,7 @@ player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
     player->funcs->mrl_retrieve_props (player, mrl);
 }
 
-void
+static void
 player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
