@@ -557,6 +557,24 @@ player_mrl_get_video_codec (player_t *player, mrl_t *mrl)
   return video ? strdup (video->codec) : NULL;
 }
 
+off_t
+player_mrl_get_size (player_t *player, mrl_t *mrl)
+{
+  mrl_properties_t *prop;
+
+  if (!player || !mrl)
+    return 0;
+
+  if (!mrl->prop)
+    player_mrl_retrieve_properties (player, mrl);
+
+  prop = mrl->prop;
+  if (!prop)
+    return 0;
+
+  return prop->size;
+}
+
 static void
 player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
