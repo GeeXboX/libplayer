@@ -176,6 +176,7 @@ show_info (player_t *player, mrl_t *mrl)
   char *meta;
   char *codec;
   uint32_t prop;
+  off_t size;
 
   if (!player || !mrl || !mrl->name)
     return;
@@ -186,11 +187,12 @@ show_info (player_t *player, mrl_t *mrl)
   show_type (mrl);
   show_resource (mrl);
 
-  if (mrl->prop) {
-    printf (" Size: %.2f MB\n", mrl->prop->size / 1024.0 / 1024.0);
-    printf (" Seekable: %i\n", mrl->prop->seekable);
-    printf (" Length: %.2f sec\n", (float) mrl->prop->length / 1000.0);
-  }
+  size = player_mrl_get_size (player, mrl);
+  printf (" Size: %.2f MB\n", size / 1024.0 / 1024.0);
+  prop = player_mrl_get_properties (player, mrl, PLAYER_PROPERTY_SEEKABLE);
+  printf (" Seekable: %i\n", prop);
+  prop = player_mrl_get_properties (player, mrl, PLAYER_PROPERTY_LENGTH);
+  printf (" Length: %.2f sec\n", (float) prop / 1000.0);
 
   codec = player_mrl_get_video_codec (player, mrl);
   if (codec) {
