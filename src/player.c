@@ -310,16 +310,11 @@ player_get_time_pos (player_t *player)
 }
 
 char *
-player_get_metadata (player_t *player, player_metadata_t m)
+player_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
 {
-  mrl_t *mrl;
   mrl_metadata_t *meta;
 
-  if (!player)
-    return NULL;
-
-  mrl = player->mrl;
-  if (!mrl)
+  if (!player || !mrl)
     return NULL;
 
   meta = mrl->meta;
