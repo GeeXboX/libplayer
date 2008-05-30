@@ -1618,22 +1618,22 @@ register_functions_mplayer (void)
   player_funcs_t *funcs = NULL;
 
   funcs = calloc (1, sizeof (player_funcs_t));
-  funcs->init             = mplayer_init;
-  funcs->uninit           = mplayer_uninit;
-  funcs->set_verbosity    = mplayer_set_verbosity;
-  funcs->mrl_retrieve_props    = mplayer_mrl_retrieve_properties;
-  funcs->mrl_retrieve_meta     = mplayer_mrl_retrieve_metadata;
-  funcs->pb_start         = mplayer_playback_start;
-  funcs->pb_stop          = mplayer_playback_stop;
-  funcs->pb_pause         = mplayer_playback_pause;
-  funcs->pb_seek          = mplayer_playback_seek;
-  funcs->pb_dvdnav        = mplayer_playback_dvdnav;
-  funcs->get_volume       = mplayer_get_volume;
-  funcs->get_mute         = mplayer_get_mute;
-  funcs->get_time_pos     = mplayer_get_time_pos;
-  funcs->set_volume       = mplayer_set_volume;
-  funcs->set_mute         = mplayer_set_mute;
-  funcs->set_sub_delay    = mplayer_set_sub_delay;
+  funcs->init               = mplayer_init;
+  funcs->uninit             = mplayer_uninit;
+  funcs->set_verbosity      = mplayer_set_verbosity;
+  funcs->mrl_retrieve_props = mplayer_mrl_retrieve_properties;
+  funcs->mrl_retrieve_meta  = mplayer_mrl_retrieve_metadata;
+  funcs->pb_start           = mplayer_playback_start;
+  funcs->pb_stop            = mplayer_playback_stop;
+  funcs->pb_pause           = mplayer_playback_pause;
+  funcs->pb_seek            = mplayer_playback_seek;
+  funcs->pb_dvdnav          = mplayer_playback_dvdnav;
+  funcs->get_volume         = mplayer_get_volume;
+  funcs->get_mute           = mplayer_get_mute;
+  funcs->get_time_pos       = mplayer_get_time_pos;
+  funcs->set_volume         = mplayer_set_volume;
+  funcs->set_mute           = mplayer_set_mute;
+  funcs->set_sub_delay      = mplayer_set_sub_delay;
 
   return funcs;
 }

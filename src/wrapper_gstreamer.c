@@ -277,22 +277,22 @@ register_functions_gstreamer (void)
   player_funcs_t *funcs = NULL;
 
   funcs = calloc (1, sizeof (player_funcs_t));
-  funcs->init            = gstreamer_player_init;
-  funcs->uninit          = gstreamer_player_uninit;
-  funcs->set_verbosity   = NULL;
-  funcs->mrl_retrieve_props   = NULL;
-  funcs->mrl_retrieve_meta    = NULL;
-  funcs->pb_start        = gstreamer_player_playback_start;
-  funcs->pb_stop         = gstreamer_player_playback_stop;
-  funcs->pb_pause        = NULL;
-  funcs->pb_seek         = NULL;
-  funcs->pb_dvdnav       = NULL;
-  funcs->get_volume      = NULL;
-  funcs->get_mute        = NULL;
-  funcs->get_time_pos    = NULL;
-  funcs->set_volume      = NULL;
-  funcs->set_mute        = NULL;
-  funcs->set_sub_delay   = NULL;
+  funcs->init               = gstreamer_player_init;
+  funcs->uninit             = gstreamer_player_uninit;
+  funcs->set_verbosity      = NULL;
+  funcs->mrl_retrieve_props = NULL;
+  funcs->mrl_retrieve_meta  = NULL;
+  funcs->pb_start           = gstreamer_player_playback_start;
+  funcs->pb_stop            = gstreamer_player_playback_stop;
+  funcs->pb_pause           = NULL;
+  funcs->pb_seek            = NULL;
+  funcs->pb_dvdnav          = NULL;
+  funcs->get_volume         = NULL;
+  funcs->get_mute           = NULL;
+  funcs->get_time_pos       = NULL;
+  funcs->set_volume         = NULL;
+  funcs->set_mute           = NULL;
+  funcs->set_sub_delay      = NULL;
   
   return funcs;
 }
