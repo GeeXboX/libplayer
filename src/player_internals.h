@@ -35,6 +35,12 @@ typedef enum playback_status {
   PLAYER_PB_ERROR
 } playback_status_t;
 
+typedef enum player_state {
+  PLAYER_STATE_IDLE,
+  PLAYER_STATE_PAUSE,
+  PLAYER_STATE_RUNNING
+} player_state_t;
+
 typedef enum identify_flags {
   IDENTIFY_AUDIO      = (1 << 0),
   IDENTIFY_VIDEO      = (1 << 1),

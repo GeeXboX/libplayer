@@ -62,12 +62,6 @@ typedef enum player_ao {
   PLAYER_AO_OSS
 } player_ao_t;
 
-typedef enum player_state {
-  PLAYER_STATE_IDLE,
-  PLAYER_STATE_PAUSE,
-  PLAYER_STATE_RUNNING
-} player_state_t;
-
 typedef enum player_mrl_type {
   PLAYER_MRL_TYPE_UNKNOWN,
   PLAYER_MRL_TYPE_AUDIO,
