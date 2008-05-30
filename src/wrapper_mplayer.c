@@ -806,7 +806,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
 
   it = strstr (buffer, "FPS=");
   if (it) {
-    video->framerate = (uint32_t) (90000.0 / atof (parse_field (it, "FPS=")));
+    video->frameduration = (uint32_t) (90000.0 / atof (parse_field (it, "FPS=")));
     return 1;
   }
 
@@ -1299,9 +1299,9 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
       plog (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Video Aspect: %i", video->aspect);
 
-    if (video->framerate)
+    if (video->frameduration)
       plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Framerate: %i", video->framerate);
+            MODULE_NAME, "Video Framerate: %i", video->frameduration);
   }
 
   if (audio) {

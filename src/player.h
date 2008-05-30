@@ -150,7 +150,7 @@ typedef struct mrl_properties_video_s {
   uint32_t aspect;
   uint32_t channels;
   uint32_t streams;
-  uint32_t framerate;
+  uint32_t frameduration;
 } mrl_properties_video_t;
 
 typedef struct mrl_properties_s {

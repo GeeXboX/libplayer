@@ -237,7 +237,7 @@ xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
   video->streams =
     xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_STREAMS);
 
-  video->framerate =
+  video->frameduration =
     xine_get_stream_info (stream, XINE_STREAM_INFO_FRAME_DURATION);
 }
 
@@ -568,9 +568,9 @@ xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
       plog (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Video Streams: %i", video->streams);
 
-    if (video->framerate)
+    if (video->frameduration)
       plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Framerate: %i", video->framerate);
+            MODULE_NAME, "Video Framerate: %i", video->frameduration);
   }
 
   if (audio) {

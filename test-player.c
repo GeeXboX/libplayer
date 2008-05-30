@@ -209,8 +209,8 @@ show_info (player_t *player, mrl_t *mrl)
       printf (" Video Channels: %i\n", video->channels);
     if (video->streams)
       printf (" Video Streams: %i\n", video->streams);
-    if (video->framerate)
-      printf (" Video Framerate: %.2f\n", 90000.0 / video->framerate);
+    if (video->frameduration)
+      printf (" Video Framerate: %.2f\n", 90000.0 / video->frameduration);
   }
 
   if (audio) {
