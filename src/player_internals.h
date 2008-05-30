@@ -48,6 +48,16 @@ typedef enum identify_flags {
   IDENTIFY_PROPERTIES = (1 << 3),
 } identify_flags_t;
 
+struct mrl_metadata_s {
+  char *title;
+  char *artist;
+  char *genre;
+  char *album;
+  char *year;
+  char *track;
+  char *comment;
+};
+
 typedef struct player_funcs_s {
   init_status_t (* init) (player_t *player);
   void (* uninit) (player_t *player);

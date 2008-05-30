@@ -31,6 +31,7 @@
 
 /* opaque data type */
 typedef struct player_s player_t;
+typedef struct mrl_metadata_s mrl_metadata_t;
 
 typedef enum {
   PLAYER_MSG_NONE,          /* no error messages */
@@ -159,16 +160,6 @@ typedef struct mrl_properties_s {
   mrl_properties_audio_t *audio;
   mrl_properties_video_t *video;
 } mrl_properties_t;
-
-typedef struct mrl_metadata_s {
-  char *title;
-  char *artist;
-  char *genre;
-  char *album;
-  char *year;
-  char *track;
-  char *comment;
-} mrl_metadata_t;
 
 typedef struct mrl_s {
   char *name;
