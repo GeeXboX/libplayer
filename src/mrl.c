@@ -503,6 +503,8 @@ player_mrl_get_audio_codec (player_t *player, mrl_t *mrl)
   mrl_properties_t *prop;
   mrl_properties_audio_t *audio;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player || !mrl)
     return NULL;
 
@@ -523,6 +525,8 @@ player_mrl_get_video_codec (player_t *player, mrl_t *mrl)
   mrl_properties_t *prop;
   mrl_properties_video_t *video;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player || !mrl)
     return NULL;
 
@@ -541,6 +545,8 @@ off_t
 player_mrl_get_size (player_t *player, mrl_t *mrl)
 {
   mrl_properties_t *prop;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player || !mrl)
     return 0;
