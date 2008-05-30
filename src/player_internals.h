@@ -52,8 +52,8 @@ typedef struct player_funcs_s {
   init_status_t (* init) (player_t *player);
   void (* uninit) (player_t *player);
   void (* set_verbosity) (player_t *player, player_verbosity_level_t level);
-  void (* mrl_get_props) (player_t *player, mrl_t *mrl);
-  void (* mrl_get_meta) (player_t *player, mrl_t *mrl);
+  void (* mrl_retrieve_props) (player_t *player, mrl_t *mrl);
+  void (* mrl_retrieve_meta) (player_t *player, mrl_t *mrl);
   playback_status_t (* pb_start) (player_t *player);
   void (* pb_stop) (player_t *player);
   playback_status_t (* pb_pause) (player_t *player);

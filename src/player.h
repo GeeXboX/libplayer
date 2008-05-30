@@ -204,8 +204,8 @@ void player_mrl_remove (player_t *player);
 void player_mrl_remove_all (player_t *player);
 void player_mrl_previous (player_t *player);
 void player_mrl_next (player_t *player);
-void player_mrl_get_properties (player_t *player, mrl_t *mrl);
-void player_mrl_get_metadata (player_t *player, mrl_t *mrl);
+void player_mrl_retrieve_properties (player_t *player, mrl_t *mrl);
+void player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl);
 
 /* get player playback properties */
 int player_get_volume (player_t *player);

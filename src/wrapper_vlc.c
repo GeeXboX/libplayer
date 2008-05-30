@@ -125,8 +125,8 @@ register_functions_vlc (void)
   funcs->init             = vlc_init;
   funcs->uninit           = vlc_uninit;
   funcs->set_verbosity    = NULL;
-  funcs->mrl_get_props    = NULL;
-  funcs->mrl_get_meta     = NULL;
+  funcs->mrl_retrieve_props    = NULL;
+  funcs->mrl_retrieve_meta     = NULL;
   funcs->pb_start         = vlc_playback_start;
   funcs->pb_stop          = NULL;
   funcs->pb_pause         = NULL;

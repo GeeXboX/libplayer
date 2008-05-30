@@ -514,13 +514,13 @@ xine_player_uninit (player_t *player)
 }
 
 static void
-xine_player_mrl_get_properties (player_t *player, mrl_t *mrl)
+xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
   mrl_properties_video_t *video;
   mrl_properties_audio_t *audio;
   struct stat st;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
 
   if (!player || !mrl || !mrl->prop || !mrl->name)
     return;
@@ -598,11 +598,11 @@ xine_player_mrl_get_properties (player_t *player, mrl_t *mrl)
 }
 
 static void
-xine_player_mrl_get_metadata (player_t *player, mrl_t *mrl)
+xine_player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
 
   if (!player || !mrl || !mrl->meta)
     return;
@@ -921,8 +921,8 @@ register_functions_xine (void)
   funcs->init            = xine_player_init;
   funcs->uninit          = xine_player_uninit;
   funcs->set_verbosity   = xine_player_set_verbosity;
-  funcs->mrl_get_props   = xine_player_mrl_get_properties;
-  funcs->mrl_get_meta    = xine_player_mrl_get_metadata;
+  funcs->mrl_retrieve_props   = xine_player_mrl_retrieve_properties;
+  funcs->mrl_retrieve_meta    = xine_player_mrl_retrieve_metadata;
   funcs->pb_start        = xine_player_playback_start;
   funcs->pb_stop         = xine_player_playback_stop;
   funcs->pb_pause        = xine_player_playback_pause;

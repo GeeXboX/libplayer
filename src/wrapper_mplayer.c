@@ -1250,13 +1250,13 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
 }
 
 static void
-mplayer_mrl_get_properties (player_t *player, mrl_t *mrl)
+mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
   mrl_properties_video_t *video;
   mrl_properties_audio_t *audio;
   struct stat st;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
 
   if (!player || !mrl || !mrl->prop || !mrl->name)
     return;
@@ -1324,11 +1324,11 @@ mplayer_mrl_get_properties (player_t *player, mrl_t *mrl)
 }
 
 static void
-mplayer_mrl_get_metadata (player_t *player, mrl_t *mrl)
+mplayer_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
 
   if (!player || !mrl || !mrl->meta)
     return;
@@ -1621,8 +1621,8 @@ register_functions_mplayer (void)
   funcs->init             = mplayer_init;
   funcs->uninit           = mplayer_uninit;
   funcs->set_verbosity    = mplayer_set_verbosity;
-  funcs->mrl_get_props    = mplayer_mrl_get_properties;
-  funcs->mrl_get_meta     = mplayer_mrl_get_metadata;
+  funcs->mrl_retrieve_props    = mplayer_mrl_retrieve_properties;
+  funcs->mrl_retrieve_meta     = mplayer_mrl_retrieve_metadata;
   funcs->pb_start         = mplayer_playback_start;
   funcs->pb_stop          = mplayer_playback_stop;
   funcs->pb_pause         = mplayer_playback_pause;

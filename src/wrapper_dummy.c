@@ -71,15 +71,15 @@ dummy_uninit (player_t *player)
 }
 
 static void
-dummy_mrl_get_properties (player_t *player, mrl_t *mrl)
+dummy_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_properties");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
 }
 
 static void
-dummy_mrl_get_metadata (player_t *player, mrl_t *mrl)
+dummy_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_get_metadata");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
 }
 
 static playback_status_t
@@ -187,8 +187,8 @@ register_functions_dummy (void)
   funcs = malloc (sizeof (player_funcs_t));
   funcs->init = dummy_init;
   funcs->uninit = dummy_uninit;
-  funcs->mrl_get_props = dummy_mrl_get_properties;
-  funcs->mrl_get_meta = dummy_mrl_get_metadata;
+  funcs->mrl_retrieve_props = dummy_mrl_retrieve_properties;
+  funcs->mrl_retrieve_meta = dummy_mrl_retrieve_metadata;
   funcs->pb_start = dummy_playback_start;
   funcs->pb_stop = dummy_playback_stop;
   funcs->pb_pause = dummy_playback_pause;

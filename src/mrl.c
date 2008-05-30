@@ -262,7 +262,7 @@ mrl_new (player_t *player, char *name, char *subtitle)
   mrl->name = strdup (name);
   mrl->subtitle = subtitle ? strdup (subtitle) : NULL;
 
-  player_mrl_get_properties (player, mrl);
+  player_mrl_retrieve_properties (player, mrl);
 
   mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */
   mrl->resource = mrl_guess_resource (mrl);
@@ -440,7 +440,7 @@ player_mrl_next (player_t *player)
 }
 
 void
-player_mrl_get_properties (player_t *player, mrl_t *mrl)
+player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -453,12 +453,12 @@ player_mrl_get_properties (player_t *player, mrl_t *mrl)
   mrl->prop = mrl_properties_new ();
 
   /* player specific init */
-  if (player->funcs->mrl_get_props)
-    player->funcs->mrl_get_props (player, mrl);
+  if (player->funcs->mrl_retrieve_props)
+    player->funcs->mrl_retrieve_props (player, mrl);
 }
 
 void
-player_mrl_get_metadata (player_t *player, mrl_t *mrl)
+player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -471,6 +471,6 @@ player_mrl_get_metadata (player_t *player, mrl_t *mrl)
   mrl->meta = mrl_metadata_new ();
 
   /* player specific init */
-  if (player->funcs->mrl_get_meta)
-    player->funcs->mrl_get_meta (player, mrl);
+  if (player->funcs->mrl_retrieve_meta)
+    player->funcs->mrl_retrieve_meta (player, mrl);
 }

@@ -280,8 +280,8 @@ register_functions_gstreamer (void)
   funcs->init            = gstreamer_player_init;
   funcs->uninit          = gstreamer_player_uninit;
   funcs->set_verbosity   = NULL;
-  funcs->mrl_get_props   = NULL;
-  funcs->mrl_get_meta    = NULL;
+  funcs->mrl_retrieve_props   = NULL;
+  funcs->mrl_retrieve_meta    = NULL;
   funcs->pb_start        = gstreamer_player_playback_start;
   funcs->pb_stop         = gstreamer_player_playback_stop;
   funcs->pb_pause        = NULL;
