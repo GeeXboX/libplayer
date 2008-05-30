@@ -198,7 +198,6 @@ xine_identify_audio (mrl_t *mrl, xine_stream_t *stream)
 static void
 xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
 {
-  uint32_t val;
   const char *s;
   mrl_properties_video_t *video;
 
@@ -238,8 +237,8 @@ xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
   video->streams =
     xine_get_stream_info (stream, XINE_STREAM_INFO_VIDEO_STREAMS);
 
-  val = xine_get_stream_info (stream, XINE_STREAM_INFO_FRAME_DURATION);
-  video->framerate = val ? 90000.0 / val : 0.0;
+  video->framerate =
+    xine_get_stream_info (stream, XINE_STREAM_INFO_FRAME_DURATION);
 }
 
 static void
@@ -571,7 +570,7 @@ xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 
     if (video->framerate)
       plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Framerate: %.2f", video->framerate);
+            MODULE_NAME, "Video Framerate: %i", video->framerate);
   }
 
   if (audio) {

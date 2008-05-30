@@ -806,7 +806,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
 
   it = strstr (buffer, "FPS=");
   if (it) {
-    video->framerate = (float) atof (parse_field (it, "FPS="));
+    video->framerate = (uint32_t) (90000.0 / atof (parse_field (it, "FPS=")));
     return 1;
   }
 
@@ -1301,7 +1301,7 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 
     if (video->framerate)
       plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Framerate: %.2f", video->framerate);
+            MODULE_NAME, "Video Framerate: %i", video->framerate);
   }
 
   if (audio) {
