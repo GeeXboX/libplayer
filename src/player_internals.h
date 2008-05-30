@@ -58,15 +58,15 @@ struct mrl_metadata_s {
   char *comment;
 };
 
-struct mrl_properties_audio_s {
+typedef struct mrl_properties_audio_s {
   char *codec;
   uint32_t bitrate;
   uint32_t bits;
   uint32_t channels;
   uint32_t samplerate;
-};
+} mrl_properties_audio_t;
 
-struct mrl_properties_video_s {
+typedef struct mrl_properties_video_s {
   char *codec;
   uint32_t bitrate;
   uint32_t width;
@@ -75,7 +75,7 @@ struct mrl_properties_video_s {
   uint32_t channels;
   uint32_t streams;
   uint32_t frameduration;   /* 1/90000 sec */
-};
+} mrl_properties_video_t;
 
 struct mrl_properties_s {
   off_t size;

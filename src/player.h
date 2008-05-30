@@ -32,8 +32,6 @@
 /* opaque data type */
 typedef struct player_s player_t;
 typedef struct mrl_metadata_s mrl_metadata_t;
-typedef struct mrl_properties_audio_s mrl_properties_audio_t;
-typedef struct mrl_properties_video_s mrl_properties_video_t;
 typedef struct mrl_properties_s mrl_properties_t;
 
 typedef enum {
