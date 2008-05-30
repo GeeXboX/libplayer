@@ -34,6 +34,7 @@ typedef struct player_s player_t;
 typedef struct mrl_metadata_s mrl_metadata_t;
 typedef struct mrl_properties_audio_s mrl_properties_audio_t;
 typedef struct mrl_properties_video_s mrl_properties_video_t;
+typedef struct mrl_properties_s mrl_properties_t;
 
 typedef enum {
   PLAYER_MSG_NONE,          /* no error messages */
@@ -151,14 +152,6 @@ typedef enum player_properties {
   PLAYER_VIDEO_PROPERTY_STREAMS,
   PLAYER_VIDEO_PROPERTY_FRAMEDURATION,
 } player_properties_t;
-
-typedef struct mrl_properties_s {
-  off_t size;
-  uint32_t seekable;
-  uint32_t length;
-  mrl_properties_audio_t *audio;
-  mrl_properties_video_t *video;
-} mrl_properties_t;
 
 typedef struct mrl_s {
   char *name;

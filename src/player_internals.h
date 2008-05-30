@@ -77,6 +77,14 @@ struct mrl_properties_video_s {
   uint32_t frameduration;   /* 1/90000 sec */
 };
 
+struct mrl_properties_s {
+  off_t size;
+  uint32_t seekable;
+  uint32_t length;
+  mrl_properties_audio_t *audio;
+  mrl_properties_video_t *video;
+};
+
 typedef struct player_funcs_s {
   init_status_t (* init) (player_t *player);
   void (* uninit) (player_t *player);
