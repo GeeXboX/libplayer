@@ -483,6 +483,9 @@ player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
   if (!player || !mrl)
     return NULL;
 
+  if (!mrl->meta)
+    player_mrl_retrieve_metadata (player, mrl);
+
   meta = mrl->meta;
   if (!meta)
     return NULL;
