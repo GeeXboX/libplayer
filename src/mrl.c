@@ -251,7 +251,7 @@ mrl_uses_ao (mrl_t *mrl)
 }
 
 mrl_t *
-player_mrl_new (player_t *player, char *name, char *subtitle)
+mrl_new (player_t *player, char *name, char *subtitle)
 {
   mrl_t *mrl = NULL;
 
@@ -290,7 +290,7 @@ player_mrl_append (player_t *player,
   if (!player || !location)
     return;
 
-  mrl = player_mrl_new (player, location, subtitle);
+  mrl = mrl_new (player, location, subtitle);
   if (!mrl)
     return;
 
@@ -327,7 +327,7 @@ player_mrl_set (player_t *player, char *location, char *subtitle)
   if (!player || !location)
     return;
 
-  mrl = player_mrl_new (player, location, subtitle);
+  mrl = mrl_new (player, location, subtitle);
   if (!mrl)
     return;
 
