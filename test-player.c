@@ -375,7 +375,6 @@ main (int argc, char **argv)
     do {
       printf (" > %s added to the playlist!\n", argv[optind]);
       player_mrl_append (player, argv[optind], NULL, PLAYER_ADD_MRL_QUEUE);
-      player_mrl_retrieve_metadata (player, player_get_mrl (player));
     } while (++optind < argc);
     putchar ('\n');
   }
