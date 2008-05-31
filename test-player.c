@@ -162,7 +162,7 @@ show_resource (mrl_t *mrl)
     [PLAYER_MRL_RESOURCE_VCD]     = "Video Compact Disc",
   };
   const int resource_size = sizeof (resource_desc) / sizeof (resource_desc[0]);
-  int resource = PLAYER_MRL_RESOURCE_UNKNOWN;
+  player_mrl_resource_t resource = PLAYER_MRL_RESOURCE_UNKNOWN;
 
   if (mrl && mrl->resource < resource_size && mrl->resource >= 0)
     resource = mrl->resource;
