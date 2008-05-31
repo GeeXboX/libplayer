@@ -722,3 +722,12 @@ mrl_get_resource (mrl_t *mrl)
 
   return mrl->resource;
 }
+
+char *
+mrl_get_uri (mrl_t *mrl)
+{
+  if (!mrl)
+    return NULL;
+
+  return strdup (mrl->name);
+}
