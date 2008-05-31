@@ -39,8 +39,6 @@ extern "C" {
 /* opaque data type */
 typedef struct player_s player_t;
 typedef struct mrl_s mrl_t;
-typedef struct mrl_metadata_s mrl_metadata_t;
-typedef struct mrl_properties_s mrl_properties_t;
 
 typedef enum {
   PLAYER_MSG_NONE,          /* no error messages */

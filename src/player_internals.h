@@ -48,7 +48,7 @@ typedef enum identify_flags {
   IDENTIFY_PROPERTIES = (1 << 3),
 } identify_flags_t;
 
-struct mrl_metadata_s {
+typedef struct mrl_metadata_s {
   char *title;
   char *artist;
   char *genre;
@@ -56,7 +56,7 @@ struct mrl_metadata_s {
   char *year;
   char *track;
   char *comment;
-};
+} mrl_metadata_t;
 
 typedef struct mrl_properties_audio_s {
   char *codec;
@@ -77,13 +77,13 @@ typedef struct mrl_properties_video_s {
   uint32_t frameduration;   /* 1/90000 sec */
 } mrl_properties_video_t;
 
-struct mrl_properties_s {
+typedef struct mrl_properties_s {
   off_t size;
   uint32_t seekable;
   uint32_t length;
   mrl_properties_audio_t *audio;
   mrl_properties_video_t *video;
-};
+} mrl_properties_t;
 
 struct mrl_s {
   char *name;
