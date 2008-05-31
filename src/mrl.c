@@ -713,3 +713,12 @@ mrl_get_type (mrl_t *mrl)
 
   return mrl->type;
 }
+
+player_mrl_resource_t
+mrl_get_resource (mrl_t *mrl)
+{
+  if (!mrl)
+    return PLAYER_MRL_RESOURCE_UNKNOWN;
+
+  return mrl->resource;
+}

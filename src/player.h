@@ -173,6 +173,7 @@ mrl_t *player_get_mrl (player_t *player);
 void mrl_free (mrl_t *mrl, int recursive);
 void mrl_list_free (mrl_t *mrl);
 player_mrl_type_t mrl_get_type (mrl_t *mrl);
+player_mrl_resource_t mrl_get_resource (mrl_t *mrl);
 
 void player_mrl_set (player_t *player, char *location);
 void player_mrl_append (player_t *player,
