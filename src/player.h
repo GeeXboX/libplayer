@@ -115,7 +115,6 @@ typedef enum player_mrl_resource {
   PLAYER_MRL_RESOURCE_TCP,
   PLAYER_MRL_RESOURCE_UDP,
   PLAYER_MRL_RESOURCE_UNSV,
-
 } player_mrl_resource_t;
 
 /* for local streams */
