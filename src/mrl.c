@@ -143,6 +143,72 @@ mrl_metadata_free (mrl_metadata_t *meta)
   free (meta);
 }
 
+static void
+mrl_resource_local_free (mrl_resource_local_args_t *args)
+{
+  if (!args)
+    return;
+  
+  if (args->location)
+    free (args->location);
+}
+
+static void
+mrl_resource_cd_free (mrl_resource_cd_args_t *args)
+{
+  if (!args)
+    return;
+  
+  if (args->device)
+    free (args->device);
+}
+
+static void
+mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args)
+{
+  if (!args)
+    return;
+  
+  if (args->device)
+    free (args->device);
+  if (args->audio_lang)
+    free (args->audio_lang);
+  if (args->sub_lang)
+    free (args->sub_lang);
+}
+
+static void
+mrl_resource_tv_free (mrl_resource_tv_args_t *args)
+{
+  if (!args)
+    return;
+  
+  if (args->device)
+    free (args->device);
+  if (args->driver)
+    free (args->driver);
+  if (args->output_format)
+    free (args->output_format);
+  if (args->norm)
+    free (args->norm);
+}
+
+static void
+mrl_resource_network_free (mrl_resource_network_args_t *args)
+{
+  if (!args)
+    return;
+  
+  if (args->url)
+    free (args->url);
+  if (args->username)
+    free (args->username);
+  if (args->password)
+    free (args->password);
+  if (args->user_agent)
+    free (args->user_agent);
+}
+
 void
 mrl_free (mrl_t *mrl, int recursive)
 {
@@ -165,6 +231,52 @@ mrl_free (mrl_t *mrl, int recursive)
   if (mrl->meta)
     mrl_metadata_free (mrl->meta);
 
+  if (mrl->priv)
+  {
+    switch (mrl->resource)
+    {
+    case PLAYER_MRL_RESOURCE_FIFO:
+    case PLAYER_MRL_RESOURCE_FILE:
+    case PLAYER_MRL_RESOURCE_STDIN:
+      mrl_resource_local_free (mrl->priv);
+      break;
+      
+    case PLAYER_MRL_RESOURCE_CDDA:
+    case PLAYER_MRL_RESOURCE_CDDB:
+      mrl_resource_cd_free (mrl->priv);
+      break;
+      
+    case PLAYER_MRL_RESOURCE_DVD:
+    case PLAYER_MRL_RESOURCE_DVDNAV:
+    case PLAYER_MRL_RESOURCE_VCD:
+      mrl_resource_videodisc_free (mrl->priv);
+      break;
+      
+    case PLAYER_MRL_RESOURCE_DVB:
+    case PLAYER_MRL_RESOURCE_PVR:
+    case PLAYER_MRL_RESOURCE_RADIO:
+    case PLAYER_MRL_RESOURCE_TV:
+      mrl_resource_tv_free (mrl->priv);
+      break;
+      
+    case PLAYER_MRL_RESOURCE_FTP: 
+    case PLAYER_MRL_RESOURCE_HTTP:
+    case PLAYER_MRL_RESOURCE_MMS:
+    case PLAYER_MRL_RESOURCE_RTP:
+    case PLAYER_MRL_RESOURCE_RTSP:
+    case PLAYER_MRL_RESOURCE_SMB:
+    case PLAYER_MRL_RESOURCE_TCP:
+    case PLAYER_MRL_RESOURCE_UDP:
+    case PLAYER_MRL_RESOURCE_UNSV:
+      mrl_resource_network_free (mrl->priv);
+        break;
+      
+    default:
+      break;
+    }
+    free (mrl->priv);
+  }
+  
   if (recursive && mrl->next)
     mrl_free (mrl->next, 1);
 
