@@ -413,7 +413,7 @@ player_mrl_next (player_t *player)
 }
 
 static void
-player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
+mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -431,7 +431,7 @@ player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 }
 
 uint32_t
-player_mrl_get_property (player_t *player, mrl_t *mrl, player_properties_t p)
+mrl_get_property (player_t *player, mrl_t *mrl, player_properties_t p)
 {
   mrl_properties_t *prop;
 
@@ -445,7 +445,7 @@ player_mrl_get_property (player_t *player, mrl_t *mrl, player_properties_t p)
     return 0;
 
   if (!mrl->prop)
-    player_mrl_retrieve_properties (player, mrl);
+    mrl_retrieve_properties (player, mrl);
 
   prop = mrl->prop;
   if (!prop)
@@ -497,7 +497,7 @@ player_mrl_get_property (player_t *player, mrl_t *mrl, player_properties_t p)
 }
 
 char *
-player_mrl_get_audio_codec (player_t *player, mrl_t *mrl)
+mrl_get_audio_codec (player_t *player, mrl_t *mrl)
 {
   mrl_properties_t *prop;
   mrl_properties_audio_t *audio;
@@ -514,7 +514,7 @@ player_mrl_get_audio_codec (player_t *player, mrl_t *mrl)
     return NULL;
 
   if (!mrl->prop)
-    player_mrl_retrieve_properties (player, mrl);
+    mrl_retrieve_properties (player, mrl);
 
   prop = mrl->prop;
   if (!prop)
@@ -525,7 +525,7 @@ player_mrl_get_audio_codec (player_t *player, mrl_t *mrl)
 }
 
 char *
-player_mrl_get_video_codec (player_t *player, mrl_t *mrl)
+mrl_get_video_codec (player_t *player, mrl_t *mrl)
 {
   mrl_properties_t *prop;
   mrl_properties_video_t *video;
@@ -542,7 +542,7 @@ player_mrl_get_video_codec (player_t *player, mrl_t *mrl)
     return NULL;
 
   if (!mrl->prop)
-    player_mrl_retrieve_properties (player, mrl);
+    mrl_retrieve_properties (player, mrl);
 
   prop = mrl->prop;
   if (!prop)
@@ -553,7 +553,7 @@ player_mrl_get_video_codec (player_t *player, mrl_t *mrl)
 }
 
 off_t
-player_mrl_get_size (player_t *player, mrl_t *mrl)
+mrl_get_size (player_t *player, mrl_t *mrl)
 {
   mrl_properties_t *prop;
 
@@ -569,7 +569,7 @@ player_mrl_get_size (player_t *player, mrl_t *mrl)
     return 0;
 
   if (!mrl->prop)
-    player_mrl_retrieve_properties (player, mrl);
+    mrl_retrieve_properties (player, mrl);
 
   prop = mrl->prop;
   if (!prop)
@@ -579,7 +579,7 @@ player_mrl_get_size (player_t *player, mrl_t *mrl)
 }
 
 static void
-player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
+mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -597,7 +597,7 @@ player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 }
 
 char *
-player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
+mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
 {
   mrl_metadata_t *meta;
 
@@ -611,7 +611,7 @@ player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
     return NULL;
 
   if (!mrl->meta)
-    player_mrl_retrieve_metadata (player, mrl);
+    mrl_retrieve_metadata (player, mrl);
 
   meta = mrl->meta;
   if (!meta)
@@ -684,7 +684,7 @@ mrl_new (player_t *player, char *name)
   mrl->subs = malloc (sizeof (char *));
   mrl->subs = NULL;
   
-  player_mrl_retrieve_properties (player, mrl);
+  mrl_retrieve_properties (player, mrl);
 
   mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */
   mrl->resource = mrl_guess_resource (mrl);

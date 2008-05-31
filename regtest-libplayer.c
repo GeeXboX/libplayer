@@ -69,8 +69,8 @@ do_regression_tests (player_t *player, char *name)
     return;
   
   player_mrl_append (player, mrl, PLAYER_ADD_MRL_NOW);
-  player_mrl_get_property (player, NULL, PLAYER_PROPERTY_SEEKABLE);
-  player_mrl_get_metadata (player, NULL, PLAYER_METADATA_TITLE);
+  mrl_get_property (player, NULL, PLAYER_PROPERTY_SEEKABLE);
+  mrl_get_metadata (player, NULL, PLAYER_METADATA_TITLE);
   printf ("Current volume: %d\n", player_get_volume (player));
   player_set_volume (player, 85);
   player_playback_start (player);
