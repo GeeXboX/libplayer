@@ -101,6 +101,7 @@ typedef enum player_mrl_resource {
 
   /* Radio/Television */
   PLAYER_MRL_RESOURCE_DVB,
+  PLAYER_MRL_RESOURCE_PVR,
   PLAYER_MRL_RESOURCE_RADIO,
   PLAYER_MRL_RESOURCE_TV,
 
@@ -113,6 +114,7 @@ typedef enum player_mrl_resource {
   PLAYER_MRL_RESOURCE_SMB,
   PLAYER_MRL_RESOURCE_TCP,
   PLAYER_MRL_RESOURCE_UDP,
+  PLAYER_MRL_RESOURCE_UNSV,
 
 } player_mrl_resource_t;
 
