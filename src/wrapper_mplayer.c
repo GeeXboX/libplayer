@@ -900,8 +900,10 @@ mp_identify (mrl_t *mrl, int flags)
     return;
   
   /* create pipe */
-  if (pipe (mp_pipe))
+  if (pipe (mp_pipe)) {
+    free (uri);
     return;
+  }
 
   /* create the fork */
   pid = fork ();
@@ -938,6 +940,7 @@ mp_identify (mrl_t *mrl, int flags)
 
   /* I'm your father */
   default:
+    free (uri);
     close (mp_pipe[1]);
 
     mp_fifo = fdopen (mp_pipe[0], "r");
