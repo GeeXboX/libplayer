@@ -186,16 +186,11 @@ show_info (player_t *player, mrl_t *mrl)
   char *codec;
   uint32_t prop;
   off_t size;
-  char *uri;
 
   if (!player || !mrl)
     return;
 
-  uri = mrl_get_uri (mrl);
   printf ("Properties and metadata:\n");
-  if (uri)
-    printf (" URI: %s\n", uri);
-  free (uri);
 
   show_type (mrl);
   show_resource (mrl);
