@@ -161,7 +161,6 @@ typedef enum player_properties {
 typedef struct mrl_s {
   char *name;
   char *subtitle;
-  char *cover;
   player_mrl_type_t type;
   player_mrl_resource_t resource;
   mrl_properties_t *prop;

@@ -199,8 +199,6 @@ mrl_free (mrl_t *mrl, int recursive)
     free (mrl->name);
   if (mrl->subtitle)
     free (mrl->subtitle);
-  if (mrl->cover)
-    free (mrl->cover);
 
   if (mrl->prop)
     mrl_properties_free (mrl->prop);
