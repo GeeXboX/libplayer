@@ -448,7 +448,13 @@ player_mrl_get_property (player_t *player, mrl_t *mrl, player_properties_t p)
 {
   mrl_properties_t *prop;
 
-  if (!player || !mrl)
+  if (!player)
+    return 0;
+
+  /* try to use internal mrl? */
+  if (!mrl && player->mrl)
+    mrl = player->mrl;
+  else if (!mrl)
     return 0;
 
   if (!mrl->prop)
@@ -511,7 +517,13 @@ player_mrl_get_audio_codec (player_t *player, mrl_t *mrl)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  if (!player || !mrl)
+  if (!player)
+    return NULL;
+
+  /* try to use internal mrl? */
+  if (!mrl && player->mrl)
+    mrl = player->mrl;
+  else if (!mrl)
     return NULL;
 
   if (!mrl->prop)
@@ -533,7 +545,13 @@ player_mrl_get_video_codec (player_t *player, mrl_t *mrl)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  if (!player || !mrl)
+  if (!player)
+    return NULL;
+
+  /* try to use internal mrl? */
+  if (!mrl && player->mrl)
+    mrl = player->mrl;
+  else if (!mrl)
     return NULL;
 
   if (!mrl->prop)
@@ -554,7 +572,13 @@ player_mrl_get_size (player_t *player, mrl_t *mrl)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  if (!player || !mrl)
+  if (!player)
+    return 0;
+
+  /* try to use internal mrl? */
+  if (!mrl && player->mrl)
+    mrl = player->mrl;
+  else if (!mrl)
     return 0;
 
   if (!mrl->prop)
@@ -590,7 +614,13 @@ player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
 {
   mrl_metadata_t *meta;
 
-  if (!player || !mrl)
+  if (!player)
+    return NULL;
+
+  /* try to use internal mrl? */
+  if (!mrl && player->mrl)
+    mrl = player->mrl;
+  else if (!mrl)
     return NULL;
 
   if (!mrl->meta)
