@@ -156,6 +156,13 @@ xine_identify_metadata (mrl_t *mrl, xine_stream_t *stream)
       free (meta->track);
     meta->track = strdup (s);
   }
+
+  s = xine_get_meta_info (stream, XINE_META_INFO_COMMENT);
+  if (s) {
+    if (meta->comment)
+      free (meta->comment);
+    meta->comment = strdup (s);
+  }
 }
 
 static void
