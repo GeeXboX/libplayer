@@ -604,7 +604,6 @@ mrl_new (player_t *player, player_mrl_resource_t res, void *args)
   
   mrl = calloc (1, sizeof (mrl_t));
 
-  mrl->subs = malloc (sizeof (char *));
   mrl->subs = NULL;
   
   mrl->resource = res;
