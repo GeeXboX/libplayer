@@ -647,6 +647,10 @@ xine_player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   if (meta->track)
     plog (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Track: %s", meta->track);
+
+  if (meta->comment)
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Comment: %s", meta->comment);
 }
 
 static playback_status_t
