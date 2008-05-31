@@ -438,7 +438,7 @@ player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 }
 
 uint32_t
-player_mrl_get_properties (player_t *player, mrl_t *mrl, player_properties_t p)
+player_mrl_get_property (player_t *player, mrl_t *mrl, player_properties_t p)
 {
   mrl_properties_t *prop;
 
