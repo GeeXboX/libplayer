@@ -227,7 +227,6 @@ void player_set_verbosity (player_t *player, player_verbosity_level_t level);
 /* MRL helpers */
 mrl_t *mrl_new (player_t *player, char *name);
 void mrl_add_subtitle (mrl_t *mrl, char *subtitle);
-mrl_t *player_get_mrl (player_t *player);
 void mrl_free (mrl_t *mrl, int recursive);
 void mrl_list_free (mrl_t *mrl);
 char *mrl_get_uri (mrl_t *mrl);
@@ -240,6 +239,7 @@ char *mrl_get_audio_codec (player_t *player, mrl_t *mrl);
 char *mrl_get_video_codec (player_t *player, mrl_t *mrl);
 off_t mrl_get_size (player_t *player, mrl_t *mrl);
 
+mrl_t *player_get_mrl (player_t *player);
 void player_mrl_set (player_t *player, mrl_t *mrl);
 void player_mrl_append (player_t *player, mrl_t *mrl, player_add_mrl_t when);
 void player_mrl_remove (player_t *player);
