@@ -521,7 +521,7 @@ player_mrl_get_audio_codec (player_t *player, mrl_t *mrl)
     return NULL;
 
   audio = prop->audio;
-  return audio ? strdup (audio->codec) : NULL;
+  return audio && audio->codec ? strdup (audio->codec) : NULL;
 }
 
 char *
@@ -549,7 +549,7 @@ player_mrl_get_video_codec (player_t *player, mrl_t *mrl)
     return NULL;
 
   video = prop->video;
-  return video ? strdup (video->codec) : NULL;
+  return video && video->codec ? strdup (video->codec) : NULL;
 }
 
 off_t
