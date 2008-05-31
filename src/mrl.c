@@ -269,7 +269,7 @@ mrl_free (mrl_t *mrl, int recursive)
     case PLAYER_MRL_RESOURCE_UDP:
     case PLAYER_MRL_RESOURCE_UNSV:
       mrl_resource_network_free (mrl->priv);
-        break;
+      break;
       
     default:
       break;
