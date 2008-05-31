@@ -704,3 +704,12 @@ mrl_new (player_t *player, char *name)
 
   return mrl;
 }
+
+player_mrl_type_t
+mrl_get_type (mrl_t *mrl)
+{
+  if (!mrl)
+    return PLAYER_MRL_TYPE_UNKNOWN;
+
+  return mrl->type;
+}

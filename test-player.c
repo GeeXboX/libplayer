@@ -118,7 +118,7 @@ show_type (mrl_t *mrl)
   if (!mrl)
     printf ("unknown\n");
 
-  switch (mrl->type) {
+  switch (mrl_get_type (mrl)) {
   case PLAYER_MRL_TYPE_AUDIO:
     printf ("audio\n");
     break;
