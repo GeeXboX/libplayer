@@ -273,7 +273,7 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   xine_video_port_t *vo;
   xine_audio_port_t *ao;
 
-  if (!player || !mrl || !mrl->name)
+  if (!player || !mrl)
     return;
 
   x = (xine_player_t *) player->priv;
@@ -296,7 +296,27 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   stream = xine_stream_new (x->xine, ao, vo);
 
   if (stream) {
-    xine_open (stream, mrl->name);
+    char *uri = NULL;
+    
+    switch (mrl->resource)
+    {
+    case PLAYER_MRL_RESOURCE_FILE:
+    {
+      mrl_resource_local_args_t *args = mrl->priv;
+      if (args && args->location)
+        uri = strdup (args->location);
+      break;
+    }
+
+    default:
+      break;
+    }
+
+    if (uri)
+    {
+      xine_open (stream, uri);
+      free (uri);
+    }
 
     if ((flags & IDENTIFY_VIDEO))
       xine_identify_video (mrl, stream);
@@ -553,14 +573,21 @@ xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
 
-  if (!player || !mrl || !mrl->prop || !mrl->name)
+  if (!player || !mrl || !mrl->prop)
     return;
 
   /* now fetch properties */
-  stat (mrl->name, &st);
-  mrl->prop->size = st.st_size;
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
-        (float) mrl->prop->size / 1024 / 1024);
+  if (mrl->resource == PLAYER_MRL_RESOURCE_FILE)
+  {
+    mrl_resource_local_args_t *args = mrl->priv;
+    if (args && args->location)
+    {
+      stat (args->location, &st);
+      mrl->prop->size = st.st_size;
+      plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
+            (float) mrl->prop->size / 1024 / 1024);
+    }
+  }
 
   xine_identify (player, mrl,
                  IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
@@ -676,7 +703,8 @@ xine_player_playback_start (player_t *player)
 {
   char *mrl = NULL;
   xine_player_t *x = NULL;
-
+  char *uri = NULL;
+  
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
   if (!player)
@@ -687,19 +715,37 @@ xine_player_playback_start (player_t *player)
   if (!x->stream)
     return PLAYER_PB_ERROR;
 
+  switch (player->mrl->resource)
+  {
+  case PLAYER_MRL_RESOURCE_FILE:
+  {
+    mrl_resource_local_args_t *args = player->mrl->priv;
+    if (args && args->location)
+      uri = strdup (args->location);
+    break;
+  }
+
+  default:
+    break;
+  }
+
+  if (!uri)
+    return PLAYER_PB_ERROR;
+  
   /* add subtitle to the MRL */
   if (player->mrl->subs) {
-    mrl = malloc (strlen (player->mrl->name) +
+    mrl = malloc (strlen (uri) +
                   strlen (player->mrl->subs[0]) + 11);
 
     if (mrl)
-      sprintf (mrl, "%s#subtitle:%s",
-               player->mrl->name, player->mrl->subs[0]);
+      sprintf (mrl, "%s#subtitle:%s", uri, player->mrl->subs[0]);
   }
   /* or take only the name */
   else
-    mrl = strdup (player->mrl->name);
+    mrl = strdup (uri);
 
+  free (uri);
+  
   if (!mrl)
     return PLAYER_PB_ERROR;
 

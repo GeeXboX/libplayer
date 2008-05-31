@@ -550,15 +550,38 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
     break;
 
   case SLAVE_LOADFILE:
-    if (player->mrl->name && value)
-      send_to_slave (mplayer, "loadfile \"%s\" %i",
-                     player->mrl->name, value->i_val);
+  {
+    char *uri = NULL;
 
+    if (!player->mrl)
+      break;
+    
+    switch (player->mrl->resource)
+    {
+    case PLAYER_MRL_RESOURCE_FILE:
+    {
+      mrl_resource_local_args_t *args = player->mrl->priv;
+      if (args && args->location)
+        uri = strdup (args->location);
+      break;
+    }
+
+    default:
+      break;
+    }
+    
+    if (uri && value)
+      send_to_slave (mplayer, "loadfile \"%s\" %i",
+                     uri, value->i_val);
+
+    if (uri)
+      free (uri);
     send_to_slave (mplayer, "loadlist");
     /* wait that the thread will confirm "loadlist" */
     sem_wait (&mplayer->sem);
     break;
-
+  }
+  
   case SLAVE_PAUSE:
     send_to_slave (mplayer, "pause");
     break;
@@ -854,10 +877,28 @@ mp_identify (mrl_t *mrl, int flags)
   int found;
   FILE *mp_fifo;
   pid_t pid;
-
-  if (!mrl || !mrl->name)
+  char *uri = NULL;
+  
+  if (!mrl)
     return;
 
+  switch (mrl->resource)
+  {
+  case PLAYER_MRL_RESOURCE_FILE:
+  {
+    mrl_resource_local_args_t *args = mrl->priv;
+    if (args && args->location)
+      uri = strdup (args->location);
+    break;
+  }
+
+  default:
+    break;
+  }
+
+  if (!uri)
+    return;
+  
   /* create pipe */
   if (pipe (mp_pipe))
     return;
@@ -885,7 +926,7 @@ mp_identify (mrl_t *mrl, int flags)
     params[pp++] = "-noconsolecontrols";
     params[pp++] = "-endpos";
     params[pp++] = "0";
-    params[pp++] = strdup (mrl->name);
+    params[pp++] = uri;
     params[pp++] = "-identify";
     params[pp] = NULL;
 
@@ -1283,15 +1324,22 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
 
-  if (!player || !mrl || !mrl->prop || !mrl->name)
+  if (!player || !mrl || !mrl->prop)
     return;
 
   /* now fetch properties */
-  stat (mrl->name, &st);
-  mrl->prop->size = st.st_size;
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
-        (float) mrl->prop->size / 1024 / 1024);
-
+  if (mrl->resource == PLAYER_MRL_RESOURCE_FILE)
+  {
+    mrl_resource_local_args_t *args = mrl->priv;
+    if (args && args->location)
+    {
+      stat (args->location, &st);
+      mrl->prop->size = st.st_size;
+      plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
+            (float) mrl->prop->size / 1024 / 1024);
+    }
+  }
+  
   mp_identify (mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
 
   audio = mrl->prop->audio;

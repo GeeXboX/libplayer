@@ -97,7 +97,9 @@ static playback_status_t
 vlc_playback_start (player_t *player)
 {
   vlc_t *vlc;
+#if 0
   int id;
+#endif
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
@@ -109,9 +111,11 @@ vlc_playback_start (player_t *player)
   if (!vlc->core)
     return PLAYER_PB_ERROR;
 
+#if 0
   id = libvlc_playlist_add (vlc->core, player->mrl->name, NULL, NULL);
   libvlc_playlist_play (vlc->core, id, 0, NULL, NULL);
-
+#endif
+  
   return PLAYER_PB_OK;
 }
 

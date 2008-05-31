@@ -86,7 +86,6 @@ typedef struct mrl_properties_s {
 } mrl_properties_t;
 
 struct mrl_s {
-  char *name;
   char **subs;
   player_mrl_type_t type;
   player_mrl_resource_t resource;

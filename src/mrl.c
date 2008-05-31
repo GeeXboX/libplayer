@@ -149,8 +149,6 @@ mrl_free (mrl_t *mrl, int recursive)
   if (!mrl)
     return;
 
-  if (mrl->name)
-    free (mrl->name);
   if (mrl->subs)
   {
     char **sub = mrl->subs;
@@ -493,7 +491,6 @@ mrl_new (player_t *player, player_mrl_resource_t res, void *args)
   }
   
   mrl = calloc (1, sizeof (mrl_t));
-  mrl->name = NULL;
 
   mrl->subs = malloc (sizeof (char *));
   mrl->subs = NULL;

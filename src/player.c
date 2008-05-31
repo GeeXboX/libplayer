@@ -344,9 +344,11 @@ player_playback_start (player_t *player)
     return;
 
   player->state = PLAYER_STATE_RUNNING;
+#if 0
   plog (player, PLAYER_MSG_INFO,
         MODULE_NAME, "Now playing: %s", player->mrl->name);
-
+#endif
+  
   /* notify front-end */
   if (player->event_cb)
     player->event_cb (PLAYER_EVENT_PLAYBACK_START, NULL);

@@ -225,6 +225,7 @@ gstreamer_player_playback_start (player_t *player)
   case PLAYER_MRL_RESOURCE_FILE:
   {
     /* check if given MRL is a relative path */
+#if 0
     if (player->mrl->name[0] != '/')
     {
       char *cwd;
@@ -235,6 +236,7 @@ gstreamer_player_playback_start (player_t *player)
     else
       sprintf (mrl, "file://%s", player->mrl->name);
     break;
+#endif
   }
   default:
     break;
