@@ -261,7 +261,7 @@ player_get_mrl (player_t *player)
 
 void
 player_mrl_append (player_t *player,
-                   char *location, char *subtitle, player_add_mrl_t when)
+                   char *location, player_add_mrl_t when)
 {
   mrl_t *mrl = NULL;
 
@@ -270,7 +270,7 @@ player_mrl_append (player_t *player,
   if (!player || !location)
     return;
 
-  mrl = mrl_new (player, location, subtitle);
+  mrl = mrl_new (player, location);
   if (!mrl)
     return;
 
@@ -298,7 +298,7 @@ player_mrl_append (player_t *player,
 }
 
 void
-player_mrl_set (player_t *player, char *location, char *subtitle)
+player_mrl_set (player_t *player, char *location)
 {
   mrl_t *mrl = NULL;
 
@@ -307,7 +307,7 @@ player_mrl_set (player_t *player, char *location, char *subtitle)
   if (!player || !location)
     return;
 
-  mrl = mrl_new (player, location, subtitle);
+  mrl = mrl_new (player, location);
   if (!mrl)
     return;
 
@@ -622,7 +622,7 @@ player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
 }
 
 mrl_t *
-mrl_new (player_t *player, char *name, char *subtitle)
+mrl_new (player_t *player, char *name)
 {
   mrl_t *mrl = NULL;
 
@@ -631,7 +631,6 @@ mrl_new (player_t *player, char *name, char *subtitle)
 
   mrl = calloc (1, sizeof (mrl_t));
   mrl->name = strdup (name);
-  mrl->subtitle = subtitle ? strdup (subtitle) : NULL;
 
   player_mrl_retrieve_properties (player, mrl);
 

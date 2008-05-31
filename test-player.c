@@ -106,7 +106,7 @@ load_media (player_t *player)
   *(file + strlen (file) - 1) = '\0';
   putchar ('\n');
 
-  player_mrl_append (player, file, NULL, PLAYER_ADD_MRL_QUEUE);
+  player_mrl_append (player, file, PLAYER_ADD_MRL_QUEUE);
   printf ("Media added to the playlist!\n");
 }
 
@@ -398,7 +398,7 @@ main (int argc, char **argv)
   if (optind < argc) {
     do {
       printf (" > %s added to the playlist!\n", argv[optind]);
-      player_mrl_append (player, argv[optind], NULL, PLAYER_ADD_MRL_QUEUE);
+      player_mrl_append (player, argv[optind], PLAYER_ADD_MRL_QUEUE);
     } while (++optind < argc);
     putchar ('\n');
   }

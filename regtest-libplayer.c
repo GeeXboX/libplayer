@@ -62,7 +62,7 @@ do_regression_tests (player_t *player, char *mrl)
   if (!player || !mrl)
     return;
 
-  player_mrl_append (player, mrl, NULL, PLAYER_ADD_MRL_NOW);
+  player_mrl_append (player, mrl, PLAYER_ADD_MRL_NOW);
   player_mrl_get_property (player, player_get_mrl (player), PLAYER_PROPERTY_SEEKABLE);
   player_mrl_get_metadata (player, player_get_mrl (player), PLAYER_METADATA_TITLE);
   printf ("Current volume: %d\n", player_get_volume (player));
