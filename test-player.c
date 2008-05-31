@@ -162,12 +162,12 @@ show_resource (mrl_t *mrl)
     [PLAYER_MRL_RESOURCE_VCD]     = "Video Compact Disc",
   };
   const int resource_size = sizeof (resource_desc) / sizeof (resource_desc[0]);
-  player_mrl_resource_t resource = PLAYER_MRL_RESOURCE_UNKNOWN;
+  player_mrl_resource_t resource = mrl_get_resource (mrl);
 
-  if (mrl && mrl->resource < resource_size && mrl->resource >= 0)
-    resource = mrl->resource;
+  if (resource > resource_size || resource < 0)
+    resource = PLAYER_MRL_RESOURCE_UNKNOWN;
 
-  printf (" Resource: %s\n", resource_desc[mrl->resource]);
+  printf (" Resource: %s\n", resource_desc[resource]);
 }
 
 static void
@@ -177,12 +177,16 @@ show_info (player_t *player, mrl_t *mrl)
   char *codec;
   uint32_t prop;
   off_t size;
+  char *uri;
 
-  if (!player || !mrl || !mrl->name)
+  if (!player || !mrl)
     return;
 
+  uri = mrl_get_uri (mrl);
   printf ("Properties and metadata:\n");
-  printf (" Name: %s\n", mrl->name);
+  if (uri)
+    printf (" URI: %s\n", uri);
+  free (uri);
 
   show_type (mrl);
   show_resource (mrl);
