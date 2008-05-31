@@ -57,11 +57,17 @@ frontend_event_cb (player_event_t e, void *data)
 }
 
 static void
-do_regression_tests (player_t *player, char *mrl)
+do_regression_tests (player_t *player, char *name)
 {
-  if (!player || !mrl)
+  mrl_t *mrl;
+  
+  if (!player || !name)
     return;
 
+  mrl = mrl_new (player, name);
+  if (!mrl)
+    return;
+  
   player_mrl_append (player, mrl, PLAYER_ADD_MRL_NOW);
   player_mrl_get_property (player, NULL, PLAYER_PROPERTY_SEEKABLE);
   player_mrl_get_metadata (player, NULL, PLAYER_METADATA_TITLE);

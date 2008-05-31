@@ -266,18 +266,11 @@ player_get_mrl (player_t *player)
 }
 
 void
-player_mrl_append (player_t *player,
-                   char *location, player_add_mrl_t when)
+player_mrl_append (player_t *player, mrl_t *mrl, player_add_mrl_t when)
 {
-  mrl_t *mrl = NULL;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  if (!player || !location)
-    return;
-
-  mrl = mrl_new (player, location);
-  if (!mrl)
+  if (!player || !mrl)
     return;
 
   /* create/expand the playlist */
@@ -304,17 +297,11 @@ player_mrl_append (player_t *player,
 }
 
 void
-player_mrl_set (player_t *player, char *location)
+player_mrl_set (player_t *player, mrl_t *mrl)
 {
-  mrl_t *mrl = NULL;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  if (!player || !location)
-    return;
-
-  mrl = mrl_new (player, location);
-  if (!mrl)
+  if (!player || !mrl)
     return;
 
   if (player->mrl) {

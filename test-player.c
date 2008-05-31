@@ -100,13 +100,18 @@ static void
 load_media (player_t *player)
 {
   char file[1024];
-
+  mrl_t *mrl;
+  
   printf ("Media to load (MRL|file): ");
   fgets (file, sizeof (file), stdin);
   *(file + strlen (file) - 1) = '\0';
   putchar ('\n');
 
-  player_mrl_append (player, file, PLAYER_ADD_MRL_QUEUE);
+  mrl = mrl_new (player, file);
+  if (!mrl)
+    return;
+  
+  player_mrl_append (player, mrl, PLAYER_ADD_MRL_QUEUE);
   printf ("Media added to the playlist!\n");
 }
 
@@ -401,8 +406,13 @@ main (int argc, char **argv)
   /* these arguments are MRLs|files */
   if (optind < argc) {
     do {
+      mrl_t *mrl;
+
+      mrl = mrl_new (player, argv[optind]);
+      if (!mrl)
+        continue;
       printf (" > %s added to the playlist!\n", argv[optind]);
-      player_mrl_append (player, argv[optind], PLAYER_ADD_MRL_QUEUE);
+      player_mrl_append (player, mrl, PLAYER_ADD_MRL_QUEUE);
     } while (++optind < argc);
     putchar ('\n');
   }

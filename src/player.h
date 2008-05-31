@@ -176,9 +176,8 @@ char *mrl_get_uri (mrl_t *mrl);
 player_mrl_type_t mrl_get_type (mrl_t *mrl);
 player_mrl_resource_t mrl_get_resource (mrl_t *mrl);
 
-void player_mrl_set (player_t *player, char *location);
-void player_mrl_append (player_t *player,
-                        char *location, player_add_mrl_t when);
+void player_mrl_set (player_t *player, mrl_t *mrl);
+void player_mrl_append (player_t *player, mrl_t *mrl, player_add_mrl_t when);
 void player_mrl_remove (player_t *player);
 void player_mrl_remove_all (player_t *player);
 void player_mrl_previous (player_t *player);
