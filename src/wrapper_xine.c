@@ -851,6 +851,30 @@ xine_player_get_mute (player_t *player)
   return PLAYER_MUTE_OFF;
 }
 
+static int
+xine_player_get_time_pos (player_t *player)
+{
+  xine_player_t *x;
+  int time_pos = 0;
+  int ret;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
+
+  if (!player)
+    return 0;
+
+  x = (xine_player_t *) player->priv;
+
+  if (!x || !x->stream)
+    return 0;
+
+  ret = xine_get_pos_length (x->stream, NULL, &time_pos, NULL);
+  if (!ret || time_pos < 0)
+    return 0;
+
+  return time_pos;
+}
+
 static void
 xine_player_set_volume (player_t *player, int value)
 {
@@ -936,7 +960,7 @@ register_functions_xine (void)
   funcs->pb_dvdnav          = xine_player_playback_dvdnav;
   funcs->get_volume         = xine_player_get_volume;
   funcs->get_mute           = xine_player_get_mute;
-  funcs->get_time_pos       = NULL;
+  funcs->get_time_pos       = xine_player_get_time_pos;
   funcs->set_volume         = xine_player_set_volume;
   funcs->set_mute           = xine_player_set_mute;
   funcs->set_sub_delay      = xine_player_set_sub_delay;
