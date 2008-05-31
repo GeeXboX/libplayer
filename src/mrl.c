@@ -607,11 +607,13 @@ mrl_new (player_t *player, player_mrl_resource_t res, void *args)
   mrl->subs = malloc (sizeof (char *));
   mrl->subs = NULL;
   
+  mrl->resource = res;
+  mrl->priv = args;
+
   mrl_retrieve_properties (player, mrl);
 
   mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */
-  mrl->resource = res;
-  mrl->priv = args;
+
 
   return mrl;
 }
