@@ -251,11 +251,18 @@ xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
 static void
 xine_identify_properties (mrl_t *mrl, xine_stream_t *stream)
 {
+  int length = 0;
+  int ret;
+
   if (!mrl || !mrl->prop || !stream)
     return;
 
   mrl->prop->seekable =
     xine_get_stream_info (stream, XINE_STREAM_INFO_SEEKABLE);
+
+  ret = xine_get_pos_length (stream, NULL, NULL, &length);
+  if (ret && length > 0)
+    mrl->prop->length = length;
 }
 
 static void
