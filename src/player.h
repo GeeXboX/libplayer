@@ -38,6 +38,7 @@ extern "C" {
 
 /* opaque data type */
 typedef struct player_s player_t;
+typedef struct mrl_s mrl_t;
 typedef struct mrl_metadata_s mrl_metadata_t;
 typedef struct mrl_properties_s mrl_properties_t;
 
@@ -157,20 +158,6 @@ typedef enum player_properties {
   PLAYER_PROPERTY_VIDEO_STREAMS,
   PLAYER_PROPERTY_VIDEO_FRAMEDURATION,
 } player_properties_t;
-
-typedef struct mrl_s {
-  char *name;
-  char **subs;
-  player_mrl_type_t type;
-  player_mrl_resource_t resource;
-  mrl_properties_t *prop;
-  mrl_metadata_t *meta;
-
-  /* for playlist management */
-  struct mrl_s *prev;
-  struct mrl_s *next;
-} mrl_t;
-
 
 /* player init/uninit prototypes */
 player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,

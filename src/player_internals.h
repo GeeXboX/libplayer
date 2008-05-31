@@ -85,6 +85,19 @@ struct mrl_properties_s {
   mrl_properties_video_t *video;
 };
 
+struct mrl_s {
+  char *name;
+  char **subs;
+  player_mrl_type_t type;
+  player_mrl_resource_t resource;
+  mrl_properties_t *prop;
+  mrl_metadata_t *meta;
+
+  /* for playlist management */
+  struct mrl_s *prev;
+  struct mrl_s *next;
+};
+
 typedef struct player_funcs_s {
   init_status_t (* init) (player_t *player);
   void (* uninit) (player_t *player);
