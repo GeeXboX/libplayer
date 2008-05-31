@@ -1256,6 +1256,24 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
   }
 }
 
+static int
+mplayer_mrl_supported_res (player_t *player, player_mrl_resource_t res)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_supported_res");
+
+  if (!player)
+    return 0;
+
+  switch (res)
+  {
+  case PLAYER_MRL_RESOURCE_FILE:
+    return 1;
+
+  default:
+    return 0;
+  }
+}
+
 static void
 mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
@@ -1628,6 +1646,7 @@ register_functions_mplayer (void)
   funcs->init               = mplayer_init;
   funcs->uninit             = mplayer_uninit;
   funcs->set_verbosity      = mplayer_set_verbosity;
+  funcs->mrl_supported_res  = mplayer_mrl_supported_res;
   funcs->mrl_retrieve_props = mplayer_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = mplayer_mrl_retrieve_metadata;
   funcs->pb_start           = mplayer_playback_start;

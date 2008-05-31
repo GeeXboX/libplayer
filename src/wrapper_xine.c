@@ -526,6 +526,24 @@ xine_player_uninit (player_t *player)
   free (x);
 }
 
+static int
+xine_player_mrl_supported_res (player_t *player, player_mrl_resource_t res)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_supported_res");
+
+  if (!player)
+    return 0;
+
+  switch (res)
+  {
+  case PLAYER_MRL_RESOURCE_FILE:
+    return 1;
+
+  default:
+    return 0;
+  }
+}
+
 static void
 xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
@@ -962,6 +980,7 @@ register_functions_xine (void)
   funcs->init               = xine_player_init;
   funcs->uninit             = xine_player_uninit;
   funcs->set_verbosity      = xine_player_set_verbosity;
+  funcs->mrl_supported_res  = xine_player_mrl_supported_res;
   funcs->mrl_retrieve_props = xine_player_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = xine_player_mrl_retrieve_metadata;
   funcs->pb_start           = xine_player_playback_start;

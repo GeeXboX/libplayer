@@ -225,7 +225,7 @@ void player_uninit (player_t *player);
 void player_set_verbosity (player_t *player, player_verbosity_level_t level);
 
 /* MRL helpers */
-mrl_t *mrl_new (player_t *player, char *name);
+mrl_t *mrl_new (player_t *player, player_mrl_resource_t res, void *args);
 void mrl_add_subtitle (mrl_t *mrl, char *subtitle);
 void mrl_free (mrl_t *mrl, int recursive);
 void mrl_list_free (mrl_t *mrl);

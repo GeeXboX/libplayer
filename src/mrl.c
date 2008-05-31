@@ -515,15 +515,31 @@ mrl_add_subtitle (mrl_t *mrl, char *subtitle)
 }
 
 mrl_t *
-mrl_new (player_t *player, char *name)
+mrl_new (player_t *player, player_mrl_resource_t res, void *args)
 {
   mrl_t *mrl = NULL;
-
-  if (!player || !name)
+  int support = 0;
+  
+  if (!player || !args)
     return NULL;
 
+  /* ensure we provide a valid resource type */
+  if (res == PLAYER_MRL_RESOURCE_UNKNOWN)
+    return NULL;
+
+  /* ensure player support this resource type */
+  if (player->funcs->mrl_supported_res)
+    support = player->funcs->mrl_supported_res (player, res);
+
+  if (!support)
+  {
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
+          "Unsupported resource type (%d)\n", res);
+    return NULL;
+  }
+  
   mrl = calloc (1, sizeof (mrl_t));
-  mrl->name = strdup (name);
+  mrl->name = NULL;
 
   mrl->subs = malloc (sizeof (char *));
   mrl->subs = NULL;
@@ -531,7 +547,8 @@ mrl_new (player_t *player, char *name)
   mrl_retrieve_properties (player, mrl);
 
   mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */
-  mrl->resource = mrl_guess_resource (mrl);
+  mrl->resource = res;
+  mrl->priv = args;
 
   return mrl;
 }

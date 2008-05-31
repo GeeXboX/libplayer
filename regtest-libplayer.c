@@ -60,11 +60,15 @@ static void
 do_regression_tests (player_t *player, char *name)
 {
   mrl_t *mrl;
+  mrl_resource_local_args_t *args;
   
   if (!player || !name)
     return;
 
-  mrl = mrl_new (player, name);
+  args = calloc (1, sizeof (mrl_resource_local_args_t));
+  args->location = strdup (name);
+    
+  mrl = mrl_new (player, PLAYER_MRL_RESOURCE_FILE, args);
   if (!mrl)
     return;
   

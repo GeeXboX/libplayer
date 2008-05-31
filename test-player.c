@@ -101,13 +101,17 @@ load_media (player_t *player)
 {
   char file[1024];
   mrl_t *mrl;
+  mrl_resource_local_args_t *args;
   
   printf ("Media to load (MRL|file): ");
   fgets (file, sizeof (file), stdin);
   *(file + strlen (file) - 1) = '\0';
   putchar ('\n');
 
-  mrl = mrl_new (player, file);
+  args = calloc (1, sizeof (mrl_resource_local_args_t));
+  args->location = strdup (file);
+  
+  mrl = mrl_new (player, PLAYER_MRL_RESOURCE_FILE, args);
   if (!mrl)
     return;
   
@@ -407,8 +411,12 @@ main (int argc, char **argv)
   if (optind < argc) {
     do {
       mrl_t *mrl;
+      mrl_resource_local_args_t *args;
 
-      mrl = mrl_new (player, argv[optind]);
+      args = calloc (1, sizeof (mrl_resource_local_args_t));
+      args->location = strdup (argv[optind]);
+      
+      mrl = mrl_new (player, PLAYER_MRL_RESOURCE_FILE, args);
       if (!mrl)
         continue;
       printf (" > %s added to the playlist!\n", argv[optind]);
