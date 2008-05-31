@@ -45,52 +45,6 @@ mrl_guess_type (mrl_t *mrl)
   return PLAYER_MRL_TYPE_UNKNOWN;
 }
 
-static player_mrl_resource_t
-mrl_guess_resource (mrl_t *mrl)
-{
-  int i = 0;
-  static const struct {
-    const player_mrl_resource_t resource;
-    const char *string;
-  } resources_list[] = {
-    {PLAYER_MRL_RESOURCE_CDDA,    "cdda:"},
-    {PLAYER_MRL_RESOURCE_CDDB,    "cddb:"},
-    {PLAYER_MRL_RESOURCE_DVB,     "dvb:"},
-    {PLAYER_MRL_RESOURCE_DVD,     "dvd:"},
-    {PLAYER_MRL_RESOURCE_DVDNAV,  "dvdnav:"},
-    {PLAYER_MRL_RESOURCE_FIFO,    "fifo:"},
-    {PLAYER_MRL_RESOURCE_FILE,    "file:"},
-    {PLAYER_MRL_RESOURCE_FTP,     "ftp:"},
-    {PLAYER_MRL_RESOURCE_HTTP,    "http:"},
-    {PLAYER_MRL_RESOURCE_MMS,     "mms:"},
-    {PLAYER_MRL_RESOURCE_RADIO,   "radio:"},
-    {PLAYER_MRL_RESOURCE_RTP,     "rtp:"},
-    {PLAYER_MRL_RESOURCE_RTSP,    "rtsp:"},
-    {PLAYER_MRL_RESOURCE_SMB,     "smb:"},
-    {PLAYER_MRL_RESOURCE_STDIN,   "stdin:"},
-    {PLAYER_MRL_RESOURCE_TCP,     "tcp:"},
-    {PLAYER_MRL_RESOURCE_TV,      "tv:"},
-    {PLAYER_MRL_RESOURCE_UDP,     "udp:"},
-    {PLAYER_MRL_RESOURCE_VCD,     "vcd:"},
-    {PLAYER_MRL_RESOURCE_UNKNOWN, NULL}
-  };
-
-  if (!mrl || !mrl->name)
-    return PLAYER_MRL_RESOURCE_UNKNOWN;
-
-  /* when no resource is used in the name */
-  if (!strstr (mrl->name, ":"))
-    return PLAYER_MRL_RESOURCE_FILE;
-
-  while (resources_list[i].string) {
-    if (strstr (mrl->name, resources_list[i].string))
-      return resources_list[i].resource;
-    i++;
-  }
-
-  return PLAYER_MRL_RESOURCE_UNKNOWN;
-}
-
 mrl_properties_audio_t *
 mrl_properties_audio_new (void)
 {
