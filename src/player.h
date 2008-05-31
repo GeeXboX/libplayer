@@ -115,8 +115,55 @@ typedef enum player_mrl_resource {
   PLAYER_MRL_RESOURCE_TCP,
   PLAYER_MRL_RESOURCE_UDP,
   PLAYER_MRL_RESOURCE_UNSV,
-
 } player_mrl_resource_t;
+
+/* for local streams */
+typedef struct mrl_resource_local_args_s {
+  char *location;
+  int playlist;
+} mrl_resource_local_args_t;
+
+/* for audio CD */
+typedef struct mrl_resource_cd_args_s {
+  char *device;
+  uint8_t speed;
+  uint8_t track_start;
+  uint8_t track_end;
+} mrl_resource_cd_args_t;
+
+/* for video discs */ 
+typedef struct mrl_resource_videodisc_args_s {
+  char *device;
+  uint8_t speed;
+  uint8_t angle;
+  uint8_t chapter_start;
+  uint8_t chapter_end;
+  uint8_t track_start;
+  uint8_t track_end;
+  char *audio_lang;
+  char *sub_lang;
+  uint8_t sub_cc;
+} mrl_resource_videodisc_args_t;
+
+/* for radio/tv streams */ 
+typedef struct mrl_resource_tv_args_s {
+  char *device;
+  char *driver;
+  uint8_t input;
+  int width;
+  int height;
+  int fps;
+  char *output_format;
+  char *norm;
+} mrl_resource_tv_args_t;
+
+/* for network streams */ 
+typedef struct mrl_resource_network_args_s {
+  char *url;
+  char *username;
+  char *password;
+  char *user_agent;
+} mrl_resource_network_args_t;
 
 typedef enum player_add_mrl {
   PLAYER_ADD_MRL_NOW,
@@ -195,12 +242,12 @@ void player_mrl_remove (player_t *player);
 void player_mrl_remove_all (player_t *player);
 void player_mrl_previous (player_t *player);
 void player_mrl_next (player_t *player);
-char *player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m);
-uint32_t player_mrl_get_property (player_t *player,
+char *mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m);
+uint32_t mrl_get_property (player_t *player,
                                   mrl_t *mrl, player_properties_t p);
-char *player_mrl_get_audio_codec (player_t *player, mrl_t *mrl);
-char *player_mrl_get_video_codec (player_t *player, mrl_t *mrl);
-off_t player_mrl_get_size (player_t *player, mrl_t *mrl);
+char *mrl_get_audio_codec (player_t *player, mrl_t *mrl);
+char *mrl_get_video_codec (player_t *player, mrl_t *mrl);
+off_t mrl_get_size (player_t *player, mrl_t *mrl);
 
 /* get player playback properties */
 int player_get_volume (player_t *player);
