@@ -197,8 +197,16 @@ mrl_free (mrl_t *mrl, int recursive)
 
   if (mrl->name)
     free (mrl->name);
-  if (mrl->subtitle)
-    free (mrl->subtitle);
+  if (mrl->subs)
+  {
+    char **sub = mrl->subs;
+    while (*sub)
+    {
+      free (*sub);
+      (*sub)++;
+    }
+    free (mrl->subs);
+  }
 
   if (mrl->prop)
     mrl_properties_free (mrl->prop);
@@ -619,6 +627,32 @@ player_mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
   }
 }
 
+static int
+get_list_length (void *list)
+{
+  void **l = list;
+  int n = 0;
+  while (*l++)
+    n++;
+  return n;
+}
+
+void
+mrl_add_subtitle (mrl_t *mrl, char *subtitle)
+{
+  char **subs;
+  int n;
+  
+  if (!mrl || !subtitle)
+    return;
+  
+  subs = mrl->subs;
+  n = get_list_length (subs) + 1;
+  subs = realloc (subs, (n + 1) * sizeof (*subs));
+  subs[n] = NULL;
+  subs[n - 1] = strdup (subtitle);
+}
+
 mrl_t *
 mrl_new (player_t *player, char *name)
 {
@@ -630,6 +664,9 @@ mrl_new (player_t *player, char *name)
   mrl = calloc (1, sizeof (mrl_t));
   mrl->name = strdup (name);
 
+  mrl->subs = malloc (sizeof (char *));
+  mrl->subs = NULL;
+  
   player_mrl_retrieve_properties (player, mrl);
 
   mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */

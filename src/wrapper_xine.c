@@ -652,13 +652,13 @@ xine_player_playback_start (player_t *player)
     return PLAYER_PB_ERROR;
 
   /* add subtitle to the MRL */
-  if (player->mrl->subtitle) {
+  if (player->mrl->subs) {
     mrl = malloc (strlen (player->mrl->name) +
-                  strlen (player->mrl->subtitle) + 11);
+                  strlen (player->mrl->subs[0]) + 11);
 
     if (mrl)
       sprintf (mrl, "%s#subtitle:%s",
-               player->mrl->name, player->mrl->subtitle);
+               player->mrl->name, player->mrl->subs[0]);
   }
   /* or take only the name */
   else
