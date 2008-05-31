@@ -22,6 +22,13 @@
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#if 0 /* avoid EMACS indent */
+}
+#endif /* 0 */
+#endif /* __cplusplus */
+
 #include <inttypes.h>
 
 #define LIBPLAYER_VERSION_MAJOR 0
@@ -211,5 +218,12 @@ void player_playback_stop (player_t *player);
 void player_playback_pause (player_t *player);
 void player_playback_seek (player_t *player, int value);
 void player_playback_dvdnav (player_t *player, player_dvdnav_t value);
+
+#ifdef __cplusplus
+#if 0 /* avoid EMACS indent */
+{
+#endif /* 0 */
+}
+#endif /* __cplusplus */
 
 #endif /* PLAYER_H_ */
