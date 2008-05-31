@@ -1571,7 +1571,7 @@ mplayer_get_time_pos (player_t *player)
   time_pos = slave_get_property_float (player, PROPERTY_TIME_POS);
 
   if (time_pos < 0.0)
-    return -1;
+    return 0;
 
   return (int) (time_pos * 1000.0);
 }
