@@ -239,7 +239,7 @@ char *mrl_get_audio_codec (player_t *player, mrl_t *mrl);
 char *mrl_get_video_codec (player_t *player, mrl_t *mrl);
 off_t mrl_get_size (player_t *player, mrl_t *mrl);
 
-mrl_t *player_get_mrl (player_t *player);
+mrl_t *player_get_current_mrl (player_t *player);
 void player_mrl_set (player_t *player, mrl_t *mrl);
 void player_mrl_append (player_t *player, mrl_t *mrl, player_add_mrl_t when);
 void player_mrl_remove (player_t *player);

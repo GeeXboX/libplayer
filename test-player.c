@@ -498,7 +498,7 @@ main (int argc, char **argv)
       printf ("ERASE PLAYLIST\n");
       break;
     case 'v':   /* print properties and metadata */
-      show_info (player, player_get_mrl (player));
+      show_info (player, player_get_current_mrl (player));
       break;
     default:
       fprintf (stderr, "ERROR: Command unknown!\n");

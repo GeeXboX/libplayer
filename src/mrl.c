@@ -257,7 +257,7 @@ mrl_uses_ao (mrl_t *mrl)
 }
 
 mrl_t *
-player_get_mrl (player_t *player)
+player_get_current_mrl (player_t *player)
 {
   if (!player)
     return NULL;
