@@ -614,7 +614,6 @@ mrl_new (player_t *player, player_mrl_resource_t res, void *args)
 
   mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */
 
-
   return mrl;
 }
 
