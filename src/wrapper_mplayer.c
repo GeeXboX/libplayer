@@ -1149,6 +1149,7 @@ mplayer_init (player_t *player)
       break;
 
     default:
+      params[pp++] = "null";
       plog (player, PLAYER_MSG_WARNING,
             MODULE_NAME, "Unsupported video output type");
       break;
@@ -1172,6 +1173,7 @@ mplayer_init (player_t *player)
       break;
 
     default:
+      params[pp++] = "null";
       plog (player, PLAYER_MSG_WARNING,
             MODULE_NAME, "Unsupported audio output type");
       break;
