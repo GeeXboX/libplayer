@@ -685,7 +685,18 @@ player_subtitle_next (player_t *player)
 void
 player_dvd_nav (player_t *player, player_dvdnav_t value)
 {
+  mrl_resource_t res;
+  mrl_t *mrl;
+
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  res = mrl_get_resource (mrl);
+  if (res != MRL_RESOURCE_DVDNAV)
     return;
 
   /* player specific playback_dvdnav() */
@@ -696,42 +707,108 @@ player_dvd_nav (player_t *player, player_dvdnav_t value)
 void
 player_dvd_angle_select (player_t *player, int angle)
 {
+  mrl_resource_t res;
+  mrl_t *mrl;
+
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  res = mrl_get_resource (mrl);
+  if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
 }
 
 void
 player_dvd_angle_prev (player_t *player)
 {
+  mrl_resource_t res;
+  mrl_t *mrl;
+
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  res = mrl_get_resource (mrl);
+  if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
 }
 
 void
 player_dvd_angle_next (player_t *player)
 {
+  mrl_resource_t res;
+  mrl_t *mrl;
+
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  res = mrl_get_resource (mrl);
+  if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
 }
 
 void
 player_dvd_title_select (player_t *player, int title)
 {
+  mrl_resource_t res;
+  mrl_t *mrl;
+
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  res = mrl_get_resource (mrl);
+  if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
 }
 
 void
 player_dvd_title_prev (player_t *player)
 {
+  mrl_resource_t res;
+  mrl_t *mrl;
+
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  res = mrl_get_resource (mrl);
+  if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
 }
 
 void
 player_dvd_title_next (player_t *player)
 {
+  mrl_resource_t res;
+  mrl_t *mrl;
+
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  res = mrl_get_resource (mrl);
+  if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
 }
 
@@ -744,21 +821,54 @@ player_dvd_title_next (player_t *player)
 void
 player_tv_channel_select (player_t *player, int channel)
 {
+  mrl_resource_t res;
+  mrl_t *mrl;
+
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  res = mrl_get_resource (mrl);
+  if (res != MRL_RESOURCE_DVB && res != MRL_RESOURCE_TV)
     return;
 }
 
 void
 player_tv_channel_prev (player_t *player)
 {
+  mrl_resource_t res;
+  mrl_t *mrl;
+
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  res = mrl_get_resource (mrl);
+  if (res != MRL_RESOURCE_DVB && res != MRL_RESOURCE_TV)
     return;
 }
 
 void
 player_tv_channel_next (player_t *player)
 {
+  mrl_resource_t res;
+  mrl_t *mrl;
+  
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  res = mrl_get_resource (mrl);
+  if (res != MRL_RESOURCE_DVB && res != MRL_RESOURCE_TV)
     return;
 }
 
@@ -771,20 +881,47 @@ player_tv_channel_next (player_t *player)
 void
 player_radio_channel_select (player_t *player, int channel)
 {
+  mrl_t *mrl;
+
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  if (mrl_get_resource (mrl) != MRL_RESOURCE_RADIO)
     return;
 }
 
 void
 player_radio_channel_prev (player_t *player)
 {
+  mrl_t *mrl;
+  
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  if (mrl_get_resource (mrl) != MRL_RESOURCE_RADIO)
     return;
 }
 
 void
 player_radio_channel_next (player_t *player)
 {
+  mrl_t *mrl;
+  
   if (!player)
+    return;
+
+  mrl = player_mrl_get_current (player);
+  if (!mrl)
+    return;
+
+  if (mrl_get_resource (mrl) != MRL_RESOURCE_RADIO)
     return;
 }
