@@ -225,6 +225,12 @@ typedef enum player_video_aspect {
   PLAYER_VIDEO_ASPECT_SATURATION,
 } player_video_aspect_t;
 
+typedef enum player_sub_alignment {
+  PLAYER_SUB_ALIGNMENT_TOP,
+  PLAYER_SUB_ALIGNMENT_CENTER,
+  PLAYER_SUB_ALIGNMENT_BOTTOM,
+} player_sub_alignment_t;
+
 /* player init/uninit prototypes */
 player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
                        player_verbosity_level_t verbosity,
@@ -262,6 +268,7 @@ int player_get_time_pos (player_t *player);
 /* tune player playback properties */
 void player_set_loop (player_t *player, int value);
 void player_set_shuffle (player_t *player, int value);
+void player_set_framedrop (player_t *player, int value);
 void player_set_volume (player_t *player, int value);
 void player_set_mute (player_t *player, player_mute_t value);
 void player_set_sub_delay (player_t *player, float value);
@@ -271,7 +278,50 @@ void player_playback_start (player_t *player);
 void player_playback_stop (player_t *player);
 void player_playback_pause (player_t *player);
 void player_playback_seek (player_t *player, int value);
+void player_playback_seek_chapter (player_t *player, int value, int absolute);
+void player_playback_speed (player_t *player, int value);
 void player_playback_dvdnav (player_t *player, player_dvdnav_t value);
+
+/* audio controls */
+void player_audio_set_delay (player_t *player, int value, int absolute);
+void player_audio_select (player_t *player, int audio_id);
+void player_audio_prev (player_t *player);
+void player_audio_next (player_t *player);
+
+/* video controls */
+void player_video_set_fullscreen (player_t *player, int value);
+void player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
+                              int8_t value, int absolute);
+void player_video_set_panscan (player_t *player, int8_t value, int absolute);
+void player_video_set_aspect_ratio (player_t *player, float value);
+
+/* subtitles controls */
+void player_subtitle_set_alignment (player_t *player,
+                                    player_sub_alignment_t a);
+void player_subtitle_set_position (player_t *player, int value);
+void player_subtitle_set_visibility (player_t *player, int value);
+void player_subtitle_scale (player_t *player, int value, int absolute);
+void player_subtitle_select (player_t *player, int sub_id);
+void player_subtitle_prev (player_t *player);
+void player_subtitle_next (player_t *player);
+
+/* DVD controls */
+void player_dvd_angle_select (player_t *player, int angle);
+void player_dvd_angle_prev (player_t *player);
+void player_dvd_angle_next (player_t *player);
+void player_dvd_title_select (player_t *player, int title);
+void player_dvd_title_prev (player_t *player);
+void player_dvd_title_next (player_t *player);
+
+/* TV/DVB controls */
+void player_tv_channel_select (player_t *player, int channel);
+void player_tv_channel_prev (player_t *player);
+void player_tv_channel_next (player_t *player);
+
+/* Radio controls */
+void player_radio_channel_select (player_t *player, int channel);
+void player_radio_channel_prev (player_t *player);
+void player_radio_channel_next (player_t *player);
 
 #ifdef __cplusplus
 #if 0 /* avoid EMACS indent */
