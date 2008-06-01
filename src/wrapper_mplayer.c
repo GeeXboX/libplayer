@@ -1061,7 +1061,6 @@ mplayer_init (player_t *player)
    */
   switch (player->vo) {
   case PLAYER_VO_X11:
-  case PLAYER_VO_X11_SDL:
   case PLAYER_VO_XV:
     if (!x11_init (player))
       return PLAYER_INIT_ERROR;
@@ -1121,14 +1120,6 @@ mplayer_init (player_t *player)
 
     case PLAYER_VO_X11:
       params[pp++] = "x11";
-      /* window ID */
-      params[pp++] = "-wid";
-      params[pp++] = strdup (winid);
-      break;
-
-    /* with MPlayer, SDL is not specific to X11 */
-    case PLAYER_VO_X11_SDL:
-      params[pp++] = "sdl";
       /* window ID */
       params[pp++] = "-wid";
       params[pp++] = strdup (winid);
