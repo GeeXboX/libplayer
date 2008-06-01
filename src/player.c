@@ -166,7 +166,7 @@ player_mrl_get_current (player_t *player)
 }
 
 void
-player_mrl_append (player_t *player, mrl_t *mrl, player_add_mrl_t when)
+player_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -188,7 +188,7 @@ player_mrl_append (player_t *player, mrl_t *mrl, player_add_mrl_t when)
   }
 
   /* play it now ? */
-  if (when == PLAYER_ADD_MRL_NOW)
+  if (when == PLAYER_MRL_ADD_NOW)
   {
     player_playback_stop (player);
     player->mrl = mrl;

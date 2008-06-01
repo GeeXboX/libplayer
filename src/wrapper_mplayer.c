@@ -558,7 +558,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
     
     switch (player->mrl->resource)
     {
-    case PLAYER_MRL_RESOURCE_FILE:
+    case MRL_RESOURCE_FILE:
     {
       mrl_resource_local_args_t *args = player->mrl->priv;
       if (args && args->location)
@@ -884,7 +884,7 @@ mp_identify (mrl_t *mrl, int flags)
 
   switch (mrl->resource)
   {
-  case PLAYER_MRL_RESOURCE_FILE:
+  case MRL_RESOURCE_FILE:
   {
     mrl_resource_local_args_t *args = mrl->priv;
     if (args && args->location)
@@ -1301,7 +1301,7 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
 }
 
 static int
-mplayer_mrl_supported_res (player_t *player, player_mrl_resource_t res)
+mplayer_mrl_supported_res (player_t *player, mrl_resource_t res)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_supported_res");
 
@@ -1310,7 +1310,7 @@ mplayer_mrl_supported_res (player_t *player, player_mrl_resource_t res)
 
   switch (res)
   {
-  case PLAYER_MRL_RESOURCE_FILE:
+  case MRL_RESOURCE_FILE:
     return 1;
 
   default:
@@ -1331,7 +1331,7 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
     return;
 
   /* now fetch properties */
-  if (mrl->resource == PLAYER_MRL_RESOURCE_FILE)
+  if (mrl->resource == MRL_RESOURCE_FILE)
   {
     mrl_resource_local_args_t *args = mrl->priv;
     if (args && args->location)
@@ -1580,7 +1580,7 @@ mplayer_playback_dvdnav (player_t *player, player_dvdnav_t value)
   if (!player)
     return;
 
-  if (player->mrl->resource == PLAYER_MRL_RESOURCE_DVDNAV)
+  if (player->mrl->resource == MRL_RESOURCE_DVDNAV)
     slave_cmd_int (player, SLAVE_DVDNAV, action);
 }
 

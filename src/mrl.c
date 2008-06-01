@@ -30,19 +30,19 @@
 
 #define MODULE_NAME "player"
 
-static player_mrl_type_t
+static mrl_type_t
 mrl_guess_type (mrl_t *mrl)
 {
   if (!mrl || !mrl->prop)
-    return PLAYER_MRL_TYPE_UNKNOWN;
+    return MRL_TYPE_UNKNOWN;
 
   if (mrl->prop->video)
-    return PLAYER_MRL_TYPE_VIDEO;
+    return MRL_TYPE_VIDEO;
 
   if (mrl->prop->audio)
-    return PLAYER_MRL_TYPE_AUDIO;
+    return MRL_TYPE_AUDIO;
 
-  return PLAYER_MRL_TYPE_UNKNOWN;
+  return MRL_TYPE_UNKNOWN;
 }
 
 mrl_properties_audio_t *
@@ -235,39 +235,39 @@ mrl_free (mrl_t *mrl, int recursive)
   {
     switch (mrl->resource)
     {
-    case PLAYER_MRL_RESOURCE_FIFO:
-    case PLAYER_MRL_RESOURCE_FILE:
-    case PLAYER_MRL_RESOURCE_STDIN:
+    case MRL_RESOURCE_FIFO:
+    case MRL_RESOURCE_FILE:
+    case MRL_RESOURCE_STDIN:
       mrl_resource_local_free (mrl->priv);
       break;
       
-    case PLAYER_MRL_RESOURCE_CDDA:
-    case PLAYER_MRL_RESOURCE_CDDB:
+    case MRL_RESOURCE_CDDA:
+    case MRL_RESOURCE_CDDB:
       mrl_resource_cd_free (mrl->priv);
       break;
       
-    case PLAYER_MRL_RESOURCE_DVD:
-    case PLAYER_MRL_RESOURCE_DVDNAV:
-    case PLAYER_MRL_RESOURCE_VCD:
+    case MRL_RESOURCE_DVD:
+    case MRL_RESOURCE_DVDNAV:
+    case MRL_RESOURCE_VCD:
       mrl_resource_videodisc_free (mrl->priv);
       break;
       
-    case PLAYER_MRL_RESOURCE_DVB:
-    case PLAYER_MRL_RESOURCE_PVR:
-    case PLAYER_MRL_RESOURCE_RADIO:
-    case PLAYER_MRL_RESOURCE_TV:
+    case MRL_RESOURCE_DVB:
+    case MRL_RESOURCE_PVR:
+    case MRL_RESOURCE_RADIO:
+    case MRL_RESOURCE_TV:
       mrl_resource_tv_free (mrl->priv);
       break;
       
-    case PLAYER_MRL_RESOURCE_FTP: 
-    case PLAYER_MRL_RESOURCE_HTTP:
-    case PLAYER_MRL_RESOURCE_MMS:
-    case PLAYER_MRL_RESOURCE_RTP:
-    case PLAYER_MRL_RESOURCE_RTSP:
-    case PLAYER_MRL_RESOURCE_SMB:
-    case PLAYER_MRL_RESOURCE_TCP:
-    case PLAYER_MRL_RESOURCE_UDP:
-    case PLAYER_MRL_RESOURCE_UNSV:
+    case MRL_RESOURCE_FTP: 
+    case MRL_RESOURCE_HTTP:
+    case MRL_RESOURCE_MMS:
+    case MRL_RESOURCE_RTP:
+    case MRL_RESOURCE_RTSP:
+    case MRL_RESOURCE_SMB:
+    case MRL_RESOURCE_TCP:
+    case MRL_RESOURCE_UDP:
+    case MRL_RESOURCE_UNSV:
       mrl_resource_network_free (mrl->priv);
       break;
       
@@ -339,7 +339,7 @@ mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 }
 
 uint32_t
-mrl_get_property (player_t *player, mrl_t *mrl, player_properties_t p)
+mrl_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
 {
   mrl_properties_t *prop;
 
@@ -360,43 +360,43 @@ mrl_get_property (player_t *player, mrl_t *mrl, player_properties_t p)
     return 0;
 
   switch (p) {
-  case PLAYER_PROPERTY_SEEKABLE:
+  case MRL_PROPERTY_SEEKABLE:
     return prop->seekable;
 
-  case PLAYER_PROPERTY_LENGTH:
+  case MRL_PROPERTY_LENGTH:
     return prop->length;
 
-  case PLAYER_PROPERTY_AUDIO_BITRATE:
+  case MRL_PROPERTY_AUDIO_BITRATE:
     return prop->audio ? prop->audio->bitrate : 0;
 
-  case PLAYER_PROPERTY_AUDIO_BITS:
+  case MRL_PROPERTY_AUDIO_BITS:
     return prop->audio ? prop->audio->bits : 0;
 
-  case PLAYER_PROPERTY_AUDIO_CHANNELS:
+  case MRL_PROPERTY_AUDIO_CHANNELS:
     return prop->audio ? prop->audio->channels : 0;
 
-  case PLAYER_PROPERTY_AUDIO_SAMPLERATE:
+  case MRL_PROPERTY_AUDIO_SAMPLERATE:
     return prop->audio ? prop->audio->samplerate : 0;
 
-  case PLAYER_PROPERTY_VIDEO_BITRATE:
+  case MRL_PROPERTY_VIDEO_BITRATE:
     return prop->video ? prop->video->bitrate : 0;
 
-  case PLAYER_PROPERTY_VIDEO_WIDTH:
+  case MRL_PROPERTY_VIDEO_WIDTH:
     return prop->video ? prop->video->width : 0;
 
-  case PLAYER_PROPERTY_VIDEO_HEIGHT:
+  case MRL_PROPERTY_VIDEO_HEIGHT:
     return prop->video ? prop->video->height : 0;
 
-  case PLAYER_PROPERTY_VIDEO_ASPECT:
+  case MRL_PROPERTY_VIDEO_ASPECT:
     return prop->video ? prop->video->aspect : 0;
 
-  case PLAYER_PROPERTY_VIDEO_CHANNELS:
+  case MRL_PROPERTY_VIDEO_CHANNELS:
     return prop->video ? prop->video->channels : 0;
 
-  case PLAYER_PROPERTY_VIDEO_STREAMS:
+  case MRL_PROPERTY_VIDEO_STREAMS:
     return prop->video ? prop->video->streams : 0;
 
-  case PLAYER_PROPERTY_VIDEO_FRAMEDURATION:
+  case MRL_PROPERTY_VIDEO_FRAMEDURATION:
     return prop->video ? prop->video->frameduration : 0;
 
   default:
@@ -505,7 +505,7 @@ mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 }
 
 char *
-mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
+mrl_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m)
 {
   mrl_metadata_t *meta;
 
@@ -526,25 +526,25 @@ mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m)
     return NULL;
 
   switch (m) {
-  case PLAYER_METADATA_TITLE:
+  case MRL_METADATA_TITLE:
     return meta->title ? strdup (meta->title) : NULL;
 
-  case PLAYER_METADATA_ARTIST:
+  case MRL_METADATA_ARTIST:
     return meta->artist ? strdup (meta->artist) : NULL;
 
-  case PLAYER_METADATA_GENRE:
+  case MRL_METADATA_GENRE:
     return meta->genre ? strdup (meta->genre) : NULL;
 
-  case PLAYER_METADATA_ALBUM:
+  case MRL_METADATA_ALBUM:
     return meta->album ? strdup (meta->album) : NULL;
 
-  case PLAYER_METADATA_YEAR:
+  case MRL_METADATA_YEAR:
     return meta->year ? strdup (meta->year) : NULL;
 
-  case PLAYER_METADATA_TRACK:
+  case MRL_METADATA_TRACK:
     return meta->track ? strdup (meta->track) : NULL;
 
-  case PLAYER_METADATA_COMMENT:
+  case MRL_METADATA_COMMENT:
     return meta->comment ? strdup (meta->comment) : NULL;
 
   default:
@@ -579,7 +579,7 @@ mrl_add_subtitle (mrl_t *mrl, char *subtitle)
 }
 
 mrl_t *
-mrl_new (player_t *player, player_mrl_resource_t res, void *args)
+mrl_new (player_t *player, mrl_resource_t res, void *args)
 {
   mrl_t *mrl = NULL;
   int support = 0;
@@ -588,7 +588,7 @@ mrl_new (player_t *player, player_mrl_resource_t res, void *args)
     return NULL;
 
   /* ensure we provide a valid resource type */
-  if (res == PLAYER_MRL_RESOURCE_UNKNOWN)
+  if (res == MRL_RESOURCE_UNKNOWN)
     return NULL;
 
   /* ensure player support this resource type */
@@ -616,20 +616,20 @@ mrl_new (player_t *player, player_mrl_resource_t res, void *args)
   return mrl;
 }
 
-player_mrl_type_t
+mrl_type_t
 mrl_get_type (mrl_t *mrl)
 {
   if (!mrl)
-    return PLAYER_MRL_TYPE_UNKNOWN;
+    return MRL_TYPE_UNKNOWN;
 
   return mrl->type;
 }
 
-player_mrl_resource_t
+mrl_resource_t
 mrl_get_resource (mrl_t *mrl)
 {
   if (!mrl)
-    return PLAYER_MRL_RESOURCE_UNKNOWN;
+    return MRL_RESOURCE_UNKNOWN;
 
   return mrl->resource;
 }

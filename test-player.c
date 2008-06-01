@@ -111,11 +111,11 @@ load_media (player_t *player)
   args = calloc (1, sizeof (mrl_resource_local_args_t));
   args->location = strdup (file);
   
-  mrl = mrl_new (player, PLAYER_MRL_RESOURCE_FILE, args);
+  mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
   if (!mrl)
     return;
   
-  player_mrl_append (player, mrl, PLAYER_ADD_MRL_QUEUE);
+  player_mrl_append (player, mrl, PLAYER_MRL_ADD_QUEUE);
   printf ("Media added to the playlist!\n");
 }
 
@@ -128,15 +128,15 @@ show_type (mrl_t *mrl)
     printf ("unknown\n");
 
   switch (mrl_get_type (mrl)) {
-  case PLAYER_MRL_TYPE_AUDIO:
+  case MRL_TYPE_AUDIO:
     printf ("audio\n");
     break;
 
-  case PLAYER_MRL_TYPE_VIDEO:
+  case MRL_TYPE_VIDEO:
     printf ("video\n");
     break;
 
-  case PLAYER_MRL_TYPE_IMAGE:
+  case MRL_TYPE_IMAGE:
     printf ("image\n");
     break;
 
@@ -149,32 +149,32 @@ static void
 show_resource (mrl_t *mrl)
 {
   const char const *resource_desc[] = {
-    [PLAYER_MRL_RESOURCE_UNKNOWN] = "unknown",
-    [PLAYER_MRL_RESOURCE_CDDA]    = "Compact Disc Digital Audio",
-    [PLAYER_MRL_RESOURCE_CDDB]    = "Compact Disc Database",
-    [PLAYER_MRL_RESOURCE_DVB]     = "Digital Video Broadcasting",
-    [PLAYER_MRL_RESOURCE_DVD]     = "Digital Versatile Disc",
-    [PLAYER_MRL_RESOURCE_DVDNAV]  = "Digital Versatile Disc with menu navigation",
-    [PLAYER_MRL_RESOURCE_FIFO]    = "FIFO",
-    [PLAYER_MRL_RESOURCE_FILE]    = "file",
-    [PLAYER_MRL_RESOURCE_FTP]     = "File Transfer Protocol",
-    [PLAYER_MRL_RESOURCE_HTTP]    = "Hypertext Transfer Protocol",
-    [PLAYER_MRL_RESOURCE_MMS]     = "Microsoft Media Services",
-    [PLAYER_MRL_RESOURCE_RADIO]   = "radio analog",
-    [PLAYER_MRL_RESOURCE_RTP]     = "Real-time Transport Protocol",
-    [PLAYER_MRL_RESOURCE_RTSP]    = "Real Time Streaming Protocol",
-    [PLAYER_MRL_RESOURCE_SMB]     = "Samba",
-    [PLAYER_MRL_RESOURCE_STDIN]   = "standard input",
-    [PLAYER_MRL_RESOURCE_TCP]     = "Transmission Control Protocol",
-    [PLAYER_MRL_RESOURCE_TV]      = "Television analog",
-    [PLAYER_MRL_RESOURCE_UDP]     = "User Datagram Protocol",
-    [PLAYER_MRL_RESOURCE_VCD]     = "Video Compact Disc",
+    [MRL_RESOURCE_UNKNOWN] = "unknown",
+    [MRL_RESOURCE_CDDA]    = "Compact Disc Digital Audio",
+    [MRL_RESOURCE_CDDB]    = "Compact Disc Database",
+    [MRL_RESOURCE_DVB]     = "Digital Video Broadcasting",
+    [MRL_RESOURCE_DVD]     = "Digital Versatile Disc",
+    [MRL_RESOURCE_DVDNAV]  = "Digital Versatile Disc with menu navigation",
+    [MRL_RESOURCE_FIFO]    = "FIFO",
+    [MRL_RESOURCE_FILE]    = "file",
+    [MRL_RESOURCE_FTP]     = "File Transfer Protocol",
+    [MRL_RESOURCE_HTTP]    = "Hypertext Transfer Protocol",
+    [MRL_RESOURCE_MMS]     = "Microsoft Media Services",
+    [MRL_RESOURCE_RADIO]   = "radio analog",
+    [MRL_RESOURCE_RTP]     = "Real-time Transport Protocol",
+    [MRL_RESOURCE_RTSP]    = "Real Time Streaming Protocol",
+    [MRL_RESOURCE_SMB]     = "Samba",
+    [MRL_RESOURCE_STDIN]   = "standard input",
+    [MRL_RESOURCE_TCP]     = "Transmission Control Protocol",
+    [MRL_RESOURCE_TV]      = "Television analog",
+    [MRL_RESOURCE_UDP]     = "User Datagram Protocol",
+    [MRL_RESOURCE_VCD]     = "Video Compact Disc",
   };
   const int resource_size = sizeof (resource_desc) / sizeof (resource_desc[0]);
-  player_mrl_resource_t resource = mrl_get_resource (mrl);
+  mrl_resource_t resource = mrl_get_resource (mrl);
 
   if (resource > resource_size || resource < 0)
-    resource = PLAYER_MRL_RESOURCE_UNKNOWN;
+    resource = MRL_RESOURCE_UNKNOWN;
 
   printf (" Resource: %s\n", resource_desc[resource]);
 }
@@ -197,9 +197,9 @@ show_info (player_t *player, mrl_t *mrl)
 
   size = mrl_get_size (player, mrl);
   printf (" Size: %.2f MB\n", size / 1024.0 / 1024.0);
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_SEEKABLE);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_SEEKABLE);
   printf (" Seekable: %i\n", prop);
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_LENGTH);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_LENGTH);
   printf (" Length: %.2f sec\n", (float) prop / 1000.0);
 
   codec = mrl_get_video_codec (player, mrl);
@@ -208,31 +208,31 @@ show_info (player_t *player, mrl_t *mrl)
     free (codec);
   }
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_VIDEO_BITRATE);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_BITRATE);
   if (prop)
     printf (" Video Bitrate: %i kbps\n", prop / 1000);
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_VIDEO_WIDTH);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_WIDTH);
   if (prop)
     printf (" Video Width: %i\n", prop);
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_VIDEO_HEIGHT);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_HEIGHT);
   if (prop)
     printf (" Video Height: %i\n", prop);
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_VIDEO_ASPECT);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_ASPECT);
   if (prop)
     printf (" Video Aspect: %.2f\n", prop / 10000.0);
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_VIDEO_CHANNELS);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_CHANNELS);
   if (prop)
     printf (" Video Channels: %i\n", prop);
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_VIDEO_STREAMS);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_STREAMS);
   if (prop)
     printf (" Video Streams: %i\n", prop);
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_VIDEO_FRAMEDURATION);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_FRAMEDURATION);
   if (prop)
     printf (" Video Framerate: %.2f\n", 90000.0 / prop);
 
@@ -242,59 +242,59 @@ show_info (player_t *player, mrl_t *mrl)
     free (codec);
   }
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_AUDIO_BITRATE);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_AUDIO_BITRATE);
   if (prop)
     printf (" Audio Bitrate: %i kbps\n", prop / 1000);
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_AUDIO_BITS);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_AUDIO_BITS);
   if (prop)
     printf (" Audio Bits: %i bps\n", prop);
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_AUDIO_CHANNELS);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_AUDIO_CHANNELS);
   if (prop)
     printf (" Audio Channels: %i\n", prop);
 
-  prop = mrl_get_property (player, mrl, PLAYER_PROPERTY_AUDIO_SAMPLERATE);
+  prop = mrl_get_property (player, mrl, MRL_PROPERTY_AUDIO_SAMPLERATE);
   if (prop)
     printf (" Audio Sample Rate: %i Hz\n", prop);
 
-  meta = mrl_get_metadata (player, mrl, PLAYER_METADATA_TITLE);
+  meta = mrl_get_metadata (player, mrl, MRL_METADATA_TITLE);
   if (meta) {
     printf (" Meta Title: %s\n", meta);
     free (meta);
   }
 
-  meta = mrl_get_metadata (player, mrl, PLAYER_METADATA_ARTIST);
+  meta = mrl_get_metadata (player, mrl, MRL_METADATA_ARTIST);
   if (meta) {
     printf (" Meta Artist: %s\n", meta);
     free (meta);
   }
 
-  meta = mrl_get_metadata (player, mrl, PLAYER_METADATA_GENRE);
+  meta = mrl_get_metadata (player, mrl, MRL_METADATA_GENRE);
   if (meta) {
     printf (" Meta Genre: %s\n", meta);
     free (meta);
   }
 
-  meta = mrl_get_metadata (player, mrl, PLAYER_METADATA_ALBUM);
+  meta = mrl_get_metadata (player, mrl, MRL_METADATA_ALBUM);
   if (meta) {
     printf (" Meta Album: %s\n", meta);
     free (meta);
   }
 
-  meta = mrl_get_metadata (player, mrl, PLAYER_METADATA_YEAR);
+  meta = mrl_get_metadata (player, mrl, MRL_METADATA_YEAR);
   if (meta) {
     printf (" Meta Year: %s\n", meta);
     free (meta);
   }
 
-  meta = mrl_get_metadata (player, mrl, PLAYER_METADATA_TRACK);
+  meta = mrl_get_metadata (player, mrl, MRL_METADATA_TRACK);
   if (meta) {
     printf (" Meta Track: %s\n", meta);
     free (meta);
   }
 
-  meta = mrl_get_metadata (player, mrl, PLAYER_METADATA_COMMENT);
+  meta = mrl_get_metadata (player, mrl, MRL_METADATA_COMMENT);
   if (meta) {
     printf (" Meta Comment: %s\n", meta);
     free (meta);
@@ -411,11 +411,11 @@ main (int argc, char **argv)
       args = calloc (1, sizeof (mrl_resource_local_args_t));
       args->location = strdup (argv[optind]);
       
-      mrl = mrl_new (player, PLAYER_MRL_RESOURCE_FILE, args);
+      mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
       if (!mrl)
         continue;
       printf (" > %s added to the playlist!\n", argv[optind]);
-      player_mrl_append (player, mrl, PLAYER_ADD_MRL_QUEUE);
+      player_mrl_append (player, mrl, PLAYER_MRL_ADD_QUEUE);
     } while (++optind < argc);
     putchar ('\n');
   }

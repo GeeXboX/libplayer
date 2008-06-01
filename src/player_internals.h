@@ -87,8 +87,8 @@ typedef struct mrl_properties_s {
 
 struct mrl_s {
   char **subs;
-  player_mrl_type_t type;
-  player_mrl_resource_t resource;
+  mrl_type_t type;
+  mrl_resource_t resource;
   mrl_properties_t *prop;
   mrl_metadata_t *meta;
   void *priv; /* private data, depending on resource type */
@@ -102,7 +102,7 @@ typedef struct player_funcs_s {
   init_status_t (* init) (player_t *player);
   void (* uninit) (player_t *player);
   void (* set_verbosity) (player_t *player, player_verbosity_level_t level);
-  int (* mrl_supported_res) (player_t *player, player_mrl_resource_t res);
+  int (* mrl_supported_res) (player_t *player, mrl_resource_t res);
   void (* mrl_retrieve_props) (player_t *player, mrl_t *mrl);
   void (* mrl_retrieve_meta) (player_t *player, mrl_t *mrl);
   playback_status_t (* pb_start) (player_t *player);

@@ -222,7 +222,7 @@ gstreamer_player_playback_start (player_t *player)
   
   switch (player->mrl->resource)
   {
-  case PLAYER_MRL_RESOURCE_FILE:
+  case MRL_RESOURCE_FILE:
   {
     /* check if given MRL is a relative path */
 #if 0

@@ -68,13 +68,13 @@ do_regression_tests (player_t *player, char *name)
   args = calloc (1, sizeof (mrl_resource_local_args_t));
   args->location = strdup (name);
     
-  mrl = mrl_new (player, PLAYER_MRL_RESOURCE_FILE, args);
+  mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
   if (!mrl)
     return;
   
-  player_mrl_append (player, mrl, PLAYER_ADD_MRL_NOW);
-  mrl_get_property (player, NULL, PLAYER_PROPERTY_SEEKABLE);
-  mrl_get_metadata (player, NULL, PLAYER_METADATA_TITLE);
+  player_mrl_append (player, mrl, PLAYER_MRL_ADD_NOW);
+  mrl_get_property (player, NULL, MRL_PROPERTY_SEEKABLE);
+  mrl_get_metadata (player, NULL, MRL_METADATA_TITLE);
   printf ("Current volume: %d\n", player_audio_volume_get (player));
   player_audio_volume_set (player, 85);
   player_playback_start (player);
