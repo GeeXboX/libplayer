@@ -217,6 +217,14 @@ typedef enum player_properties {
   PLAYER_PROPERTY_VIDEO_FRAMEDURATION,
 } player_properties_t;
 
+typedef enum player_video_aspect {
+  PLAYER_VIDEO_ASPECT_BRIGHTNESS,
+  PLAYER_VIDEO_ASPECT_CONTRAST,
+  PLAYER_VIDEO_ASPECT_GAMMA,
+  PLAYER_VIDEO_ASPECT_HUE,
+  PLAYER_VIDEO_ASPECT_SATURATION,
+} player_video_aspect_t;
+
 /* player init/uninit prototypes */
 player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
                        player_verbosity_level_t verbosity,
