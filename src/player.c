@@ -423,7 +423,7 @@ player_playback_dvdnav (player_t *player, player_dvdnav_t value)
 
 /* get player playback properties */
 int
-player_get_volume (player_t *player)
+player_audio_volume_get (player_t *player)
 {
   int res = -1;
 
@@ -438,7 +438,7 @@ player_get_volume (player_t *player)
 }
 
 player_mute_t
-player_get_mute (player_t *player)
+player_audio_mute_get (player_t *player)
 {
   player_mute_t res = PLAYER_MUTE_UNKNOWN;
 
@@ -487,7 +487,7 @@ player_set_shuffle (player_t *player, int value)
 }
 
 void
-player_set_volume (player_t *player, int value)
+player_audio_volume_set (player_t *player, int value)
 {
   if (!player)
     return;
@@ -498,7 +498,7 @@ player_set_volume (player_t *player, int value)
 }
 
 void
-player_set_mute (player_t *player, player_mute_t value)
+player_audio_mute_set (player_t *player, player_mute_t value)
 {
   if (!player)
     return;
@@ -509,7 +509,7 @@ player_set_mute (player_t *player, player_mute_t value)
 }
 
 void
-player_set_sub_delay (player_t *player, float value)
+player_subtitle_set_delay (player_t *player, float value)
 {
   if (!player)
     return;

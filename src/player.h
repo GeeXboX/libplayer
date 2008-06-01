@@ -261,17 +261,12 @@ void player_mrl_previous (player_t *player);
 void player_mrl_next (player_t *player);
 
 /* get player playback properties */
-int player_get_volume (player_t *player);
-player_mute_t player_get_mute (player_t *player);
 int player_get_time_pos (player_t *player);
 
 /* tune player playback properties */
 void player_set_loop (player_t *player, int value);
 void player_set_shuffle (player_t *player, int value);
 void player_set_framedrop (player_t *player, int value);
-void player_set_volume (player_t *player, int value);
-void player_set_mute (player_t *player, player_mute_t value);
-void player_set_sub_delay (player_t *player, float value);
 
 /* player controls */
 void player_playback_start (player_t *player);
@@ -280,9 +275,12 @@ void player_playback_pause (player_t *player);
 void player_playback_seek (player_t *player, int value);
 void player_playback_seek_chapter (player_t *player, int value, int absolute);
 void player_playback_speed (player_t *player, int value);
-void player_playback_dvdnav (player_t *player, player_dvdnav_t value);
 
 /* audio controls */
+int player_audio_volume_get (player_t *player);
+void player_audio_volume_set (player_t *player, int value);
+player_mute_t player_audio_mute_get (player_t *player);
+void player_audio_mute_set (player_t *player, player_mute_t value);
 void player_audio_set_delay (player_t *player, int value, int absolute);
 void player_audio_select (player_t *player, int audio_id);
 void player_audio_prev (player_t *player);
@@ -296,6 +294,7 @@ void player_video_set_panscan (player_t *player, int8_t value, int absolute);
 void player_video_set_aspect_ratio (player_t *player, float value);
 
 /* subtitles controls */
+void player_subtitle_set_delay (player_t *player, float value);
 void player_subtitle_set_alignment (player_t *player,
                                     player_sub_alignment_t a);
 void player_subtitle_set_position (player_t *player, int value);
@@ -306,6 +305,7 @@ void player_subtitle_prev (player_t *player);
 void player_subtitle_next (player_t *player);
 
 /* DVD controls */
+void player_dvd_nav (player_t *player, player_dvdnav_t value);
 void player_dvd_angle_select (player_t *player, int angle);
 void player_dvd_angle_prev (player_t *player);
 void player_dvd_angle_next (player_t *player);

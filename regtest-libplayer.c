@@ -75,18 +75,18 @@ do_regression_tests (player_t *player, char *name)
   player_mrl_append (player, mrl, PLAYER_ADD_MRL_NOW);
   mrl_get_property (player, NULL, PLAYER_PROPERTY_SEEKABLE);
   mrl_get_metadata (player, NULL, PLAYER_METADATA_TITLE);
-  printf ("Current volume: %d\n", player_get_volume (player));
-  player_set_volume (player, 85);
+  printf ("Current volume: %d\n", player_audio_volume_get (player));
+  player_audio_volume_set (player, 85);
   player_playback_start (player);
   player_playback_seek (player, 2);  /* 2s forward */
   player_playback_seek (player, -1); /* 1s backward */
-  player_mute_t mute = player_get_mute (player);
+  player_mute_t mute = player_audio_mute_get (player);
   printf ("Current mute: %s\n", mute == PLAYER_MUTE_ON
                                 ? "on" : (mute == PLAYER_MUTE_OFF
                                           ? "off" : "unknown"));
   printf ("Current time position: %d [ms]\n", player_get_time_pos (player));
-  player_set_mute (player, PLAYER_MUTE_ON);
-  player_set_sub_delay (player, 1.5);
+  player_audio_mute_set (player, PLAYER_MUTE_ON);
+  player_subtitle_set_delay (player, 1.5);
   player_playback_pause (player);
   player_playback_stop (player);
   player_mrl_previous (player);

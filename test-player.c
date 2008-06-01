@@ -420,7 +420,7 @@ main (int argc, char **argv)
     putchar ('\n');
   }
 
-  player_set_volume (player, volume);
+  player_audio_volume_set (player, volume);
   printf (TESTPLAYER_COMMANDS);
 
   /* main loop */
@@ -433,7 +433,7 @@ main (int argc, char **argv)
     case '0':   /* increase volume */
       if (++volume > 100)
         volume = 100;
-      player_set_volume (player, volume);
+      player_audio_volume_set (player, volume);
       printf ("VOLUME %i\n", volume);
       break;
     case '1':   /* 5s backward */
@@ -447,7 +447,7 @@ main (int argc, char **argv)
     case '9':   /* decrease volume */
       if (--volume < 0)
         volume = 0;
-      player_set_volume (player, volume);
+      player_audio_volume_set (player, volume);
       printf ("VOLUME %i\n", volume);
       break;
     case 'b':   /* start the previous stream in the playlist */
@@ -463,12 +463,12 @@ main (int argc, char **argv)
       load_media (player);
       break;
     case 'm':   /* set/unset mute */
-      if (player_get_mute (player) != PLAYER_MUTE_ON) {
-        player_set_mute (player, PLAYER_MUTE_ON);
+      if (player_audio_mute_get (player) != PLAYER_MUTE_ON) {
+        player_audio_mute_set (player, PLAYER_MUTE_ON);
         printf ("MUTE\n");
       }
       else {
-        player_set_mute (player, PLAYER_MUTE_OFF);
+        player_audio_mute_set (player, PLAYER_MUTE_OFF);
         printf ("UNMUTE\n");
       }
       break;
