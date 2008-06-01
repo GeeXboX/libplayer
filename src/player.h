@@ -36,17 +36,14 @@ extern "C" {
 #define LIBPLAYER_VERSION_MICRO 1
 #define LIBPLAYER_VERSION "0.0.1"
 
-/* opaque data type */
-typedef struct player_s player_t;
-typedef struct mrl_s mrl_t;
+/***************************************************************************/
+/*                                                                         */
+/* Player (Un)Initialization                                               */
+/*  Mandatory for all operations below                                     */
+/*                                                                         */
+/***************************************************************************/
 
-typedef enum {
-  PLAYER_MSG_NONE,          /* no error messages */
-  PLAYER_MSG_INFO,          /* working operations */
-  PLAYER_MSG_WARNING,       /* harmless failures */
-  PLAYER_MSG_ERROR,         /* may result in hazardous behavior */
-  PLAYER_MSG_CRITICAL,      /* prevents lib from working */
-} player_verbosity_level_t;
+typedef struct player_s player_t;
 
 typedef enum player_type {
   PLAYER_TYPE_XINE,
@@ -72,6 +69,37 @@ typedef enum player_ao {
   PLAYER_AO_ALSA,
   PLAYER_AO_OSS
 } player_ao_t;
+
+typedef enum player_event {
+  PLAYER_EVENT_UNKNOWN,
+  PLAYER_EVENT_PLAYBACK_START,
+  PLAYER_EVENT_PLAYBACK_STOP,
+  PLAYER_EVENT_PLAYBACK_FINISHED,
+  PLAYER_EVENT_MRL_UPDATED
+} player_event_t;
+
+typedef enum {
+  PLAYER_MSG_NONE,          /* no error messages */
+  PLAYER_MSG_INFO,          /* working operations */
+  PLAYER_MSG_WARNING,       /* harmless failures */
+  PLAYER_MSG_ERROR,         /* may result in hazardous behavior */
+  PLAYER_MSG_CRITICAL,      /* prevents lib from working */
+} player_verbosity_level_t;
+
+player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
+                       player_verbosity_level_t verbosity,
+                       int event_cb (player_event_t e, void *data));
+void player_uninit (player_t *player);
+void player_set_verbosity (player_t *player, player_verbosity_level_t level);
+
+/***************************************************************************/
+/*                                                                         */
+/* Media Resource Locater (MRL) Helpers                                    */
+/*  MRLs can have multiple types and are used to define a stream           */
+/*                                                                         */
+/***************************************************************************/
+
+typedef struct mrl_s mrl_t;
 
 typedef enum player_mrl_type {
   PLAYER_MRL_TYPE_UNKNOWN,
@@ -163,34 +191,6 @@ typedef struct mrl_resource_network_args_s {
   char *user_agent;
 } mrl_resource_network_args_t;
 
-typedef enum player_add_mrl {
-  PLAYER_ADD_MRL_NOW,
-  PLAYER_ADD_MRL_QUEUE
-} player_add_mrl_t;
-
-typedef enum player_event {
-  PLAYER_EVENT_UNKNOWN,
-  PLAYER_EVENT_PLAYBACK_START,
-  PLAYER_EVENT_PLAYBACK_STOP,
-  PLAYER_EVENT_PLAYBACK_FINISHED,
-  PLAYER_EVENT_MRL_UPDATED
-} player_event_t;
-
-typedef enum player_mute {
-  PLAYER_MUTE_UNKNOWN,
-  PLAYER_MUTE_ON,
-  PLAYER_MUTE_OFF
-} player_mute_t;
-
-typedef enum player_dvdnav {
-  PLAYER_DVDNAV_UP,
-  PLAYER_DVDNAV_DOWN,
-  PLAYER_DVDNAV_RIGHT,
-  PLAYER_DVDNAV_LEFT,
-  PLAYER_DVDNAV_MENU,
-  PLAYER_DVDNAV_SELECT
-} player_dvdnav_t;
-
 typedef enum player_metadata {
   PLAYER_METADATA_TITLE,
   PLAYER_METADATA_ARTIST,
@@ -217,28 +217,6 @@ typedef enum player_properties {
   PLAYER_PROPERTY_VIDEO_FRAMEDURATION,
 } player_properties_t;
 
-typedef enum player_video_aspect {
-  PLAYER_VIDEO_ASPECT_BRIGHTNESS,
-  PLAYER_VIDEO_ASPECT_CONTRAST,
-  PLAYER_VIDEO_ASPECT_GAMMA,
-  PLAYER_VIDEO_ASPECT_HUE,
-  PLAYER_VIDEO_ASPECT_SATURATION,
-} player_video_aspect_t;
-
-typedef enum player_sub_alignment {
-  PLAYER_SUB_ALIGNMENT_TOP,
-  PLAYER_SUB_ALIGNMENT_CENTER,
-  PLAYER_SUB_ALIGNMENT_BOTTOM,
-} player_sub_alignment_t;
-
-/* player init/uninit prototypes */
-player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
-                       player_verbosity_level_t verbosity,
-                       int event_cb (player_event_t e, void *data));
-void player_uninit (player_t *player);
-void player_set_verbosity (player_t *player, player_verbosity_level_t level);
-
-/* MRL helpers */
 mrl_t *mrl_new (player_t *player, player_mrl_resource_t res, void *args);
 void mrl_add_subtitle (mrl_t *mrl, char *subtitle);
 void mrl_free (mrl_t *mrl, int recursive);
@@ -247,10 +225,21 @@ player_mrl_type_t mrl_get_type (mrl_t *mrl);
 player_mrl_resource_t mrl_get_resource (mrl_t *mrl);
 char *mrl_get_metadata (player_t *player, mrl_t *mrl, player_metadata_t m);
 uint32_t mrl_get_property (player_t *player,
-                                  mrl_t *mrl, player_properties_t p);
+                           mrl_t *mrl, player_properties_t p);
 char *mrl_get_audio_codec (player_t *player, mrl_t *mrl);
 char *mrl_get_video_codec (player_t *player, mrl_t *mrl);
 off_t mrl_get_size (player_t *player, mrl_t *mrl);
+
+/***************************************************************************/
+/*                                                                         */
+/* Player to MRL connection                                                */
+/*                                                                         */
+/***************************************************************************/
+
+typedef enum player_add_mrl {
+  PLAYER_ADD_MRL_NOW,
+  PLAYER_ADD_MRL_QUEUE
+} player_add_mrl_t;
 
 mrl_t *player_mrl_get_current (player_t *player);
 void player_mrl_set (player_t *player, mrl_t *mrl);
@@ -260,15 +249,23 @@ void player_mrl_remove_all (player_t *player);
 void player_mrl_previous (player_t *player);
 void player_mrl_next (player_t *player);
 
-/* get player playback properties */
-int player_get_time_pos (player_t *player);
+/***************************************************************************/
+/*                                                                         */
+/* Player tuning & properties                                              */
+/*                                                                         */
+/***************************************************************************/
 
-/* tune player playback properties */
+int player_get_time_pos (player_t *player);
 void player_set_loop (player_t *player, int value);
 void player_set_shuffle (player_t *player, int value);
 void player_set_framedrop (player_t *player, int value);
 
-/* player controls */
+/***************************************************************************/
+/*                                                                         */
+/* Playback related controls                                               */
+/*                                                                         */
+/***************************************************************************/
+
 void player_playback_start (player_t *player);
 void player_playback_stop (player_t *player);
 void player_playback_pause (player_t *player);
@@ -276,7 +273,18 @@ void player_playback_seek (player_t *player, int value);
 void player_playback_seek_chapter (player_t *player, int value, int absolute);
 void player_playback_speed (player_t *player, int value);
 
-/* audio controls */
+/***************************************************************************/
+/*                                                                         */
+/* Audio related controls                                                  */
+/*                                                                         */
+/***************************************************************************/
+
+typedef enum player_mute {
+  PLAYER_MUTE_UNKNOWN,
+  PLAYER_MUTE_ON,
+  PLAYER_MUTE_OFF
+} player_mute_t;
+
 int player_audio_volume_get (player_t *player);
 void player_audio_volume_set (player_t *player, int value);
 player_mute_t player_audio_mute_get (player_t *player);
@@ -286,14 +294,38 @@ void player_audio_select (player_t *player, int audio_id);
 void player_audio_prev (player_t *player);
 void player_audio_next (player_t *player);
 
-/* video controls */
+/***************************************************************************/
+/*                                                                         */
+/* Video related controls                                                  */
+/*                                                                         */
+/***************************************************************************/
+
+typedef enum player_video_aspect {
+  PLAYER_VIDEO_ASPECT_BRIGHTNESS,
+  PLAYER_VIDEO_ASPECT_CONTRAST,
+  PLAYER_VIDEO_ASPECT_GAMMA,
+  PLAYER_VIDEO_ASPECT_HUE,
+  PLAYER_VIDEO_ASPECT_SATURATION,
+} player_video_aspect_t;
+
 void player_video_set_fullscreen (player_t *player, int value);
 void player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
                               int8_t value, int absolute);
 void player_video_set_panscan (player_t *player, int8_t value, int absolute);
 void player_video_set_aspect_ratio (player_t *player, float value);
 
-/* subtitles controls */
+/***************************************************************************/
+/*                                                                         */
+/* Subtitles related controls                                              */
+/*                                                                         */
+/***************************************************************************/
+
+typedef enum player_sub_alignment {
+  PLAYER_SUB_ALIGNMENT_TOP,
+  PLAYER_SUB_ALIGNMENT_CENTER,
+  PLAYER_SUB_ALIGNMENT_BOTTOM,
+} player_sub_alignment_t;
+
 void player_subtitle_set_delay (player_t *player, float value);
 void player_subtitle_set_alignment (player_t *player,
                                     player_sub_alignment_t a);
@@ -304,7 +336,21 @@ void player_subtitle_select (player_t *player, int sub_id);
 void player_subtitle_prev (player_t *player);
 void player_subtitle_next (player_t *player);
 
-/* DVD controls */
+/***************************************************************************/
+/*                                                                         */
+/* DVD specific controls                                                   */
+/*                                                                         */
+/***************************************************************************/
+
+typedef enum player_dvdnav {
+  PLAYER_DVDNAV_UP,
+  PLAYER_DVDNAV_DOWN,
+  PLAYER_DVDNAV_RIGHT,
+  PLAYER_DVDNAV_LEFT,
+  PLAYER_DVDNAV_MENU,
+  PLAYER_DVDNAV_SELECT
+} player_dvdnav_t;
+
 void player_dvd_nav (player_t *player, player_dvdnav_t value);
 void player_dvd_angle_select (player_t *player, int angle);
 void player_dvd_angle_prev (player_t *player);
@@ -313,12 +359,22 @@ void player_dvd_title_select (player_t *player, int title);
 void player_dvd_title_prev (player_t *player);
 void player_dvd_title_next (player_t *player);
 
-/* TV/DVB controls */
+/***************************************************************************/
+/*                                                                         */
+/* TV/DVB specific controls                                                */
+/*                                                                         */
+/***************************************************************************/
+
 void player_tv_channel_select (player_t *player, int channel);
 void player_tv_channel_prev (player_t *player);
 void player_tv_channel_next (player_t *player);
 
-/* Radio controls */
+/***************************************************************************/
+/*                                                                         */
+/* Radio specific controls                                                 */
+/*                                                                         */
+/***************************************************************************/
+
 void player_radio_channel_select (player_t *player, int channel);
 void player_radio_channel_prev (player_t *player);
 void player_radio_channel_next (player_t *player);
