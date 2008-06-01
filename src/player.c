@@ -44,6 +44,12 @@
 
 #define MODULE_NAME "player"
 
+/***************************************************************************/
+/*                                                                         */
+/* Player (Un)Initialization                                               */
+/*                                                                         */
+/***************************************************************************/
+
 player_t *
 player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
              player_verbosity_level_t verbosity,
@@ -156,6 +162,12 @@ player_set_verbosity (player_t *player, player_verbosity_level_t level)
     player->funcs->set_verbosity (player, level);
 }
 
+/***************************************************************************/
+/*                                                                         */
+/* Player to MRL connection                                                */
+/*                                                                         */
+/***************************************************************************/
+
 mrl_t *
 player_mrl_get_current (player_t *player)
 {
@@ -163,6 +175,24 @@ player_mrl_get_current (player_t *player)
     return NULL;
 
   return player->mrl;
+}
+
+void
+player_mrl_set (player_t *player, mrl_t *mrl)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player || !mrl)
+    return;
+
+  if (player->mrl) {
+    player_playback_stop (player);
+    mrl->prev = player->mrl->prev;
+    mrl->next = player->mrl->next;
+    mrl_free (player->mrl, 0);
+  }
+
+  player->mrl = mrl;
 }
 
 void
@@ -194,24 +224,6 @@ player_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when)
     player->mrl = mrl;
     player_playback_start (player);
   }
-}
-
-void
-player_mrl_set (player_t *player, mrl_t *mrl)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
-
-  if (!player || !mrl)
-    return;
-
-  if (player->mrl) {
-    player_playback_stop (player);
-    mrl->prev = player->mrl->prev;
-    mrl->next = player->mrl->next;
-    mrl_free (player->mrl, 0);
-  }
-
-  player->mrl = mrl;
 }
 
 void
@@ -312,6 +324,58 @@ player_mrl_next (player_t *player)
   player_playback_start (player);
 }
 
+/***************************************************************************/
+/*                                                                         */
+/* Player tuning & properties                                              */
+/*                                                                         */
+/***************************************************************************/
+
+int
+player_get_time_pos (player_t *player)
+{
+  int res = -1;
+
+  if (!player)
+    return -1;
+
+  /* player specific get_time_pos() */
+  if (player->funcs->get_time_pos)
+    res = player->funcs->get_time_pos (player);
+
+  return res;
+}
+
+void
+player_set_loop (player_t *player, int value)
+{
+  if (!player)
+    return;
+
+  player->loop = value;
+}
+
+void
+player_set_shuffle (player_t *player, int value)
+{
+  if (!player)
+    return;
+
+  player->shuffle = value;
+}
+
+void
+player_set_framedrop (player_t *player, int value)
+{
+  if (!player)
+    return;
+}
+
+/***************************************************************************/
+/*                                                                         */
+/* Playback related controls                                               */
+/*                                                                         */
+/***************************************************************************/
+
 void
 player_playback_start (player_t *player)
 {
@@ -411,17 +475,25 @@ player_playback_seek (player_t *player, int value)
 }
 
 void
-player_playback_dvdnav (player_t *player, player_dvdnav_t value)
+player_playback_seek_chapter (player_t *player, int value, int absolute)
 {
   if (!player)
     return;
-
-  /* player specific playback_dvdnav() */
-  if (player->funcs->pb_dvdnav)
-    player->funcs->pb_dvdnav (player, value);
 }
 
-/* get player playback properties */
+void
+player_playback_speed (player_t *player, int value)
+{
+  if (!player)
+    return;
+}
+
+/***************************************************************************/
+/*                                                                         */
+/* Audio related controls                                                  */
+/*                                                                         */
+/***************************************************************************/
+
 int
 player_audio_volume_get (player_t *player)
 {
@@ -435,6 +507,17 @@ player_audio_volume_get (player_t *player)
     res = player->funcs->get_volume (player);
 
   return res;
+}
+
+void
+player_audio_volume_set (player_t *player, int value)
+{
+  if (!player)
+    return;
+
+  /* player specific set_volume() */
+  if (player->funcs->set_volume)
+    player->funcs->set_volume (player, value);
 }
 
 player_mute_t
@@ -452,51 +535,6 @@ player_audio_mute_get (player_t *player)
   return res;
 }
 
-int
-player_get_time_pos (player_t *player)
-{
-  int res = -1;
-
-  if (!player)
-    return -1;
-
-  /* player specific get_time_pos() */
-  if (player->funcs->get_time_pos)
-    res = player->funcs->get_time_pos (player);
-
-  return res;
-}
-
-/* tune player playback properties */
-void
-player_set_loop (player_t *player, int value)
-{
-  if (!player)
-    return;
-
-  player->loop = value;
-}
-
-void
-player_set_shuffle (player_t *player, int value)
-{
-  if (!player)
-    return;
-
-  player->shuffle = value;
-}
-
-void
-player_audio_volume_set (player_t *player, int value)
-{
-  if (!player)
-    return;
-
-  /* player specific set_volume() */
-  if (player->funcs->set_volume)
-    player->funcs->set_volume (player, value);
-}
-
 void
 player_audio_mute_set (player_t *player, player_mute_t value)
 {
@@ -509,6 +547,75 @@ player_audio_mute_set (player_t *player, player_mute_t value)
 }
 
 void
+player_audio_set_delay (player_t *player, int value, int absolute)
+{
+  if (!player)
+    return;
+}
+      
+void
+player_audio_select (player_t *player, int audio_id)
+{
+  if (!player)
+    return;
+}
+
+void
+player_audio_prev (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+void
+player_audio_next (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+/***************************************************************************/
+/*                                                                         */
+/* Video related controls                                                  */
+/*                                                                         */
+/***************************************************************************/
+
+void
+player_video_set_fullscreen (player_t *player, int value)
+{
+  if (!player)
+    return;
+}
+
+void
+player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
+                         int8_t value, int absolute)
+{
+  if (!player)
+    return;
+}
+
+void
+player_video_set_panscan (player_t *player, int8_t value, int absolute)
+{
+  if (!player)
+    return;
+}
+
+void
+player_video_set_aspect_ratio (player_t *player, float value)
+{
+  if (!player)
+    return;
+}
+
+/***************************************************************************/
+/*                                                                         */
+/* Subtitles related controls                                              */
+/*                                                                         */
+/***************************************************************************/
+
+void
 player_subtitle_set_delay (player_t *player, float value)
 {
   if (!player)
@@ -517,4 +624,167 @@ player_subtitle_set_delay (player_t *player, float value)
   /* player specific set_sub_delay() */
   if (player->funcs->set_sub_delay)
     player->funcs->set_sub_delay (player, value);
+}
+
+void
+player_subtitle_set_alignment (player_t *player,
+                               player_sub_alignment_t a)
+{
+  if (!player)
+    return;
+}
+
+void
+player_subtitle_set_position (player_t *player, int value)
+{
+  if (!player)
+    return;
+}
+
+void
+player_subtitle_set_visibility (player_t *player, int value)
+{
+  if (!player)
+    return;
+}
+
+void
+player_subtitle_scale (player_t *player, int value, int absolute)
+{
+  if (!player)
+    return;
+}
+
+void
+player_subtitle_select (player_t *player, int sub_id)
+{
+  if (!player)
+    return;
+}
+
+void
+player_subtitle_prev (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+void
+player_subtitle_next (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+/***************************************************************************/
+/*                                                                         */
+/* DVD specific controls                                                   */
+/*                                                                         */
+/***************************************************************************/
+
+void
+player_dvd_nav (player_t *player, player_dvdnav_t value)
+{
+  if (!player)
+    return;
+
+  /* player specific playback_dvdnav() */
+  if (player->funcs->pb_dvdnav)
+    player->funcs->pb_dvdnav (player, value);
+}
+
+void
+player_dvd_angle_select (player_t *player, int angle)
+{
+  if (!player)
+    return;
+}
+
+void
+player_dvd_angle_prev (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+void
+player_dvd_angle_next (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+void
+player_dvd_title_select (player_t *player, int title)
+{
+  if (!player)
+    return;
+}
+
+void
+player_dvd_title_prev (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+void
+player_dvd_title_next (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+/***************************************************************************/
+/*                                                                         */
+/* TV/DVB specific controls                                                */
+/*                                                                         */
+/***************************************************************************/
+
+void
+player_tv_channel_select (player_t *player, int channel)
+{
+  if (!player)
+    return;
+}
+
+void
+player_tv_channel_prev (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+void
+player_tv_channel_next (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+/***************************************************************************/
+/*                                                                         */
+/* Radio specific controls                                                 */
+/*                                                                         */
+/***************************************************************************/
+
+void
+player_radio_channel_select (player_t *player, int channel)
+{
+  if (!player)
+    return;
+}
+
+void
+player_radio_channel_prev (player_t *player)
+{
+  if (!player)
+    return;
+}
+
+void
+player_radio_channel_next (player_t *player)
+{
+  if (!player)
+    return;
 }
