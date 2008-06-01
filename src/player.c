@@ -157,7 +157,7 @@ player_set_verbosity (player_t *player, player_verbosity_level_t level)
 }
 
 mrl_t *
-player_get_current_mrl (player_t *player)
+player_mrl_get_current (player_t *player)
 {
   if (!player)
     return NULL;
