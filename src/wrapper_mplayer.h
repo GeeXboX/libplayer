@@ -19,10 +19,10 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef WRAPPER_MPLAYER_H_
-#define WRAPPER_MPLAYER_H_
+#ifndef WRAPPER_MPLAYER_H
+#define WRAPPER_MPLAYER_H
 
 player_funcs_t * register_functions_mplayer (void);
 void *register_private_mplayer (void);
 
-#endif /* WRAPPER_MPLAYER_H_ */
+#endif /* WRAPPER_MPLAYER_H */

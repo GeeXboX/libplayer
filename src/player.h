@@ -19,8 +19,8 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PLAYER_H_
-#define PLAYER_H_
+#ifndef PLAYER_H
+#define PLAYER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -386,4 +386,4 @@ void player_radio_channel_next (player_t *player);
 }
 #endif /* __cplusplus */
 
-#endif /* PLAYER_H_ */
+#endif /* PLAYER_H */

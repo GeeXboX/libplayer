@@ -19,10 +19,10 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef WRAPPER_VLC_H_
-#define WRAPPER_VLC_H_
+#ifndef WRAPPER_VLC_H
+#define WRAPPER_VLC_H
 
 player_funcs_t * register_functions_vlc (void);
 void *register_private_vlc (void);
 
-#endif /* WRAPPER_VLC_H_ */
+#endif /* WRAPPER_VLC_H */

@@ -19,10 +19,10 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef WRAPPER_XINE_H_
-#define WRAPPER_XINE_H_
+#ifndef WRAPPER_XINE_H
+#define WRAPPER_XINE_H
 
 player_funcs_t * register_functions_xine (void);
 void *register_private_xine (void);
 
-#endif /* WRAPPER_XINE_H_ */
+#endif /* WRAPPER_XINE_H */
