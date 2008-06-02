@@ -1687,6 +1687,17 @@ mplayer_set_sub_delay (player_t *player, float value)
   slave_set_property_float (player, PROPERTY_SUB_DELAY, value);
 }
 
+static void
+mplayer_set_sub_visibility (player_t *player, int value)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_visibility: %i", value);
+
+  if (!player)
+    return;
+
+  slave_set_property_flag (player, PROPERTY_SUB_VISIBILITY, value);
+}
+
 /* public API */
 player_funcs_t *
 register_functions_mplayer (void)
@@ -1730,7 +1741,7 @@ register_functions_mplayer (void)
   funcs->set_sub_delay      = mplayer_set_sub_delay;
   funcs->set_sub_alignment  = NULL;
   funcs->set_sub_pos        = NULL;
-  funcs->set_sub_visibility = NULL;
+  funcs->set_sub_visibility = mplayer_set_sub_visibility;
   funcs->sub_scale          = NULL;
   funcs->sub_select         = NULL;
   funcs->sub_prev           = NULL;
