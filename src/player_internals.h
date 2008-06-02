@@ -99,23 +99,43 @@ struct mrl_s {
 };
 
 typedef struct player_funcs_s {
+  /* Player (Un)Init */
   init_status_t (* init) (player_t *player);
   void (* uninit) (player_t *player);
   void (* set_verbosity) (player_t *player, player_verbosity_level_t level);
+
+  /* MRLs */
   int (* mrl_supported_res) (player_t *player, mrl_resource_t res);
   void (* mrl_retrieve_props) (player_t *player, mrl_t *mrl);
   void (* mrl_retrieve_meta) (player_t *player, mrl_t *mrl);
+
+  /* Player properties */
+  int (* get_time_pos) (player_t *player);
+
+  /* Playback */
   playback_status_t (* pb_start) (player_t *player);
   void (* pb_stop) (player_t *player);
   playback_status_t (* pb_pause) (player_t *player);
   void (* pb_seek) (player_t *player, int value);
-  void (* pb_dvdnav) (player_t *player, player_dvdnav_t value);
+
+  /* Audio */
   int (* get_volume) (player_t *player);
-  player_mute_t (* get_mute) (player_t *player);
-  int (* get_time_pos) (player_t *player);
   void (* set_volume) (player_t *player, int value);
+  player_mute_t (* get_mute) (player_t *player);
   void (* set_mute) (player_t *player, player_mute_t value);
+
+  /* Video */
+
+  /* Subtitles */
   void (* set_sub_delay) (player_t *player, float value);
+  
+  /* DVD */
+  void (* pb_dvdnav) (player_t *player, player_dvdnav_t value);
+
+  /* TV */
+
+  /* Radio */
+
 } player_funcs_t;
 
 struct player_s {

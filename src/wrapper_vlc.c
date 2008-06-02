@@ -126,23 +126,30 @@ register_functions_vlc (void)
   player_funcs_t *funcs = NULL;
 
   funcs = calloc (1, sizeof (player_funcs_t));
+
   funcs->init               = vlc_init;
   funcs->uninit             = vlc_uninit;
   funcs->set_verbosity      = NULL;
+
   funcs->mrl_retrieve_props = NULL;
   funcs->mrl_retrieve_meta  = NULL;
+
+  funcs->get_time_pos       = NULL;
+  
   funcs->pb_start           = vlc_playback_start;
   funcs->pb_stop            = NULL;
   funcs->pb_pause           = NULL;
   funcs->pb_seek            = NULL;
-  funcs->pb_dvdnav          = NULL;
+
   funcs->get_volume         = NULL;
-  funcs->get_mute           = NULL;
-  funcs->get_time_pos       = NULL;
   funcs->set_volume         = NULL;
+  funcs->get_mute           = NULL;
   funcs->set_mute           = NULL;
+
   funcs->set_sub_delay      = NULL;
 
+  funcs->pb_dvdnav          = NULL;
+  
   return funcs;
 }
 

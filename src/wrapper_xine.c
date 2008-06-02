@@ -1023,24 +1023,31 @@ register_functions_xine (void)
   player_funcs_t *funcs = NULL;
 
   funcs = calloc (1, sizeof (player_funcs_t));
+
   funcs->init               = xine_player_init;
   funcs->uninit             = xine_player_uninit;
   funcs->set_verbosity      = xine_player_set_verbosity;
+
   funcs->mrl_supported_res  = xine_player_mrl_supported_res;
   funcs->mrl_retrieve_props = xine_player_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = xine_player_mrl_retrieve_metadata;
+
+  funcs->get_time_pos       = xine_player_get_time_pos;
+  
   funcs->pb_start           = xine_player_playback_start;
   funcs->pb_stop            = xine_player_playback_stop;
   funcs->pb_pause           = xine_player_playback_pause;
   funcs->pb_seek            = xine_player_playback_seek;
-  funcs->pb_dvdnav          = xine_player_playback_dvdnav;
+
   funcs->get_volume         = xine_player_get_volume;
-  funcs->get_mute           = xine_player_get_mute;
-  funcs->get_time_pos       = xine_player_get_time_pos;
   funcs->set_volume         = xine_player_set_volume;
+  funcs->get_mute           = xine_player_get_mute;
   funcs->set_mute           = xine_player_set_mute;
+
   funcs->set_sub_delay      = xine_player_set_sub_delay;
 
+  funcs->pb_dvdnav          = xine_player_playback_dvdnav;
+  
   return funcs;
 }
 
