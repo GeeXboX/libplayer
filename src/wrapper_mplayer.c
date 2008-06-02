@@ -530,6 +530,16 @@ slave_set_property_float (player_t *player, slave_property_t property,
   slave_set_property (player, property, param);
 }
 
+static inline void
+slave_set_property_flag (player_t *player, slave_property_t property,
+                         int value)
+{
+  slave_value_t param;
+
+  param.i_val = value ? 1 : 0;
+  slave_set_property (player, property, param);
+}
+
 static void
 slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
 {
@@ -1016,6 +1026,7 @@ is_available (player_t *player, const char *bin)
  * char *slave_get_property_str   (player_t, slave_property_t)
  * void  slave_set_property_int   (player_t, slave_property_t, int)
  * void  slave_set_property_float (player_t, slave_property_t, float)
+ * void  slave_set_property_flag  (player_t, slave_property_t, int)
  */
 
 /**
