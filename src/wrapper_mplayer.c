@@ -615,7 +615,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
   case SLAVE_SUB_LOAD:
     if (player->mrl->subs) {
       char **sub = player->mrl->subs;
-      slave_set_property_int (player, PROPERTY_SUB_VISIBILITY, 1);
+      slave_set_property_flag (player, PROPERTY_SUB_VISIBILITY, 1);
       while (*sub)
       {
         send_to_slave (mplayer, "sub_load \"%s\"", *sub);
