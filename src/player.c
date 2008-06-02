@@ -368,6 +368,10 @@ player_set_framedrop (player_t *player, int value)
 {
   if (!player)
     return;
+
+  /* player specific set_framedrop() */
+  if (player->funcs->set_framedrop)
+    player->funcs->set_framedrop (player, value);
 }
 
 /***************************************************************************/
@@ -479,6 +483,10 @@ player_playback_seek_chapter (player_t *player, int value, int absolute)
 {
   if (!player)
     return;
+
+  /* player specific playback_seek_chapter() */
+  if (player->funcs->pb_seek_chapter)
+    player->funcs->pb_seek_chapter (player, value, absolute);
 }
 
 void
@@ -486,6 +494,10 @@ player_playback_speed (player_t *player, int value)
 {
   if (!player)
     return;
+
+  /* player specific playback_set_speed() */
+  if (player->funcs->pb_set_speed)
+    player->funcs->pb_set_speed (player, value);
 }
 
 /***************************************************************************/
@@ -551,6 +563,10 @@ player_audio_set_delay (player_t *player, int value, int absolute)
 {
   if (!player)
     return;
+
+  /* player specific audio_set_delay() */
+  if (player->funcs->audio_set_delay)
+    player->funcs->audio_set_delay (player, value, absolute);
 }
       
 void
@@ -558,6 +574,10 @@ player_audio_select (player_t *player, int audio_id)
 {
   if (!player)
     return;
+
+  /* player specific audio_select() */
+  if (player->funcs->audio_select)
+    player->funcs->audio_select (player, audio_id);
 }
 
 void
@@ -565,6 +585,10 @@ player_audio_prev (player_t *player)
 {
   if (!player)
     return;
+
+  /* player specific audio_prev() */
+  if (player->funcs->audio_prev)
+    player->funcs->audio_prev (player);
 }
 
 void
@@ -572,6 +596,10 @@ player_audio_next (player_t *player)
 {
   if (!player)
     return;
+
+  /* player specific audio_next() */
+  if (player->funcs->audio_next)
+    player->funcs->audio_next (player);
 }
 
 /***************************************************************************/
@@ -585,6 +613,10 @@ player_video_set_fullscreen (player_t *player, int value)
 {
   if (!player)
     return;
+
+  /* player specific video_set_fs() */
+  if (player->funcs->video_set_fs)
+    player->funcs->video_set_fs (player, value);
 }
 
 void
@@ -593,6 +625,10 @@ player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
 {
   if (!player)
     return;
+
+  /* player specific video_set_aspect() */
+  if (player->funcs->video_set_aspect)
+    player->funcs->video_set_aspect (player, aspect, value, absolute);
 }
 
 void
@@ -600,6 +636,10 @@ player_video_set_panscan (player_t *player, int8_t value, int absolute)
 {
   if (!player)
     return;
+
+  /* player specific video_set_panscan() */
+  if (player->funcs->video_set_panscan)
+    player->funcs->video_set_panscan (player, value, absolute);
 }
 
 void
@@ -607,6 +647,10 @@ player_video_set_aspect_ratio (player_t *player, float value)
 {
   if (!player)
     return;
+
+  /* player specific video_set_ar() */
+  if (player->funcs->video_set_ar)
+    player->funcs->video_set_ar (player, value);
 }
 
 /***************************************************************************/
@@ -632,6 +676,10 @@ player_subtitle_set_alignment (player_t *player,
 {
   if (!player)
     return;
+
+  /* player specific set_sub_alignment() */
+  if (player->funcs->set_sub_alignment)
+    player->funcs->set_sub_alignment (player, a);
 }
 
 void
@@ -639,6 +687,10 @@ player_subtitle_set_position (player_t *player, int value)
 {
   if (!player)
     return;
+
+  /* player specific set_sub_pos() */
+  if (player->funcs->set_sub_pos)
+    player->funcs->set_sub_pos (player, value);
 }
 
 void
@@ -646,6 +698,10 @@ player_subtitle_set_visibility (player_t *player, int value)
 {
   if (!player)
     return;
+
+  /* player specific set_sub_visibility() */
+  if (player->funcs->set_sub_visibility)
+    player->funcs->set_sub_visibility (player, value);
 }
 
 void
@@ -653,6 +709,10 @@ player_subtitle_scale (player_t *player, int value, int absolute)
 {
   if (!player)
     return;
+
+  /* player specific sub_scale() */
+  if (player->funcs->sub_scale)
+    player->funcs->sub_scale (player, value, absolute);
 }
 
 void
@@ -660,6 +720,10 @@ player_subtitle_select (player_t *player, int sub_id)
 {
   if (!player)
     return;
+
+  /* player specific sub_select() */
+  if (player->funcs->sub_select)
+    player->funcs->sub_select (player, sub_id);
 }
 
 void
@@ -667,6 +731,10 @@ player_subtitle_prev (player_t *player)
 {
   if (!player)
     return;
+
+  /* player specific sub_prev() */
+  if (player->funcs->sub_prev)
+    player->funcs->sub_prev (player);
 }
 
 void
@@ -674,6 +742,10 @@ player_subtitle_next (player_t *player)
 {
   if (!player)
     return;
+
+  /* player specific sub_next() */
+  if (player->funcs->sub_next)
+    player->funcs->sub_next (player);
 }
 
 /***************************************************************************/
@@ -720,6 +792,10 @@ player_dvd_angle_select (player_t *player, int angle)
   res = mrl_get_resource (mrl);
   if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
+
+  /* player specific dvd_angle_set() */
+  if (player->funcs->dvd_angle_set)
+    player->funcs->dvd_angle_set (player, angle);
 }
 
 void
@@ -738,6 +814,10 @@ player_dvd_angle_prev (player_t *player)
   res = mrl_get_resource (mrl);
   if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
+
+  /* player specific dvd_angle_prev() */
+  if (player->funcs->dvd_angle_prev)
+    player->funcs->dvd_angle_prev (player);
 }
 
 void
@@ -756,6 +836,10 @@ player_dvd_angle_next (player_t *player)
   res = mrl_get_resource (mrl);
   if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
+
+  /* player specific dvd_angle_next() */
+  if (player->funcs->dvd_angle_next)
+    player->funcs->dvd_angle_next (player);
 }
 
 void
@@ -774,6 +858,10 @@ player_dvd_title_select (player_t *player, int title)
   res = mrl_get_resource (mrl);
   if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
+
+  /* player specific dvd_title_set() */
+  if (player->funcs->dvd_title_set)
+    player->funcs->dvd_title_set (player, title);
 }
 
 void
@@ -792,6 +880,10 @@ player_dvd_title_prev (player_t *player)
   res = mrl_get_resource (mrl);
   if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
+
+  /* player specific dvd_title_prev() */
+  if (player->funcs->dvd_title_prev)
+    player->funcs->dvd_title_prev (player);
 }
 
 void
@@ -810,6 +902,10 @@ player_dvd_title_next (player_t *player)
   res = mrl_get_resource (mrl);
   if (res != MRL_RESOURCE_DVD && res != MRL_RESOURCE_DVDNAV)
     return;
+
+  /* player specific dvd_title_next() */
+  if (player->funcs->dvd_title_next)
+    player->funcs->dvd_title_next (player);
 }
 
 /***************************************************************************/
@@ -834,6 +930,10 @@ player_tv_channel_select (player_t *player, int channel)
   res = mrl_get_resource (mrl);
   if (res != MRL_RESOURCE_DVB && res != MRL_RESOURCE_TV)
     return;
+
+  /* player specific tv_channel_set() */
+  if (player->funcs->tv_channel_set)
+    player->funcs->tv_channel_set (player, channel);
 }
 
 void
@@ -852,6 +952,10 @@ player_tv_channel_prev (player_t *player)
   res = mrl_get_resource (mrl);
   if (res != MRL_RESOURCE_DVB && res != MRL_RESOURCE_TV)
     return;
+
+  /* player specific tv_channel_prev() */
+  if (player->funcs->tv_channel_prev)
+    player->funcs->tv_channel_prev (player);
 }
 
 void
@@ -870,6 +974,10 @@ player_tv_channel_next (player_t *player)
   res = mrl_get_resource (mrl);
   if (res != MRL_RESOURCE_DVB && res != MRL_RESOURCE_TV)
     return;
+
+  /* player specific tv_channel_next() */
+  if (player->funcs->tv_channel_next)
+    player->funcs->tv_channel_next (player);
 }
 
 /***************************************************************************/
@@ -892,6 +1000,10 @@ player_radio_channel_select (player_t *player, int channel)
 
   if (mrl_get_resource (mrl) != MRL_RESOURCE_RADIO)
     return;
+
+  /* player specific radio_channel_set() */
+  if (player->funcs->radio_channel_set)
+    player->funcs->radio_channel_set (player, channel);
 }
 
 void
@@ -908,6 +1020,10 @@ player_radio_channel_prev (player_t *player)
 
   if (mrl_get_resource (mrl) != MRL_RESOURCE_RADIO)
     return;
+
+  /* player specific radio_channel_prev() */
+  if (player->funcs->radio_channel_prev)
+    player->funcs->radio_channel_prev (player);
 }
 
 void
@@ -924,4 +1040,8 @@ player_radio_channel_next (player_t *player)
 
   if (mrl_get_resource (mrl) != MRL_RESOURCE_RADIO)
     return;
+
+  /* player specific radio_channel_next() */
+  if (player->funcs->radio_channel_next)
+    player->funcs->radio_channel_next (player);
 }
