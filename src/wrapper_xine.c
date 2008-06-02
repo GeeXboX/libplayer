@@ -835,7 +835,7 @@ xine_player_playback_seek (player_t *player, int value)
 }
 
 static void
-xine_player_playback_dvdnav (player_t *player, player_dvdnav_t value)
+xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
 {
   char log[8];
   int event;
@@ -877,7 +877,7 @@ xine_player_playback_dvdnav (player_t *player, player_dvdnav_t value)
     return;
   }
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_dvdnav: %s", log);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %s", log);
 
   if (!player)
     return;
@@ -1065,7 +1065,7 @@ register_functions_xine (void)
   funcs->sub_prev           = NULL;
   funcs->sub_next           = NULL;
   
-  funcs->pb_dvdnav          = xine_player_playback_dvdnav;
+  funcs->dvd_nav            = xine_player_dvd_nav;
   funcs->dvd_angle_set      = NULL;
   funcs->dvd_angle_prev     = NULL;
   funcs->dvd_angle_next     = NULL;

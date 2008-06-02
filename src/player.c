@@ -700,8 +700,8 @@ player_dvd_nav (player_t *player, player_dvdnav_t value)
     return;
 
   /* player specific playback_dvdnav() */
-  if (player->funcs->pb_dvdnav)
-    player->funcs->pb_dvdnav (player, value);
+  if (player->funcs->dvd_nav)
+    player->funcs->dvd_nav (player, value);
 }
 
 void

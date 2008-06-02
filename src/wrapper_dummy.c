@@ -109,7 +109,7 @@ dummy_playback_seek (player_t *player, int value)
 }
 
 static void
-dummy_playback_dvdnav (player_t *player, player_dvdnav_t value)
+dummy_dvd_nav (player_t *player, player_dvdnav_t value)
 {
   char log[8] = "unknown";
 
@@ -139,7 +139,7 @@ dummy_playback_dvdnav (player_t *player, player_dvdnav_t value)
     strcpy (log, "select");
   }
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_dvdnav: %s", log);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %s", log);
 }
 
 static int
@@ -227,7 +227,7 @@ register_functions_dummy (void)
   funcs->sub_prev           = NULL;
   funcs->sub_next           = NULL;
 
-  funcs->pb_dvdnav          = dummy_playback_dvdnav;
+  funcs->dvd_nav            = dummy_dvd_nav;
   funcs->dvd_angle_set      = NULL;
   funcs->dvd_angle_prev     = NULL;
   funcs->dvd_angle_next     = NULL;

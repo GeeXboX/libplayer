@@ -321,7 +321,7 @@ register_functions_gstreamer (void)
   funcs->sub_prev           = NULL;
   funcs->sub_next           = NULL;
   
-  funcs->pb_dvdnav          = NULL;
+  funcs->dvd_nav            = NULL;
   funcs->dvd_angle_set      = NULL;
   funcs->dvd_angle_prev     = NULL;
   funcs->dvd_angle_next     = NULL;

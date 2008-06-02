@@ -149,7 +149,7 @@ typedef struct player_funcs_s {
   void (* sub_next) (player_t *player);
   
   /* DVD */
-  void (* pb_dvdnav) (player_t *player, player_dvdnav_t value);
+  void (* dvd_nav) (player_t *player, player_dvdnav_t value);
   void (* dvd_angle_set) (player_t *player, int angle);
   void (* dvd_angle_prev) (player_t *player);
   void (* dvd_angle_next) (player_t *player);
