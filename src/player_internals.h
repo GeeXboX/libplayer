@@ -19,8 +19,8 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef PLAYER_INTERNALS_H_
-#define PLAYER_INTERNALS_H_
+#ifndef PLAYER_INTERNALS_H
+#define PLAYER_INTERNALS_H
 
 struct x11_s;
 
@@ -148,4 +148,4 @@ void mrl_metadata_free (mrl_metadata_t *meta);
 int mrl_uses_vo (mrl_t *mrl);
 int mrl_uses_ao (mrl_t *mrl);
 
-#endif /* PLAYER_INTERNALS_H_ */
+#endif /* PLAYER_INTERNALS_H */

@@ -19,8 +19,8 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef X11_COMMON_H_
-#define X11_COMMON_H_
+#ifndef X11_COMMON_H
+#define X11_COMMON_H
 
 #include <X11/Xlib.h>
 
@@ -38,4 +38,4 @@ Display *x11_get_display (x11_t *x11);
 Window x11_get_window (x11_t *x11);
 void *x11_get_data (x11_t *x11);
 
-#endif /* X11_COMMON_H_ */
+#endif /* X11_COMMON_H */
