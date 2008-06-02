@@ -1673,7 +1673,7 @@ mplayer_set_mute (player_t *player, player_mute_t value)
   if (!player)
     return;
 
-  slave_set_property_int (player, PROPERTY_MUTE, mute);
+  slave_set_property_flag (player, PROPERTY_MUTE, mute);
 }
 
 static void
