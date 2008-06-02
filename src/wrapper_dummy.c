@@ -188,23 +188,60 @@ register_functions_dummy (void)
 
   funcs->init               = dummy_init;
   funcs->uninit             = dummy_uninit;
+  funcs->set_verbosity      = NULL;
 
+  funcs->mrl_supported_res  = NULL;
   funcs->mrl_retrieve_props = dummy_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = dummy_mrl_retrieve_metadata;
 
+  funcs->get_time_pos       = NULL;
+  funcs->set_framedrop      = NULL;
+  
   funcs->pb_start           = dummy_playback_start;
   funcs->pb_stop            = dummy_playback_stop;
   funcs->pb_pause           = dummy_playback_pause;
   funcs->pb_seek            = dummy_playback_seek;
+  funcs->pb_seek_chapter    = NULL;
+  funcs->pb_set_speed       = NULL;
 
   funcs->get_volume         = dummy_get_volume;
   funcs->set_volume         = dummy_set_volume;
   funcs->get_mute           = dummy_get_mute;
   funcs->set_mute           = dummy_set_mute;
+  funcs->audio_set_delay    = NULL;
+  funcs->audio_select       = NULL;
+  funcs->audio_prev         = NULL;
+  funcs->audio_next         = NULL;
+
+  funcs->video_set_fs       = NULL;
+  funcs->video_set_aspect   = NULL;
+  funcs->video_set_panscan  = NULL;
+  funcs->video_set_ar       = NULL;
 
   funcs->set_sub_delay      = dummy_set_sub_delay;
+  funcs->set_sub_alignment  = NULL;
+  funcs->set_sub_pos        = NULL;
+  funcs->set_sub_visibility = NULL;
+  funcs->sub_scale          = NULL;
+  funcs->sub_select         = NULL;
+  funcs->sub_prev           = NULL;
+  funcs->sub_next           = NULL;
 
   funcs->pb_dvdnav          = dummy_playback_dvdnav;
+  funcs->dvd_angle_set      = NULL;
+  funcs->dvd_angle_prev     = NULL;
+  funcs->dvd_angle_next     = NULL;
+  funcs->dvd_title_set      = NULL;
+  funcs->dvd_title_prev     = NULL;
+  funcs->dvd_title_next     = NULL;
+
+  funcs->tv_channel_set     = NULL;
+  funcs->tv_channel_prev    = NULL;
+  funcs->tv_channel_next    = NULL;
+
+  funcs->radio_channel_set  = NULL;
+  funcs->radio_channel_prev = NULL;
+  funcs->radio_channel_next = NULL;
   
   return funcs;
 }

@@ -1033,20 +1033,53 @@ register_functions_xine (void)
   funcs->mrl_retrieve_meta  = xine_player_mrl_retrieve_metadata;
 
   funcs->get_time_pos       = xine_player_get_time_pos;
+  funcs->set_framedrop      = NULL;
   
   funcs->pb_start           = xine_player_playback_start;
   funcs->pb_stop            = xine_player_playback_stop;
   funcs->pb_pause           = xine_player_playback_pause;
   funcs->pb_seek            = xine_player_playback_seek;
-
+  funcs->pb_seek_chapter    = NULL;
+  funcs->pb_set_speed       = NULL;
+  
   funcs->get_volume         = xine_player_get_volume;
   funcs->set_volume         = xine_player_set_volume;
   funcs->get_mute           = xine_player_get_mute;
   funcs->set_mute           = xine_player_set_mute;
+  funcs->audio_set_delay    = NULL;
+  funcs->audio_select       = NULL;
+  funcs->audio_prev         = NULL;
+  funcs->audio_next         = NULL;
 
+  funcs->video_set_fs       = NULL;
+  funcs->video_set_aspect   = NULL;
+  funcs->video_set_panscan  = NULL;
+  funcs->video_set_ar       = NULL;
+  
   funcs->set_sub_delay      = xine_player_set_sub_delay;
-
+  funcs->set_sub_alignment  = NULL;
+  funcs->set_sub_pos        = NULL;
+  funcs->set_sub_visibility = NULL;
+  funcs->sub_scale          = NULL;
+  funcs->sub_select         = NULL;
+  funcs->sub_prev           = NULL;
+  funcs->sub_next           = NULL;
+  
   funcs->pb_dvdnav          = xine_player_playback_dvdnav;
+  funcs->dvd_angle_set      = NULL;
+  funcs->dvd_angle_prev     = NULL;
+  funcs->dvd_angle_next     = NULL;
+  funcs->dvd_title_set      = NULL;
+  funcs->dvd_title_prev     = NULL;
+  funcs->dvd_title_next     = NULL;
+
+  funcs->tv_channel_set     = NULL;
+  funcs->tv_channel_prev    = NULL;
+  funcs->tv_channel_next    = NULL;
+
+  funcs->radio_channel_set  = NULL;
+  funcs->radio_channel_prev = NULL;
+  funcs->radio_channel_next = NULL;
   
   return funcs;
 }

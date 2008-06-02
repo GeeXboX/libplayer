@@ -111,30 +111,61 @@ typedef struct player_funcs_s {
 
   /* Player properties */
   int (* get_time_pos) (player_t *player);
+  void (* set_framedrop) (player_t *player, int value);
 
   /* Playback */
   playback_status_t (* pb_start) (player_t *player);
   void (* pb_stop) (player_t *player);
   playback_status_t (* pb_pause) (player_t *player);
   void (* pb_seek) (player_t *player, int value);
+  void (* pb_seek_chapter) (player_t *player, int value, int absolute);
+  void (* pb_set_speed) (player_t *player, int value);
 
   /* Audio */
   int (* get_volume) (player_t *player);
   void (* set_volume) (player_t *player, int value);
   player_mute_t (* get_mute) (player_t *player);
   void (* set_mute) (player_t *player, player_mute_t value);
-
+  void (* audio_set_delay) (player_t *player, int value, int absolute);
+  void (* audio_select) (player_t *player, int audio_id);
+  void (* audio_prev) (player_t *player);
+  void (* audio_next) (player_t *player);
+  
   /* Video */
+  void (* video_set_fs) (player_t *player, int value);
+  void (* video_set_aspect) (player_t *player, player_video_aspect_t aspect,
+                             int8_t value, int absolute);
+  void (* video_set_panscan) (player_t *player, int8_t value, int absolute);
+  void (* video_set_ar) (player_t *player, float value);
 
   /* Subtitles */
   void (* set_sub_delay) (player_t *player, float value);
+  void (* set_sub_alignment) (player_t *player, player_sub_alignment_t a);
+  void (* set_sub_pos) (player_t *player, int value);
+  void (* set_sub_visibility) (player_t *player, int value);
+  void (* sub_scale) (player_t *player, int value, int absolute);
+  void (* sub_select) (player_t *player, int sub_id);
+  void (* sub_prev) (player_t *player);
+  void (* sub_next) (player_t *player);
   
   /* DVD */
   void (* pb_dvdnav) (player_t *player, player_dvdnav_t value);
-
+  void (* dvd_angle_set) (player_t *player, int angle);
+  void (* dvd_angle_prev) (player_t *player);
+  void (* dvd_angle_next) (player_t *player);
+  void (* dvd_title_set) (player_t *player, int title);
+  void (* dvd_title_prev) (player_t *player);
+  void (* dvd_title_next) (player_t *player);
+  
   /* TV */
-
+  void (* tv_channel_set) (player_t *player, int channel);
+  void (* tv_channel_prev) (player_t *player);
+  void (* tv_channel_next) (player_t *player);
+  
   /* Radio */
+  void (* radio_channel_set) (player_t *player, int channel);
+  void (* radio_channel_prev) (player_t *player);
+  void (* radio_channel_next) (player_t *player);
 
 } player_funcs_t;
 

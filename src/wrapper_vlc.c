@@ -131,24 +131,58 @@ register_functions_vlc (void)
   funcs->uninit             = vlc_uninit;
   funcs->set_verbosity      = NULL;
 
+  funcs->mrl_supported_res  = NULL;
   funcs->mrl_retrieve_props = NULL;
   funcs->mrl_retrieve_meta  = NULL;
 
   funcs->get_time_pos       = NULL;
+  funcs->set_framedrop      = NULL;
   
   funcs->pb_start           = vlc_playback_start;
   funcs->pb_stop            = NULL;
   funcs->pb_pause           = NULL;
   funcs->pb_seek            = NULL;
+  funcs->pb_seek_chapter    = NULL;
+  funcs->pb_set_speed       = NULL;
 
   funcs->get_volume         = NULL;
   funcs->set_volume         = NULL;
   funcs->get_mute           = NULL;
   funcs->set_mute           = NULL;
+  funcs->audio_set_delay    = NULL;
+  funcs->audio_select       = NULL;
+  funcs->audio_prev         = NULL;
+  funcs->audio_next         = NULL;
+
+  funcs->video_set_fs       = NULL;
+  funcs->video_set_aspect   = NULL;
+  funcs->video_set_panscan  = NULL;
+  funcs->video_set_ar       = NULL;
 
   funcs->set_sub_delay      = NULL;
+  funcs->set_sub_alignment  = NULL;
+  funcs->set_sub_pos        = NULL;
+  funcs->set_sub_visibility = NULL;
+  funcs->sub_scale          = NULL;
+  funcs->sub_select         = NULL;
+  funcs->sub_prev           = NULL;
+  funcs->sub_next           = NULL;
 
   funcs->pb_dvdnav          = NULL;
+  funcs->dvd_angle_set      = NULL;
+  funcs->dvd_angle_prev     = NULL;
+  funcs->dvd_angle_next     = NULL;
+  funcs->dvd_title_set      = NULL;
+  funcs->dvd_title_prev     = NULL;
+  funcs->dvd_title_next     = NULL;
+
+  funcs->tv_channel_set     = NULL;
+  funcs->tv_channel_prev    = NULL;
+  funcs->tv_channel_next    = NULL;
+
+  funcs->radio_channel_set  = NULL;
+  funcs->radio_channel_prev = NULL;
+  funcs->radio_channel_next = NULL;
   
   return funcs;
 }
