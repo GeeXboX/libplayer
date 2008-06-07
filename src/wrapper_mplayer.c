@@ -1538,7 +1538,7 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   int opt;
 
   plog (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "playback_seek: %d", value, seek);
+        MODULE_NAME, "playback_seek: %d %d", value, seek);
 
   if (!player)
     return;
