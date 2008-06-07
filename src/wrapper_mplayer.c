@@ -541,7 +541,7 @@ slave_set_property_flag (player_t *player, slave_property_t property,
 }
 
 static void
-slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
+slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 {
   mplayer_t *mplayer = NULL;
 
@@ -633,7 +633,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value)
 static inline void
 slave_cmd (player_t *player, slave_cmd_t cmd)
 {
-  slave_action (player, cmd, NULL);
+  slave_action (player, cmd, NULL, 0);
 }
 
 static inline void
@@ -642,7 +642,16 @@ slave_cmd_int (player_t *player, slave_cmd_t cmd, int value)
   slave_value_t param;
 
   param.i_val = value;
-  slave_action (player, cmd, &param);
+  slave_action (player, cmd, &param, 0);
+}
+
+static inline void
+slave_cmd_int_opt (player_t *player, slave_cmd_t cmd, int value, int opt)
+{
+  slave_value_t param;
+
+  param.i_val = value;
+  slave_action (player, cmd, &param, opt);
 }
 
 static int
@@ -1021,6 +1030,7 @@ is_available (player_t *player, const char *bin)
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * void  slave_cmd                (player_t, slave_cmd_t)
  * void  slave_cmd_int            (player_t, slave_cmd_t,      int)
+ * void  slave_cmd_int_opt        (player_t, slave_cmd_t,      int,   opt)
  * int   slave_get_property_int   (player_t, slave_property_t)
  * float slave_get_property_float (player_t, slave_property_t)
  * char *slave_get_property_str   (player_t, slave_property_t)
