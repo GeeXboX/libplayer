@@ -590,16 +590,8 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   case SLAVE_SUB_LOAD:
-    if (player->mrl->subs) {
-      char **sub = player->mrl->subs;
-      slave_set_property_flag (player, PROPERTY_SUB_VISIBILITY, 1);
-      while (*sub)
-      {
-        send_to_slave (mplayer, "sub_load \"%s\"", *sub);
-        (*sub)++;
-      }
-      slave_set_property_int (player, PROPERTY_SUB, 0);
-    }
+    if (value && value->s_val)
+      send_to_slave (mplayer, "sub_load \"%s\"", value->s_val);
     break;
 
   default:
@@ -1498,8 +1490,16 @@ mplayer_playback_start (player_t *player)
   pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* load subtitle if exists */
-  if (player->mrl->subs)
-    slave_cmd (player, SLAVE_SUB_LOAD);
+  if (player->mrl->subs) {
+    char **sub = player->mrl->subs;
+    slave_set_property_flag (player, PROPERTY_SUB_VISIBILITY, 1);
+    while (*sub)
+    {
+      slave_cmd_str (player, SLAVE_SUB_LOAD, *sub);
+      (*sub)++;
+    }
+    slave_set_property_int (player, PROPERTY_SUB, 0);
+  }
 
   /* X11 */
   if (player->x11 && !mrl_uses_vo (player->mrl))
