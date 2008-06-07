@@ -632,6 +632,15 @@ slave_cmd_int_opt (player_t *player, slave_cmd_t cmd, int value, int opt)
 }
 
 static inline void
+slave_cmd_str (player_t *player, slave_cmd_t cmd, char *str)
+{
+  slave_value_t param;
+
+  param.s_val = str;
+  slave_action (player, cmd, &param, 0);
+}
+
+static inline void
 slave_cmd_str_opt (player_t *player, slave_cmd_t cmd, char *str, int opt)
 {
   slave_value_t param;
@@ -1017,6 +1026,7 @@ is_available (player_t *player, const char *bin)
  * void  slave_cmd                (player_t, slave_cmd_t)
  * void  slave_cmd_int            (player_t, slave_cmd_t,      int)
  * void  slave_cmd_int_opt        (player_t, slave_cmd_t,      int,   int)
+ * void  slave_cmd_str            (player_t, slave_cmd_t,      char*)
  * void  slave_cmd_str_opt        (player_t, slave_cmd_t,      char*, int)
  * int   slave_get_property_int   (player_t, slave_property_t)
  * float slave_get_property_float (player_t, slave_property_t)
