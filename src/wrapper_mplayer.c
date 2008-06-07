@@ -562,31 +562,10 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_LOADFILE:
   {
-    char *uri = NULL;
-
-    if (!player->mrl)
-      break;
-    
-    switch (player->mrl->resource)
-    {
-    case MRL_RESOURCE_FILE:
-    {
-      mrl_resource_local_args_t *args = player->mrl->priv;
-      if (args && args->location)
-        uri = strdup (args->location);
-      break;
-    }
-
-    default:
-      break;
-    }
-    
-    if (uri && value)
+    if (value && value->s_val)
       send_to_slave (mplayer, "loadfile \"%s\" %i",
-                     uri, value->i_val);
+                     value->s_val, opt);
 
-    if (uri)
-      free (uri);
     send_to_slave (mplayer, "loadlist");
     /* wait that the thread will confirm "loadlist" */
     sem_wait (&mplayer->sem);
@@ -1467,6 +1446,7 @@ static playback_status_t
 mplayer_playback_start (player_t *player)
 {
   mplayer_t *mplayer = NULL;
+  char *uri = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
@@ -1478,8 +1458,30 @@ mplayer_playback_start (player_t *player)
   if (!mplayer)
     return PLAYER_PB_FATAL;
 
+  if (!player->mrl)
+    return PLAYER_PB_ERROR;
+
+  switch (player->mrl->resource)
+  {
+  case MRL_RESOURCE_FILE:
+  {
+    mrl_resource_local_args_t *args = player->mrl->priv;
+    if (args && args->location)
+      uri = strdup (args->location);
+    break;
+  }
+
+  default:
+    break;
+  }
+
+  if (!uri)
+    return PLAYER_PB_ERROR;
+
   /* 0: new play, 1: append to the current playlist */
-  slave_cmd_int (player, SLAVE_LOADFILE, 0);
+  slave_cmd_str_opt (player, SLAVE_LOADFILE, uri, 0);
+
+  free (uri);
 
   pthread_mutex_lock (&mplayer->mutex_status);
   if (mplayer->status != MPLAYER_IS_PLAYING) {
