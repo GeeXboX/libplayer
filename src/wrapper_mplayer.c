@@ -561,7 +561,6 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   case SLAVE_LOADFILE:
-  {
     if (value && value->s_val)
       send_to_slave (mplayer, "loadfile \"%s\" %i",
                      value->s_val, opt);
@@ -570,7 +569,6 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     /* wait that the thread will confirm "loadlist" */
     sem_wait (&mplayer->sem);
     break;
-  }
   
   case SLAVE_PAUSE:
     send_to_slave (mplayer, "pause");
