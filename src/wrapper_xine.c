@@ -712,7 +712,7 @@ xine_player_playback_start (player_t *player)
 
   x = (xine_player_t *) player->priv;
 
-  if (!x->stream)
+  if (!x->stream || !player->mrl)
     return PLAYER_PB_ERROR;
 
   switch (player->mrl->resource)
