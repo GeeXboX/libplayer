@@ -1030,7 +1030,7 @@ is_available (player_t *player, const char *bin)
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * void  slave_cmd                (player_t, slave_cmd_t)
  * void  slave_cmd_int            (player_t, slave_cmd_t,      int)
- * void  slave_cmd_int_opt        (player_t, slave_cmd_t,      int,   opt)
+ * void  slave_cmd_int_opt        (player_t, slave_cmd_t,      int,   int)
  * int   slave_get_property_int   (player_t, slave_property_t)
  * float slave_get_property_float (player_t, slave_property_t)
  * char *slave_get_property_str   (player_t, slave_property_t)
