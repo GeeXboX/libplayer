@@ -87,6 +87,7 @@ typedef struct mplayer_s {
 typedef union slave_value {
   int i_val;
   float f_val;
+  char *s_val;
 } slave_value_t;
 
 /* slave commands */
@@ -654,6 +655,15 @@ slave_cmd_int_opt (player_t *player, slave_cmd_t cmd, int value, int opt)
   slave_action (player, cmd, &param, opt);
 }
 
+static inline void
+slave_cmd_str_opt (player_t *player, slave_cmd_t cmd, char *str, int opt)
+{
+  slave_value_t param;
+
+  param.s_val = str;
+  slave_action (player, cmd, &param, opt);
+}
+
 static int
 mp_identify_metadata (mrl_t *mrl, const char *buffer)
 {
@@ -1031,6 +1041,7 @@ is_available (player_t *player, const char *bin)
  * void  slave_cmd                (player_t, slave_cmd_t)
  * void  slave_cmd_int            (player_t, slave_cmd_t,      int)
  * void  slave_cmd_int_opt        (player_t, slave_cmd_t,      int,   int)
+ * void  slave_cmd_str_opt        (player_t, slave_cmd_t,      char*, int)
  * int   slave_get_property_int   (player_t, slave_property_t)
  * float slave_get_property_float (player_t, slave_property_t)
  * char *slave_get_property_str   (player_t, slave_property_t)
