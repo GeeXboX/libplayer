@@ -266,10 +266,16 @@ void player_set_framedrop (player_t *player, int value);
 /*                                                                         */
 /***************************************************************************/
 
+typedef enum player_pb_seek {
+  PLAYER_PB_SEEK_RELATIVE,
+  PLAYER_PB_SEEK_ABSOLUTE,
+  PLAYER_PB_SEEK_PERCENT,
+} player_pb_seek_t;
+
 void player_playback_start (player_t *player);
 void player_playback_stop (player_t *player);
 void player_playback_pause (player_t *player);
-void player_playback_seek (player_t *player, int value);
+void player_playback_seek (player_t *player, int value, player_pb_seek_t seek);
 void player_playback_seek_chapter (player_t *player, int value, int absolute);
 void player_playback_speed (player_t *player, int value);
 

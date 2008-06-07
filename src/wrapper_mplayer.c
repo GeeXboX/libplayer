@@ -602,7 +602,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_SEEK:
     if (value)
-      send_to_slave (mplayer, "seek %i 0", value->i_val);
+      send_to_slave (mplayer, "seek %i %i", value->i_val, opt);
     break;
 
   case SLAVE_STOP:
@@ -1533,14 +1533,30 @@ mplayer_playback_pause (player_t *player)
 }
 
 static void
-mplayer_playback_seek (player_t *player, int value)
+mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_seek: %d", value);
+  int opt;
+
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "playback_seek: %d", value, seek);
 
   if (!player)
     return;
 
-  slave_cmd_int (player, SLAVE_SEEK, value);
+  switch (seek) {
+  default:
+  case PLAYER_PB_SEEK_RELATIVE:
+    opt = 0;
+    break;
+  case PLAYER_PB_SEEK_PERCENT:
+    opt = 1;
+    break;
+  case PLAYER_PB_SEEK_ABSOLUTE:
+    opt = 2;
+    break;
+  }
+
+  slave_cmd_int_opt (player, SLAVE_SEEK, value, opt);
 }
 
 static void

@@ -103,9 +103,10 @@ dummy_playback_pause (player_t *player)
 }
 
 static void
-dummy_playback_seek (player_t *player, int value)
+dummy_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_seek: %d", value);
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "playback_seek: %d %d", value, seek);
 }
 
 static void

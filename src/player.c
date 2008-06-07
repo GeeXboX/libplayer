@@ -468,14 +468,14 @@ player_playback_pause (player_t *player)
 }
 
 void
-player_playback_seek (player_t *player, int value)
+player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
   if (!player)
     return;
 
   /* player specific playback_seek() */
   if (player->funcs->pb_seek)
-    player->funcs->pb_seek (player, value);
+    player->funcs->pb_seek (player, value, seek);
 }
 
 void

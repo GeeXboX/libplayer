@@ -78,8 +78,8 @@ do_regression_tests (player_t *player, char *name)
   printf ("Current volume: %d\n", player_audio_volume_get (player));
   player_audio_volume_set (player, 85);
   player_playback_start (player);
-  player_playback_seek (player, 2);  /* 2s forward */
-  player_playback_seek (player, -1); /* 1s backward */
+  player_playback_seek (player, 2, PLAYER_PB_SEEK_RELATIVE);  /* 2s forward */
+  player_playback_seek (player, -1, PLAYER_PB_SEEK_RELATIVE); /* 1s backward */
   player_mute_t mute = player_audio_mute_get (player);
   printf ("Current mute: %s\n", mute == PLAYER_MUTE_ON
                                 ? "on" : (mute == PLAYER_MUTE_OFF

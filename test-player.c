@@ -437,11 +437,11 @@ main (int argc, char **argv)
       printf ("VOLUME %i\n", volume);
       break;
     case '1':   /* 5s backward */
-      player_playback_seek (player, -5);
+      player_playback_seek (player, -5, PLAYER_PB_SEEK_RELATIVE);
       printf ("SEEK -5 sec.\n");
       break;
     case '2':   /* 5s forward */
-      player_playback_seek (player, 5);
+      player_playback_seek (player, 5, PLAYER_PB_SEEK_RELATIVE);
       printf ("SEEK +5 sec.\n");
       break;
     case '9':   /* decrease volume */

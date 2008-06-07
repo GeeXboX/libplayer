@@ -808,12 +808,13 @@ xine_player_playback_pause (player_t *player)
 }
 
 static void
-xine_player_playback_seek (player_t *player, int value)
+xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
   xine_player_t *x = NULL;
   int pos_time = 0, length = 0;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_seek: %d", value);
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "playback_seek: %d %d", value, seek);
 
   if (!player)
     return;
@@ -824,7 +825,19 @@ xine_player_playback_seek (player_t *player, int value)
     return;
 
   xine_get_pos_length (x->stream, NULL, &pos_time, &length);
-  pos_time += value * 1000;
+
+  switch (seek) {
+  default:
+  case PLAYER_PB_SEEK_RELATIVE:
+    pos_time += value * 1000;
+    break;
+  case PLAYER_PB_SEEK_PERCENT:
+    pos_time = length / 100 * value;
+    break;
+  case PLAYER_PB_SEEK_ABSOLUTE:
+    pos_time = value * 1000;
+    break;
+  }
 
   if (pos_time < 0)
     pos_time = 0;
