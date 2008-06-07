@@ -562,8 +562,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_LOADFILE:
     if (value && value->s_val)
-      send_to_slave (mplayer, "loadfile \"%s\" %i",
-                     value->s_val, opt);
+      send_to_slave (mplayer, "loadfile \"%s\" %i", value->s_val, opt);
 
     send_to_slave (mplayer, "loadlist");
     /* wait that the thread will confirm "loadlist" */
