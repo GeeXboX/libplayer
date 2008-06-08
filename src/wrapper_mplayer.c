@@ -1249,7 +1249,7 @@ mplayer_uninit (player_t *player)
     fclose (mplayer->fifo_in);
     fclose (mplayer->fifo_out);
 
-    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "MPlayer child terminated");
+    plog (player, PLAYER_MSG_INFO, MODULE_NAME, "MPlayer child terminated");
 
     /* X11 */
     if (player->x11)
