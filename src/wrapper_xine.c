@@ -297,7 +297,7 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
 
   if (stream) {
     char *uri = NULL;
-    
+
     switch (mrl->resource)
     {
     case MRL_RESOURCE_FILE:
@@ -391,7 +391,7 @@ xine_player_init (player_t *player)
     id_vo = strdup ("fb");
     visual = XINE_VISUAL_TYPE_FB;
     break;
-    
+
   default:
     plog (player, PLAYER_MSG_WARNING,
           MODULE_NAME, "Unsupported video output type");
@@ -704,7 +704,7 @@ xine_player_playback_start (player_t *player)
   char *mrl = NULL;
   xine_player_t *x = NULL;
   char *uri = NULL;
-  
+
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
   if (!player)
@@ -731,7 +731,7 @@ xine_player_playback_start (player_t *player)
 
   if (!uri)
     return PLAYER_PB_ERROR;
-  
+
   /* add subtitle to the MRL */
   if (player->mrl->subs) {
     mrl = malloc (strlen (uri) +
@@ -745,7 +745,7 @@ xine_player_playback_start (player_t *player)
     mrl = strdup (uri);
 
   free (uri);
-  
+
   if (!mrl)
     return PLAYER_PB_ERROR;
 
@@ -1047,14 +1047,14 @@ register_functions_xine (void)
 
   funcs->get_time_pos       = xine_player_get_time_pos;
   funcs->set_framedrop      = NULL;
-  
+
   funcs->pb_start           = xine_player_playback_start;
   funcs->pb_stop            = xine_player_playback_stop;
   funcs->pb_pause           = xine_player_playback_pause;
   funcs->pb_seek            = xine_player_playback_seek;
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = NULL;
-  
+
   funcs->get_volume         = xine_player_get_volume;
   funcs->set_volume         = xine_player_set_volume;
   funcs->get_mute           = xine_player_get_mute;
@@ -1068,7 +1068,7 @@ register_functions_xine (void)
   funcs->video_set_aspect   = NULL;
   funcs->video_set_panscan  = NULL;
   funcs->video_set_ar       = NULL;
-  
+
   funcs->set_sub_delay      = xine_player_set_sub_delay;
   funcs->set_sub_alignment  = NULL;
   funcs->set_sub_pos        = NULL;
@@ -1077,7 +1077,7 @@ register_functions_xine (void)
   funcs->sub_select         = NULL;
   funcs->sub_prev           = NULL;
   funcs->sub_next           = NULL;
-  
+
   funcs->dvd_nav            = xine_player_dvd_nav;
   funcs->dvd_angle_set      = NULL;
   funcs->dvd_angle_prev     = NULL;
@@ -1093,7 +1093,7 @@ register_functions_xine (void)
   funcs->radio_channel_set  = NULL;
   funcs->radio_channel_prev = NULL;
   funcs->radio_channel_next = NULL;
-  
+
   return funcs;
 }
 

@@ -115,7 +115,7 @@ typedef enum mrl_resource {
   MRL_RESOURCE_FIFO,
   MRL_RESOURCE_FILE,
   MRL_RESOURCE_STDIN,
-  
+
   /* Audio CD */
   MRL_RESOURCE_CDDA,
   MRL_RESOURCE_CDDB,

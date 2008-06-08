@@ -148,7 +148,7 @@ mrl_resource_local_free (mrl_resource_local_args_t *args)
 {
   if (!args)
     return;
-  
+
   if (args->location)
     free (args->location);
 }
@@ -158,7 +158,7 @@ mrl_resource_cd_free (mrl_resource_cd_args_t *args)
 {
   if (!args)
     return;
-  
+
   if (args->device)
     free (args->device);
 }
@@ -168,7 +168,7 @@ mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args)
 {
   if (!args)
     return;
-  
+
   if (args->device)
     free (args->device);
   if (args->audio_lang)
@@ -182,7 +182,7 @@ mrl_resource_tv_free (mrl_resource_tv_args_t *args)
 {
   if (!args)
     return;
-  
+
   if (args->device)
     free (args->device);
   if (args->driver)
@@ -198,7 +198,7 @@ mrl_resource_network_free (mrl_resource_network_args_t *args)
 {
   if (!args)
     return;
-  
+
   if (args->url)
     free (args->url);
   if (args->username)
@@ -240,25 +240,25 @@ mrl_free (mrl_t *mrl, int recursive)
     case MRL_RESOURCE_STDIN:
       mrl_resource_local_free (mrl->priv);
       break;
-      
+
     case MRL_RESOURCE_CDDA:
     case MRL_RESOURCE_CDDB:
       mrl_resource_cd_free (mrl->priv);
       break;
-      
+
     case MRL_RESOURCE_DVD:
     case MRL_RESOURCE_DVDNAV:
     case MRL_RESOURCE_VCD:
       mrl_resource_videodisc_free (mrl->priv);
       break;
-      
+
     case MRL_RESOURCE_DVB:
     case MRL_RESOURCE_PVR:
     case MRL_RESOURCE_RADIO:
     case MRL_RESOURCE_TV:
       mrl_resource_tv_free (mrl->priv);
       break;
-      
+
     case MRL_RESOURCE_FTP: 
     case MRL_RESOURCE_HTTP:
     case MRL_RESOURCE_MMS:
@@ -270,13 +270,13 @@ mrl_free (mrl_t *mrl, int recursive)
     case MRL_RESOURCE_UNSV:
       mrl_resource_network_free (mrl->priv);
       break;
-      
+
     default:
       break;
     }
     free (mrl->priv);
   }
-  
+
   if (recursive && mrl->next)
     mrl_free (mrl->next, 1);
 
@@ -567,10 +567,10 @@ mrl_add_subtitle (mrl_t *mrl, char *subtitle)
 {
   char **subs;
   int n;
-  
+
   if (!mrl || !subtitle)
     return;
-  
+
   subs = mrl->subs;
   n = get_list_length (subs) + 1;
   subs = realloc (subs, (n + 1) * sizeof (*subs));
@@ -583,7 +583,7 @@ mrl_new (player_t *player, mrl_resource_t res, void *args)
 {
   mrl_t *mrl = NULL;
   int support = 0;
-  
+
   if (!player || !args)
     return NULL;
 
@@ -601,11 +601,11 @@ mrl_new (player_t *player, mrl_resource_t res, void *args)
           "Unsupported resource type (%d)\n", res);
     return NULL;
   }
-  
+
   mrl = calloc (1, sizeof (mrl_t));
 
   mrl->subs = NULL;
-  
+
   mrl->resource = res;
   mrl->priv = args;
 

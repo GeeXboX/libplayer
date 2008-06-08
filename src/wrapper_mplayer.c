@@ -568,7 +568,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     /* wait that the thread will confirm "loadlist" */
     sem_wait (&mplayer->sem);
     break;
-  
+
   case SLAVE_PAUSE:
     send_to_slave (mplayer, "pause");
     break;
@@ -884,7 +884,7 @@ mp_identify (mrl_t *mrl, int flags)
   FILE *mp_fifo;
   pid_t pid;
   char *uri = NULL;
-  
+
   if (!mrl)
     return;
 
@@ -904,7 +904,7 @@ mp_identify (mrl_t *mrl, int flags)
 
   if (!uri)
     return;
-  
+
   /* create pipe */
   if (pipe (mp_pipe)) {
     free (uri);
@@ -1341,7 +1341,7 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
             (float) mrl->prop->size / 1024 / 1024);
     }
   }
-  
+
   mp_identify (mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
 
   audio = mrl->prop->audio;
@@ -1762,7 +1762,7 @@ register_functions_mplayer (void)
 
   funcs->get_time_pos       = mplayer_get_time_pos;
   funcs->set_framedrop      = NULL;
-  
+
   funcs->pb_start           = mplayer_playback_start;
   funcs->pb_stop            = mplayer_playback_stop;
   funcs->pb_pause           = mplayer_playback_pause;
@@ -1783,7 +1783,7 @@ register_functions_mplayer (void)
   funcs->video_set_aspect   = NULL;
   funcs->video_set_panscan  = NULL;
   funcs->video_set_ar       = NULL;
-  
+
   funcs->set_sub_delay      = mplayer_set_sub_delay;
   funcs->set_sub_alignment  = NULL;
   funcs->set_sub_pos        = NULL;
@@ -1792,7 +1792,7 @@ register_functions_mplayer (void)
   funcs->sub_select         = NULL;
   funcs->sub_prev           = NULL;
   funcs->sub_next           = NULL;
-  
+
   funcs->dvd_nav            = mplayer_dvd_nav;
   funcs->dvd_angle_set      = NULL;
   funcs->dvd_angle_prev     = NULL;

@@ -61,17 +61,17 @@ do_regression_tests (player_t *player, char *name)
 {
   mrl_t *mrl;
   mrl_resource_local_args_t *args;
-  
+
   if (!player || !name)
     return;
 
   args = calloc (1, sizeof (mrl_resource_local_args_t));
   args->location = strdup (name);
-    
+
   mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
   if (!mrl)
     return;
-  
+
   player_mrl_append (player, mrl, PLAYER_MRL_ADD_NOW);
   mrl_get_property (player, NULL, MRL_PROPERTY_SEEKABLE);
   mrl_get_metadata (player, NULL, MRL_METADATA_TITLE);

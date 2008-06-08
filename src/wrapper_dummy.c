@@ -197,7 +197,7 @@ register_functions_dummy (void)
 
   funcs->get_time_pos       = NULL;
   funcs->set_framedrop      = NULL;
-  
+
   funcs->pb_start           = dummy_playback_start;
   funcs->pb_stop            = dummy_playback_stop;
   funcs->pb_pause           = dummy_playback_pause;
@@ -243,7 +243,7 @@ register_functions_dummy (void)
   funcs->radio_channel_set  = NULL;
   funcs->radio_channel_prev = NULL;
   funcs->radio_channel_next = NULL;
-  
+
   return funcs;
 }
 

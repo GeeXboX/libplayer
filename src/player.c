@@ -416,7 +416,7 @@ player_playback_start (player_t *player)
   plog (player, PLAYER_MSG_INFO,
         MODULE_NAME, "Now playing: %s", player->mrl->name);
 #endif
-  
+
   /* notify front-end */
   if (player->event_cb)
     player->event_cb (PLAYER_EVENT_PLAYBACK_START, NULL);
@@ -568,7 +568,7 @@ player_audio_set_delay (player_t *player, int value, int absolute)
   if (player->funcs->audio_set_delay)
     player->funcs->audio_set_delay (player, value, absolute);
 }
-      
+
 void
 player_audio_select (player_t *player, int audio_id)
 {
@@ -963,7 +963,7 @@ player_tv_channel_next (player_t *player)
 {
   mrl_resource_t res;
   mrl_t *mrl;
-  
+
   if (!player)
     return;
 
@@ -1010,7 +1010,7 @@ void
 player_radio_channel_prev (player_t *player)
 {
   mrl_t *mrl;
-  
+
   if (!player)
     return;
 
@@ -1030,7 +1030,7 @@ void
 player_radio_channel_next (player_t *player)
 {
   mrl_t *mrl;
-  
+
   if (!player)
     return;
 

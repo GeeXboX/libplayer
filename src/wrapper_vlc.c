@@ -115,7 +115,7 @@ vlc_playback_start (player_t *player)
   id = libvlc_playlist_add (vlc->core, player->mrl->name, NULL, NULL);
   libvlc_playlist_play (vlc->core, id, 0, NULL, NULL);
 #endif
-  
+
   return PLAYER_PB_OK;
 }
 
@@ -137,7 +137,7 @@ register_functions_vlc (void)
 
   funcs->get_time_pos       = NULL;
   funcs->set_framedrop      = NULL;
-  
+
   funcs->pb_start           = vlc_playback_start;
   funcs->pb_stop            = NULL;
   funcs->pb_pause           = NULL;
@@ -183,7 +183,7 @@ register_functions_vlc (void)
   funcs->radio_channel_set  = NULL;
   funcs->radio_channel_prev = NULL;
   funcs->radio_channel_next = NULL;
-  
+
   return funcs;
 }
 

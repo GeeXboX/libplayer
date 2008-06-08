@@ -67,18 +67,18 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
     /* properly shutdown playback engine */
     g_main_loop_quit (loop);
     gst_element_set_state (g->bin, GST_STATE_NULL);
-    
+
     /* tell player */
     if (player->event_cb)
       player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
-    
+
     break;
   }
   case GST_MESSAGE_ERROR:
   {
     gchar *debug;
     GError *err;
-    
+
     gst_message_parse_error (msg, &err, &debug);
     g_free (debug);
 
@@ -103,7 +103,7 @@ gstreamer_player_init (player_t *player)
 {
   gstreamer_player_t *g = NULL;
   GError *error;
-  
+
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
   if (!player)
@@ -118,7 +118,7 @@ gstreamer_player_init (player_t *player)
     return PLAYER_INIT_ERROR;
 
   g->bin = gst_element_factory_make ("playbin", "player");
-  
+
   g->bus = gst_pipeline_get_bus (GST_PIPELINE (g->bin));
   if (!g->bus)
   {
@@ -164,7 +164,7 @@ gstreamer_player_init (player_t *player)
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
   g->loop = g_main_loop_new (NULL, FALSE);
-  
+
   return PLAYER_INIT_OK;
 }
 
@@ -186,7 +186,7 @@ gstreamer_player_uninit (player_t *player)
   gst_element_set_state (g->bin, GST_STATE_NULL);
   g_main_loop_quit (g->loop);
   g_main_loop_unref (g->loop);
-  
+
   gst_object_unref (GST_OBJECT (g->bin));
   gst_object_unref (GST_OBJECT (g->bus));
 
@@ -211,7 +211,7 @@ gstreamer_player_playback_start (player_t *player)
   gstreamer_player_t *g;
   pthread_attr_t attr;
   pthread_t th;
-  
+
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
   if (!player)
@@ -219,7 +219,7 @@ gstreamer_player_playback_start (player_t *player)
 
   g = (gstreamer_player_t *) player->priv;
   memset (mrl, '\0', PATH_MAX + 16);
-  
+
   switch (player->mrl->resource)
   {
   case MRL_RESOURCE_FILE:
@@ -252,7 +252,7 @@ gstreamer_player_playback_start (player_t *player)
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
   pthread_create (&th, &attr, gstreamer_playback_thread, player);
   pthread_attr_destroy (&attr);
-  
+
   return PLAYER_PB_OK;
 }
 
@@ -290,14 +290,14 @@ register_functions_gstreamer (void)
 
   funcs->get_time_pos       = NULL;
   funcs->set_framedrop      = NULL;
-  
+
   funcs->pb_start           = gstreamer_player_playback_start;
   funcs->pb_stop            = gstreamer_player_playback_stop;
   funcs->pb_pause           = NULL;
   funcs->pb_seek            = NULL;
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = NULL;
-  
+
   funcs->get_volume         = NULL;
   funcs->set_volume         = NULL;
   funcs->get_mute           = NULL;
@@ -311,7 +311,7 @@ register_functions_gstreamer (void)
   funcs->video_set_aspect   = NULL;
   funcs->video_set_panscan  = NULL;
   funcs->video_set_ar       = NULL;
-  
+
   funcs->set_sub_delay      = NULL;
   funcs->set_sub_alignment  = NULL;
   funcs->set_sub_pos        = NULL;
@@ -320,7 +320,7 @@ register_functions_gstreamer (void)
   funcs->sub_select         = NULL;
   funcs->sub_prev           = NULL;
   funcs->sub_next           = NULL;
-  
+
   funcs->dvd_nav            = NULL;
   funcs->dvd_angle_set      = NULL;
   funcs->dvd_angle_prev     = NULL;
@@ -336,7 +336,7 @@ register_functions_gstreamer (void)
   funcs->radio_channel_set  = NULL;
   funcs->radio_channel_prev = NULL;
   funcs->radio_channel_next = NULL;
-  
+
   return funcs;
 }
 

@@ -38,10 +38,10 @@ plog (player_t *player, player_verbosity_level_t level,
   /* do we really want loging ? */
   if (player->verbosity == PLAYER_MSG_NONE)
     return;
-  
+
   if (level < player->verbosity)
     return;
-  
+
   va_start (va, format);
   fprintf (stderr, "[%s]: ", module);
   vfprintf (stderr, format, va);
