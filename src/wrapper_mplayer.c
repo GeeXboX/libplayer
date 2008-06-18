@@ -176,7 +176,7 @@ static const char *
 get_prop (slave_property_t property)
 {
   const int size = sizeof (g_slave_props) / sizeof (g_slave_props[0]);
-  int prop = PROPERTY_UNKNOWN;
+  slave_property_t prop = PROPERTY_UNKNOWN;
 
   if (property < size && property >= 0)
     prop = property;
