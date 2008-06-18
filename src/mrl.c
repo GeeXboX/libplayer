@@ -598,7 +598,7 @@ mrl_new (player_t *player, mrl_resource_t res, void *args)
   if (!support)
   {
     plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
-          "Unsupported resource type (%d)\n", res);
+          "Unsupported resource type (%d)", res);
     return NULL;
   }
 
