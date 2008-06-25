@@ -259,7 +259,7 @@ thread_fifo (void *arg)
     pthread_mutex_lock (&mplayer->mutex_search);
     /* search the result for a property */
     if (mplayer->search && mplayer->search->property &&
-        (it = strstr(buffer, mplayer->search->property)))
+        (it = strstr(buffer, mplayer->search->property)) == buffer)
     {
       it = parse_field (it, mplayer->search->property);
 
@@ -271,7 +271,7 @@ thread_fifo (void *arg)
     /* If this error (from stderr) exists, then we can go out
      * because there is no result for the real command.
      */
-    else if (strstr (buffer, "Command loadfile")) {
+    else if (strstr (buffer, "Command loadfile") == buffer) {
       if (mplayer->search) {
         free (mplayer->search->property);
         mplayer->search->property = NULL;
@@ -281,7 +281,7 @@ thread_fifo (void *arg)
     }
     pthread_mutex_unlock (&mplayer->mutex_search);
 
-    if (strstr (buffer, "EOF code:")) {
+    if (strstr (buffer, "EOF code:") == buffer) {
       pthread_mutex_lock (&mplayer->mutex_status);
       /* when the stream is ended without stop action */
       if (mplayer->status == MPLAYER_IS_PLAYING) {
@@ -299,7 +299,7 @@ thread_fifo (void *arg)
       else
         pthread_mutex_unlock (&mplayer->mutex_status);
     }
-    else if (strstr (buffer, "File not found: ''")) {
+    else if (strstr (buffer, "File not found: ''") == buffer) {
       /* when the stream is ended with stop action */
       pthread_mutex_lock (&mplayer->mutex_status);
       if (mplayer->status == MPLAYER_IS_IDLE) {
@@ -311,8 +311,8 @@ thread_fifo (void *arg)
         pthread_mutex_unlock (&mplayer->mutex_status);
     }
     /* when the stream is successfully started with action "play" */
-    else if (strstr (buffer, "Starting playback") ||  /* for local */
-             strstr (buffer, "Connecting to server")) /* for network */
+    else if (strstr (buffer, "Starting playback") == buffer ||  /* for local */
+             strstr (buffer, "Connecting to server") == buffer) /* for network */
     {
       pthread_mutex_lock (&mplayer->mutex_status);
       mplayer->status = MPLAYER_IS_PLAYING;
@@ -321,7 +321,7 @@ thread_fifo (void *arg)
     /* Same as "Command loadfile", it is detected for continue
      * but here only with the action "play".
      */
-    else if (strstr (buffer, "Command loadlist"))
+    else if (strstr (buffer, "Command loadlist") == buffer)
       sem_post (&mplayer->sem);
   }
 
@@ -652,7 +652,7 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
     return 0;
 
   /* no new metadata */
-  if (strstr (buffer, "ID_CLIP_INFO_N=")) {
+  if (strstr (buffer, "ID_CLIP_INFO_N=") == buffer) {
     cnt = 0;
     property = PROPERTY_UNKNOWN;
     return 0;
@@ -856,14 +856,14 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
     return 0;
 
   it = strstr (buffer, "ID_LENGTH=");
-  if (it) {
+  if (it == buffer) {
     mrl->prop->length
       = (uint32_t) (atof (parse_field (it, "ID_LENGTH=")) * 1000.0);
     return 1;
   }
 
   it = strstr (buffer, "ID_SEEKABLE=");
-  if (it) {
+  if (it == buffer) {
     mrl->prop->seekable = atoi (parse_field (it, "ID_SEEKABLE="));
     return 1;
   }
