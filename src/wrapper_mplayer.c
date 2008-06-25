@@ -965,10 +965,6 @@ mp_identify (mrl_t *mrl, int flags)
 
       if (!found && (flags & IDENTIFY_PROPERTIES))
         found = mp_identify_properties (mrl, buffer);
-
-      /* stop fgets because MPlayer is ended */
-      if (!found && strstr (buffer, "Exiting"))
-        break;
     }
 
     /* wait the death of MPlayer */
