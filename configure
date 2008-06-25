@@ -661,7 +661,7 @@ add_extralibs -lX11 -lpthread
 #################################################
 #   check for mplayer
 #################################################
-if test "$wrapper_mplayer" = "auto" -o "$wrapper_mplayer" = "yes"; then
+if test "$wrapper_mplayer" = "auto"; then
   wrapper_mplayer="no"
   which mplayer 2>&1 > /dev/null
   if [ "$?" = 0 ]; then
