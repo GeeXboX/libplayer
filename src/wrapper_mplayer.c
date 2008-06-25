@@ -660,7 +660,7 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
 
   meta = mrl->meta;
 
-  snprintf (str, sizeof (str), "NAME%i=", cnt);
+  snprintf (str, sizeof (str), "ID_CLIP_INFO_NAME%i=", cnt);
   it = strstr (buffer, str);
   if (it) {
     if (!strcasecmp (parse_field (it, str), "title"))
@@ -685,7 +685,7 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
     return 1;
   }
 
-  snprintf (str, sizeof (str), "VALUE%i=", cnt);
+  snprintf (str, sizeof (str), "ID_CLIP_INFO_VALUE%i=", cnt);
   it = strstr (buffer, str);
   if (it) {
     switch (property) {
@@ -758,29 +758,29 @@ mp_identify_audio (mrl_t *mrl, const char *buffer)
 
   audio = mrl->prop->audio;
 
-  it = strstr (buffer, "CODEC=");
+  it = strstr (buffer, "ID_AUDIO_CODEC=");
   if (it) {
     if (audio->codec)
       free (audio->codec);
-    audio->codec = strdup (parse_field (it, "CODEC="));
+    audio->codec = strdup (parse_field (it, "ID_AUDIO_CODEC="));
     return 1;
   }
 
-  it = strstr (buffer, "BITRATE=");
+  it = strstr (buffer, "ID_AUDIO_BITRATE=");
   if (it) {
-    audio->bitrate = atoi (parse_field (it, "BITRATE="));
+    audio->bitrate = atoi (parse_field (it, "ID_AUDIO_BITRATE="));
     return 1;
   }
 
-  it = strstr (buffer, "NCH=");
+  it = strstr (buffer, "ID_AUDIO_NCH=");
   if (it) {
-    audio->channels = atoi (parse_field (it, "NCH="));
+    audio->channels = atoi (parse_field (it, "ID_AUDIO_NCH="));
     return 1;
   }
 
-  it = strstr (buffer, "RATE=");
+  it = strstr (buffer, "ID_AUDIO_RATE=");
   if (it) {
-    audio->samplerate = atoi (parse_field (it, "RATE="));
+    audio->samplerate = atoi (parse_field (it, "ID_AUDIO_RATE="));
     return 1;
   }
 
@@ -802,44 +802,44 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
 
   video = mrl->prop->video;
 
-  it = strstr (buffer, "CODEC=");
+  it = strstr (buffer, "ID_VIDEO_CODEC=");
   if (it) {
     if (video->codec)
       free (video->codec);
-    video->codec = strdup (parse_field (it, "CODEC="));
+    video->codec = strdup (parse_field (it, "ID_VIDEO_CODEC="));
     return 1;
   }
 
-  it = strstr (buffer, "BITRATE=");
+  it = strstr (buffer, "ID_VIDEO_BITRATE=");
   if (it) {
-    video->bitrate = atoi (parse_field (it, "BITRATE="));
+    video->bitrate = atoi (parse_field (it, "ID_VIDEO_BITRATE="));
     return 1;
   }
 
-  it = strstr (buffer, "WIDTH=");
+  it = strstr (buffer, "ID_VIDEO_WIDTH=");
   if (it) {
-    video->width = atoi (parse_field (it, "WIDTH="));
+    video->width = atoi (parse_field (it, "ID_VIDEO_WIDTH="));
     return 1;
   }
 
-  it = strstr (buffer, "HEIGHT=");
+  it = strstr (buffer, "ID_VIDEO_HEIGHT=");
   if (it) {
-    video->height = atoi (parse_field (it, "HEIGHT="));
+    video->height = atoi (parse_field (it, "ID_VIDEO_HEIGHT="));
     return 1;
   }
 
   /* Maybe this field is got more that one time,
    * but the last is the right value.
    */
-  it = strstr (buffer, "ASPECT=");
+  it = strstr (buffer, "ID_VIDEO_ASPECT=");
   if (it) {
-    video->aspect = (uint32_t) (atof (parse_field (it, "ASPECT=")) * 10000.0);
+    video->aspect = (uint32_t) (atof (parse_field (it, "ID_VIDEO_ASPECT=")) * 10000.0);
     return 1;
   }
 
-  it = strstr (buffer, "FPS=");
+  it = strstr (buffer, "ID_VIDEO_FPS=");
   if (it) {
-    val = atof (parse_field (it, "FPS="));
+    val = atof (parse_field (it, "ID_VIDEO_FPS="));
     video->frameduration = (uint32_t) (val ? 90000.0 / val : 0);
     return 1;
   }
