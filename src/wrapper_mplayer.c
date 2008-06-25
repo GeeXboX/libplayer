@@ -323,13 +323,11 @@ thread_fifo (void *arg)
      */
     else if (strstr (buffer, "Command loadlist"))
       sem_post (&mplayer->sem);
-    else if (strstr (buffer, "Exiting")) {
-      pthread_mutex_lock (&mplayer->mutex_status);
-      mplayer->status = MPLAYER_IS_DEAD;
-      pthread_mutex_unlock (&mplayer->mutex_status);
-      break;
-    }
   }
+
+  pthread_mutex_lock (&mplayer->mutex_status);
+  mplayer->status = MPLAYER_IS_DEAD;
+  pthread_mutex_unlock (&mplayer->mutex_status);
 
   pthread_exit (0);
 }
