@@ -362,7 +362,7 @@ x11_init (player_t *player)
   pthread_mutex_lock (&x11->mutex_display);
 
   atts.override_redirect = True;  /* window on top */
-  atts.background_pixel = 0;      /* black background */
+  atts.background_pixel = XBlackPixel (x11->display, screen); /* black background */
 
   /* remove borders */
   XA_NO_BORDER = XInternAtom (x11->display, "_MOTIF_WM_HINTS", False);
