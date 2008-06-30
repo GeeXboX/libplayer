@@ -356,8 +356,8 @@ x11_init (player_t *player)
   screen = XDefaultScreen (x11->display);
 
   /* the video will be in fullscreen */
-  width = DisplayWidth (x11->display, screen);
-  height = DisplayHeight (x11->display, screen);
+  width = XDisplayWidth (x11->display, screen);
+  height = XDisplayHeight (x11->display, screen);
 
   pthread_mutex_lock (&x11->mutex_display);
 
@@ -375,9 +375,9 @@ x11_init (player_t *player)
   if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
     /* create a window for the black background */
     screeninfo->win_black = XCreateWindow (x11->display,
-                                      DefaultRootWindow (x11->display),
+                                      XDefaultRootWindow (x11->display),
                                       0, 0, width, height, 0, 0, InputOutput,
-                                      DefaultVisual (x11->display, screen),
+                                      XDefaultVisual (x11->display, screen),
                                       CWOverrideRedirect | CWBackPixel, &atts);
 
     XChangeProperty (x11->display, screeninfo->win_black, XA_NO_BORDER,
@@ -387,15 +387,15 @@ x11_init (player_t *player)
     /* create a window for the video out */
     x11->window = XCreateWindow (x11->display, screeninfo->win_black,
                                 0, 0, width, height, 0, 0, InputOutput,
-                                DefaultVisual (x11->display, screen),
+                                XDefaultVisual (x11->display, screen),
                                 CWOverrideRedirect | CWBackPixel, &atts);
     XMapWindow (x11->display,  x11->window);
   }
   else {
     /* create a window for the video out */
-    x11->window = XCreateWindow (x11->display, DefaultRootWindow (x11->display),
+    x11->window = XCreateWindow (x11->display, XDefaultRootWindow (x11->display),
                                 0, 0, width, height, 0, 0, InputOutput,
-                                DefaultVisual (x11->display, screen),
+                                XDefaultVisual (x11->display, screen),
                                 CWOverrideRedirect | CWBackPixel, &atts);
   }
 
