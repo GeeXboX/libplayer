@@ -120,14 +120,14 @@ load_media (player_t *player)
 }
 
 static void
-show_type (mrl_t *mrl)
+show_type (player_t *player, mrl_t *mrl)
 {
   printf (" Type: ");
 
   if (!mrl)
     printf ("unknown\n");
 
-  switch (mrl_get_type (mrl)) {
+  switch (mrl_get_type (player, mrl)) {
   case MRL_TYPE_AUDIO:
     printf ("audio\n");
     break;
@@ -146,7 +146,7 @@ show_type (mrl_t *mrl)
 }
 
 static void
-show_resource (mrl_t *mrl)
+show_resource (player_t *player, mrl_t *mrl)
 {
   const char const *resource_desc[] = {
     [MRL_RESOURCE_UNKNOWN] = "unknown",
@@ -171,7 +171,7 @@ show_resource (mrl_t *mrl)
     [MRL_RESOURCE_VCD]     = "Video Compact Disc",
   };
   const int resource_size = sizeof (resource_desc) / sizeof (resource_desc[0]);
-  mrl_resource_t resource = mrl_get_resource (mrl);
+  mrl_resource_t resource = mrl_get_resource (player, mrl);
 
   if (resource > resource_size || resource < 0)
     resource = MRL_RESOURCE_UNKNOWN;
@@ -192,8 +192,8 @@ show_info (player_t *player, mrl_t *mrl)
 
   printf ("Properties and metadata:\n");
 
-  show_type (mrl);
-  show_resource (mrl);
+  show_type (player, mrl);
+  show_resource (player, mrl);
 
   size = mrl_get_size (player, mrl);
   printf (" Size: %.2f MB\n", size / 1024.0 / 1024.0);
