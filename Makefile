@@ -3,6 +3,9 @@ $(error "config.mak is not present, run configure !")
 endif
 include config.mak
 
+PKGCONFIG_DIR = $(libdir)/pkgconfig
+PKGCONFIG_FILE = libplayer.pc
+
 LIBTEST = regtest-libplayer
 LIBTEST_SRCS = regtest-libplayer.c
 TESTPLAYER = test-player
@@ -32,10 +35,16 @@ clean:
 distclean: clean
 	rm -f config.log
 	rm -f config.mak
+	rm -f $(PKGCONFIG_FILE)
 
-install:
+install: install-pkgconfig
 	$(MAKE) -C src install
 	$(INSTALL) -c -m 755 $(LIBTEST) $(bindir)
 	$(INSTALL) -c -m 755 $(TESTPLAYER) $(bindir)
 
+install-pkgconfig: $(PKGCONFIG_FILE)
+	$(INSTALL) -d "$(PKGCONFIG_DIR)"
+	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
+
 .phony: clean distclean
+.phony: install install-pkgconfig

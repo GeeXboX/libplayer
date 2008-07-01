@@ -167,6 +167,10 @@ add_extralibs(){
     append extralibs "$@"
 }
 
+add_pkgconfig_requires(){
+    append pkgconfig_requires "$@"
+}
+
 check_cmd(){
     log "$@"
     "$@" >>$logfile 2>&1
@@ -276,6 +280,29 @@ append_config(){
     echo "$@" >> $CONFIGFILE
 }
 
+pkgconfig_generate(){
+    name=$1
+    comment=$2
+    version=$3
+    libs=$4
+    cflags=$5
+    requires=$6
+
+    cat <<EOF >$name.pc
+PREFIX=$PREFIX
+libdir=$libdir
+includedir=$includedir
+
+Name: $name
+Description: $comment
+Version: $version
+Requires: $requires
+Conflicts:
+Libs: -L\${libdir} $libs
+Cflags: -I\${includedir} $cflags
+EOF
+}
+
 # set temporary file name
 if test ! -z "$TMPDIR" ; then
     TMPDIR1="${TMPDIR}"
@@ -321,6 +348,7 @@ wrapper_vlc="auto"
 wrapper_gstreamer="auto"
 INSTALL="install"
 libplayer_version=`grep '#define LIBPLAYER_VERSION[[:space:]]' src/player.h | sed 's/[^0-9\.]//g'`
+pkgconfig_requires=""
 
 #################################################
 #   set cpu variable and specific cpu flags
@@ -643,6 +671,7 @@ if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
   if [ "$?" = 0 ]; then
     add_cflags -DHAVE_XINE
     add_extralibs -lpthread
+    add_pkgconfig_requires libxine
     wrapper_xine="yes"
   fi
 fi
@@ -657,6 +686,7 @@ if [ -n "$libX11dir" ]; then
 fi
 check_lib X11/X.h XInitThreads -lX11 || die "Error, can't find libX11 !"
 add_extralibs -lX11 -lpthread
+add_pkgconfig_requires x11
 
 #################################################
 #   check for mplayer
@@ -705,6 +735,7 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
   if [ "$?" = 0 ]; then
     add_cflags -DHAVE_GSTREAMER
     add_extralibs -lpthread
+    add_pkgconfig_requires gstreamer-0.10
     wrapper_gstreamer="yes"
   fi
 fi
@@ -782,6 +813,13 @@ append_config "WRAPPER_XINE=$wrapper_xine"
 append_config "WRAPPER_MPLAYER=$wrapper_mplayer"
 append_config "WRAPPER_VLC=$wrapper_vlc"
 append_config "WRAPPER_GSTREAMER=$wrapper_gstreamer"
+
+#################################################
+#   make pkg-config files
+#################################################
+echolog "Creating libplayer.pc ..."
+
+pkgconfig_generate libplayer "A multimedia A/V abstraction layer library" "$libplayer_version" "-lplayer $extralibs" "-D_FILE_OFFSET_BITS=64" "$pkgconfig_requires"
 
 clean
 exit 0
