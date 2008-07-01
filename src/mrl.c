@@ -617,18 +617,30 @@ mrl_new (player_t *player, mrl_resource_t res, void *args)
 }
 
 mrl_type_t
-mrl_get_type (mrl_t *mrl)
+mrl_get_type (player_t *player, mrl_t *mrl)
 {
-  if (!mrl)
+  if (!player)
+    return MRL_TYPE_UNKNOWN;
+
+  /* try to use internal mrl? */
+  if (!mrl && player->mrl)
+    mrl = player->mrl;
+  else if (!mrl)
     return MRL_TYPE_UNKNOWN;
 
   return mrl->type;
 }
 
 mrl_resource_t
-mrl_get_resource (mrl_t *mrl)
+mrl_get_resource (player_t *player, mrl_t *mrl)
 {
-  if (!mrl)
+  if (!player)
+    return MRL_RESOURCE_UNKNOWN;
+
+  /* try to use internal mrl? */
+  if (!mrl && player->mrl)
+    mrl = player->mrl;
+  else if (!mrl)
     return MRL_RESOURCE_UNKNOWN;
 
   return mrl->resource;

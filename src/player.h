@@ -221,8 +221,8 @@ mrl_t *mrl_new (player_t *player, mrl_resource_t res, void *args);
 void mrl_add_subtitle (mrl_t *mrl, char *subtitle);
 void mrl_free (mrl_t *mrl, int recursive);
 void mrl_list_free (mrl_t *mrl);
-mrl_type_t mrl_get_type (mrl_t *mrl);
-mrl_resource_t mrl_get_resource (mrl_t *mrl);
+mrl_type_t mrl_get_type (player_t *player, mrl_t *mrl);
+mrl_resource_t mrl_get_resource (player_t *player, mrl_t *mrl);
 char *mrl_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m);
 uint32_t mrl_get_property (player_t *player,
                            mrl_t *mrl, mrl_properties_type_t p);
