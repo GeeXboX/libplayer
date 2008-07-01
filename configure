@@ -677,18 +677,6 @@ if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
 fi
 
 #################################################
-#   check for libX11
-#################################################
-echolog "Checking for libX11 ..."
-if [ -n "$libX11dir" ]; then
-  check_cflags -I$libX11dir
-  check_ldflags -L$libX11dir
-fi
-check_lib X11/X.h XInitThreads -lX11 || die "Error, can't find libX11 !"
-add_extralibs -lX11 -lpthread
-add_pkgconfig_requires x11
-
-#################################################
 #   check for mplayer
 #################################################
 if test "$wrapper_mplayer" = "auto"; then
@@ -739,6 +727,18 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
     wrapper_gstreamer="yes"
   fi
 fi
+
+#################################################
+#   check for libX11
+#################################################
+echolog "Checking for libX11 ..."
+if [ -n "$libX11dir" ]; then
+  check_cflags -I$libX11dir
+  check_ldflags -L$libX11dir
+fi
+check_lib X11/X.h XInitThreads -lX11 || die "Error, can't find libX11 !"
+add_extralibs -lX11 -lpthread
+add_pkgconfig_requires x11
 
 #################################################
 #   logging result
