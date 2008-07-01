@@ -52,5 +52,5 @@ uninstall:
 	rm -f $(bindir)/$(TESTPLAYER)
 	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
 
-.phony: clean distclean
-.phony: install install-pkgconfig
+.PHONY: clean distclean
+.PHONY: install install-pkgconfig
