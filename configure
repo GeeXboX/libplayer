@@ -829,7 +829,14 @@ append_config "X11=$x11"
 #################################################
 echolog "Creating libplayer.pc ..."
 
-pkgconfig_generate libplayer "A multimedia A/V abstraction layer library" "$libplayer_version" "-lplayer" "$extralibs" "-D_FILE_OFFSET_BITS=64" "" "$pkgconfig_requires"
+pkgconfig_generate libplayer \
+                   "A multimedia A/V abstraction layer library" \
+                   "$libplayer_version" \
+                   "-lplayer" \
+                   "$extralibs" \
+                   "-D_FILE_OFFSET_BITS=64" \
+                   "" \
+                   "$pkgconfig_requires"
 
 clean
 exit 0
