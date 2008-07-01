@@ -285,8 +285,9 @@ pkgconfig_generate(){
     comment=$2
     version=$3
     libs=$4
-    cflags=$5
-    requires=$6
+    libs_private=$5
+    cflags=$6
+    requires=$7
 
     cat <<EOF >$name.pc
 PREFIX=$PREFIX
@@ -299,6 +300,7 @@ Version: $version
 Requires: $requires
 Conflicts:
 Libs: -L\${libdir} $libs
+Libs.private: $libs_private
 Cflags: -I\${includedir} $cflags
 EOF
 }
@@ -825,7 +827,7 @@ append_config "X11=$x11"
 #################################################
 echolog "Creating libplayer.pc ..."
 
-pkgconfig_generate libplayer "A multimedia A/V abstraction layer library" "$libplayer_version" "-lplayer $extralibs" "-D_FILE_OFFSET_BITS=64" "$pkgconfig_requires"
+pkgconfig_generate libplayer "A multimedia A/V abstraction layer library" "$libplayer_version" "-lplayer" "$extralibs" "-D_FILE_OFFSET_BITS=64" "$pkgconfig_requires"
 
 clean
 exit 0
