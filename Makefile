@@ -46,5 +46,11 @@ install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
 	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
 
+uninstall:
+	$(MAKE) -C src uninstall
+	rm -f $(bindir)/$(LIBTEST)
+	rm -f $(bindir)/$(TESTPLAYER)
+	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
+
 .phony: clean distclean
 .phony: install install-pkgconfig

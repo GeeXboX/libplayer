@@ -73,6 +73,11 @@ install: $(BUILD_RULES)
 	fi
 	$(INSTALL) -c -m 644 player.h $(includedir)
 
+uninstall:
+	rm -f $(libdir)/$(STATIC_LIBNAME)
+	rm -f $(libdir)/$(SHARED_LIBNAME)*
+	rm -f $(includedir)/player.h
+
 depend:
 	$(CC) -MM $(CFLAGS) $(SRCS) 1>.depend
 
