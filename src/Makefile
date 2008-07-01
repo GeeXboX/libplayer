@@ -19,7 +19,6 @@ SHARED_LIBNAME_MAJOR = $(SHARED_LIBNAME).$(shell echo $(LIBPLAYER_VERSION) | cut
 SRCS =  player.c \
 	mrl.c \
 	logs.c \
-	x11_common.c \
 	wrapper_dummy.c
 
 ifeq ($(WRAPPER_MPLAYER),yes)
@@ -36,6 +35,10 @@ endif
 
 ifeq ($(WRAPPER_GSTREAMER),yes)
   SRCS += wrapper_gstreamer.c
+endif
+
+ifeq ($(X11),yes)
+  SRCS += x11_common.c
 endif
 
 OBJS = $(SRCS:.c=.o)
