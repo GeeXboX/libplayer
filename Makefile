@@ -53,4 +53,4 @@ uninstall:
 	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
 
 .PHONY: clean distclean
-.PHONY: install install-pkgconfig
+.PHONY: install install-pkgconfig uninstall

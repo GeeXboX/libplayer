@@ -82,6 +82,7 @@ depend:
 	$(CC) -MM $(CFLAGS) $(SRCS) 1>.depend
 
 .PHONY: clean depend
+.PHONY: uninstall
 
 #
 # include dependency files if they exist
