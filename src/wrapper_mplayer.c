@@ -653,6 +653,13 @@ count_nb_dec (int dec)
 static char *
 mp_resource_get_uri (mrl_t *mrl)
 {
+  static const char const *protocols[] = {
+    [MRL_RESOURCE_FILE]     = "file://",
+    [MRL_RESOURCE_CDDA]     = "cdda://",
+    [MRL_RESOURCE_CDDB]     = "cddb://",
+    [MRL_RESOURCE_UNKNOWN]  = NULL
+  };
+
   if (!mrl)
     return NULL;
 
@@ -670,7 +677,7 @@ mp_resource_get_uri (mrl_t *mrl)
   case MRL_RESOURCE_CDDB: /* cddb://track_start-track_end:speed/device */
   {
     char *uri;
-    char *protocol = mrl->resource == MRL_RESOURCE_CDDA ? "cdda://" : "cddb://";
+    const char *protocol = protocols[mrl->resource];
     char track_start[4] = "";
     char track_end[8] = "";
     char speed[8] = "";
