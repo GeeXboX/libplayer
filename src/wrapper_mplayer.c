@@ -639,6 +639,17 @@ slave_cmd_str_opt (player_t *player, slave_cmd_t cmd, char *str, int opt)
   slave_action (player, cmd, &param, opt);
 }
 
+static int
+count_nb_dec (int dec)
+{
+  int size = 1;
+
+  while (dec /= 10)
+    size++;
+
+  return size;
+}
+
 static char *
 mp_resource_get_uri (mrl_t *mrl)
 {
@@ -653,6 +664,45 @@ mp_resource_get_uri (mrl_t *mrl)
     if (args && args->location)
       return strdup (args->location);
     break;
+  }
+
+  case MRL_RESOURCE_CDDA: /* cdda://track_start-track_end:speed/device */
+  case MRL_RESOURCE_CDDB: /* cddb://track_start-track_end:speed/device */
+  {
+    char *uri;
+    char *protocol = mrl->resource == MRL_RESOURCE_CDDA ? "cdda://" : "cddb://";
+    char track_start[4] = "";
+    char track_end[8] = "";
+    char speed[8] = "";
+    size_t size = strlen (protocol);
+    mrl_resource_cd_args_t *args;
+
+    args = mrl->priv;
+    if (!args || !args->device)
+      break;
+
+    if (args->track_start) {
+      size += count_nb_dec (args->track_start);
+      snprintf (track_start, sizeof (track_start), "%i", args->track_start);
+    }
+    if (args->track_end > args->track_start) {
+      size += 1 + count_nb_dec (args->track_end);
+      snprintf (track_end, sizeof (track_end), "-%i", args->track_end);
+    }
+    if (args->speed) {
+      size += 1 + count_nb_dec (args->speed);
+      snprintf (speed, sizeof (speed), ":%i", args->speed);
+    }
+    size += 1 + strlen (args->device);
+
+    size++;
+    uri = malloc (size);
+    if (!uri)
+      break;
+
+    snprintf (uri, size, "%s%s%s%s/%s",
+              protocol, track_start, track_end, speed, args->device);
+    return uri;
   }
 
   default:
@@ -1315,6 +1365,8 @@ mplayer_mrl_supported_res (player_t *player, mrl_resource_t res)
   switch (res)
   {
   case MRL_RESOURCE_FILE:
+  case MRL_RESOURCE_CDDA:
+  case MRL_RESOURCE_CDDB:
     return 1;
 
   default:
