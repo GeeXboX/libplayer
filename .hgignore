@@ -7,3 +7,4 @@ config.log
 config.mak
 regtest-libplayer$
 test-player$
+^libplayer.pc
