@@ -113,22 +113,22 @@ load_media (player_t *player)
 
   case '1':
   {
-  char file[1024] = "";
-  mrl_resource_local_args_t *args;
+    char file[1024] = "";
+    mrl_resource_local_args_t *args;
 
-  printf ("Media to load (file): ");
-  while (!*file) {
-  fgets (file, sizeof (file), stdin);
-  *(file + strlen (file) - 1) = '\0';
-  }
+    printf ("Media to load (file): ");
+    while (!*file) {
+      fgets (file, sizeof (file), stdin);
+      *(file + strlen (file) - 1) = '\0';
+    }
 
-  args = calloc (1, sizeof (mrl_resource_local_args_t));
-  args->location = strdup (file);
+    args = calloc (1, sizeof (mrl_resource_local_args_t));
+    args->location = strdup (file);
 
-  mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
-  if (!mrl)
-    return;
-  break;
+    mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
+    if (!mrl)
+      return;
+    break;
   }
 
   case '2':
