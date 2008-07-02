@@ -80,7 +80,7 @@ static int
 getch (void)
 {
   struct termios oldt, newt;
-  int ch;
+  int ch = 0;
 
   tcgetattr (STDIN_FILENO, &oldt);
   newt = oldt;
