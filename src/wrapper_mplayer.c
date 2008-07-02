@@ -654,7 +654,10 @@ static char *
 mp_resource_get_uri (mrl_t *mrl)
 {
   static const char const *protocols[] = {
+    /* Local Streams */
     [MRL_RESOURCE_FILE]     = "file://",
+
+    /* Audio CD */
     [MRL_RESOURCE_CDDA]     = "cdda://",
     [MRL_RESOURCE_CDDB]     = "cddb://",
 
