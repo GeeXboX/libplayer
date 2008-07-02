@@ -123,11 +123,18 @@ load_media (player_t *player)
     }
 
     args = calloc (1, sizeof (mrl_resource_local_args_t));
+    if (!args)
+      return;
+
     args->location = strdup (file);
 
     mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
-    if (!mrl)
+    if (!mrl) {
+      if (args->location)
+        free (args->location);
+      free (args);
       return;
+    }
     break;
   }
 
