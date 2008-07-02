@@ -657,6 +657,17 @@ mp_resource_get_uri (mrl_t *mrl)
     [MRL_RESOURCE_FILE]     = "file://",
     [MRL_RESOURCE_CDDA]     = "cdda://",
     [MRL_RESOURCE_CDDB]     = "cddb://",
+
+    /* Network Streams */
+    [MRL_RESOURCE_FTP]      = "ftp://",
+    [MRL_RESOURCE_HTTP]     = "http://",
+    [MRL_RESOURCE_MMS]      = "mms://",
+    [MRL_RESOURCE_RTP]      = "rtp://",
+    [MRL_RESOURCE_RTSP]     = "rtsp://",
+    [MRL_RESOURCE_SMB]      = "smb://",
+    [MRL_RESOURCE_UDP]      = "udp://",
+    [MRL_RESOURCE_UNSV]     = "unsv://",
+
     [MRL_RESOURCE_UNKNOWN]  = NULL
   };
 
@@ -709,6 +720,45 @@ mp_resource_get_uri (mrl_t *mrl)
 
     snprintf (uri, size, "%s%s%s%s/%s",
               protocol, track_start, track_end, speed, args->device);
+    return uri;
+  }
+
+  case MRL_RESOURCE_FTP:  /* ftp://username:password@url   */
+  case MRL_RESOURCE_HTTP: /* http://username:password@url  */
+  case MRL_RESOURCE_MMS:  /* mms://username:password@url   */
+  case MRL_RESOURCE_RTP:  /* rtp://username:password@url   */
+  case MRL_RESOURCE_RTSP: /* rtsp://username:password@url  */
+  case MRL_RESOURCE_SMB:  /* smb://username:password@url   */
+  case MRL_RESOURCE_UDP:  /* udp://username:password@url   */
+  case MRL_RESOURCE_UNSV: /* unsv://username:password@url  */
+  {
+    char *uri;
+    const char *protocol = protocols[mrl->resource];
+    char at[256] = "";
+    size_t size = strlen (protocol);
+    mrl_resource_network_args_t *args;
+
+    args = mrl->priv;
+    if (!args || !args->url)
+      break;
+
+    if (args->username) {
+      size += 1 + strlen (args->username);
+      if (args->password) {
+        size += 1 + strlen (args->password);
+        snprintf (at, sizeof (at), "%s:%s@", args->username, args->password);
+      }
+      else
+        snprintf (at, sizeof (at), "%s@", args->username);
+    }
+    size += strlen (args->url);
+
+    size++;
+    uri = malloc (size);
+    if (!uri)
+      break;
+
+    snprintf (uri, size, "%s%s%s", protocol, at, args->url);
     return uri;
   }
 
@@ -1374,6 +1424,14 @@ mplayer_mrl_supported_res (player_t *player, mrl_resource_t res)
   case MRL_RESOURCE_FILE:
   case MRL_RESOURCE_CDDA:
   case MRL_RESOURCE_CDDB:
+  case MRL_RESOURCE_FTP:
+  case MRL_RESOURCE_HTTP:
+  case MRL_RESOURCE_MMS:
+  case MRL_RESOURCE_RTP:
+  case MRL_RESOURCE_RTSP:
+  case MRL_RESOURCE_SMB:
+  case MRL_RESOURCE_UDP:
+  case MRL_RESOURCE_UNSV:
     return 1;
 
   default:
