@@ -295,6 +295,7 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   xine_stream_t *stream;
   xine_video_port_t *vo;
   xine_audio_port_t *ao;
+  char *uri = NULL;
 
   if (!player || !mrl)
     return;
@@ -302,6 +303,10 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   x = (xine_player_t *) player->priv;
 
   if (!x)
+    return;
+
+  uri = xine_resource_get_uri (mrl);
+  if (!uri)
     return;
 
   ao = xine_open_audio_driver (x->xine, "none", NULL);
@@ -319,14 +324,7 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   stream = xine_stream_new (x->xine, ao, vo);
 
   if (stream) {
-    char *uri = NULL;
-
-    uri = xine_resource_get_uri (mrl);
-    if (uri)
-    {
       xine_open (stream, uri);
-      free (uri);
-    }
 
     if ((flags & IDENTIFY_VIDEO))
       xine_identify_video (mrl, stream);
@@ -344,6 +342,7 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
     xine_dispose (stream);
   }
 
+  free (uri);
   xine_close_audio_driver (x->xine, ao);
   xine_close_video_driver (x->xine, vo);
 }
