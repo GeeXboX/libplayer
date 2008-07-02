@@ -161,8 +161,12 @@ load_media (player_t *player)
     args->speed = (uint8_t) val;
 
     mrl = mrl_new (player, MRL_RESOURCE_CDDA, args);
-    if (!mrl)
+    if (!mrl) {
+      if (args->device)
+        free (args->device);
+      free (args);
       return;
+    }
     break;
   }
   }
