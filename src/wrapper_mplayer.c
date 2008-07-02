@@ -1521,6 +1521,8 @@ mplayer_playback_start (player_t *player)
   if (!uri)
     return PLAYER_PB_ERROR;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "uri: %s", uri);
+
   /* 0: new play, 1: append to the current playlist */
   slave_cmd_str_opt (player, SLAVE_LOADFILE, uri, 0);
 
