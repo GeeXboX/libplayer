@@ -639,6 +639,29 @@ slave_cmd_str_opt (player_t *player, slave_cmd_t cmd, char *str, int opt)
   slave_action (player, cmd, &param, opt);
 }
 
+static char *
+mp_resource_get_uri (mrl_t *mrl)
+{
+  if (!mrl)
+    return NULL;
+
+  switch (mrl->resource)
+  {
+  case MRL_RESOURCE_FILE:
+  {
+    mrl_resource_local_args_t *args = mrl->priv;
+    if (args && args->location)
+      return strdup (args->location);
+    break;
+  }
+
+  default:
+    break;
+  }
+
+  return NULL;
+}
+
 static int
 mp_identify_metadata (mrl_t *mrl, const char *buffer)
 {
@@ -887,20 +910,7 @@ mp_identify (mrl_t *mrl, int flags)
   if (!mrl)
     return;
 
-  switch (mrl->resource)
-  {
-  case MRL_RESOURCE_FILE:
-  {
-    mrl_resource_local_args_t *args = mrl->priv;
-    if (args && args->location)
-      uri = strdup (args->location);
-    break;
-  }
-
-  default:
-    break;
-  }
-
+  uri = mp_resource_get_uri (mrl);
   if (!uri)
     return;
 
@@ -1455,20 +1465,7 @@ mplayer_playback_start (player_t *player)
   if (!player->mrl)
     return PLAYER_PB_ERROR;
 
-  switch (player->mrl->resource)
-  {
-  case MRL_RESOURCE_FILE:
-  {
-    mrl_resource_local_args_t *args = player->mrl->priv;
-    if (args && args->location)
-      uri = strdup (args->location);
-    break;
-  }
-
-  default:
-    break;
-  }
-
+  uri = mp_resource_get_uri (player->mrl);
   if (!uri)
     return PLAYER_PB_ERROR;
 

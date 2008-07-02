@@ -104,6 +104,29 @@ send_event (player_t *player, int event)
   xine_event_send (x->stream, &xine_event);
 }
 
+static char *
+xine_resource_get_uri (mrl_t *mrl)
+{
+  if (!mrl)
+    return NULL;
+
+  switch (mrl->resource)
+  {
+  case MRL_RESOURCE_FILE:
+  {
+    mrl_resource_local_args_t *args = mrl->priv;
+    if (args && args->location)
+      return strdup (args->location);
+    break;
+  }
+
+  default:
+    break;
+  }
+
+  return NULL;
+}
+
 static void
 xine_identify_metadata (mrl_t *mrl, xine_stream_t *stream)
 {
@@ -298,20 +321,7 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   if (stream) {
     char *uri = NULL;
 
-    switch (mrl->resource)
-    {
-    case MRL_RESOURCE_FILE:
-    {
-      mrl_resource_local_args_t *args = mrl->priv;
-      if (args && args->location)
-        uri = strdup (args->location);
-      break;
-    }
-
-    default:
-      break;
-    }
-
+    uri = xine_resource_get_uri (mrl);
     if (uri)
     {
       xine_open (stream, uri);
@@ -715,20 +725,7 @@ xine_player_playback_start (player_t *player)
   if (!x->stream || !player->mrl)
     return PLAYER_PB_ERROR;
 
-  switch (player->mrl->resource)
-  {
-  case MRL_RESOURCE_FILE:
-  {
-    mrl_resource_local_args_t *args = player->mrl->priv;
-    if (args && args->location)
-      uri = strdup (args->location);
-    break;
-  }
-
-  default:
-    break;
-  }
-
+  uri = xine_resource_get_uri (player->mrl);
   if (!uri)
     return PLAYER_PB_ERROR;
 
