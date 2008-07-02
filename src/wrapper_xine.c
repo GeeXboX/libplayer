@@ -324,7 +324,7 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   stream = xine_stream_new (x->xine, ao, vo);
 
   if (stream) {
-      xine_open (stream, uri);
+    xine_open (stream, uri);
 
     if ((flags & IDENTIFY_VIDEO))
       xine_identify_video (mrl, stream);
