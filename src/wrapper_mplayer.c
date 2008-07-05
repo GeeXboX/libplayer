@@ -96,6 +96,12 @@ typedef enum item_state {
   ITEM_HACK     = (1 << 1),
 } item_state_t;
 
+typedef struct item_list_s {
+  const char *str;
+  const int state_lib;    /* states of the command in libplayer */
+  item_state_t state_mp;  /* state of the command in MPlayer */
+} item_list_t;
+
 /* slave commands */
 typedef enum slave_cmd {
   SLAVE_UNKNOWN = 0,
@@ -110,11 +116,7 @@ typedef enum slave_cmd {
   SLAVE_SUB_LOAD      /* sub_load string */
 } slave_cmd_t;
 
-static const struct {
-  const char *str;
-  const int state_lib;    /* states of the command in libplayer */
-  item_state_t state_mp;  /* state of the command in MPlayer */
-} g_slave_cmds[] = {
+static item_list_t g_slave_cmds[] = {
   [SLAVE_DVDNAV]        = {"dvdnav",       ITEM_ENABLE,   ITEM_DISABLE},
   [SLAVE_GET_PROPERTY]  = {"get_property", ITEM_ENABLE,   ITEM_DISABLE},
   [SLAVE_LOADFILE]      = {"loadfile",     ITEM_ENABLE,   ITEM_DISABLE},
