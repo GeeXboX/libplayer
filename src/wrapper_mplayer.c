@@ -92,6 +92,7 @@ typedef union slave_value {
 
 /* slave commands */
 typedef enum slave_cmd {
+  SLAVE_UNKNOWN = 0,
   SLAVE_DVDNAV,       /* dvdnav int */
   SLAVE_GET_PROPERTY, /* get_property string */
   SLAVE_LOADFILE,     /* loadfile string [int] */
@@ -113,6 +114,7 @@ static const char const *g_slave_cmds[] = {
   [SLAVE_SET_PROPERTY]  = "set_property",
   [SLAVE_STOP]          = "stop",
   [SLAVE_SUB_LOAD]      = "sub_load",
+  [SLAVE_UNKNOWN]       = NULL
 };
 
 /* slave properties */
