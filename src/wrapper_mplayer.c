@@ -103,6 +103,18 @@ typedef enum slave_cmd {
   SLAVE_SUB_LOAD      /* sub_load string */
 } slave_cmd_t;
 
+static const char const *g_slave_cmds[] = {
+  [SLAVE_DVDNAV]        = "dvdnav",
+  [SLAVE_GET_PROPERTY]  = "get_property",
+  [SLAVE_LOADFILE]      = "loadfile",
+  [SLAVE_PAUSE]         = "pause",
+  [SLAVE_QUIT]          = "quit",
+  [SLAVE_SEEK]          = "seek",
+  [SLAVE_SET_PROPERTY]  = "set_property",
+  [SLAVE_STOP]          = "stop",
+  [SLAVE_SUB_LOAD]      = "sub_load",
+};
+
 /* slave properties */
 typedef enum slave_property {
   PROPERTY_UNKNOWN,
@@ -165,6 +177,17 @@ sig_handler (int signal)
 {
   if (signal == SIGPIPE)
     fprintf (stderr, "SIGPIPE detected by the death of MPlayer");
+}
+
+static const char *
+get_cmd (slave_cmd_t cmd)
+{
+  const int size = sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
+
+  if (cmd < size && cmd >= 0)
+    return g_slave_cmds[cmd];
+
+  return NULL;
 }
 
 /**
