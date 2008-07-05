@@ -112,7 +112,7 @@ typedef enum slave_cmd {
 
 static const struct {
   const char *str;
-  const item_state_t state_lib; /* state of the command in libplayer */
+  const int state_lib; /* state of the command in libplayer */
   item_state_t state_mp;        /* state of the command in MPlayer */
 } g_slave_cmds[] = {
   [SLAVE_DVDNAV]        = {"dvdnav",       ITEM_ENABLE,   ITEM_DISABLE},
