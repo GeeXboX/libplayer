@@ -195,11 +195,12 @@ static const char *
 get_cmd (slave_cmd_t cmd)
 {
   const int size = sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
+  slave_cmd_t command = SLAVE_UNKNOWN;
 
   if (cmd < size && cmd >= 0)
-    return g_slave_cmds[cmd].str;
+    command = cmd;
 
-  return NULL;
+  return g_slave_cmds[command].str;
 }
 
 /**
