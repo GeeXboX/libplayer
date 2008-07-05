@@ -364,6 +364,7 @@ slave_get_property (player_t *player, slave_property_t property)
 {
   mplayer_t *mplayer = NULL;
   const char *prop;
+  const char *command;
 
   if (!player)
     return;
@@ -375,8 +376,9 @@ slave_get_property (player_t *player, slave_property_t property)
 
   /* get the right property in the global list */
   prop = get_prop (property);
-  if (prop)
-    send_to_slave (mplayer, "get_property %s", prop);
+  command = get_cmd (SLAVE_GET_PROPERTY);
+  if (prop && command)
+    send_to_slave (mplayer, "%s %s", command, prop);
   else
     /* should never going here */
     return;
@@ -497,6 +499,7 @@ slave_set_property (player_t *player, slave_property_t property,
 {
   mplayer_t *mplayer = NULL;
   const char *prop;
+  const char *command;
   char cmd[SLAVE_CMD_BUFFER];
 
   if (!player)
@@ -509,8 +512,9 @@ slave_set_property (player_t *player, slave_property_t property,
 
   /* get the right property in the global list */
   prop = get_prop (property);
-  if (prop)
-    sprintf (cmd, "set_property %s", prop);
+  command = get_cmd (SLAVE_SET_PROPERTY);
+  if (prop && command)
+    sprintf (cmd, "%s %s", command, prop);
   else
     /* should never going here */
     return;
@@ -566,6 +570,7 @@ static void
 slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 {
   mplayer_t *mplayer = NULL;
+  const char *command;
 
   if (!player)
     return;
@@ -575,15 +580,19 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   if (!mplayer || !mplayer->fifo_in)
     return;
 
+  command = get_cmd (cmd);
+  if (!command)
+    return;
+
   switch (cmd) {
   case SLAVE_DVDNAV:
     if (value)
-      send_to_slave (mplayer, "dvdnav %i", value->i_val);
+      send_to_slave (mplayer, "%s %i", command, value->i_val);
     break;
 
   case SLAVE_LOADFILE:
     if (value && value->s_val)
-      send_to_slave (mplayer, "loadfile \"%s\" %i", value->s_val, opt);
+      send_to_slave (mplayer, "%s \"%s\" %i", command, value->s_val, opt);
 
     send_to_slave (mplayer, "loadlist");
     /* wait that the thread will confirm "loadlist" */
@@ -591,16 +600,16 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   case SLAVE_PAUSE:
-    send_to_slave (mplayer, "pause");
+    send_to_slave (mplayer, command);
     break;
 
   case SLAVE_QUIT:
-    send_to_slave (mplayer, "quit");
+    send_to_slave (mplayer, command);
     break;
 
   case SLAVE_SEEK:
     if (value)
-      send_to_slave (mplayer, "seek %i %i", value->i_val, opt);
+      send_to_slave (mplayer, "%s %i %i", command, value->i_val, opt);
     break;
 
   case SLAVE_STOP:
@@ -612,7 +621,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_SUB_LOAD:
     if (value && value->s_val)
-      send_to_slave (mplayer, "sub_load \"%s\"", value->s_val);
+      send_to_slave (mplayer, "%s \"%s\"", command, value->s_val);
     break;
 
   default:
