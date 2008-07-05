@@ -90,6 +90,12 @@ typedef union slave_value {
   char *s_val;
 } slave_value_t;
 
+typedef enum item_state {
+  ITEM_DISABLE  = 0,
+  ITEM_ENABLE   = (1 << 0),
+  ITEM_HACK     = (1 << 1),
+} item_state_t;
+
 /* slave commands */
 typedef enum slave_cmd {
   SLAVE_UNKNOWN = 0,
@@ -104,17 +110,21 @@ typedef enum slave_cmd {
   SLAVE_SUB_LOAD      /* sub_load string */
 } slave_cmd_t;
 
-static const char const *g_slave_cmds[] = {
-  [SLAVE_DVDNAV]        = "dvdnav",
-  [SLAVE_GET_PROPERTY]  = "get_property",
-  [SLAVE_LOADFILE]      = "loadfile",
-  [SLAVE_PAUSE]         = "pause",
-  [SLAVE_QUIT]          = "quit",
-  [SLAVE_SEEK]          = "seek",
-  [SLAVE_SET_PROPERTY]  = "set_property",
-  [SLAVE_STOP]          = "stop",
-  [SLAVE_SUB_LOAD]      = "sub_load",
-  [SLAVE_UNKNOWN]       = NULL
+static const struct {
+  const char *str;
+  const item_state_t state_lib; /* state of the command in libplayer */
+  item_state_t state_mp;        /* state of the command in MPlayer */
+} g_slave_cmds[] = {
+  [SLAVE_DVDNAV]        = {"dvdnav",       ITEM_ENABLE,   ITEM_DISABLE},
+  [SLAVE_GET_PROPERTY]  = {"get_property", ITEM_ENABLE,   ITEM_DISABLE},
+  [SLAVE_LOADFILE]      = {"loadfile",     ITEM_ENABLE,   ITEM_DISABLE},
+  [SLAVE_PAUSE]         = {"pause",        ITEM_ENABLE,   ITEM_DISABLE},
+  [SLAVE_QUIT]          = {"quit",         ITEM_ENABLE,   ITEM_DISABLE},
+  [SLAVE_SEEK]          = {"seek",         ITEM_ENABLE,   ITEM_DISABLE},
+  [SLAVE_SET_PROPERTY]  = {"set_property", ITEM_ENABLE,   ITEM_DISABLE},
+  [SLAVE_STOP]          = {"stop",         ITEM_HACK,     ITEM_DISABLE},
+  [SLAVE_SUB_LOAD]      = {"sub_load",     ITEM_ENABLE,   ITEM_DISABLE},
+  [SLAVE_UNKNOWN]       = {NULL,           ITEM_DISABLE,  ITEM_DISABLE}
 };
 
 /* slave properties */
@@ -187,7 +197,7 @@ get_cmd (slave_cmd_t cmd)
   const int size = sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
 
   if (cmd < size && cmd >= 0)
-    return g_slave_cmds[cmd];
+    return g_slave_cmds[cmd].str;
 
   return NULL;
 }
