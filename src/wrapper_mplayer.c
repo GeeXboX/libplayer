@@ -41,7 +41,7 @@
 
 #define MODULE_NAME "mplayer"
 
-#define SLAVE_CMD_BUFFER 256
+#define FIFO_BUFFER      256
 #define MPLAYER_NAME     "mplayer"
 
 typedef enum {
@@ -299,7 +299,7 @@ parse_field (char *line, char *field)
 static void *
 thread_fifo (void *arg)
 {
-  char buffer[SLAVE_CMD_BUFFER], log[SLAVE_CMD_BUFFER];
+  char buffer[FIFO_BUFFER], log[FIFO_BUFFER];
   char *it;
   player_t *player;
   mplayer_t *mplayer;
@@ -315,7 +315,7 @@ thread_fifo (void *arg)
     pthread_exit (0);
 
   /* MPlayer's stdout parser */
-  while (fgets (buffer, SLAVE_CMD_BUFFER, mplayer->fifo_out))
+  while (fgets (buffer, FIFO_BUFFER, mplayer->fifo_out))
   {
     pthread_mutex_lock (&mplayer->mutex_verbosity);
     if (mplayer->verbosity)
@@ -503,7 +503,7 @@ slave_get_property (player_t *player, slave_property_t property)
 static char *
 slave_result (slave_property_t property, player_t *player)
 {
-  char str[SLAVE_CMD_BUFFER];
+  char str[FIFO_BUFFER];
   const char *prop;
   char *ret = NULL;
   mplayer_t *mplayer = NULL;
@@ -612,7 +612,7 @@ slave_set_property (player_t *player, slave_property_t property,
   const char *prop;
   const char *command;
   item_state_t state_cmd;
-  char cmd[SLAVE_CMD_BUFFER];
+  char cmd[FIFO_BUFFER];
 
   if (!player)
     return;
@@ -1159,7 +1159,7 @@ static void
 mp_identify (mrl_t *mrl, int flags)
 {
   char *params[16];
-  char buffer[SLAVE_CMD_BUFFER];
+  char buffer[FIFO_BUFFER];
   int pp = 0;
   int mp_pipe[2];
   int found;
@@ -1220,7 +1220,7 @@ mp_identify (mrl_t *mrl, int flags)
 
     mp_fifo = fdopen (mp_pipe[0], "r");
 
-    while (fgets (buffer, SLAVE_CMD_BUFFER, mp_fifo)) {
+    while (fgets (buffer, FIFO_BUFFER, mp_fifo)) {
       found = 0;
 
       if (flags & IDENTIFY_VIDEO)
@@ -1320,13 +1320,13 @@ mp_check_compatibility (player_t *player, checklist_t check)
   default:
   {
     FILE *mp_fifo;
-    char buffer[SLAVE_CMD_BUFFER];
+    char buffer[FIFO_BUFFER];
     char *buf;
 
     close (mp_pipe[1]);
     mp_fifo = fdopen (mp_pipe[0], "r");
 
-    while (fgets (buffer, SLAVE_CMD_BUFFER, mp_fifo))
+    while (fgets (buffer, FIFO_BUFFER, mp_fifo))
     {
       for (i = 1; i < nb; i++)
       {
