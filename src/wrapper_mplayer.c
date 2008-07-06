@@ -648,12 +648,12 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_PAUSE:
     if (state_cmd == ITEM_ENABLE)
-    send_to_slave (mplayer, command);
+      send_to_slave (mplayer, command);
     break;
 
   case SLAVE_QUIT:
     if (state_cmd == ITEM_ENABLE)
-    send_to_slave (mplayer, command);
+      send_to_slave (mplayer, command);
     break;
 
   case SLAVE_SEEK:
@@ -663,7 +663,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_STOP:
     if (state_cmd == ITEM_HACK)
-    send_to_slave (mplayer, "loadfile \"\"");
+      send_to_slave (mplayer, "loadfile \"\"");
 
     /* wait that the thread will found the EOF */
     sem_wait (&mplayer->sem);
