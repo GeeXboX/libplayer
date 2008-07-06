@@ -131,7 +131,7 @@ static item_list_t g_slave_cmds[] = {
   [SLAVE_QUIT]          = {"quit",         ITEM_ENABLE,   ITEM_DISABLE},
   [SLAVE_SEEK]          = {"seek",         ITEM_ENABLE,   ITEM_DISABLE},
   [SLAVE_SET_PROPERTY]  = {"set_property", ITEM_ENABLE,   ITEM_DISABLE},
-  [SLAVE_STOP]          = {"stop",         ITEM_HACK,     ITEM_DISABLE},
+  [SLAVE_STOP]          = {"stop",         ITEM_ENABLE|ITEM_HACK,     ITEM_DISABLE},
   [SLAVE_SUB_LOAD]      = {"sub_load",     ITEM_ENABLE,   ITEM_DISABLE},
   [SLAVE_UNKNOWN]       = {NULL,           ITEM_DISABLE,  ITEM_DISABLE}
 };
@@ -349,6 +349,26 @@ thread_fifo (void *arg)
     pthread_mutex_unlock (&mplayer->mutex_search);
 
     if (strstr (buffer, "EOF code:") == buffer) {
+      if (strchr (buffer, '4'))
+      {
+        item_state_t state;
+        get_cmd (SLAVE_STOP, &state);
+
+        if (state == ITEM_ENABLE)
+        {
+          pthread_mutex_lock (&mplayer->mutex_status);
+          if (mplayer->status == MPLAYER_IS_IDLE)
+          {
+            pthread_mutex_unlock (&mplayer->mutex_status);
+            sem_post (&mplayer->sem);
+          }
+          else
+            pthread_mutex_unlock (&mplayer->mutex_status);
+
+          continue;
+        }
+      }
+
       pthread_mutex_lock (&mplayer->mutex_status);
       /* when the stream is ended without stop action */
       if (mplayer->status == MPLAYER_IS_PLAYING) {
@@ -670,6 +690,8 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   case SLAVE_STOP:
     if (state_cmd == ITEM_HACK)
       send_to_slave (mplayer, "loadfile \"\"");
+    else if (state_cmd == ITEM_ENABLE)
+      send_to_slave (mplayer, command);
 
     /* wait that the thread will found the EOF */
     sem_wait (&mplayer->sem);
