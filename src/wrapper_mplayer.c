@@ -413,7 +413,7 @@ thread_fifo (void *arg)
 
     /*
      * HACK: If the slave command 'stop' is not handled by MPlayer, then this
-     *       part will stop the stream instead of "EOF code: 4".
+     *       part will find the end instead of "EOF code: 4".
      */
     else if (strstr (buffer, "File not found: ''") == buffer)
     {
