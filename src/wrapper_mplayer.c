@@ -327,7 +327,7 @@ thread_fifo (void *arg)
       plog (player, PLAYER_MSG_INFO, MODULE_NAME, "[process] %s", log);
     }
     else
-    pthread_mutex_unlock (&mplayer->mutex_verbosity);
+      pthread_mutex_unlock (&mplayer->mutex_verbosity);
 
     /*
      * Here, the result of a property requested by the slave command
