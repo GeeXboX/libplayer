@@ -324,9 +324,11 @@ thread_fifo (void *arg)
     }
     pthread_mutex_unlock (&mplayer->mutex_verbosity);
 
-    /* lock the mutex for protect mplayer->search */
+    /*
+     * Here, the result of a property requested by the slave command
+     * 'get_property', is searched and saved.
+     */
     pthread_mutex_lock (&mplayer->mutex_search);
-    /* search the result for a property */
     if (mplayer->search && mplayer->search->property &&
         (it = strstr(buffer, mplayer->search->property)) == buffer)
     {
@@ -338,8 +340,13 @@ thread_fifo (void *arg)
         *(mplayer->search->value + strlen (it)) = '\0';
       }
     }
-    /* If this error (from stderr) exists, then we can go out
-     * because there is no result for the real command.
+
+    /*
+     * HACK: This part will be used only to detect the end of the slave
+     *       command 'get_property'. In this case, libplayer is locked on
+     *       mplayer->sem as long as the property will be found or not.
+     *
+     * NOTE: This hack is no longer necessary since MPlayer r26296.
      */
     else if (strstr (buffer, "Command loadfile") == buffer)
     {
@@ -347,14 +354,22 @@ thread_fifo (void *arg)
       {
         free (mplayer->search->property);
         mplayer->search->property = NULL;
-        /* search ended */
         sem_post (&mplayer->sem);
       }
     }
     pthread_mutex_unlock (&mplayer->mutex_search);
 
+    /*
+     * Search for "End Of File" in order to handle slave command 'stop'
+     * or "end of stream".
+     */
     if (strstr (buffer, "EOF code:") == buffer)
     {
+      /*
+       * When code is '4', then slave command 'stop' was used. But if the
+       * command is not ENABLE, then this EOF code will be considered as an
+       * "end of stream".
+       */
       if (strchr (buffer, '4'))
       {
         item_state_t state;
@@ -375,8 +390,10 @@ thread_fifo (void *arg)
         }
       }
 
+      /*
+       * Here we can consider an "end of stream" and sending an event.
+       */
       pthread_mutex_lock (&mplayer->mutex_status);
-      /* when the stream is ended without stop action */
       if (mplayer->status == MPLAYER_IS_PLAYING)
       {
         plog (player, PLAYER_MSG_INFO,
@@ -386,13 +403,18 @@ thread_fifo (void *arg)
 
         if (player->event_cb)
           player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
-        /* X11 */
+
         if (player->x11)
           x11_unmap (player);
       }
       else
         pthread_mutex_unlock (&mplayer->mutex_status);
     }
+
+    /*
+     * HACK: If the slave command 'stop' is not handled by MPlayer, then this
+     *       part will stop the stream instead of "EOF code: 4".
+     */
     else if (strstr (buffer, "File not found: ''") == buffer)
     {
       item_state_t state;
@@ -401,18 +423,20 @@ thread_fifo (void *arg)
       if (state != ITEM_HACK)
         continue;
 
-      /* when the stream is ended with stop action */
       pthread_mutex_lock (&mplayer->mutex_status);
       if (mplayer->status == MPLAYER_IS_IDLE)
       {
         pthread_mutex_unlock (&mplayer->mutex_status);
-        /* ok, now we can continue */
         sem_post (&mplayer->sem);
       }
       else
         pthread_mutex_unlock (&mplayer->mutex_status);
     }
-    /* when the stream is successfully started with action "play" */
+
+    /*
+     * Detect when MPlayer playback is really started in order to change
+     * the current status.
+     */
     else if (strstr (buffer, "Starting playback") == buffer ||  /* for local */
              strstr (buffer, "Connecting to server") == buffer) /* for network */
     {
@@ -420,8 +444,13 @@ thread_fifo (void *arg)
       mplayer->status = MPLAYER_IS_PLAYING;
       pthread_mutex_unlock (&mplayer->mutex_status);
     }
-    /* Same as "Command loadfile", it is detected for continue
-     * but here only with the action "play".
+
+    /*
+     * HACK: loadlist is never used in libplayer to load a playlist. This
+     *       will be used only to detect the end of the previous command.
+     *       In this case, when the slave command 'loadfile' is used to play
+     *       a stream, libplayer is locked on mplayer->sem as long as the
+     *       loading is not finished.
      */
     else if (strstr (buffer, "Command loadlist") == buffer)
       sem_post (&mplayer->sem);
