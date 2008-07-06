@@ -313,9 +313,11 @@ thread_fifo (void *arg)
     pthread_exit (0);
 
   /* MPlayer's stdout parser */
-  while (fgets (buffer, SLAVE_CMD_BUFFER, mplayer->fifo_out)) {
+  while (fgets (buffer, SLAVE_CMD_BUFFER, mplayer->fifo_out))
+  {
     pthread_mutex_lock (&mplayer->mutex_verbosity);
-    if (mplayer->verbosity) {
+    if (mplayer->verbosity)
+    {
       strcpy (log, buffer);
       *(log + strlen (log) - 1) = '\0';
       plog (player, PLAYER_MSG_INFO, MODULE_NAME, "[process] %s", log);
@@ -330,7 +332,8 @@ thread_fifo (void *arg)
     {
       it = parse_field (it, mplayer->search->property);
 
-      if ((mplayer->search->value = malloc (strlen (it) + 1))) {
+      if ((mplayer->search->value = malloc (strlen (it) + 1)))
+      {
         memcpy (mplayer->search->value, it, strlen (it));
         *(mplayer->search->value + strlen (it)) = '\0';
       }
@@ -338,8 +341,10 @@ thread_fifo (void *arg)
     /* If this error (from stderr) exists, then we can go out
      * because there is no result for the real command.
      */
-    else if (strstr (buffer, "Command loadfile") == buffer) {
-      if (mplayer->search) {
+    else if (strstr (buffer, "Command loadfile") == buffer)
+    {
+      if (mplayer->search)
+      {
         free (mplayer->search->property);
         mplayer->search->property = NULL;
         /* search ended */
@@ -348,7 +353,8 @@ thread_fifo (void *arg)
     }
     pthread_mutex_unlock (&mplayer->mutex_search);
 
-    if (strstr (buffer, "EOF code:") == buffer) {
+    if (strstr (buffer, "EOF code:") == buffer)
+    {
       if (strchr (buffer, '4'))
       {
         item_state_t state;
@@ -371,7 +377,8 @@ thread_fifo (void *arg)
 
       pthread_mutex_lock (&mplayer->mutex_status);
       /* when the stream is ended without stop action */
-      if (mplayer->status == MPLAYER_IS_PLAYING) {
+      if (mplayer->status == MPLAYER_IS_PLAYING)
+      {
         plog (player, PLAYER_MSG_INFO,
               MODULE_NAME, "Playback of stream has ended");
         mplayer->status = MPLAYER_IS_IDLE;
@@ -386,7 +393,8 @@ thread_fifo (void *arg)
       else
         pthread_mutex_unlock (&mplayer->mutex_status);
     }
-    else if (strstr (buffer, "File not found: ''") == buffer) {
+    else if (strstr (buffer, "File not found: ''") == buffer)
+    {
       item_state_t state;
       get_cmd (SLAVE_STOP, &state);
 
@@ -395,7 +403,8 @@ thread_fifo (void *arg)
 
       /* when the stream is ended with stop action */
       pthread_mutex_lock (&mplayer->mutex_status);
-      if (mplayer->status == MPLAYER_IS_IDLE) {
+      if (mplayer->status == MPLAYER_IS_IDLE)
+      {
         pthread_mutex_unlock (&mplayer->mutex_status);
         /* ok, now we can continue */
         sem_post (&mplayer->sem);
