@@ -104,7 +104,7 @@ load_media (player_t *player)
 
   printf ("What resource to load?\n");
   printf (" 1 - Local file\n");
-  printf (" 2 - Compat Disc\n");
+  printf (" 2 - Compact Disc Digital Audio\n");
   c = getch ();
 
   switch (c) {
