@@ -103,6 +103,8 @@ typedef enum item_state {
   ITEM_HACK     = (1 << 1),
 } item_state_t;
 
+#define ALL_ITEM_STATES (ITEM_HACK | ITEM_ENABLE)
+
 typedef struct item_list_s {
   const char *str;
   const int state_lib;    /* states of the command in libplayer */
@@ -211,21 +213,20 @@ get_cmd (slave_cmd_t cmd, item_state_t *state)
 
   if (state)
   {
-    const int all_states = (ITEM_HACK | ITEM_ENABLE);
     int state_lib;
     item_state_t state_mp;
 
     *state = ITEM_DISABLE;
-    state_lib = g_slave_cmds[command].state_lib & all_states;
+    state_lib = g_slave_cmds[command].state_lib & ALL_ITEM_STATES;
     state_mp = g_slave_cmds[command].state_mp;
 
     if ((state_lib == ITEM_HACK) ||
-        (state_lib == all_states && state_mp == ITEM_DISABLE))
+        (state_lib == ALL_ITEM_STATES && state_mp == ITEM_DISABLE))
     {
       *state = ITEM_HACK;
     }
     else if ((state_lib == ITEM_ENABLE && state_mp == ITEM_ENABLE) ||
-            (state_lib == all_states && state_mp == ITEM_ENABLE))
+            (state_lib == ALL_ITEM_STATES && state_mp == ITEM_ENABLE))
     {
       *state = ITEM_ENABLE;
     }
@@ -1357,13 +1358,12 @@ mp_check_compatibility (player_t *player, checklist_t check)
   /* check items list */
   for (i = 1; i < nb; i++)
   {
-    const int all_states = (ITEM_HACK | ITEM_ENABLE);
     int state_libplayer;
 
     state_mp = &list[i].state_mp;
     state_lib = &list[i].state_lib;
     str = list[i].str;
-    state_libplayer = *state_lib & all_states;
+    state_libplayer = *state_lib & ALL_ITEM_STATES;
 
     if (state_libplayer == ITEM_ENABLE && *state_mp == ITEM_DISABLE)
     {
@@ -1378,7 +1378,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
             "%s '%s' is needed and not supported by your version of MPlayer "
             "and libplayer, then a hack is used", what, str);
     }
-    else if (state_libplayer == all_states && *state_mp == ITEM_DISABLE)
+    else if (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_DISABLE)
     {
       plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
             "%s '%s' is needed and not supported by your version of MPlayer, "
@@ -1391,7 +1391,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
             "libplayer, then a hack is used", what, str);
     }
     else if ((state_libplayer == ITEM_ENABLE && *state_mp == ITEM_ENABLE) ||
-             (state_libplayer == all_states && *state_mp == ITEM_ENABLE))
+             (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_ENABLE))
     {
       plog (player, PLAYER_MSG_INFO, MODULE_NAME,
             "%s '%s' is supported by your version of MPlayer", what, str);
