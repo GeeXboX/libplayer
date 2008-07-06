@@ -59,6 +59,13 @@ typedef enum mplayer_status {
   MPLAYER_IS_DEAD
 } mplayer_status_t;
 
+typedef enum checklist {
+  CHECKLIST_COMMANDS,
+#if 0
+  CHECKLIST_PROPERTIES,
+#endif
+} checklist_t;
+
 /* property and value for a search in the fifo_out */
 typedef struct mp_search_s {
   char *property;
@@ -1143,6 +1150,164 @@ mp_identify (mrl_t *mrl, int flags)
 }
 
 static int
+mp_check_compatibility (player_t *player, checklist_t check)
+{
+  int i, nb = 0, res = 1;
+  int mp_pipe[2];
+  pid_t pid;
+  item_list_t *list;
+  const char *str, *what;
+  const int *state_lib;
+  item_state_t *state_mp;
+
+  if (!player)
+    return 0;
+
+  if (pipe (mp_pipe))
+    return 0;
+
+  switch (check)
+  {
+  case CHECKLIST_COMMANDS:
+    nb = sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
+    list = g_slave_cmds;
+    what = "slave command";
+    break;
+#if 0
+  case CHECKLIST_PROPERTIES:
+    nb = sizeof (g_slave_props) / sizeof (g_slave_props[0]);
+    list = g_slave_props;
+    what = "slave property";
+    break;
+#endif
+  default:
+    break;
+  }
+
+  pid = fork ();
+
+  switch (pid)
+  {
+  /* the son (a new hope) */
+  case 0:
+  {
+    char *params[8];
+    int pp = 0;
+
+    close (mp_pipe[0]);
+    dup2 (mp_pipe[1], STDOUT_FILENO);
+
+    params[pp++] = "mplayer";
+    switch (check)
+    {
+    case CHECKLIST_COMMANDS:
+      params[pp++] = "-input";
+      params[pp++] = "cmdlist";
+      break;
+#if 0
+    case CHECKLIST_PROPERTIES:
+      params[pp++] = "-list-properties";
+      break;
+#endif
+    default:
+      break;
+    }
+    params[pp] = NULL;
+
+    execvp ("mplayer", params);
+  }
+
+  case -1:
+    break;
+
+  /* I'm your father */
+  default:
+  {
+    FILE *mp_fifo;
+    char buffer[SLAVE_CMD_BUFFER];
+    char *buf;
+
+    close (mp_pipe[1]);
+    mp_fifo = fdopen (mp_pipe[0], "r");
+
+    while (fgets (buffer, SLAVE_CMD_BUFFER, mp_fifo))
+    {
+      for (i = 1; i < nb; i++)
+      {
+        state_mp = &list[i].state_mp;
+        str = list[i].str;
+
+        if (!str || !state_mp || *state_mp != ITEM_DISABLE)
+          continue;
+
+        buf = strstr (buffer, str);
+        if (!buf)
+          continue;
+
+        /* search the command|property */
+        if ((buf == buffer || (buf > buffer && *(buf - 1) == ' '))
+            && (*(buf + strlen (str)) == ' ' || *(buf + strlen (str)) == '\n'))
+        {
+          *state_mp = ITEM_ENABLE;
+          break;
+        }
+      }
+    }
+
+    waitpid (pid, NULL, 0);
+    close (mp_pipe[0]);
+    fclose (mp_fifo);
+  }
+  }
+
+  /* check items list */
+  for (i = 1; i < nb; i++)
+  {
+    const int all_states = (ITEM_HACK | ITEM_ENABLE);
+    int state_libplayer;
+
+    state_mp = &list[i].state_mp;
+    state_lib = &list[i].state_lib;
+    str = list[i].str;
+    state_libplayer = *state_lib & all_states;
+
+    if (state_libplayer == ITEM_ENABLE && *state_mp == ITEM_DISABLE)
+    {
+      plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
+            "%s '%s' is needed and not supported by your version of MPlayer",
+            what, str);
+      res = 0;
+    }
+    else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_DISABLE)
+    {
+      plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
+            "%s '%s' is needed and not supported by your version of MPlayer "
+            "and libplayer, then a hack is used", what, str);
+    }
+    else if (state_libplayer == all_states && *state_mp == ITEM_DISABLE)
+    {
+      plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
+            "%s '%s' is needed and not supported by your version of MPlayer, "
+            "then a hack is used", what, str);
+    }
+    else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_ENABLE)
+    {
+      plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
+            "%s '%s' is supported by your version of MPlayer but not by "
+            "libplayer, then a hack is used", what, str);
+    }
+    else if ((state_libplayer == ITEM_ENABLE && *state_mp == ITEM_ENABLE) ||
+             (state_libplayer == all_states && *state_mp == ITEM_ENABLE))
+    {
+      plog (player, PLAYER_MSG_INFO, MODULE_NAME,
+            "%s '%s' is supported by your version of MPlayer", what, str);
+    }
+  }
+
+  return res;
+}
+
+static int
 is_available (player_t *player, const char *bin)
 {
   char *p, *fp, *env;
@@ -1218,6 +1383,11 @@ mplayer_init (player_t *player)
 
   /* test if MPlayer is available */
   if (!is_available (player, "mplayer"))
+    return PLAYER_INIT_ERROR;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "check MPlayer compatibility");
+
+  if (!mp_check_compatibility (player, CHECKLIST_COMMANDS))
     return PLAYER_INIT_ERROR;
 
   /* action for SIGPIPE */
