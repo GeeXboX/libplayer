@@ -227,7 +227,7 @@ get_cmd (slave_cmd_t cmd, item_state_t *state)
       *state = ITEM_HACK;
     }
     else if ((state_lib == ITEM_ENABLE && state_mp == ITEM_ENABLE) ||
-            (state_lib == ALL_ITEM_STATES && state_mp == ITEM_ENABLE))
+             (state_lib == ALL_ITEM_STATES && state_mp == ITEM_ENABLE))
     {
       *state = ITEM_ENABLE;
     }
