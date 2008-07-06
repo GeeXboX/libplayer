@@ -124,16 +124,16 @@ typedef enum slave_cmd {
 } slave_cmd_t;
 
 static item_list_t g_slave_cmds[] = {
-  [SLAVE_DVDNAV]        = {"dvdnav",       ITEM_ENABLE,   ITEM_DISABLE},
-  [SLAVE_GET_PROPERTY]  = {"get_property", ITEM_ENABLE,   ITEM_DISABLE},
-  [SLAVE_LOADFILE]      = {"loadfile",     ITEM_ENABLE,   ITEM_DISABLE},
-  [SLAVE_PAUSE]         = {"pause",        ITEM_ENABLE,   ITEM_DISABLE},
-  [SLAVE_QUIT]          = {"quit",         ITEM_ENABLE,   ITEM_DISABLE},
-  [SLAVE_SEEK]          = {"seek",         ITEM_ENABLE,   ITEM_DISABLE},
-  [SLAVE_SET_PROPERTY]  = {"set_property", ITEM_ENABLE,   ITEM_DISABLE},
-  [SLAVE_STOP]          = {"stop",         ITEM_ENABLE|ITEM_HACK,     ITEM_DISABLE},
-  [SLAVE_SUB_LOAD]      = {"sub_load",     ITEM_ENABLE,   ITEM_DISABLE},
-  [SLAVE_UNKNOWN]       = {NULL,           ITEM_DISABLE,  ITEM_DISABLE}
+  [SLAVE_DVDNAV]        = {"dvdnav",       ITEM_ENABLE,           ITEM_DISABLE},
+  [SLAVE_GET_PROPERTY]  = {"get_property", ITEM_ENABLE,           ITEM_DISABLE},
+  [SLAVE_LOADFILE]      = {"loadfile",     ITEM_ENABLE,           ITEM_DISABLE},
+  [SLAVE_PAUSE]         = {"pause",        ITEM_ENABLE,           ITEM_DISABLE},
+  [SLAVE_QUIT]          = {"quit",         ITEM_ENABLE,           ITEM_DISABLE},
+  [SLAVE_SEEK]          = {"seek",         ITEM_ENABLE,           ITEM_DISABLE},
+  [SLAVE_SET_PROPERTY]  = {"set_property", ITEM_ENABLE,           ITEM_DISABLE},
+  [SLAVE_STOP]          = {"stop",         ITEM_ENABLE|ITEM_HACK, ITEM_DISABLE},
+  [SLAVE_SUB_LOAD]      = {"sub_load",     ITEM_ENABLE,           ITEM_DISABLE},
+  [SLAVE_UNKNOWN]       = {NULL,           ITEM_DISABLE,          ITEM_DISABLE}
 };
 
 /* slave properties */
