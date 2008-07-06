@@ -330,7 +330,7 @@ thread_fifo (void *arg)
      */
     pthread_mutex_lock (&mplayer->mutex_search);
     if (mplayer->search && mplayer->search->property &&
-        (it = strstr(buffer, mplayer->search->property)) == buffer)
+        (it = strstr (buffer, mplayer->search->property)) == buffer)
     {
       it = parse_field (it, mplayer->search->property);
 
