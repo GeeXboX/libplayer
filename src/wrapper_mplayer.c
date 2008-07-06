@@ -42,6 +42,7 @@
 #define MODULE_NAME "mplayer"
 
 #define SLAVE_CMD_BUFFER 256
+#define MPLAYER_NAME     "mplayer"
 
 typedef enum {
   MPLAYER_DVDNAV_UP     = 1,
@@ -1191,7 +1192,7 @@ mp_identify (mrl_t *mrl, int flags)
     dup2 (mp_pipe[1], STDERR_FILENO);
     dup2 (mp_pipe[1], STDOUT_FILENO);
 
-    params[pp++] = "mplayer";
+    params[pp++] = MPLAYER_NAME;
     params[pp++] = "-quiet";
     params[pp++] = "-vo";
     params[pp++] = "null";
@@ -1207,7 +1208,7 @@ mp_identify (mrl_t *mrl, int flags)
     params[pp] = NULL;
 
     /* launch MPlayer, if execvp returns there is an error */
-    execvp ("mplayer", params);
+    execvp (MPLAYER_NAME, params);
 
   case -1:
     break;
@@ -1292,7 +1293,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
     close (mp_pipe[0]);
     dup2 (mp_pipe[1], STDOUT_FILENO);
 
-    params[pp++] = "mplayer";
+    params[pp++] = MPLAYER_NAME;
     switch (check)
     {
     case CHECKLIST_COMMANDS:
@@ -1309,7 +1310,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
     }
     params[pp] = NULL;
 
-    execvp ("mplayer", params);
+    execvp (MPLAYER_NAME, params);
   }
 
   case -1:
@@ -1476,7 +1477,7 @@ mplayer_init (player_t *player)
     return PLAYER_INIT_ERROR;
 
   /* test if MPlayer is available */
-  if (!executable_is_available (player, "mplayer"))
+  if (!executable_is_available (player, MPLAYER_NAME))
     return PLAYER_INIT_ERROR;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "check MPlayer compatibility");
@@ -1531,7 +1532,7 @@ mplayer_init (player_t *player)
     dup2 (mplayer->pipe_out[1], STDOUT_FILENO);
 
     /* default MPlayer arguments */
-    params[pp++] = "mplayer";
+    params[pp++] = MPLAYER_NAME;
     params[pp++] = "-slave";            /* work in slave mode */
     params[pp++] = "-quiet";            /* reduce output messages */
     params[pp++] = "-v";                /* necessary for detect EOF */
@@ -1605,7 +1606,7 @@ mplayer_init (player_t *player)
     params[pp] = NULL;
 
     /* launch MPlayer, if execvp returns there is an error */
-    execvp ("mplayer", params);
+    execvp (MPLAYER_NAME, params);
 
   case -1:
     break;
