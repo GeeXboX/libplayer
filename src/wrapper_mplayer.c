@@ -367,6 +367,12 @@ thread_fifo (void *arg)
         pthread_mutex_unlock (&mplayer->mutex_status);
     }
     else if (strstr (buffer, "File not found: ''") == buffer) {
+      item_state_t state;
+      get_cmd (SLAVE_STOP, &state);
+
+      if (state != ITEM_HACK)
+        continue;
+
       /* when the stream is ended with stop action */
       pthread_mutex_lock (&mplayer->mutex_status);
       if (mplayer->status == MPLAYER_IS_IDLE) {
