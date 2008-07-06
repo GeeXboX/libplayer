@@ -320,10 +320,13 @@ thread_fifo (void *arg)
     pthread_mutex_lock (&mplayer->mutex_verbosity);
     if (mplayer->verbosity)
     {
+      pthread_mutex_unlock (&mplayer->mutex_verbosity);
+
       strcpy (log, buffer);
       *(log + strlen (log) - 1) = '\0';
       plog (player, PLAYER_MSG_INFO, MODULE_NAME, "[process] %s", log);
     }
+    else
     pthread_mutex_unlock (&mplayer->mutex_verbosity);
 
     /*
@@ -398,10 +401,11 @@ thread_fifo (void *arg)
       pthread_mutex_lock (&mplayer->mutex_status);
       if (mplayer->status == MPLAYER_IS_PLAYING)
       {
-        plog (player, PLAYER_MSG_INFO,
-              MODULE_NAME, "Playback of stream has ended");
         mplayer->status = MPLAYER_IS_IDLE;
         pthread_mutex_unlock (&mplayer->mutex_status);
+
+        plog (player, PLAYER_MSG_INFO,
+              MODULE_NAME, "Playback of stream has ended");
 
         if (player->event_cb)
           player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
