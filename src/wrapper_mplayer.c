@@ -1402,7 +1402,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
 }
 
 static int
-is_available (player_t *player, const char *bin)
+executable_is_available (player_t *player, const char *bin)
 {
   char *p, *fp, *env;
   char prog[256];
@@ -1476,7 +1476,7 @@ mplayer_init (player_t *player)
     return PLAYER_INIT_ERROR;
 
   /* test if MPlayer is available */
-  if (!is_available (player, "mplayer"))
+  if (!executable_is_available (player, "mplayer"))
     return PLAYER_INIT_ERROR;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "check MPlayer compatibility");
