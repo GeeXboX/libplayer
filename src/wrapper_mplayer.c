@@ -201,13 +201,35 @@ sig_handler (int signal)
 }
 
 static const char *
-get_cmd (slave_cmd_t cmd)
+get_cmd (slave_cmd_t cmd, item_state_t *state)
 {
   const int size = sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
   slave_cmd_t command = SLAVE_UNKNOWN;
 
   if (cmd < size && cmd >= 0)
     command = cmd;
+
+  if (state)
+  {
+    const int all_states = (ITEM_HACK | ITEM_ENABLE);
+    int state_lib;
+    item_state_t state_mp;
+
+    *state = ITEM_DISABLE;
+    state_lib = g_slave_cmds[command].state_lib & all_states;
+    state_mp = g_slave_cmds[command].state_mp;
+
+    if ((state_lib == ITEM_HACK) ||
+        (state_lib == all_states && state_mp == ITEM_DISABLE))
+    {
+      *state = ITEM_HACK;
+    }
+    else if ((state_lib == ITEM_ENABLE && state_mp == ITEM_ENABLE) ||
+            (state_lib == all_states && state_mp == ITEM_ENABLE))
+    {
+      *state = ITEM_ENABLE;
+    }
+  }
 
   return g_slave_cmds[command].str;
 }
@@ -387,6 +409,7 @@ slave_get_property (player_t *player, slave_property_t property)
   mplayer_t *mplayer = NULL;
   const char *prop;
   const char *command;
+  item_state_t state_cmd;
 
   if (!player)
     return;
@@ -398,8 +421,8 @@ slave_get_property (player_t *player, slave_property_t property)
 
   /* get the right property in the global list */
   prop = get_prop (property);
-  command = get_cmd (SLAVE_GET_PROPERTY);
-  if (prop && command)
+  command = get_cmd (SLAVE_GET_PROPERTY, &state_cmd);
+  if (prop && command && state_cmd == ITEM_ENABLE)
     send_to_slave (mplayer, "%s %s", command, prop);
   else
     /* should never going here */
@@ -522,6 +545,7 @@ slave_set_property (player_t *player, slave_property_t property,
   mplayer_t *mplayer = NULL;
   const char *prop;
   const char *command;
+  item_state_t state_cmd;
   char cmd[SLAVE_CMD_BUFFER];
 
   if (!player)
@@ -534,8 +558,8 @@ slave_set_property (player_t *player, slave_property_t property,
 
   /* get the right property in the global list */
   prop = get_prop (property);
-  command = get_cmd (SLAVE_SET_PROPERTY);
-  if (prop && command)
+  command = get_cmd (SLAVE_SET_PROPERTY, &state_cmd);
+  if (prop && command && state_cmd == ITEM_ENABLE)
     sprintf (cmd, "%s %s", command, prop);
   else
     /* should never going here */
@@ -593,6 +617,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 {
   mplayer_t *mplayer = NULL;
   const char *command;
+  item_state_t state_cmd;
 
   if (!player)
     return;
@@ -602,18 +627,18 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   if (!mplayer || !mplayer->fifo_in)
     return;
 
-  command = get_cmd (cmd);
-  if (!command)
+  command = get_cmd (cmd, &state_cmd);
+  if (!command || state_cmd == ITEM_DISABLE)
     return;
 
   switch (cmd) {
   case SLAVE_DVDNAV:
-    if (value)
+    if (state_cmd == ITEM_ENABLE && value)
       send_to_slave (mplayer, "%s %i", command, value->i_val);
     break;
 
   case SLAVE_LOADFILE:
-    if (value && value->s_val)
+    if (state_cmd == ITEM_ENABLE && value && value->s_val)
       send_to_slave (mplayer, "%s \"%s\" %i", command, value->s_val, opt);
 
     send_to_slave (mplayer, "loadlist");
@@ -622,19 +647,22 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   case SLAVE_PAUSE:
+    if (state_cmd == ITEM_ENABLE)
     send_to_slave (mplayer, command);
     break;
 
   case SLAVE_QUIT:
+    if (state_cmd == ITEM_ENABLE)
     send_to_slave (mplayer, command);
     break;
 
   case SLAVE_SEEK:
-    if (value)
+    if (state_cmd == ITEM_ENABLE && value)
       send_to_slave (mplayer, "%s %i %i", command, value->i_val, opt);
     break;
 
   case SLAVE_STOP:
+    if (state_cmd == ITEM_HACK)
     send_to_slave (mplayer, "loadfile \"\"");
 
     /* wait that the thread will found the EOF */
@@ -642,7 +670,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   case SLAVE_SUB_LOAD:
-    if (value && value->s_val)
+    if (state_cmd == ITEM_ENABLE && value && value->s_val)
       send_to_slave (mplayer, "%s \"%s\"", command, value->s_val);
     break;
 
