@@ -1661,7 +1661,7 @@ mplayer_init (player_t *player)
       params[pp++] = "x11";
       /* window ID */
       params[pp++] = "-wid";
-      params[pp++] = strdup (winid);
+      params[pp++] = winid;
       break;
 
     /* with xv and wid, zoom, fs and aspect have no effect.
@@ -1671,7 +1671,7 @@ mplayer_init (player_t *player)
       params[pp++] = "xv";
       /* window ID */
       params[pp++] = "-wid";
-      params[pp++] = strdup (winid);
+      params[pp++] = winid;
       break;
 
     case PLAYER_VO_FB:
