@@ -864,15 +864,18 @@ mp_resource_get_uri (mrl_t *mrl)
     if (!args || !args->device)
       break;
 
-    if (args->track_start) {
+    if (args->track_start)
+    {
       size += count_nb_dec (args->track_start);
       snprintf (track_start, sizeof (track_start), "%i", args->track_start);
     }
-    if (args->track_end > args->track_start) {
+    if (args->track_end > args->track_start)
+    {
       size += 1 + count_nb_dec (args->track_end);
       snprintf (track_end, sizeof (track_end), "-%i", args->track_end);
     }
-    if (args->speed) {
+    if (args->speed)
+    {
       size += 1 + count_nb_dec (args->speed);
       snprintf (speed, sizeof (speed), ":%i", args->speed);
     }
@@ -963,9 +966,11 @@ mp_resource_get_uri (mrl_t *mrl)
     if (!args || !args->url)
       break;
 
-    if (args->username) {
+    if (args->username)
+    {
       size += 1 + strlen (args->username);
-      if (args->password) {
+      if (args->password)
+      {
         size += 1 + strlen (args->password);
         snprintf (at, sizeof (at), "%s:%s@", args->username, args->password);
       }
