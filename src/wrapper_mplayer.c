@@ -53,6 +53,12 @@ typedef enum {
   MPLAYER_DVDNAV_SELECT = 6,
 } mplayer_dvdnav_t;
 
+typedef enum mplayer_sub_alignment {
+  MPLAYER_SUB_ALIGNMENT_TOP    = 0,
+  MPLAYER_SUB_ALIGNMENT_CENTER = 1,
+  MPLAYER_SUB_ALIGNMENT_BOTTOM = 2,
+} mplayer_sub_alignment_t;
+
 /* Status of MPlayer child */
 typedef enum mplayer_status {
   MPLAYER_IS_IDLE,
@@ -158,6 +164,7 @@ typedef enum slave_property {
   PROPERTY_MUTE,
   PROPERTY_SAMPLERATE,
   PROPERTY_SUB,
+  PROPERTY_SUB_ALIGNMENT,
   PROPERTY_SUB_DELAY,
   PROPERTY_SUB_VISIBILITY,
   PROPERTY_TIME_POS,
@@ -185,6 +192,7 @@ static const char const *g_slave_props[] = {
   [PROPERTY_MUTE]             = "mute",
   [PROPERTY_SAMPLERATE]       = "samplerate",
   [PROPERTY_SUB]              = "sub",
+  [PROPERTY_SUB_ALIGNMENT]    = "sub_alignment",
   [PROPERTY_SUB_DELAY]        = "sub_delay",
   [PROPERTY_SUB_VISIBILITY]   = "sub_visibility",
   [PROPERTY_TIME_POS]         = "time_pos",
@@ -2251,6 +2259,37 @@ mplayer_set_sub_delay (player_t *player, float value)
 }
 
 static void
+mplayer_set_sub_alignment (player_t *player, player_sub_alignment_t a)
+{
+  mplayer_sub_alignment_t alignment;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_alignment: %i", a);
+
+  if (!player)
+    return;
+
+  switch (a)
+  {
+  case PLAYER_SUB_ALIGNMENT_TOP:
+    alignment = MPLAYER_SUB_ALIGNMENT_TOP;
+    break;
+
+  case PLAYER_SUB_ALIGNMENT_CENTER:
+    alignment = MPLAYER_SUB_ALIGNMENT_CENTER;
+    break;
+
+  case PLAYER_SUB_ALIGNMENT_BOTTOM:
+    alignment = MPLAYER_SUB_ALIGNMENT_BOTTOM;
+    break;
+
+  default:
+    return;
+  }
+
+  slave_set_property_int (player, PROPERTY_SUB_ALIGNMENT, alignment);
+}
+
+static void
 mplayer_set_sub_visibility (player_t *player, int value)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_visibility: %i", value);
@@ -2302,7 +2341,7 @@ register_functions_mplayer (void)
   funcs->video_set_ar       = NULL;
 
   funcs->set_sub_delay      = mplayer_set_sub_delay;
-  funcs->set_sub_alignment  = NULL;
+  funcs->set_sub_alignment  = mplayer_set_sub_alignment;
   funcs->set_sub_pos        = NULL;
   funcs->set_sub_visibility = mplayer_set_sub_visibility;
   funcs->sub_scale          = NULL;
