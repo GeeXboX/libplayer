@@ -162,6 +162,8 @@ typedef struct mrl_resource_videodisc_args_s {
   char *device;
   uint8_t speed;
   uint8_t angle;
+  uint8_t title_start;
+  uint8_t title_end;
   uint8_t chapter_start;
   uint8_t chapter_end;
   uint8_t track_start;
