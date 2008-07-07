@@ -853,6 +853,7 @@ mp_resource_get_uri (mrl_t *mrl)
   case MRL_RESOURCE_CDDB: /* cddb://track_start-track_end:speed/device */
   {
     char *uri;
+    char *device = NULL;
     const char *protocol = protocols[mrl->resource];
     char track_start[4] = "";
     char track_end[8] = "";
@@ -861,7 +862,7 @@ mp_resource_get_uri (mrl_t *mrl)
     mrl_resource_cd_args_t *args;
 
     args = mrl->priv;
-    if (!args || !args->device)
+    if (!args)
       break;
 
     if (args->track_start)
@@ -879,15 +880,30 @@ mp_resource_get_uri (mrl_t *mrl)
       size += 1 + count_nb_dec (args->speed);
       snprintf (speed, sizeof (speed), ":%i", args->speed);
     }
-    size += 1 + strlen (args->device);
+    if (args->device)
+    {
+      size_t length = 1 + strlen (args->device);
+      size += length;
+      device = malloc (1 + length);
+      if (device)
+        snprintf (device, 1 + length, "/%s", args->device);
+    }
 
     size++;
     uri = malloc (size);
     if (!uri)
+    {
+      if (device)
+        free (device);
       break;
+    }
 
-    snprintf (uri, size, "%s%s%s%s/%s",
-              protocol, track_start, track_end, speed, args->device);
+    snprintf (uri, size, "%s%s%s%s%s",
+              protocol, track_start, track_end, speed, device ? device : "");
+
+    if (device)
+      free (device);
+
     return uri;
   }
 
