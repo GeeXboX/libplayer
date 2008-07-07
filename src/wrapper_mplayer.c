@@ -1255,9 +1255,7 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
 static void
 mp_identify (mrl_t *mrl, int flags)
 {
-  char *params[16];
   char buffer[FIFO_BUFFER];
-  int pp = 0;
   int mp_pipe[2];
   int found;
   FILE *mp_fifo;
@@ -1283,6 +1281,10 @@ mp_identify (mrl_t *mrl, int flags)
   switch (pid) {
   /* the son (a new hope) */
   case 0:
+  {
+    char *params[16];
+    int pp = 0;
+
     close (mp_pipe[0]);
 
     /* connect stdout and stderr to the pipe */
@@ -1306,6 +1308,7 @@ mp_identify (mrl_t *mrl, int flags)
 
     /* launch MPlayer, if execvp returns there is an error */
     execvp (MPLAYER_NAME, params);
+  }
 
   case -1:
     break;
@@ -1558,9 +1561,7 @@ mplayer_init (player_t *player)
 {
   struct sigaction action;
   mplayer_t *mplayer = NULL;
-  char *params[32];
   char winid[32];
-  int pp = 0;
   pthread_attr_t attr;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
@@ -1619,6 +1620,10 @@ mplayer_init (player_t *player)
   switch (mplayer->pid) {
   /* the son (a new hope) */
   case 0:
+  {
+    char *params[32];
+    int pp = 0;
+
     close (mplayer->pipe_in[1]);
     close (mplayer->pipe_out[0]);
 
@@ -1704,6 +1709,7 @@ mplayer_init (player_t *player)
 
     /* launch MPlayer, if execvp returns there is an error */
     execvp (MPLAYER_NAME, params);
+  }
 
   case -1:
     break;
