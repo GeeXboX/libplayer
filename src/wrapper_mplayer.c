@@ -819,6 +819,10 @@ mp_resource_get_uri (mrl_t *mrl)
     [MRL_RESOURCE_CDDA]     = "cdda://",
     [MRL_RESOURCE_CDDB]     = "cddb://",
 
+    /* Video discs */
+    [MRL_RESOURCE_DVD]      = "dvd://",
+    [MRL_RESOURCE_DVDNAV]   = "dvdnav://",
+
     /* Network Streams */
     [MRL_RESOURCE_FTP]      = "ftp://",
     [MRL_RESOURCE_HTTP]     = "http://",
@@ -881,6 +885,62 @@ mp_resource_get_uri (mrl_t *mrl)
 
     snprintf (uri, size, "%s%s%s%s/%s",
               protocol, track_start, track_end, speed, args->device);
+    return uri;
+  }
+
+  case MRL_RESOURCE_DVD:    /* dvd://title_start-title_end/device */
+  case MRL_RESOURCE_DVDNAV: /* dvdnav://title_start-title_end/device */
+  {
+    char *uri;
+    char *device = NULL;
+    const char *protocol = protocols[mrl->resource];
+    char title_start[4] = "";
+    char title_end[8] = "";
+    size_t size = strlen (protocol);
+    mrl_resource_videodisc_args_t *args;
+
+    args = mrl->priv;
+    if (!args)
+      break;
+
+    if (args->title_start)
+    {
+      size += count_nb_dec (args->title_start);
+      snprintf (title_start, sizeof (title_start), "%i", args->title_start);
+    }
+    if (args->title_end > args->title_start)
+    {
+      size += 1 + count_nb_dec (args->title_end);
+      snprintf (title_end, sizeof (title_end), "-%i", args->title_end);
+    }
+    /*
+     * NOTE: for dvd://, "/device" is handled by MPlayer >= r27226, and that
+     *       is just ignored with older.
+     */
+    if (args->device)
+    {
+      size_t length = 1 + strlen (args->device);
+      size += length;
+      device = malloc (1 + length);
+      if (device)
+        snprintf (device, 1 + length, "/%s", args->device);
+    }
+
+    size++;
+    uri = malloc (size);
+    if (!uri)
+    {
+      if (device)
+        free (device);
+      break;
+    }
+
+    snprintf (uri, size, "%s%s%s%s",
+              protocol, title_start, title_end, device ? device : "");
+
+    if (device)
+      free (device);
+
     return uri;
   }
 
@@ -1747,6 +1807,8 @@ mplayer_mrl_supported_res (player_t *player, mrl_resource_t res)
   case MRL_RESOURCE_FILE:
   case MRL_RESOURCE_CDDA:
   case MRL_RESOURCE_CDDB:
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
   case MRL_RESOURCE_FTP:
   case MRL_RESOURCE_HTTP:
   case MRL_RESOURCE_MMS:
