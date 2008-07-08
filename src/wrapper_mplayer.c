@@ -531,7 +531,7 @@ slave_get_property (player_t *player, slave_property_t property)
   if (!command || state != ITEM_ENABLE)
     return;
 
-    send_to_slave (player, "%s %s", command, prop);
+  send_to_slave (player, "%s %s", command, prop);
 }
 
 /**
