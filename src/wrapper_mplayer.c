@@ -494,7 +494,7 @@ slave_get_property (player_t *player, slave_property_t property)
 
   mplayer = (mplayer_t *) player->priv;
 
-  if (!mplayer || !mplayer->fifo_in)
+  if (!mplayer)
     return;
 
   prop = get_prop (property);
@@ -623,7 +623,7 @@ slave_set_property (player_t *player, slave_property_t property,
 
   mplayer = (mplayer_t *) player->priv;
 
-  if (!mplayer || !mplayer->fifo_in)
+  if (!mplayer)
     return;
 
   prop = get_prop (property);
@@ -692,7 +692,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   mplayer = (mplayer_t *) player->priv;
 
-  if (!mplayer || !mplayer->fifo_in)
+  if (!mplayer)
     return;
 
   command = get_cmd (cmd, &state_cmd);
