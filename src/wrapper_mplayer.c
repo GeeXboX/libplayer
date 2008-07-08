@@ -1551,7 +1551,6 @@ mplayer_init (player_t *player)
   struct sigaction action;
   mplayer_t *mplayer = NULL;
   char winid[32];
-  pthread_attr_t attr;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
@@ -1702,6 +1701,9 @@ mplayer_init (player_t *player)
 
   /* I'm your father */
   default:
+  {
+    pthread_attr_t attr;
+
     close (mplayer->pipe_in[0]);
     close (mplayer->pipe_out[1]);
 
@@ -1723,6 +1725,7 @@ mplayer_init (player_t *player)
     }
 
     pthread_attr_destroy (&attr);
+  }
   }
 
   return PLAYER_INIT_ERROR;
