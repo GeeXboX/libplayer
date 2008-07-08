@@ -1745,7 +1745,7 @@ mplayer_uninit (player_t *player)
     slave_cmd (player, SLAVE_QUIT);
 
     /* wait the death of the thread fifo_out */
-    (void) pthread_join (mplayer->th_fifo, &ret);
+    pthread_join (mplayer->th_fifo, &ret);
 
     /* wait the death of MPlayer */
     waitpid (mplayer->pid, NULL, 0);
