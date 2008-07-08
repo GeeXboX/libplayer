@@ -1246,10 +1246,7 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
 static void
 mp_identify (mrl_t *mrl, int flags)
 {
-  char buffer[FIFO_BUFFER];
   int mp_pipe[2];
-  int found;
-  FILE *mp_fifo;
   pid_t pid;
   char *uri = NULL;
 
@@ -1302,6 +1299,11 @@ mp_identify (mrl_t *mrl, int flags)
 
   /* I'm your father */
   default:
+  {
+    char buffer[FIFO_BUFFER];
+    int found;
+    FILE *mp_fifo;
+
     free (uri);
     close (mp_pipe[1]);
 
@@ -1328,6 +1330,7 @@ mp_identify (mrl_t *mrl, int flags)
 
     close (mp_pipe[0]);
     fclose (mp_fifo);
+  }
   }
 }
 
