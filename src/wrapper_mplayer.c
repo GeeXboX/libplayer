@@ -1361,8 +1361,8 @@ mp_check_compatibility (player_t *player, checklist_t check)
   int i, nb = 0, res = 1;
   int mp_pipe[2];
   pid_t pid;
-  item_list_t *list;
-  const char *str, *what;
+  item_list_t *list = NULL;
+  const char *str, *what = NULL;
   const int *state_lib;
   item_state_t *state_mp;
 
@@ -1389,6 +1389,9 @@ mp_check_compatibility (player_t *player, checklist_t check)
   default:
     break;
   }
+
+  if (!list || !what)
+    return 0;
 
   pid = fork ();
 
