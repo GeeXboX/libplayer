@@ -497,13 +497,11 @@ slave_get_property (player_t *player, slave_property_t property)
   if (!mplayer || !mplayer->fifo_in)
     return;
 
-  /* get the right property in the global list */
   prop = get_prop (property);
   command = get_cmd (SLAVE_GET_PROPERTY, &state_cmd);
   if (prop && command && state_cmd == ITEM_ENABLE)
     send_to_slave (mplayer, "%s %s", command, prop);
   else
-    /* should never going here */
     return;
 }
 
@@ -528,15 +526,12 @@ slave_result (slave_property_t property, player_t *player)
   if (!mplayer || !mplayer->fifo_in || !mplayer->fifo_out)
     return NULL;
 
-  /* get the right property in the global list */
   prop = get_prop (property);
   if (prop)
     sprintf (str, "ANS_%s=", prop);
   else
-    /* should never going here */
     return NULL;
 
-  /* lock the mutex for protect mplayer->search */
   pthread_mutex_lock (&mplayer->mutex_search);
   mplayer->search = malloc (sizeof (mp_search_t));
 
@@ -586,7 +581,6 @@ slave_get_property_int (player_t *player, slave_property_t property)
   result = slave_result (property, player);
 
   if (result) {
-    /* string to float and round to int */
     value = (int) rintf (atof (result));
     free (result);
   }
@@ -634,13 +628,11 @@ slave_set_property (player_t *player, slave_property_t property,
   if (!mplayer || !mplayer->fifo_in)
     return;
 
-  /* get the right property in the global list */
   prop = get_prop (property);
   command = get_cmd (SLAVE_SET_PROPERTY, &state_cmd);
   if (prop && command && state_cmd == ITEM_ENABLE)
     sprintf (cmd, "%s %s", command, prop);
   else
-    /* should never going here */
     return;
 
   switch (property) {
@@ -1269,13 +1261,11 @@ mp_identify (mrl_t *mrl, int flags)
   if (!uri)
     return;
 
-  /* create pipe */
   if (pipe (mp_pipe)) {
     free (uri);
     return;
   }
 
-  /* create the fork */
   pid = fork ();
 
   switch (pid) {
@@ -1287,7 +1277,6 @@ mp_identify (mrl_t *mrl, int flags)
 
     close (mp_pipe[0]);
 
-    /* connect stdout and stderr to the pipe */
     dup2 (mp_pipe[1], STDERR_FILENO);
     dup2 (mp_pipe[1], STDOUT_FILENO);
 
@@ -1306,7 +1295,6 @@ mp_identify (mrl_t *mrl, int flags)
     params[pp++] = "-identify";
     params[pp] = NULL;
 
-    /* launch MPlayer, if execvp returns there is an error */
     execvp (MPLAYER_NAME, params);
   }
 
@@ -1339,7 +1327,6 @@ mp_identify (mrl_t *mrl, int flags)
     /* wait the death of MPlayer */
     waitpid (pid, NULL, 0);
 
-    /* close pipe and fifo */
     close (mp_pipe[0]);
     fclose (mp_fifo);
   }
@@ -1604,7 +1591,6 @@ mplayer_init (player_t *player)
     break;
   }
 
-  /* create pipes */
   if (pipe (mplayer->pipe_in))
     return PLAYER_INIT_ERROR;
 
@@ -1614,7 +1600,6 @@ mplayer_init (player_t *player)
     return PLAYER_INIT_ERROR;
   }
 
-  /* create the fork */
   mplayer->pid = fork ();
 
   switch (mplayer->pid) {
@@ -1707,7 +1692,6 @@ mplayer_init (player_t *player)
 
     params[pp] = NULL;
 
-    /* launch MPlayer, if execvp returns there is an error */
     execvp (MPLAYER_NAME, params);
   }
 
@@ -1729,7 +1713,6 @@ mplayer_init (player_t *player)
     pthread_attr_init (&attr);
     pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
-    /* create the thread */
     if (pthread_create (&mplayer->th_fifo, &attr,
                         thread_fifo, (void *) player) >= 0)
     {
@@ -1771,17 +1754,14 @@ mplayer_uninit (player_t *player)
 
     mplayer->status = MPLAYER_IS_DEAD;
 
-    /* close pipes */
     close (mplayer->pipe_in[1]);
     close (mplayer->pipe_out[0]);
 
-    /* close fifos */
     fclose (mplayer->fifo_in);
     fclose (mplayer->fifo_out);
 
     plog (player, PLAYER_MSG_INFO, MODULE_NAME, "MPlayer child terminated");
 
-    /* X11 */
     if (player->x11)
       x11_uninit (player);
   }
@@ -2032,7 +2012,6 @@ mplayer_playback_start (player_t *player)
     slave_set_property_int (player, PROPERTY_SUB, 0);
   }
 
-  /* X11 */
   if (player->x11 && !mrl_uses_vo (player->mrl))
     x11_map (player);
 
@@ -2063,7 +2042,6 @@ mplayer_playback_stop (player_t *player)
   mplayer->status = MPLAYER_IS_IDLE;
   pthread_mutex_unlock (&mplayer->mutex_status);
 
-  /* X11 */
   if (player->x11 && !mrl_uses_vo (player->mrl))
     x11_unmap (player);
 
@@ -2386,7 +2364,6 @@ register_private_mplayer (void)
   mplayer->fifo_out = NULL;
   mplayer->search = NULL;
 
-  /* init semaphore and mutex */
   sem_init (&mplayer->sem, 0, 0);
   pthread_mutex_init (&mplayer->mutex_search, NULL);
   pthread_mutex_init (&mplayer->mutex_status, NULL);
