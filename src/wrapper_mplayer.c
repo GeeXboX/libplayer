@@ -266,9 +266,15 @@ get_prop (slave_property_t property)
  * descriptor on a pipe for the MPlayer's stdin.
  */
 static void
-send_to_slave (mplayer_t *mplayer, const char *format, ...)
+send_to_slave (player_t *player, const char *format, ...)
 {
+  mplayer_t *mplayer;
   va_list va;
+
+  if (!player)
+    return;
+
+  mplayer = (mplayer_t *) player->priv;
 
   if (!mplayer || !mplayer->fifo_in)
     return;
@@ -484,7 +490,6 @@ thread_fifo (void *arg)
 static void
 slave_get_property (player_t *player, slave_property_t property)
 {
-  mplayer_t *mplayer = NULL;
   const char *prop;
   const char *command;
   item_state_t state_cmd;
@@ -492,15 +497,10 @@ slave_get_property (player_t *player, slave_property_t property)
   if (!player)
     return;
 
-  mplayer = (mplayer_t *) player->priv;
-
-  if (!mplayer)
-    return;
-
   prop = get_prop (property);
   command = get_cmd (SLAVE_GET_PROPERTY, &state_cmd);
   if (prop && command && state_cmd == ITEM_ENABLE)
-    send_to_slave (mplayer, "%s %s", command, prop);
+    send_to_slave (player, "%s %s", command, prop);
 }
 
 /**
@@ -550,7 +550,7 @@ slave_result (slave_property_t property, player_t *player)
     * error is got with fgets() and the search is ended if there is no
     * result for the real command.
     */
-    send_to_slave (mplayer, "loadfile");
+    send_to_slave (player, "loadfile");
 
     /* wait that the thread will found the value */
     sem_wait (&mplayer->sem);
@@ -612,18 +612,12 @@ static void
 slave_set_property (player_t *player, slave_property_t property,
                     slave_value_t value)
 {
-  mplayer_t *mplayer = NULL;
   const char *prop;
   const char *command;
   item_state_t state_cmd;
   char cmd[FIFO_BUFFER];
 
   if (!player)
-    return;
-
-  mplayer = (mplayer_t *) player->priv;
-
-  if (!mplayer)
     return;
 
   prop = get_prop (property);
@@ -639,11 +633,11 @@ slave_set_property (player_t *player, slave_property_t property,
   case PROPERTY_SUB:
   case PROPERTY_SUB_VISIBILITY:
   case PROPERTY_VOLUME:
-    send_to_slave (mplayer, "%s %i", cmd, value.i_val);
+    send_to_slave (player, "%s %i", cmd, value.i_val);
     break;
 
   case PROPERTY_SUB_DELAY:
-    send_to_slave (mplayer, "%s %.2f", cmd, value.f_val);
+    send_to_slave (player, "%s %.2f", cmd, value.f_val);
     break;
 
   default:
@@ -702,31 +696,31 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   switch (cmd) {
   case SLAVE_DVDNAV:
     if (state_cmd == ITEM_ENABLE && value)
-      send_to_slave (mplayer, "%s %i", command, value->i_val);
+      send_to_slave (player, "%s %i", command, value->i_val);
     break;
 
   case SLAVE_LOADFILE:
     if (state_cmd == ITEM_ENABLE && value && value->s_val)
-      send_to_slave (mplayer, "%s \"%s\" %i", command, value->s_val, opt);
+      send_to_slave (player, "%s \"%s\" %i", command, value->s_val, opt);
 
-    send_to_slave (mplayer, "loadlist");
+    send_to_slave (player, "loadlist");
     /* wait that the thread will confirm "loadlist" */
     sem_wait (&mplayer->sem);
     break;
 
   case SLAVE_PAUSE:
     if (state_cmd == ITEM_ENABLE)
-      send_to_slave (mplayer, command);
+      send_to_slave (player, command);
     break;
 
   case SLAVE_QUIT:
     if (state_cmd == ITEM_ENABLE)
-      send_to_slave (mplayer, command);
+      send_to_slave (player, command);
     break;
 
   case SLAVE_SEEK:
     if (state_cmd == ITEM_ENABLE && value)
-      send_to_slave (mplayer, "%s %i %i", command, value->i_val, opt);
+      send_to_slave (player, "%s %i %i", command, value->i_val, opt);
     break;
 
   case SLAVE_STOP:
@@ -734,10 +728,10 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     {
       plog (player, PLAYER_MSG_WARNING,
             MODULE_NAME, "[hack] slave command '%s'", command);
-      send_to_slave (mplayer, "loadfile \"\"");
+      send_to_slave (player, "loadfile \"\"");
     }
     else if (state_cmd == ITEM_ENABLE)
-      send_to_slave (mplayer, command);
+      send_to_slave (player, command);
 
     /* wait that the thread will found the EOF */
     sem_wait (&mplayer->sem);
@@ -745,7 +739,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_SUB_LOAD:
     if (state_cmd == ITEM_ENABLE && value && value->s_val)
-      send_to_slave (mplayer, "%s \"%s\"", command, value->s_val);
+      send_to_slave (player, "%s \"%s\"", command, value->s_val);
     break;
 
   default:
