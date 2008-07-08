@@ -535,7 +535,7 @@ slave_result (slave_property_t property, player_t *player)
   if (!prop)
     return NULL;
 
-    sprintf (str, "ANS_%s=", prop);
+  sprintf (str, "ANS_%s=", prop);
 
   pthread_mutex_lock (&mplayer->mutex_search);
   mplayer->search = malloc (sizeof (mp_search_t));
@@ -633,7 +633,7 @@ slave_set_property (player_t *player, slave_property_t property,
   if (!prop || !command || state_cmd != ITEM_ENABLE)
     return;
 
-    sprintf (cmd, "%s %s", command, prop);
+  sprintf (cmd, "%s %s", command, prop);
 
   switch (property) {
   case PROPERTY_LOOP:
