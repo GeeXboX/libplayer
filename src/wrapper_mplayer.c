@@ -276,8 +276,15 @@ send_to_slave (player_t *player, const char *format, ...)
 
   mplayer = (mplayer_t *) player->priv;
 
-  if (!mplayer || !mplayer->fifo_in)
+  if (!mplayer)
     return;
+
+  if (!mplayer->fifo_in)
+  {
+    plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
+          "the command can not be sent to slave, stdin unavailable");
+    return;
+  }
 
   va_start (va, format);
   vfprintf (mplayer->fifo_in, format, va);
