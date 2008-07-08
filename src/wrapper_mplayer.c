@@ -1740,7 +1740,7 @@ mplayer_uninit (player_t *player)
   if (!mplayer)
     return;
 
-  if (mplayer && mplayer->fifo_in) {
+  if (mplayer->fifo_in) {
     /* suicide of MPlayer */
     slave_cmd (player, SLAVE_QUIT);
 
