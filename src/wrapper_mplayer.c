@@ -1481,6 +1481,10 @@ mp_check_compatibility (player_t *player, checklist_t check)
     state_mp = &list[i].state_mp;
     state_lib = &list[i].state_lib;
     str = list[i].str;
+
+    if (!str || !state_mp || !state_lib)
+      continue;
+
     state_libplayer = *state_lib & ALL_ITEM_STATES;
 
     if (strchr (str, '/'))
