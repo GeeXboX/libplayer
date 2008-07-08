@@ -524,7 +524,7 @@ slave_get_property (player_t *player, slave_property_t property)
     return;
 
   prop = get_prop (property, &state);
-  if (!prop || prop != ITEM_ENABLE)
+  if (!prop || state != ITEM_ENABLE)
     return;
 
   command = get_cmd (SLAVE_GET_PROPERTY, &state);
