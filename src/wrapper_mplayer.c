@@ -112,8 +112,8 @@ typedef enum item_state {
 
 typedef struct item_list_s {
   const char *str;
-  const int state_lib;    /* states of the command in libplayer */
-  item_state_t state_mp;  /* state of the command in MPlayer */
+  const int state_lib;    /* states of the item in libplayer */
+  item_state_t state_mp;  /* state of the item in MPlayer */
 } item_list_t;
 
 /* slave commands */
