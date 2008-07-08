@@ -633,16 +633,18 @@ slave_set_property (player_t *player, slave_property_t property,
 {
   const char *prop;
   const char *command;
-  item_state_t state_cmd, state_prop;
+  item_state_t state;
   char cmd[FIFO_BUFFER];
 
   if (!player)
     return;
 
-  prop = get_prop (property, &state_prop);
-  command = get_cmd (SLAVE_SET_PROPERTY, &state_cmd);
+  prop = get_prop (property, &state);
+  if (!prop || state != ITEM_ENABLE)
+    return;
 
-  if (!prop || state_prop != ITEM_ENABLE || !command || state_cmd != ITEM_ENABLE)
+  command = get_cmd (SLAVE_SET_PROPERTY, &state);
+  if (!command || state != ITEM_ENABLE)
     return;
 
   snprintf (cmd, sizeof (cmd), "%s %s", command, prop);
