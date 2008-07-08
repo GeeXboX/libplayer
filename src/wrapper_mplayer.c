@@ -535,7 +535,7 @@ slave_result (slave_property_t property, player_t *player)
   if (!prop)
     return NULL;
 
-  sprintf (str, "ANS_%s=", prop);
+  snprintf (str, sizeof (str), "ANS_%s=", prop);
 
   pthread_mutex_lock (&mplayer->mutex_search);
   mplayer->search = malloc (sizeof (mp_search_t));
@@ -633,7 +633,7 @@ slave_set_property (player_t *player, slave_property_t property,
   if (!prop || !command || state_cmd != ITEM_ENABLE)
     return;
 
-  sprintf (cmd, "%s %s", command, prop);
+  snprintf (cmd, sizeof (cmd), "%s %s", command, prop);
 
   switch (property) {
   case PROPERTY_LOOP:
@@ -1588,7 +1588,7 @@ mplayer_init (player_t *player)
   case PLAYER_VO_XV:
     if (!x11_init (player))
       return PLAYER_INIT_ERROR;
-    sprintf (winid, "%lu", (unsigned long) x11_get_window (player->x11));
+    snprintf (winid, sizeof (winid), "%lu", (unsigned long) x11_get_window (player->x11));
   default:
     break;
   }
