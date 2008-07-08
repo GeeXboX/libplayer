@@ -68,9 +68,7 @@ typedef enum mplayer_status {
 
 typedef enum checklist {
   CHECKLIST_COMMANDS,
-#if 0
   CHECKLIST_PROPERTIES,
-#endif
 } checklist_t;
 
 /* property and value for a search in the fifo_out */
@@ -175,32 +173,32 @@ typedef enum slave_property {
 } slave_property_t;
 
 
-static const char const *g_slave_props[] = {
-  [PROPERTY_AUDIO_BITRATE]    = "audio_bitrate",
-  [PROPERTY_AUDIO_CODEC]      = "audio_codec",
-  [PROPERTY_CHANNELS]         = "channels",
-  [PROPERTY_HEIGHT]           = "height",
-  [PROPERTY_LOOP]             = "loop",
-  [PROPERTY_METADATA_ALBUM]   = "metadata/album",
-  [PROPERTY_METADATA_ARTIST]  = "metadata/artist",
-  [PROPERTY_METADATA_COMMENT] = "metadata/comment",
-  [PROPERTY_METADATA_GENRE]   = "metadata/genre",
-  [PROPERTY_METADATA_NAME]    = "metadata/name",
-  [PROPERTY_METADATA_TITLE]   = "metadata/title",
-  [PROPERTY_METADATA_TRACK]   = "metadata/track",
-  [PROPERTY_METADATA_YEAR]    = "metadata/year",
-  [PROPERTY_MUTE]             = "mute",
-  [PROPERTY_SAMPLERATE]       = "samplerate",
-  [PROPERTY_SUB]              = "sub",
-  [PROPERTY_SUB_ALIGNMENT]    = "sub_alignment",
-  [PROPERTY_SUB_DELAY]        = "sub_delay",
-  [PROPERTY_SUB_VISIBILITY]   = "sub_visibility",
-  [PROPERTY_TIME_POS]         = "time_pos",
-  [PROPERTY_VIDEO_BITRATE]    = "video_bitrate",
-  [PROPERTY_VIDEO_CODEC]      = "video_codec",
-  [PROPERTY_VOLUME]           = "volume",
-  [PROPERTY_WIDTH]            = "width",
-  [PROPERTY_UNKNOWN]          = NULL
+static item_list_t g_slave_props[] = {
+  [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_CHANNELS]         = {"channels",         ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_HEIGHT]           = {"height",           ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_LOOP]             = {"loop",             ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_METADATA_ALBUM]   = {"metadata/album",   ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_METADATA_ARTIST]  = {"metadata/artist",  ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_METADATA_COMMENT] = {"metadata/comment", ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_METADATA_GENRE]   = {"metadata/genre",   ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_METADATA_NAME]    = {"metadata/name",    ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_METADATA_TITLE]   = {"metadata/title",   ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_METADATA_TRACK]   = {"metadata/track",   ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_METADATA_YEAR]    = {"metadata/year",    ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_MUTE]             = {"mute",             ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_SAMPLERATE]       = {"samplerate",       ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_SUB]              = {"sub",              ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_SUB_VISIBILITY]   = {"sub_visibility",   ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_TIME_POS]         = {"time_pos",         ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_VIDEO_BITRATE]    = {"video_bitrate",    ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_VIDEO_CODEC]      = {"video_codec",      ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_VOLUME]           = {"volume",           ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_WIDTH]            = {"width",            ITEM_ENABLE,  ITEM_DISABLE},
+  [PROPERTY_UNKNOWN]          = {NULL,               ITEM_DISABLE, ITEM_DISABLE}
 };
 
 
@@ -250,7 +248,7 @@ get_cmd (slave_cmd_t cmd, item_state_t *state)
  * in the table.
  */
 static const char *
-get_prop (slave_property_t property)
+get_prop (slave_property_t property, item_state_t *state)
 {
   const int size = sizeof (g_slave_props) / sizeof (g_slave_props[0]);
   slave_property_t prop = PROPERTY_UNKNOWN;
@@ -258,7 +256,28 @@ get_prop (slave_property_t property)
   if (property < size && property >= 0)
     prop = property;
 
-  return g_slave_props[prop];
+  if (state)
+  {
+    int state_lib;
+    item_state_t state_mp;
+
+    *state = ITEM_DISABLE;
+    state_lib = g_slave_props[prop].state_lib & ALL_ITEM_STATES;
+    state_mp = g_slave_props[prop].state_mp;
+
+    if ((state_lib == ITEM_HACK) ||
+        (state_lib == ALL_ITEM_STATES && state_mp == ITEM_DISABLE))
+    {
+      *state = ITEM_HACK;
+    }
+    else if ((state_lib == ITEM_ENABLE && state_mp == ITEM_ENABLE) ||
+             (state_lib == ALL_ITEM_STATES && state_mp == ITEM_ENABLE))
+    {
+      *state = ITEM_ENABLE;
+    }
+  }
+
+  return g_slave_props[prop].str;
 }
 
 /**
@@ -499,14 +518,14 @@ slave_get_property (player_t *player, slave_property_t property)
 {
   const char *prop;
   const char *command;
-  item_state_t state_cmd;
+  item_state_t state_cmd, state_prop;
 
   if (!player)
     return;
 
-  prop = get_prop (property);
+  prop = get_prop (property, &state_prop);
   command = get_cmd (SLAVE_GET_PROPERTY, &state_cmd);
-  if (prop && command && state_cmd == ITEM_ENABLE)
+  if (prop && state_prop == ITEM_ENABLE && command && state_cmd == ITEM_ENABLE)
     send_to_slave (player, "%s %s", command, prop);
 }
 
@@ -522,6 +541,7 @@ slave_result (slave_property_t property, player_t *player)
   const char *prop;
   char *ret = NULL;
   mplayer_t *mplayer = NULL;
+  item_state_t state;
 
   if (!player)
     return NULL;
@@ -531,8 +551,8 @@ slave_result (slave_property_t property, player_t *player)
   if (!mplayer || !mplayer->fifo_in || !mplayer->fifo_out)
     return NULL;
 
-  prop = get_prop (property);
-  if (!prop)
+  prop = get_prop (property, &state);
+  if (!prop || state != ITEM_ENABLE)
     return NULL;
 
   snprintf (str, sizeof (str), "ANS_%s=", prop);
@@ -621,16 +641,16 @@ slave_set_property (player_t *player, slave_property_t property,
 {
   const char *prop;
   const char *command;
-  item_state_t state_cmd;
+  item_state_t state_cmd, state_prop;
   char cmd[FIFO_BUFFER];
 
   if (!player)
     return;
 
-  prop = get_prop (property);
+  prop = get_prop (property, &state_prop);
   command = get_cmd (SLAVE_SET_PROPERTY, &state_cmd);
 
-  if (!prop || !command || state_cmd != ITEM_ENABLE)
+  if (!prop || state_prop != ITEM_ENABLE || !command || state_cmd != ITEM_ENABLE)
     return;
 
   snprintf (cmd, sizeof (cmd), "%s %s", command, prop);
@@ -1359,13 +1379,13 @@ mp_check_compatibility (player_t *player, checklist_t check)
     list = g_slave_cmds;
     what = "slave command";
     break;
-#if 0
+
   case CHECKLIST_PROPERTIES:
     nb = sizeof (g_slave_props) / sizeof (g_slave_props[0]);
     list = g_slave_props;
     what = "slave property";
     break;
-#endif
+
   default:
     break;
   }
@@ -1390,11 +1410,11 @@ mp_check_compatibility (player_t *player, checklist_t check)
       params[pp++] = "-input";
       params[pp++] = "cmdlist";
       break;
-#if 0
+
     case CHECKLIST_PROPERTIES:
       params[pp++] = "-list-properties";
       break;
-#endif
+
     default:
       break;
     }
@@ -1426,6 +1446,13 @@ mp_check_compatibility (player_t *player, checklist_t check)
         if (!str || !state_mp || *state_mp != ITEM_DISABLE)
           continue;
 
+        /* all items with '/' will be ignored and automatically set to ENABLE */
+        if (strchr (str, '/'))
+        {
+          *state_mp = ITEM_ENABLE;
+          continue;
+        }
+
         buf = strstr (buffer, str);
         if (!buf)
           continue;
@@ -1455,6 +1482,9 @@ mp_check_compatibility (player_t *player, checklist_t check)
     state_lib = &list[i].state_lib;
     str = list[i].str;
     state_libplayer = *state_lib & ALL_ITEM_STATES;
+
+    if (strchr (str, '/'))
+      continue;
 
     if (state_libplayer == ITEM_ENABLE && *state_mp == ITEM_DISABLE)
     {
@@ -1570,6 +1600,9 @@ mplayer_init (player_t *player)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "check MPlayer compatibility");
 
   if (!mp_check_compatibility (player, CHECKLIST_COMMANDS))
+    return PLAYER_INIT_ERROR;
+
+  if (!mp_check_compatibility (player, CHECKLIST_PROPERTIES))
     return PLAYER_INIT_ERROR;
 
   /* action for SIGPIPE */
