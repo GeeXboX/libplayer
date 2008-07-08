@@ -501,8 +501,6 @@ slave_get_property (player_t *player, slave_property_t property)
   command = get_cmd (SLAVE_GET_PROPERTY, &state_cmd);
   if (prop && command && state_cmd == ITEM_ENABLE)
     send_to_slave (mplayer, "%s %s", command, prop);
-  else
-    return;
 }
 
 /**
