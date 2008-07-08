@@ -1785,6 +1785,8 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
   mplayer_t *mplayer;
   int verbosity = -1;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_verbosity");
+
   if (!player)
     return;
 
