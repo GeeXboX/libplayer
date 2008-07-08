@@ -173,7 +173,6 @@ typedef enum slave_property {
   PROPERTY_WIDTH
 } slave_property_t;
 
-
 static item_list_t g_slave_props[] = {
   [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ENABLE,  ITEM_DISABLE},
   [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ENABLE,  ITEM_DISABLE},
