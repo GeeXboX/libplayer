@@ -209,6 +209,25 @@ sig_handler (int signal)
     fprintf (stderr, "SIGPIPE detected by the death of MPlayer");
 }
 
+static item_state_t
+get_state (int lib, item_state_t mp)
+{
+  int state_lib = lib & ALL_ITEM_STATES;
+
+  if ((state_lib == ITEM_HACK) ||
+      (state_lib == ALL_ITEM_STATES && mp == ITEM_DISABLE))
+  {
+    return ITEM_HACK;
+  }
+  else if ((state_lib == ITEM_ENABLE && mp == ITEM_ENABLE) ||
+           (state_lib == ALL_ITEM_STATES && mp == ITEM_ENABLE))
+  {
+    return ITEM_ENABLE;
+  }
+
+  return ITEM_DISABLE;
+}
+
 static const char *
 get_cmd (slave_cmd_t cmd, item_state_t *state)
 {
@@ -219,25 +238,8 @@ get_cmd (slave_cmd_t cmd, item_state_t *state)
     command = cmd;
 
   if (state)
-  {
-    int state_lib;
-    item_state_t state_mp;
-
-    *state = ITEM_DISABLE;
-    state_lib = g_slave_cmds[command].state_lib & ALL_ITEM_STATES;
-    state_mp = g_slave_cmds[command].state_mp;
-
-    if ((state_lib == ITEM_HACK) ||
-        (state_lib == ALL_ITEM_STATES && state_mp == ITEM_DISABLE))
-    {
-      *state = ITEM_HACK;
-    }
-    else if ((state_lib == ITEM_ENABLE && state_mp == ITEM_ENABLE) ||
-             (state_lib == ALL_ITEM_STATES && state_mp == ITEM_ENABLE))
-    {
-      *state = ITEM_ENABLE;
-    }
-  }
+    *state = get_state (g_slave_cmds[command].state_lib,
+                        g_slave_cmds[command].state_mp);
 
   return g_slave_cmds[command].str;
 }
@@ -257,25 +259,8 @@ get_prop (slave_property_t property, item_state_t *state)
     prop = property;
 
   if (state)
-  {
-    int state_lib;
-    item_state_t state_mp;
-
-    *state = ITEM_DISABLE;
-    state_lib = g_slave_props[prop].state_lib & ALL_ITEM_STATES;
-    state_mp = g_slave_props[prop].state_mp;
-
-    if ((state_lib == ITEM_HACK) ||
-        (state_lib == ALL_ITEM_STATES && state_mp == ITEM_DISABLE))
-    {
-      *state = ITEM_HACK;
-    }
-    else if ((state_lib == ITEM_ENABLE && state_mp == ITEM_ENABLE) ||
-             (state_lib == ALL_ITEM_STATES && state_mp == ITEM_ENABLE))
-    {
-      *state = ITEM_ENABLE;
-    }
-  }
+    *state = get_state (g_slave_cmds[prop].state_lib,
+                        g_slave_cmds[prop].state_mp);
 
   return g_slave_props[prop].str;
 }
