@@ -2137,6 +2137,9 @@ mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %i", value);
 
+  if (!player)
+    return;
+
   switch (value)
   {
   case PLAYER_DVDNAV_UP:
@@ -2166,9 +2169,6 @@ mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
   default:
     return;
   }
-
-  if (!player)
-    return;
 
   if (player->mrl->resource == MRL_RESOURCE_DVDNAV)
     slave_cmd_int (player, SLAVE_DVDNAV, action);
