@@ -2184,7 +2184,7 @@ mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
 static int
 mplayer_get_volume (player_t *player)
 {
-  int volume = 0;
+  int volume = -1;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_volume");
 
@@ -2232,12 +2232,12 @@ mplayer_get_time_pos (player_t *player)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
 
   if (!player)
-    return 0;
+    return -1;
 
   time_pos = slave_get_property_float (player, PROPERTY_TIME_POS);
 
   if (time_pos < 0.0)
-    return 0;
+    return -1;
 
   return (int) (time_pos * 1000.0);
 }

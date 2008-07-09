@@ -945,16 +945,16 @@ xine_player_get_time_pos (player_t *player)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
 
   if (!player)
-    return 0;
+    return -1;
 
   x = (xine_player_t *) player->priv;
 
   if (!x || !x->stream)
-    return 0;
+    return -1;
 
   ret = xine_get_pos_length (x->stream, NULL, &time_pos, NULL);
   if (!ret || time_pos < 0)
-    return 0;
+    return -1;
 
   return time_pos;
 }
