@@ -2133,46 +2133,39 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 static void
 mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
 {
-  char log[8];
   int action;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %i", value);
 
   switch (value)
   {
   case PLAYER_DVDNAV_UP:
-    strcpy (log, "up");
     action = MPLAYER_DVDNAV_UP;
     break;
 
   case PLAYER_DVDNAV_DOWN:
-    strcpy (log, "down");
     action = MPLAYER_DVDNAV_DOWN;
     break;
 
   case PLAYER_DVDNAV_LEFT:
-    strcpy (log, "left");
     action = MPLAYER_DVDNAV_LEFT;
     break;
 
   case PLAYER_DVDNAV_RIGHT:
-    strcpy (log, "right");
     action = MPLAYER_DVDNAV_RIGHT;
     break;
 
   case PLAYER_DVDNAV_MENU:
-    strcpy (log, "menu");
     action = MPLAYER_DVDNAV_MENU;
     break;
 
   case PLAYER_DVDNAV_SELECT:
-    strcpy (log, "select");
     action = MPLAYER_DVDNAV_SELECT;
     break;
 
   default:
     return;
   }
-
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %s", log);
 
   if (!player)
     return;

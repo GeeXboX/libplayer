@@ -846,47 +846,40 @@ xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 static void
 xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
 {
-  char log[8];
   int event;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %i", value);
 
   switch (value)
   {
   case PLAYER_DVDNAV_UP:
-    strcpy (log, "up");
     event = XINE_EVENT_INPUT_UP;
     break;
 
   case PLAYER_DVDNAV_DOWN:
-    strcpy (log, "down");
     event = XINE_EVENT_INPUT_DOWN;
     break;
 
   case PLAYER_DVDNAV_LEFT:
-    strcpy (log, "left");
     event = XINE_EVENT_INPUT_LEFT;
     break;
 
   case PLAYER_DVDNAV_RIGHT:
-    strcpy (log, "right");
     event = XINE_EVENT_INPUT_RIGHT;
     break;
 
   case PLAYER_DVDNAV_MENU:
-    strcpy (log, "menu");
     /* go to root menu if possible */
     event = XINE_EVENT_INPUT_MENU3;
     break;
 
   case PLAYER_DVDNAV_SELECT:
-    strcpy (log, "select");
     event = XINE_EVENT_INPUT_SELECT;
     break;
 
   default:
     return;
   }
-
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %s", log);
 
   if (!player)
     return;
