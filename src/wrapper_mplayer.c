@@ -652,6 +652,7 @@ slave_set_property (player_t *player, slave_property_t property,
   case PROPERTY_LOOP:
   case PROPERTY_MUTE:
   case PROPERTY_SUB:
+  case PROPERTY_SUB_ALIGNMENT:
   case PROPERTY_SUB_VISIBILITY:
   case PROPERTY_VOLUME:
     send_to_slave (player, "%s %i", cmd, value.i_val);
