@@ -42,6 +42,7 @@ struct x11_s {
   Display *display;
   Window window;
   void *data;
+  int use_subwin;
   pthread_mutex_t mutex_display;
 };
 
@@ -156,8 +157,7 @@ x11_map (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
-  if (player->type == PLAYER_TYPE_MPLAYER
-      && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO))
+  if (x11->use_subwin)
   {
     screeninfo = (screeninfo_t *) player->x11->data;
     if (screeninfo && screeninfo->win_black > 0)
@@ -210,8 +210,7 @@ x11_unmap (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
-  if (player->type == PLAYER_TYPE_MPLAYER
-      && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO))
+  if (x11->use_subwin)
   {
     screeninfo = (screeninfo_t *) player->x11->data;
     if (screeninfo && screeninfo->win_black > 0)
@@ -246,8 +245,7 @@ x11_uninit (player_t *player)
   XUnmapWindow (x11->display, x11->window);
   XDestroyWindow (x11->display, x11->window);
 
-  if (player->type == PLAYER_TYPE_MPLAYER
-      && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO))
+  if (x11->use_subwin)
   {
     screeninfo = (screeninfo_t *) player->x11->data;
     if (screeninfo && screeninfo->win_black > 0)
@@ -369,6 +367,13 @@ x11_init (player_t *player)
     return 0;
   }
 
+  if (player->type == PLAYER_TYPE_MPLAYER
+      && (player->vo == PLAYER_VO_XV ||
+          player->vo == PLAYER_VO_AUTO))
+  {
+    x11->use_subwin = 1;
+  }
+
   pthread_mutex_init (&x11->mutex_display, NULL);
 
   screen = XDefaultScreen (x11->display);
@@ -390,8 +395,7 @@ x11_init (player_t *player)
   /* MPlayer and Xv use the hardware scale on all the surface. A second
    * window is then necessary for have a black background.
    */
-  if (player->type == PLAYER_TYPE_MPLAYER
-      && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO))
+  if (x11->use_subwin)
   {
     /* create a window for the black background */
     screeninfo->win_black = XCreateWindow (x11->display,
@@ -461,8 +465,7 @@ x11_init (player_t *player)
 #endif /* HAVE_XINE */
   }
   /* only for MPlayer Xv */
-  else if (player->type == PLAYER_TYPE_MPLAYER
-           && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO))
+  else if (x11->use_subwin)
   {
     screeninfo->width = width;
     screeninfo->height = height;
