@@ -39,11 +39,11 @@
   "Options:\n" \
   " -h --help               this help\n" \
   " -p --player <player>    specify the player (mplayer|xine|vlc|gstreamer)\n" \
-  " -a --audio  <audioout>  specify the audio output (alsa|oss)\n" \
+  " -a --audio  <audioout>  specify the audio output (alsa|oss|null)\n" \
   " -g --video  <videoout>  specify the video output (x11|sdl:x11|xv|fb)\n" \
   " -v --verbose            increase verbosity\n" \
   "\n" \
-  "Default values are dummy player, null video and audio output.\n" \
+  "Default values are dummy player, null video and auto audio output.\n" \
   "\n"
 #define TESTPLAYER_COMMANDS \
   "Commands for use test-player:\n" \
@@ -370,7 +370,7 @@ main (int argc, char **argv)
   player_t *player;
   player_type_t type = PLAYER_TYPE_DUMMY;
   player_vo_t vo = PLAYER_VO_NULL;
-  player_ao_t ao = PLAYER_AO_NULL;
+  player_ao_t ao = PLAYER_AO_AUTO;
   char input;
   int run = 1;
   int volume = 85;
@@ -444,6 +444,8 @@ main (int argc, char **argv)
         ao = PLAYER_AO_ALSA;
       else if (!strcmp (optarg, "oss"))
         ao = PLAYER_AO_OSS;
+      else if (!strcmp (optarg, "null"))
+        ao = PLAYER_AO_NULL;
       break;
 
     case 'g':
