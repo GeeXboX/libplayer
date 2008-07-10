@@ -349,7 +349,7 @@ x11_init (player_t *player)
     free (x11);
     player->x11 = NULL;
     free (screeninfo);
-    plog (player, PLAYER_MSG_ERROR, MODULE_NAME, "Failed to open display");
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
     return 0;
   }
 
