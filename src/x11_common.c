@@ -339,7 +339,7 @@ x11_init (player_t *player)
   if (!player)
     return 0;
 
-  player->x11 = malloc (sizeof (x11_t));
+  player->x11 = calloc (1, sizeof (x11_t));
   x11 = player->x11;
   if (!x11)
     return 0;
