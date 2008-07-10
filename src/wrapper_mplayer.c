@@ -1583,6 +1583,7 @@ mplayer_init (player_t *player)
   struct sigaction action;
   mplayer_t *mplayer = NULL;
   char winid[32];
+  int use_x11 = 0;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
@@ -1620,7 +1621,9 @@ mplayer_init (player_t *player)
   switch (player->vo) {
   case PLAYER_VO_X11:
   case PLAYER_VO_XV:
-    if (!x11_init (player))
+  case PLAYER_VO_AUTO:
+    use_x11 = x11_init (player);
+    if (player->vo != PLAYER_VO_AUTO && !use_x11)
       return PLAYER_INIT_ERROR;
     snprintf (winid, sizeof (winid), "%lu", (unsigned long) x11_get_window (player->x11));
   default:
@@ -1671,37 +1674,40 @@ mplayer_init (player_t *player)
     params[pp++] = "-noconsolecontrols";
 
     /* select the video output */
-    params[pp++] = "-vo";
     /* TODO: possibility to add parameters for each video output */
     switch (player->vo) {
     case PLAYER_VO_NULL:
+      params[pp++] = "-vo";
       params[pp++] = "null";
       break;
 
     case PLAYER_VO_X11:
+      params[pp++] = "-vo";
       params[pp++] = "x11";
-      /* window ID */
-      params[pp++] = "-wid";
-      params[pp++] = winid;
       break;
 
     /* with xv and wid, zoom, fs and aspect have no effect.
      * The image is always scaled on all the window.
      */
     case PLAYER_VO_XV:
+      params[pp++] = "-vo";
       params[pp++] = "xv";
-      /* window ID */
-      params[pp++] = "-wid";
-      params[pp++] = winid;
       break;
 
     case PLAYER_VO_FB:
+      params[pp++] = "-vo";
       params[pp++] = "fbdev";
       break;
 
+    case PLAYER_VO_AUTO:
     default:
-      params[pp++] = "null";
       break;
+    }
+
+    if (use_x11)
+    {
+      params[pp++] = "-wid";
+      params[pp++] = winid;
     }
 
     /* select the audio output */
