@@ -1705,24 +1705,26 @@ mplayer_init (player_t *player)
     }
 
     /* select the audio output */
-    params[pp++] = "-ao";
     /* TODO: possibility to add parameters for each audio output */
     switch (player->ao) {
     /* 'null' output seems to be bugged (MPlayer crash in some cases) */
     case PLAYER_AO_NULL:
+      params[pp++] = "-ao";
       params[pp++] = "null";
       break;
 
     case PLAYER_AO_ALSA:
+      params[pp++] = "-ao";
       params[pp++] = "alsa";
       break;
 
     case PLAYER_AO_OSS:
+      params[pp++] = "-ao";
       params[pp++] = "oss";
       break;
 
+    case PLAYER_AO_AUTO:
     default:
-      params[pp++] = "null";
       break;
     }
 
