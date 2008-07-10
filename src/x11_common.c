@@ -153,7 +153,7 @@ x11_map (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
-  if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
+  if (player->type == PLAYER_TYPE_MPLAYER && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO)) {
     screeninfo = (screeninfo_t *) player->x11->data;
     if (screeninfo && screeninfo->win_black > 0) {
       XWindowChanges changes;
@@ -204,7 +204,7 @@ x11_unmap (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
-  if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
+  if (player->type == PLAYER_TYPE_MPLAYER && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO)) {
     screeninfo = (screeninfo_t *) player->x11->data;
     if (screeninfo && screeninfo->win_black > 0)
       XUnmapWindow (x11->display, screeninfo->win_black);
@@ -238,7 +238,7 @@ x11_uninit (player_t *player)
   XUnmapWindow (x11->display, x11->window);
   XDestroyWindow (x11->display, x11->window);
 
-  if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
+  if (player->type == PLAYER_TYPE_MPLAYER && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO)) {
     screeninfo = (screeninfo_t *) player->x11->data;
     if (screeninfo && screeninfo->win_black > 0) {
       XUnmapWindow (x11->display, screeninfo->win_black);
@@ -373,7 +373,7 @@ x11_init (player_t *player)
   /* MPlayer and Xv use the hardware scale on all the surface. A second
    * window is then necessary for have a black background.
    */
-  if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
+  if (player->type == PLAYER_TYPE_MPLAYER && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO)) {
     /* create a window for the black background */
     screeninfo->win_black = XCreateWindow (x11->display,
                                       XDefaultRootWindow (x11->display),
@@ -439,7 +439,7 @@ x11_init (player_t *player)
 #endif /* HAVE_XINE */
   }
   /* only for MPlayer Xv */
-  else if (player->type == PLAYER_TYPE_MPLAYER && player->vo == PLAYER_VO_XV) {
+  else if (player->type == PLAYER_TYPE_MPLAYER && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO)) {
     screeninfo->width = width;
     screeninfo->height = height;
     // screeninfo->pixel_aspect = res_v / res_h;
