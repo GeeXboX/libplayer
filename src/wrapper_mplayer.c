@@ -86,11 +86,14 @@ typedef struct mplayer_s {
   FILE *fifo_in;      /* fifo on the pipe_in  (write only) */
   FILE *fifo_out;     /* fifo on the pipe_out (read only) */
   int verbosity;
+  int start_ok;
   /* specific to thread */
   pthread_t th_fifo;      /* thread for the fifo_out parser */
   pthread_mutex_t mutex_search;
   pthread_mutex_t mutex_status;
   pthread_mutex_t mutex_verbosity;
+  pthread_mutex_t mutex_start;
+  pthread_cond_t cond_start;
   sem_t sem;
   mp_search_t *search;    /* use when a property is searched */
 } mplayer_t;
@@ -325,6 +328,7 @@ parse_field (char *line, char *field)
 static void *
 thread_fifo (void *arg)
 {
+  int start_ok = 1, check_lang = 1;
   char buffer[FIFO_BUFFER], log[FIFO_BUFFER];
   char *it;
   player_t *player;
@@ -486,6 +490,31 @@ thread_fifo (void *arg)
      */
     else if (strstr (buffer, "Command loadlist") == buffer)
       sem_post (&mplayer->sem);
+
+    /*
+     * Check language used by MPlayer. Only english is supported. A signal
+     * is sent to the init as fast as possible. If --language is not found,
+     * then MPlayer is in english. But if --language is found, then the
+     * first language must be 'en'.
+     */
+    else if (check_lang)
+    {
+      const char *it;
+
+      if ((it = strstr (buffer, "--language=")))
+      {
+        if (*(it + 11) != 'e' || *(it + 12) != 'n')
+          start_ok = 0;
+      }
+      else if (strstr (buffer, "-slave") && strstr (buffer, "-idle"))
+      {
+        pthread_mutex_lock (&mplayer->mutex_start);
+        mplayer->start_ok = start_ok;
+        pthread_cond_signal (&mplayer->cond_start);
+        pthread_mutex_unlock (&mplayer->mutex_start);
+        check_lang = 0;
+      }
+    }
   }
 
   pthread_mutex_lock (&mplayer->mutex_status);
@@ -1768,12 +1797,28 @@ mplayer_init (player_t *player)
     pthread_attr_init (&attr);
     pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
+    pthread_mutex_lock (&mplayer->mutex_start);
     if (pthread_create (&mplayer->th_fifo, &attr,
                         thread_fifo, (void *) player) >= 0)
     {
+      int start_ok;
+
+      pthread_cond_wait (&mplayer->cond_start, &mplayer->mutex_start);
+      start_ok = mplayer->start_ok;
+      pthread_mutex_unlock (&mplayer->mutex_start);
+
       pthread_attr_destroy (&attr);
+
+      if (!start_ok)
+      {
+        plog (player, PLAYER_MSG_ERROR,
+              MODULE_NAME, "only english version of MPlayer is supported");
+        return PLAYER_INIT_ERROR;
+      }
+
       return PLAYER_INIT_OK;
     }
+    pthread_mutex_unlock (&mplayer->mutex_start);
 
     pthread_attr_destroy (&attr);
   }
@@ -1822,9 +1867,11 @@ mplayer_uninit (player_t *player)
       x11_uninit (player);
   }
 
+  pthread_cond_destroy (&mplayer->cond_start);
   pthread_mutex_destroy (&mplayer->mutex_search);
   pthread_mutex_destroy (&mplayer->mutex_status);
   pthread_mutex_destroy (&mplayer->mutex_verbosity);
+  pthread_mutex_destroy (&mplayer->mutex_start);
   sem_destroy (&mplayer->sem);
 
   free (mplayer);
@@ -2416,9 +2463,11 @@ register_private_mplayer (void)
   mplayer->search = NULL;
 
   sem_init (&mplayer->sem, 0, 0);
+  pthread_cond_init (&mplayer->cond_start, NULL);
   pthread_mutex_init (&mplayer->mutex_search, NULL);
   pthread_mutex_init (&mplayer->mutex_status, NULL);
   pthread_mutex_init (&mplayer->mutex_verbosity, NULL);
+  pthread_mutex_init (&mplayer->mutex_start, NULL);
 
   return mplayer;
 }
