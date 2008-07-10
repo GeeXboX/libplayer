@@ -1618,7 +1618,8 @@ mplayer_init (player_t *player)
    * then we take the control on X11 events and only libplayer can send
    * commands to MPlayer.
    */
-  switch (player->vo) {
+  switch (player->vo)
+  {
   case PLAYER_VO_X11:
   case PLAYER_VO_XV:
   case PLAYER_VO_AUTO:
@@ -1637,7 +1638,8 @@ mplayer_init (player_t *player)
   if (pipe (mplayer->pipe_in))
     return PLAYER_INIT_ERROR;
 
-  if (pipe (mplayer->pipe_out)) {
+  if (pipe (mplayer->pipe_out))
+  {
     close (mplayer->pipe_in[0]);
     close (mplayer->pipe_in[1]);
     return PLAYER_INIT_ERROR;
@@ -1645,7 +1647,8 @@ mplayer_init (player_t *player)
 
   mplayer->pid = fork ();
 
-  switch (mplayer->pid) {
+  switch (mplayer->pid)
+  {
   /* the son (a new hope) */
   case 0:
   {
@@ -1679,7 +1682,8 @@ mplayer_init (player_t *player)
 
     /* select the video output */
     /* TODO: possibility to add parameters for each video output */
-    switch (player->vo) {
+    switch (player->vo)
+    {
     case PLAYER_VO_NULL:
       params[pp++] = "-vo";
       params[pp++] = "null";
@@ -1716,7 +1720,8 @@ mplayer_init (player_t *player)
 
     /* select the audio output */
     /* TODO: possibility to add parameters for each audio output */
-    switch (player->ao) {
+    switch (player->ao)
+    {
     case PLAYER_AO_NULL:
       params[pp++] = "-ao";
       params[pp++] = "null";
