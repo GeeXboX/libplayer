@@ -333,7 +333,6 @@ x11_init (player_t *player)
 
   x11->display = NULL;
   x11->data = NULL;
-  pthread_mutex_init (&x11->mutex_display, NULL);
 
   screeninfo = malloc (sizeof (screeninfo_t));
   if (!screeninfo) {
@@ -352,6 +351,8 @@ x11_init (player_t *player)
     plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
     return 0;
   }
+
+  pthread_mutex_init (&x11->mutex_display, NULL);
 
   screen = XDefaultScreen (x11->display);
 
