@@ -117,6 +117,8 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
     return NULL;
   }
 
+  player_set_verbosity (player, verbosity);
+
   /* player specific init */
   if (player->funcs->init)
     res = player->funcs->init (player);
@@ -126,8 +128,6 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
     player_uninit (player);
     return NULL;
   }
-
-  player_set_verbosity (player, verbosity);
 
   return player;
 }
