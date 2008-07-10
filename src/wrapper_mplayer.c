@@ -1624,7 +1624,11 @@ mplayer_init (player_t *player)
   case PLAYER_VO_AUTO:
     use_x11 = x11_init (player);
     if (player->vo != PLAYER_VO_AUTO && !use_x11)
+    {
+      plog (player, PLAYER_MSG_ERROR,
+            MODULE_NAME, "initialization for X has failed");
       return PLAYER_INIT_ERROR;
+    }
     snprintf (winid, sizeof (winid), "%lu", (unsigned long) x11_get_window (player->x11));
   default:
     break;
