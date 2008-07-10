@@ -1651,6 +1651,7 @@ mplayer_init (player_t *player)
   {
   case PLAYER_VO_X11:
   case PLAYER_VO_XV:
+  case PLAYER_VO_GL:
   case PLAYER_VO_AUTO:
     use_x11 = x11_init (player);
     if (player->vo != PLAYER_VO_AUTO && !use_x11)
@@ -1729,6 +1730,11 @@ mplayer_init (player_t *player)
     case PLAYER_VO_XV:
       params[pp++] = "-vo";
       params[pp++] = "xv";
+      break;
+
+    case PLAYER_VO_GL:
+      params[pp++] = "-vo";
+      params[pp++] = "gl";
       break;
 
     case PLAYER_VO_FB:

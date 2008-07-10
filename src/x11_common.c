@@ -369,6 +369,7 @@ x11_init (player_t *player)
 
   if (player->type == PLAYER_TYPE_MPLAYER
       && (player->vo == PLAYER_VO_XV ||
+          player->vo == PLAYER_VO_GL ||
           player->vo == PLAYER_VO_AUTO))
   {
     x11->use_subwin = 1;
