@@ -76,14 +76,16 @@ zoom (player_t *player, int parentwidth, int parentheight, float aspect,
   float convert;
 
   /* use all the surface */
-  if (!*width || !*height) {
+  if (!*width || !*height)
+  {
     *width = parentwidth;
     *height = parentheight;
     *x = 0;
     *y = 0;
   }
   /* or calcul the best size */
-  else {
+  else
+  {
     /* fix aspect */
     if (aspect != 0.0)
       convert = aspect;
@@ -93,7 +95,8 @@ zoom (player_t *player, int parentwidth, int parentheight, float aspect,
     *width = parentwidth;
     *height = (int) rintf ((float) *width / convert);
 
-    if (*height > parentheight) {
+    if (*height > parentheight)
+    {
       *height = parentheight;
       *width = (int) rintf ((float) *height * convert);
     }
@@ -157,7 +160,8 @@ x11_map (player_t *player)
       && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO))
   {
     screeninfo = (screeninfo_t *) player->x11->data;
-    if (screeninfo && screeninfo->win_black > 0) {
+    if (screeninfo && screeninfo->win_black > 0)
+    {
       XWindowChanges changes;
       changes.x = 0;
       changes.y = 0;
@@ -246,7 +250,8 @@ x11_uninit (player_t *player)
       && (player->vo == PLAYER_VO_XV || player->vo == PLAYER_VO_AUTO))
   {
     screeninfo = (screeninfo_t *) player->x11->data;
-    if (screeninfo && screeninfo->win_black > 0) {
+    if (screeninfo && screeninfo->win_black > 0)
+    {
       XUnmapWindow (x11->display, screeninfo->win_black);
       XDestroyWindow (x11->display, screeninfo->win_black);
       free (screeninfo);
@@ -271,12 +276,14 @@ dest_size_cb(void *data, int video_width, int video_height,
   screeninfo_t *screeninfo;
   screeninfo = (screeninfo_t *) data;
 
-  if (screeninfo) {
+  if (screeninfo)
+  {
     *dest_width = screeninfo->width;
     *dest_height = screeninfo->height;
     *dest_pixel_aspect = screeninfo->pixel_aspect;
   }
-  else {
+  else
+  {
     *dest_width = video_width;
     *dest_height = video_height;
     *dest_pixel_aspect = video_pixel_aspect;
@@ -297,12 +304,14 @@ frame_output_cb(void *data, int video_width, int video_height,
   *win_x = 0;
   *win_y = 0;
 
-  if (screeninfo) {
+  if (screeninfo)
+  {
     *dest_width = screeninfo->width;
     *dest_height = screeninfo->height;
     *dest_pixel_aspect = screeninfo->pixel_aspect;
   }
-  else {
+  else
+  {
     *dest_width = video_width;
     *dest_height = video_height;
     *dest_pixel_aspect = video_pixel_aspect;
@@ -341,7 +350,8 @@ x11_init (player_t *player)
   x11->data = NULL;
 
   screeninfo = malloc (sizeof (screeninfo_t));
-  if (!screeninfo) {
+  if (!screeninfo)
+  {
     free (x11);
     player->x11 = NULL;
     return 0;
@@ -350,7 +360,8 @@ x11_init (player_t *player)
 
   x11->display = XOpenDisplay (NULL);
 
-  if (!x11->display) {
+  if (!x11->display)
+  {
     free (x11);
     player->x11 = NULL;
     free (screeninfo);
@@ -400,7 +411,8 @@ x11_init (player_t *player)
                                 CWOverrideRedirect | CWBackPixel, &atts);
     XMapWindow (x11->display,  x11->window);
   }
-  else {
+  else
+  {
     /* create a window for the video out */
     x11->window = XCreateWindow (x11->display, XDefaultRootWindow (x11->display),
                                 0, 0, width, height, 0, 0, InputOutput,
@@ -424,11 +436,13 @@ x11_init (player_t *player)
   pthread_mutex_unlock (&x11->mutex_display);
 
   /* only for Xine */
-  if (player->type == PLAYER_TYPE_XINE) {
+  if (player->type == PLAYER_TYPE_XINE)
+  {
 #ifdef HAVE_XINE
     vis = malloc (sizeof (x11_visual_t));
 
-    if (vis) {
+    if (vis)
+    {
       vis->display = x11->display;
       vis->screen = screen;
       vis->d = x11->window;
@@ -458,7 +472,8 @@ x11_init (player_t *player)
     x11->data = (void *) screeninfo;
   }
   /* others video out don't use data */
-  else {
+  else
+  {
     free (screeninfo);
     x11->data = NULL;
   }
