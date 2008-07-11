@@ -129,7 +129,7 @@ typedef enum slave_cmd {
   SLAVE_QUIT,         /* quit [int] */
   SLAVE_SEEK,         /* seek float [int] */
   SLAVE_SET_PROPERTY, /* set_property string string */
-  SLAVE_STOP,
+  SLAVE_STOP,         /* stop */
   SLAVE_SUB_LOAD,     /* sub_load string */
   SLAVE_SWITCH_TITLE, /* switch_title [int] */
 } slave_cmd_t;
