@@ -65,6 +65,12 @@
   " r : remove the current stream of the playlist\n" \
   " t : remove all streams of the playlist\n" \
   " q : quit test-player\n" \
+  "\n" \
+  "Commands for dvdnav:\n" \
+  "\n" \
+  " ARROWS    : menu navigation\n" \
+  " BACKSPACE : return to menu\n" \
+  " ENTER     : select\n" \
   "\n"
 #define TESTPLAYER_HELP TESTPLAYER_OPTIONS TESTPLAYER_COMMANDS
 
@@ -650,6 +656,30 @@ main (int argc, char **argv)
       break;
     case 'v':   /* print properties and metadata */
       show_info (player, player_mrl_get_current (player));
+      break;
+    case 0x1B5B41: /* UP */
+      player_dvd_nav (player, PLAYER_DVDNAV_UP);
+      printf ("DVDNAV UP\n");
+      break;
+    case 0x1B5B42: /* DOWN */
+      player_dvd_nav (player, PLAYER_DVDNAV_DOWN);
+      printf ("DVDNAV DOWN\n");
+      break;
+    case 0x1B5B44: /* LEFT */
+      player_dvd_nav (player, PLAYER_DVDNAV_LEFT);
+      printf ("DVDNAV LEFT\n");
+      break;
+    case 0x1B5B43: /* RIGHT */
+      player_dvd_nav (player, PLAYER_DVDNAV_RIGHT);
+      printf ("DVDNAV RIGHT\n");
+      break;
+    case 0xA: /* ENTER */
+      player_dvd_nav (player, PLAYER_DVDNAV_SELECT);
+      printf ("DVDNAV SELECT\n");
+      break;
+    case 0x7F: /* BACKSPACE */
+      player_dvd_nav (player, PLAYER_DVDNAV_MENU);
+      printf ("DVDNAV MENU\n");
       break;
     default:
       fprintf (stderr, "ERROR: Command unknown!\n");
