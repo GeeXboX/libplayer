@@ -28,7 +28,7 @@
 #include "player_internals.h"
 #include "logs.h"
 
-#define MODULE_NAME "player"
+#define MODULE_NAME "mrl"
 
 static mrl_type_t
 mrl_guess_type (mrl_t *mrl)
