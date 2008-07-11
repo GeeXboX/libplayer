@@ -884,8 +884,6 @@ xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
     return;
   }
 
-  if (player->mrl->resource == MRL_RESOURCE_DVDNAV ||
-      player->mrl->resource == MRL_RESOURCE_DVD)
     send_event (player, event);
 }
 

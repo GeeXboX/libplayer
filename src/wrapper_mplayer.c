@@ -2400,7 +2400,6 @@ mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
     return;
   }
 
-  if (player->mrl->resource == MRL_RESOURCE_DVDNAV)
     slave_cmd_int (player, SLAVE_DVDNAV, action);
 }
 
