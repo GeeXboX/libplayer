@@ -884,7 +884,7 @@ xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
     return;
   }
 
-    send_event (player, event);
+  send_event (player, event);
 }
 
 static int

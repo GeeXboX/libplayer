@@ -2400,7 +2400,7 @@ mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
     return;
   }
 
-    slave_cmd_int (player, SLAVE_DVDNAV, action);
+  slave_cmd_int (player, SLAVE_DVDNAV, action);
 }
 
 static void
