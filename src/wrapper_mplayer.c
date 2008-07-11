@@ -1927,7 +1927,7 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
   if (verbosity != -1)
   {
     pthread_mutex_lock (&mplayer->mutex_verbosity);
-    mplayer->verbosity = 1;
+    mplayer->verbosity = verbosity;
     pthread_mutex_unlock (&mplayer->mutex_verbosity);
   }
 }
