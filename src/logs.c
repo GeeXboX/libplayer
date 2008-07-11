@@ -30,6 +30,12 @@ void
 plog (player_t *player, player_verbosity_level_t level,
       const char *module, const char *format, ...)
 {
+  static const char const *l[] = {
+    [PLAYER_MSG_INFO]     = "Info",
+    [PLAYER_MSG_WARNING]  = "Warn",
+    [PLAYER_MSG_ERROR]    = "Err",
+    [PLAYER_MSG_CRITICAL] = "Crit",
+  };
   va_list va;
 
   if (!player || !format)
@@ -43,7 +49,7 @@ plog (player_t *player, player_verbosity_level_t level,
     return;
 
   va_start (va, format);
-  fprintf (stderr, "[%s]: ", module);
+  fprintf (stderr, "[%s] %s: ", module, l[level]);
   vfprintf (stderr, format, va);
   fprintf (stderr, "\n");
   va_end (va);
