@@ -150,7 +150,7 @@ static item_list_t g_slave_cmds[] = {
 
 /* slave properties */
 typedef enum slave_property {
-  PROPERTY_UNKNOWN,
+  PROPERTY_UNKNOWN = 0,
   PROPERTY_ANGLE,
   PROPERTY_AUDIO_BITRATE,
   PROPERTY_AUDIO_CODEC,
