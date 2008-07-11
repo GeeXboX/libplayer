@@ -24,6 +24,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <termios.h>
+#include <inttypes.h>
 
 #define _GNU_SOURCE
 #include <getopt.h>
@@ -76,24 +77,30 @@ event_cb (player_event_t e, void *data)
   return 0;
 }
 
-static int
+static uint32_t
 getch (void)
 {
   struct termios oldt, newt;
-  int ch = 0;
+  uint32_t ch = 0;
+  uint32_t val = 0;
 
   tcgetattr (STDIN_FILENO, &oldt);
   newt = oldt;
   newt.c_lflag &= ~(ICANON | ECHO);
   tcsetattr (STDIN_FILENO, TCSANOW, &newt);
 
-  read (STDIN_FILENO, &ch, 1);
-  putchar (ch);
+  read (STDIN_FILENO, &ch, sizeof (ch));
   putchar ('\n');
+  while (ch)
+  {
+    val <<= 8;
+    val += ch & 0xFF;
+    ch >>= 8;
+  }
 
   tcsetattr (STDIN_FILENO, TCSANOW, &oldt);
 
-  return ch;
+  return val;
 }
 
 static mrl_t *
@@ -440,7 +447,7 @@ main (int argc, char **argv)
   player_type_t type = PLAYER_TYPE_DUMMY;
   player_vo_t vo = PLAYER_VO_AUTO;
   player_ao_t ao = PLAYER_AO_AUTO;
-  char input;
+  uint32_t input;
   int run = 1;
   int volume = 85;
   int time_pos;
