@@ -96,11 +96,83 @@ getch (void)
   return ch;
 }
 
+static mrl_t *
+load_res_local (player_t *player)
+{
+  char file[1024] = "";
+  mrl_t *mrl = NULL;
+  mrl_resource_local_args_t *args;
+
+  printf ("Media to load (file): ");
+  while (!*file) {
+    fgets (file, sizeof (file), stdin);
+    *(file + strlen (file) - 1) = '\0';
+  }
+
+  args = calloc (1, sizeof (mrl_resource_local_args_t));
+  if (!args)
+    return NULL;
+
+  args->location = strdup (file);
+
+  mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
+  if (!mrl) {
+    if (args->location)
+      free (args->location);
+    free (args);
+    return NULL;
+  }
+
+  return mrl;
+}
+
+static mrl_t *
+load_res_cdda (player_t *player)
+{
+  int val;
+  char device[256] = "";
+  mrl_t *mrl = NULL;
+  mrl_resource_cd_args_t *args;
+
+  args = calloc (1, sizeof (mrl_resource_cd_args_t));
+  if (!args)
+    return NULL;
+
+  printf ("Device: ");
+  while (!*device) {
+    fgets (device, sizeof (device), stdin);
+    *(device + strlen (device) - 1) = '\0';
+  }
+  args->device = strdup (device);
+
+  printf ("Track start: ");
+  scanf ("%3u", &val);
+  args->track_start = (uint8_t) val;
+
+  printf ("Track end: ");
+  scanf ("%3u", &val);
+  args->track_end = (uint8_t) val;
+
+  printf ("Speed: ");
+  scanf ("%3u", &val);
+  args->speed = (uint8_t) val;
+
+  mrl = mrl_new (player, MRL_RESOURCE_CDDA, args);
+  if (!mrl) {
+    if (args->device)
+      free (args->device);
+    free (args);
+    return NULL;
+  }
+
+  return mrl;
+}
+
 static void
 load_media (player_t *player)
 {
   int c;
-  mrl_t *mrl;
+  mrl_t *mrl = NULL;
 
   printf ("What resource to load?\n");
   printf (" 1 - Local file\n");
@@ -112,71 +184,16 @@ load_media (player_t *player)
     return;
 
   case '1':
-  {
-    char file[1024] = "";
-    mrl_resource_local_args_t *args;
-
-    printf ("Media to load (file): ");
-    while (!*file) {
-      fgets (file, sizeof (file), stdin);
-      *(file + strlen (file) - 1) = '\0';
-    }
-
-    args = calloc (1, sizeof (mrl_resource_local_args_t));
-    if (!args)
-      return;
-
-    args->location = strdup (file);
-
-    mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
-    if (!mrl) {
-      if (args->location)
-        free (args->location);
-      free (args);
-      return;
-    }
+    mrl = load_res_local (player);
     break;
-  }
 
   case '2':
-  {
-    int val;
-    char device[256] = "";
-    mrl_resource_cd_args_t *args;
-
-    args = calloc (1, sizeof (mrl_resource_cd_args_t));
-    if (!args)
-      return;
-
-    printf ("Device: ");
-    while (!*device) {
-      fgets (device, sizeof (device), stdin);
-      *(device + strlen (device) - 1) = '\0';
-    }
-    args->device = strdup (device);
-
-    printf ("Track start: ");
-    scanf ("%3u", &val);
-    args->track_start = (uint8_t) val;
-
-    printf ("Track end: ");
-    scanf ("%3u", &val);
-    args->track_end = (uint8_t) val;
-
-    printf ("Speed: ");
-    scanf ("%3u", &val);
-    args->speed = (uint8_t) val;
-
-    mrl = mrl_new (player, MRL_RESOURCE_CDDA, args);
-    if (!mrl) {
-      if (args->device)
-        free (args->device);
-      free (args);
-      return;
-    }
+    mrl = load_res_cdda (player);
     break;
   }
-  }
+
+  if (!mrl)
+    return;
 
   player_mrl_append (player, mrl, PLAYER_MRL_ADD_QUEUE);
   printf ("\nMedia added to the playlist!\n");
