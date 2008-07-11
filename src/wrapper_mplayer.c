@@ -210,7 +210,7 @@ static void
 sig_handler (int signal)
 {
   if (signal == SIGPIPE)
-    fprintf (stderr, "SIGPIPE detected by the death of MPlayer");
+    fprintf (stderr, "SIGPIPE detected by the death of MPlayer\n");
 }
 
 static item_state_t
