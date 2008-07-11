@@ -2213,50 +2213,6 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   slave_cmd_int_opt (player, SLAVE_SEEK, value, opt);
 }
 
-static void
-mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
-{
-  int action;
-
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %i", value);
-
-  if (!player)
-    return;
-
-  switch (value)
-  {
-  case PLAYER_DVDNAV_UP:
-    action = MPLAYER_DVDNAV_UP;
-    break;
-
-  case PLAYER_DVDNAV_DOWN:
-    action = MPLAYER_DVDNAV_DOWN;
-    break;
-
-  case PLAYER_DVDNAV_LEFT:
-    action = MPLAYER_DVDNAV_LEFT;
-    break;
-
-  case PLAYER_DVDNAV_RIGHT:
-    action = MPLAYER_DVDNAV_RIGHT;
-    break;
-
-  case PLAYER_DVDNAV_MENU:
-    action = MPLAYER_DVDNAV_MENU;
-    break;
-
-  case PLAYER_DVDNAV_SELECT:
-    action = MPLAYER_DVDNAV_SELECT;
-    break;
-
-  default:
-    return;
-  }
-
-  if (player->mrl->resource == MRL_RESOURCE_DVDNAV)
-    slave_cmd_int (player, SLAVE_DVDNAV, action);
-}
-
 static int
 mplayer_get_volume (player_t *player)
 {
@@ -2400,6 +2356,50 @@ mplayer_set_sub_visibility (player_t *player, int value)
     return;
 
   slave_set_property_flag (player, PROPERTY_SUB_VISIBILITY, value);
+}
+
+static void
+mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
+{
+  int action;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %i", value);
+
+  if (!player)
+    return;
+
+  switch (value)
+  {
+  case PLAYER_DVDNAV_UP:
+    action = MPLAYER_DVDNAV_UP;
+    break;
+
+  case PLAYER_DVDNAV_DOWN:
+    action = MPLAYER_DVDNAV_DOWN;
+    break;
+
+  case PLAYER_DVDNAV_LEFT:
+    action = MPLAYER_DVDNAV_LEFT;
+    break;
+
+  case PLAYER_DVDNAV_RIGHT:
+    action = MPLAYER_DVDNAV_RIGHT;
+    break;
+
+  case PLAYER_DVDNAV_MENU:
+    action = MPLAYER_DVDNAV_MENU;
+    break;
+
+  case PLAYER_DVDNAV_SELECT:
+    action = MPLAYER_DVDNAV_SELECT;
+    break;
+
+  default:
+    return;
+  }
+
+  if (player->mrl->resource == MRL_RESOURCE_DVDNAV)
+    slave_cmd_int (player, SLAVE_DVDNAV, action);
 }
 
 static void
