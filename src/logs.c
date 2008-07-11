@@ -26,10 +26,28 @@
 #include "player.h"
 #include "player_internals.h"
 
+#ifdef USE_LOGCOLOR
+#define NORMAL   "\033[0m"
+#define COLOR(x) "\033[" #x ";1m"
+#define BOLD     COLOR(1)
+#define F_RED    COLOR(31)
+#define F_GREEN  COLOR(32)
+#define F_YELLOW COLOR(33)
+#define B_RED    COLOR(41)
+#endif /* USE_LOGCOLOR */
+
 void
 plog (player_t *player, player_verbosity_level_t level,
       const char *module, const char *format, ...)
 {
+#ifdef USE_LOGCOLOR
+  static const char const *c[] = {
+    [PLAYER_MSG_INFO]     = F_GREEN,
+    [PLAYER_MSG_WARNING]  = F_YELLOW,
+    [PLAYER_MSG_ERROR]    = F_RED,
+    [PLAYER_MSG_CRITICAL] = B_RED,
+  };
+#endif /* USE_LOGCOLOR */
   static const char const *l[] = {
     [PLAYER_MSG_INFO]     = "Info",
     [PLAYER_MSG_WARNING]  = "Warn",
@@ -49,7 +67,14 @@ plog (player_t *player, player_verbosity_level_t level,
     return;
 
   va_start (va, format);
+
+#ifdef USE_LOGCOLOR
+  fprintf (stderr, "[" BOLD "%s" NORMAL "] %s%s" NORMAL ": ",
+           module, c[level], l[level]);
+#else
   fprintf (stderr, "[%s] %s: ", module, l[level]);
+#endif /* USE_LOGCOLOR */
+
   vfprintf (stderr, format, va);
   fprintf (stderr, "\n");
   va_end (va);

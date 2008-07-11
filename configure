@@ -59,6 +59,9 @@ show_help(){
   echo "  --disable-optimize          disable compiler optimization"
   echo "  --cross-prefix=PREFIX       use PREFIX for compilation tools [$cross_prefix]"
   echo "  --cross-compile             assume a cross-compiler is used"
+  echo ""
+  echo "Miscellaneous:"
+  echo "  --disable-logcolor          disable colorful console output on terminals"
   exit 1
 }
 
@@ -354,6 +357,7 @@ x11="no"
 INSTALL="install"
 libplayer_version=`grep '#define LIBPLAYER_VERSION[[:space:]]' src/player.h | sed 's/[^0-9\.]//g'`
 pkgconfig_requires=""
+logcolor="yes"
 
 #################################################
 #   set cpu variable and specific cpu flags
@@ -473,6 +477,10 @@ for opt do
   --with-gstreamer-dir=*) libgstreamerdir="$optval";
   ;;
   --with-X11-dir=*) libX11dir="$optval";
+  ;;
+  --enable-logcolor) logcolor="yes";
+  ;;
+  --disable-logcolor) logcolor="no";
   ;;
   --help) show_help
   ;;
@@ -747,6 +755,13 @@ if test "$wrapper_xine" = "yes" -o "$wrapper_mplayer" = "yes"; then
   add_extralibs -lX11 -lpthread
   add_pkgconfig_requires x11
   x11="yes"
+fi
+
+#################################################
+#   Miscellaneous
+#################################################
+if enabled logcolor; then
+  add_cflags -DUSE_LOGCOLOR
 fi
 
 #################################################
