@@ -1908,21 +1908,25 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
   if (!mplayer)
     return;
 
-  switch (level) {
+  switch (level)
+  {
   case PLAYER_MSG_INFO:
   case PLAYER_MSG_WARNING:
   case PLAYER_MSG_ERROR:
   case PLAYER_MSG_CRITICAL:
     verbosity = 1;
     break;
+
   case PLAYER_MSG_NONE:
     verbosity = 0;
     break;
+
   default:
     break;
   }
 
-  if (verbosity != -1) {
+  if (verbosity != -1)
+  {
     pthread_mutex_lock (&mplayer->mutex_verbosity);
     mplayer->verbosity = 1;
     pthread_mutex_unlock (&mplayer->mutex_verbosity);
