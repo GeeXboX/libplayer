@@ -584,6 +584,8 @@ mrl_new (player_t *player, mrl_resource_t res, void *args)
   mrl_t *mrl = NULL;
   int support = 0;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player || !args)
     return NULL;
 
@@ -619,6 +621,8 @@ mrl_new (player_t *player, mrl_resource_t res, void *args)
 mrl_type_t
 mrl_get_type (player_t *player, mrl_t *mrl)
 {
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return MRL_TYPE_UNKNOWN;
 
@@ -634,6 +638,8 @@ mrl_get_type (player_t *player, mrl_t *mrl)
 mrl_resource_t
 mrl_get_resource (player_t *player, mrl_t *mrl)
 {
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return MRL_RESOURCE_UNKNOWN;
 
