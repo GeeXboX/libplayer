@@ -130,7 +130,8 @@ typedef enum slave_cmd {
   SLAVE_SEEK,         /* seek float [int] */
   SLAVE_SET_PROPERTY, /* set_property string string */
   SLAVE_STOP,
-  SLAVE_SUB_LOAD      /* sub_load string */
+  SLAVE_SUB_LOAD,     /* sub_load string */
+  SLAVE_SWITCH_TITLE, /* switch_title [int] */
 } slave_cmd_t;
 
 static item_list_t g_slave_cmds[] = {
@@ -143,6 +144,7 @@ static item_list_t g_slave_cmds[] = {
   [SLAVE_SET_PROPERTY]  = {"set_property", ITEM_ENABLE,           ITEM_DISABLE},
   [SLAVE_STOP]          = {"stop",         ITEM_ENABLE|ITEM_HACK, ITEM_DISABLE},
   [SLAVE_SUB_LOAD]      = {"sub_load",     ITEM_ENABLE,           ITEM_DISABLE},
+  [SLAVE_SWITCH_TITLE]  = {"switch_title", ITEM_ENABLE,           ITEM_DISABLE},
   [SLAVE_UNKNOWN]       = {NULL,           ITEM_DISABLE,          ITEM_DISABLE}
 };
 
@@ -2458,6 +2460,20 @@ mplayer_dvd_angle_next (player_t *player)
   slave_set_property_int (player, PROPERTY_ANGLE, angle);
 }
 
+static void
+mplayer_dvd_title_set (player_t *player, int value)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_title_set: %i", value);
+
+  if (!player)
+    return;
+
+  if (value < 0 || value > 99)
+    return;
+
+  slave_cmd_int (player, SLAVE_SWITCH_TITLE, value);
+}
+
 /* public API */
 player_funcs_t *
 register_functions_mplayer (void)
@@ -2511,7 +2527,7 @@ register_functions_mplayer (void)
   funcs->dvd_angle_set      = mplayer_dvd_angle_set;
   funcs->dvd_angle_prev     = mplayer_dvd_angle_prev;
   funcs->dvd_angle_next     = mplayer_dvd_angle_next;
-  funcs->dvd_title_set      = NULL;
+  funcs->dvd_title_set      = mplayer_dvd_title_set;
   funcs->dvd_title_prev     = NULL;
   funcs->dvd_title_next     = NULL;
 
