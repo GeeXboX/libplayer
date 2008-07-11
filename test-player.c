@@ -168,6 +168,53 @@ load_res_cdda (player_t *player)
   return mrl;
 }
 
+static mrl_t *
+load_res_dvd (player_t *player)
+{
+  int val;
+  char device[256] = "";
+  mrl_t *mrl;
+  mrl_resource_videodisc_args_t *args;
+  mrl_resource_t res;
+
+  args = calloc (1, sizeof (mrl_resource_videodisc_args_t));
+  if (!args)
+    return NULL;
+
+  printf ("Device: ");
+  while (!*device) {
+    fgets (device, sizeof (device), stdin);
+    *(device + strlen (device) - 1) = '\0';
+  }
+  args->device = strdup (device);
+
+  printf ("dvdnav [0|1]: ");
+  scanf ("%1u", &val);
+  res = val ? MRL_RESOURCE_DVDNAV : MRL_RESOURCE_DVD;
+
+  printf ("Title start: ");
+  scanf ("%3u", &val);
+  args->title_start = (uint8_t) val;
+
+  printf ("Title end: ");
+  scanf ("%3u", &val);
+  args->title_end = (uint8_t) val;
+
+  printf ("Angle: ");
+  scanf ("%3u", &val);
+  args->angle = (uint8_t) val;
+
+  mrl = mrl_new (player, res, args);
+  if (!mrl) {
+    if (args->device)
+      free (args->device);
+    free (args);
+    return NULL;
+  }
+
+  return mrl;
+}
+
 static void
 load_media (player_t *player)
 {
@@ -177,6 +224,7 @@ load_media (player_t *player)
   printf ("What resource to load?\n");
   printf (" 1 - Local file\n");
   printf (" 2 - Compact Disc Digital Audio\n");
+  printf (" 3 - Digital Versatile Disc (Video)\n");
   c = getch ();
 
   switch (c) {
@@ -189,6 +237,10 @@ load_media (player_t *player)
 
   case '2':
     mrl = load_res_cdda (player);
+    break;
+
+  case '3':
+    mrl = load_res_dvd (player);
     break;
   }
 
