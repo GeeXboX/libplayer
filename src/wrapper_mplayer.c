@@ -149,6 +149,7 @@ static item_list_t g_slave_cmds[] = {
 /* slave properties */
 typedef enum slave_property {
   PROPERTY_UNKNOWN,
+  PROPERTY_ANGLE,
   PROPERTY_AUDIO_BITRATE,
   PROPERTY_AUDIO_CODEC,
   PROPERTY_CHANNELS,
@@ -177,6 +178,7 @@ typedef enum slave_property {
 } slave_property_t;
 
 static item_list_t g_slave_props[] = {
+  [PROPERTY_ANGLE]            = {"angle",            ITEM_ENABLE,  ITEM_DISABLE},
   [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ENABLE,  ITEM_DISABLE},
   [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ENABLE,  ITEM_DISABLE},
   [PROPERTY_CHANNELS]         = {"channels",         ITEM_ENABLE,  ITEM_DISABLE},
@@ -2400,6 +2402,62 @@ mplayer_set_sub_visibility (player_t *player, int value)
   slave_set_property_flag (player, PROPERTY_SUB_VISIBILITY, value);
 }
 
+static void
+mplayer_dvd_angle_set (player_t *player, int value)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_angle_set: %i", value);
+
+  if (!player)
+    return;
+
+  if (value < 0 || value > 10)
+    return;
+
+  slave_set_property_int (player, PROPERTY_ANGLE, value);
+}
+
+static void
+mplayer_dvd_angle_prev (player_t *player)
+{
+  int angle;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_angle_prev");
+
+  if (!player)
+    return;
+
+  angle = slave_get_property_int (player, PROPERTY_ANGLE);
+  angle--;
+
+  if (angle < 0)
+    angle = 0;
+  else if (angle > 10)
+    angle = 10;
+
+  slave_set_property_int (player, PROPERTY_ANGLE, angle);
+}
+
+static void
+mplayer_dvd_angle_next (player_t *player)
+{
+  int angle;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_angle_next");
+
+  if (!player)
+    return;
+
+  angle = slave_get_property_int (player, PROPERTY_ANGLE);
+  angle++;
+
+  if (angle < 0)
+    angle = 0;
+  else if (angle > 10)
+    angle = 10;
+
+  slave_set_property_int (player, PROPERTY_ANGLE, angle);
+}
+
 /* public API */
 player_funcs_t *
 register_functions_mplayer (void)
@@ -2450,9 +2508,9 @@ register_functions_mplayer (void)
   funcs->sub_next           = NULL;
 
   funcs->dvd_nav            = mplayer_dvd_nav;
-  funcs->dvd_angle_set      = NULL;
-  funcs->dvd_angle_prev     = NULL;
-  funcs->dvd_angle_next     = NULL;
+  funcs->dvd_angle_set      = mplayer_dvd_angle_set;
+  funcs->dvd_angle_prev     = mplayer_dvd_angle_prev;
+  funcs->dvd_angle_next     = mplayer_dvd_angle_next;
   funcs->dvd_title_set      = NULL;
   funcs->dvd_title_prev     = NULL;
   funcs->dvd_title_next     = NULL;
