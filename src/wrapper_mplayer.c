@@ -1909,13 +1909,13 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
     return;
 
   switch (level) {
-  case PLAYER_MSG_NONE:
   case PLAYER_MSG_INFO:
   case PLAYER_MSG_WARNING:
-    verbosity = 1;
-    break;
   case PLAYER_MSG_ERROR:
   case PLAYER_MSG_CRITICAL:
+    verbosity = 1;
+    break;
+  case PLAYER_MSG_NONE:
     verbosity = 0;
     break;
   default:
