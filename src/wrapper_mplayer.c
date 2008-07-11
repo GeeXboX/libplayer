@@ -352,9 +352,18 @@ thread_fifo (void *arg)
     {
       pthread_mutex_unlock (&mplayer->mutex_verbosity);
 
+      static player_verbosity_level_t level = PLAYER_MSG_INFO;
+
       strcpy (log, buffer);
       *(log + strlen (log) - 1) = '\0';
-      plog (player, PLAYER_MSG_INFO, MODULE_NAME, "[process] %s", log);
+
+      if (level == PLAYER_MSG_INFO
+          && strstr (buffer, "MPlayer interrupted by signal") == buffer)
+      {
+        level = PLAYER_MSG_CRITICAL;
+      }
+
+      plog (player, level, MODULE_NAME, "[process] %s", log);
     }
     else
       pthread_mutex_unlock (&mplayer->mutex_verbosity);
