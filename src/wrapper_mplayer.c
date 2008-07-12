@@ -2467,7 +2467,7 @@ mplayer_dvd_title_set (player_t *player, int value)
   if (!player)
     return;
 
-  if (value < 0 || value > 99)
+  if (value < 1 || value > 99)
     return;
 
   slave_cmd_int (player, SLAVE_SWITCH_TITLE, value);
