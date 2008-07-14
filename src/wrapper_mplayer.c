@@ -67,6 +67,12 @@ typedef enum mplayer_status {
   MPLAYER_IS_DEAD
 } mplayer_status_t;
 
+typedef enum mplayer_eof {
+  MPLAYER_EOF_NO,
+  MPLAYER_EOF_END,
+  MPLAYER_EOF_STOP,
+} mplayer_eof_t;
+
 typedef enum checklist {
   CHECKLIST_COMMANDS,
   CHECKLIST_PROPERTIES,
