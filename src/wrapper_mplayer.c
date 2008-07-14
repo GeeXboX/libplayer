@@ -1173,7 +1173,9 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
 
   snprintf (str, sizeof (str), "ID_CLIP_INFO_VALUE%i=", cnt);
   it = strstr (buffer, str);
-  if (it == buffer) {
+  if (it != buffer)
+    return 0;
+
     switch (property) {
     case PROPERTY_METADATA_NAME:
     case PROPERTY_METADATA_TITLE:
@@ -1225,9 +1227,6 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
     cnt++;
     property = PROPERTY_UNKNOWN;
     return 1;
-  }
-
-  return 0;
 }
 
 static int
