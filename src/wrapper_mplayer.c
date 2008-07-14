@@ -809,6 +809,10 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   if (!command || state_cmd == ITEM_DISABLE)
     return;
 
+  if (state_cmd == ITEM_HACK)
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "[hack] slave command '%s'", command);
+
   switch (cmd) {
   case SLAVE_DVDNAV:
     if (state_cmd == ITEM_ENABLE && value)
@@ -847,11 +851,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_STOP:
     if (state_cmd == ITEM_HACK)
-    {
-      plog (player, PLAYER_MSG_WARNING,
-            MODULE_NAME, "[hack] slave command '%s'", command);
       send_to_slave (player, "loadfile \"\"");
-    }
     else if (state_cmd == ITEM_ENABLE)
       send_to_slave (player, command);
 
