@@ -485,8 +485,7 @@ thread_fifo (void *arg)
      * Detect when MPlayer playback is really started in order to change
      * the current status.
      */
-    else if (strstr (buffer, "Starting playback") == buffer ||  /* for local */
-             strstr (buffer, "Connecting to server") == buffer) /* for network */
+    else if (strstr (buffer, "Starting playback") == buffer)
     {
       pthread_mutex_lock (&mplayer->mutex_status);
       mplayer->status = MPLAYER_IS_PLAYING;
