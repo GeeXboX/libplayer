@@ -1709,7 +1709,8 @@ mplayer_init (player_t *player)
     params[pp++] = MPLAYER_NAME;
     params[pp++] = "-slave";            /* work in slave mode */
     params[pp++] = "-quiet";            /* reduce output messages */
-    params[pp++] = "-v";                /* necessary for detect EOF */
+    params[pp++] = "-msglevel";
+    params[pp++] = "all=2:global=6:cplayer=7";
     params[pp++] = "-idle";             /* MPlayer stays always alive */
     params[pp++] = "-fs";               /* fullscreen (if possible) */
     params[pp++] = "-zoom";             /* zoom (if possible) */
