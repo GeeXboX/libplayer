@@ -101,6 +101,7 @@ typedef struct mplayer_s {
   pthread_mutex_t mutex_verbosity;
   pthread_mutex_t mutex_start;
   pthread_cond_t cond_start;
+  pthread_cond_t cond_status;
   sem_t sem;
   mp_search_t *search;    /* use when a property is searched */
 } mplayer_t;
@@ -340,6 +341,7 @@ static void *
 thread_fifo (void *arg)
 {
   int start_ok = 1, check_lang = 1;
+  mplayer_eof_t wait_uninit = MPLAYER_EOF_NO;
   char buffer[FIFO_BUFFER];
   char *it;
   player_t *player;
@@ -435,7 +437,7 @@ thread_fifo (void *arg)
           if (mplayer->status == MPLAYER_IS_IDLE)
           {
             pthread_mutex_unlock (&mplayer->mutex_status);
-            sem_post (&mplayer->sem);
+            wait_uninit = MPLAYER_EOF_STOP;
           }
           else
             pthread_mutex_unlock (&mplayer->mutex_status);
@@ -443,6 +445,8 @@ thread_fifo (void *arg)
           continue;
         }
       }
+
+      wait_uninit = MPLAYER_EOF_END;
 
       /*
        * Here we can consider an "end of stream" and sending an event.
@@ -463,7 +467,23 @@ thread_fifo (void *arg)
           x11_unmap (player);
       }
       else
+      {
         pthread_mutex_unlock (&mplayer->mutex_status);
+
+        item_state_t state;
+        get_cmd (SLAVE_STOP, &state);
+
+        /*
+         * Oops, 'stop' is arrived just before "EOF code != 1" and was not
+         * handled like a stop.
+         */
+        if (state == ITEM_ENABLE)
+        {
+          plog (player, PLAYER_MSG_WARNING,
+                MODULE_NAME, "'stop' unexpected detected");
+          wait_uninit = MPLAYER_EOF_STOP;
+        }
+      }
     }
 
     /*
@@ -482,7 +502,7 @@ thread_fifo (void *arg)
       if (mplayer->status == MPLAYER_IS_IDLE)
       {
         pthread_mutex_unlock (&mplayer->mutex_status);
-        sem_post (&mplayer->sem);
+        wait_uninit = MPLAYER_EOF_STOP;
       }
       else
         pthread_mutex_unlock (&mplayer->mutex_status);
@@ -495,19 +515,46 @@ thread_fifo (void *arg)
     else if (strstr (buffer, "Starting playback") == buffer)
     {
       pthread_mutex_lock (&mplayer->mutex_status);
-      mplayer->status = MPLAYER_IS_PLAYING;
+      if (mplayer->status == MPLAYER_IS_LOADING)
+      {
+        mplayer->status = MPLAYER_IS_PLAYING;
+        pthread_cond_signal (&mplayer->cond_status);
+      }
+      else
+        mplayer->status = MPLAYER_IS_PLAYING;
       pthread_mutex_unlock (&mplayer->mutex_status);
     }
 
     /*
-     * HACK: loadlist is never used in libplayer to load a playlist. This
-     *       will be used only to detect the end of the previous command.
-     *       In this case, when the slave command 'loadfile' is used to play
-     *       a stream, libplayer is locked on mplayer->sem as long as the
-     *       loading is not finished.
+     * If this 'uninit' is detected, we can be sure that nothing is playing.
+     * The status of MPlayer will be changed and a signal will be sent if
+     * MPlayer was loading a stream.
+     * But if EOF is detected before 'uninit', this is considered as a
+     * 'stop' or an 'end of stream'.
      */
-    else if (strstr (buffer, "Command loadlist") == buffer)
-      sem_post (&mplayer->sem);
+    else if (strstr (buffer, "*** uninit") == buffer)
+    {
+      switch (wait_uninit)
+      {
+      case MPLAYER_EOF_STOP:
+        wait_uninit = MPLAYER_EOF_NO;
+        sem_post (&mplayer->sem);
+        continue;
+
+      case MPLAYER_EOF_END:
+        wait_uninit = MPLAYER_EOF_NO;
+        continue;
+
+      default:
+        pthread_mutex_lock (&mplayer->mutex_status);
+        if (mplayer->status == MPLAYER_IS_LOADING)
+        {
+          mplayer->status = MPLAYER_IS_IDLE;
+          pthread_cond_signal (&mplayer->cond_status);
+        }
+        pthread_mutex_unlock (&mplayer->mutex_status);
+      }
+    }
 
     /*
      * Check language used by MPlayer. Only english is supported. A signal
@@ -770,11 +817,17 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_LOADFILE:
     if (state_cmd == ITEM_ENABLE && value && value->s_val)
+    {
+      pthread_mutex_lock (&mplayer->mutex_status);
+      mplayer->status = MPLAYER_IS_LOADING;
+      pthread_mutex_unlock (&mplayer->mutex_status);
+
       send_to_slave (player, "%s \"%s\" %i", command, value->s_val, opt);
 
-    send_to_slave (player, "loadlist");
-    /* wait that the thread will confirm "loadlist" */
-    sem_wait (&mplayer->sem);
+      pthread_mutex_lock (&mplayer->mutex_status);
+      pthread_cond_wait (&mplayer->cond_status, &mplayer->mutex_status);
+      pthread_mutex_unlock (&mplayer->mutex_status);
+    }
     break;
 
   case SLAVE_PAUSE:
@@ -1893,6 +1946,7 @@ mplayer_uninit (player_t *player)
   }
 
   pthread_cond_destroy (&mplayer->cond_start);
+  pthread_cond_destroy (&mplayer->cond_status);
   pthread_mutex_destroy (&mplayer->mutex_search);
   pthread_mutex_destroy (&mplayer->mutex_status);
   pthread_mutex_destroy (&mplayer->mutex_verbosity);
@@ -2562,6 +2616,7 @@ register_private_mplayer (void)
 
   sem_init (&mplayer->sem, 0, 0);
   pthread_cond_init (&mplayer->cond_start, NULL);
+  pthread_cond_init (&mplayer->cond_status, NULL);
   pthread_mutex_init (&mplayer->mutex_search, NULL);
   pthread_mutex_init (&mplayer->mutex_status, NULL);
   pthread_mutex_init (&mplayer->mutex_verbosity, NULL);
