@@ -228,6 +228,48 @@ load_res_dvd (player_t *player)
   return mrl;
 }
 
+static mrl_t *
+load_res_network (player_t *player)
+{
+  char url[4096] = "";
+  mrl_t *mrl;
+  mrl_resource_network_args_t *args;
+  mrl_resource_t res;
+
+  args = calloc (1, sizeof (mrl_resource_network_args_t));
+  if (!args)
+    return NULL;
+
+  printf ("URL: ");
+  while (!*url) {
+    fgets (url, sizeof (url), stdin);
+    *(url + strlen (url) - 1) = '\0';
+  }
+  args->url = strdup (url);
+
+  if (!args->url)
+    return NULL;
+
+  if (strstr (url, "http://") == url)
+    res = MRL_RESOURCE_HTTP;
+  else if (strstr (url, "mms://") == url)
+    res = MRL_RESOURCE_MMS;
+  else
+  {
+    free (args->url);
+    return NULL;
+  }
+
+  mrl = mrl_new (player, res, args);
+  if (!mrl) {
+    free (args->url);
+    free (args);
+    return NULL;
+  }
+
+  return mrl;
+}
+
 static void
 load_media (player_t *player)
 {
@@ -238,6 +280,7 @@ load_media (player_t *player)
   printf (" 1 - Local file\n");
   printf (" 2 - Compact Disc Digital Audio\n");
   printf (" 3 - Digital Versatile Disc (Video)\n");
+  printf (" 4 - Network stream (HTTP/MMS)\n");
   c = getch ();
 
   switch (c) {
@@ -254,6 +297,10 @@ load_media (player_t *player)
 
   case '3':
     mrl = load_res_dvd (player);
+    break;
+
+  case '4':
+    mrl = load_res_network (player);
     break;
   }
 
