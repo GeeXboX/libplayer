@@ -62,6 +62,7 @@ typedef enum mplayer_sub_alignment {
 /* Status of MPlayer child */
 typedef enum mplayer_status {
   MPLAYER_IS_IDLE,
+  MPLAYER_IS_LOADING,
   MPLAYER_IS_PLAYING,
   MPLAYER_IS_DEAD
 } mplayer_status_t;
