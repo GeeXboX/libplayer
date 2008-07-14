@@ -1086,7 +1086,7 @@ mp_resource_get_uri (mrl_t *mrl)
   case MRL_RESOURCE_UDP:  /* udp://username:password@url   */
   case MRL_RESOURCE_UNSV: /* unsv://username:password@url  */
   {
-    char *uri;
+    char *uri, *host_file;
     const char *protocol = protocols[mrl->resource];
     char at[256] = "";
     size_t size = strlen (protocol);
@@ -1094,6 +1094,14 @@ mp_resource_get_uri (mrl_t *mrl)
 
     args = mrl->priv;
     if (!args || !args->url)
+      break;
+
+    if (strstr (args->url, protocol) == args->url)
+      host_file = strdup (args->url + size);
+    else
+      host_file = strdup (args->url);
+
+    if (!host_file)
       break;
 
     if (args->username)
@@ -1107,14 +1115,20 @@ mp_resource_get_uri (mrl_t *mrl)
       else
         snprintf (at, sizeof (at), "%s@", args->username);
     }
-    size += strlen (args->url);
+    size += strlen (host_file);
 
     size++;
     uri = malloc (size);
     if (!uri)
+    {
+      free (host_file);
       break;
+    }
 
-    snprintf (uri, size, "%s%s%s", protocol, at, args->url);
+    snprintf (uri, size, "%s%s%s", protocol, at, host_file);
+
+    free (host_file);
+
     return uri;
   }
 
