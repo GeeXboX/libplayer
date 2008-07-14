@@ -1403,7 +1403,8 @@ mp_identify (mrl_t *mrl, int flags)
     params[pp++] = "-endpos";
     params[pp++] = "0";
     params[pp++] = uri;
-    params[pp++] = "-identify";
+    params[pp++] = "-msglevel";
+    params[pp++] = "all=0:identify=6";
     params[pp] = NULL;
 
     execvp (MPLAYER_NAME, params);
