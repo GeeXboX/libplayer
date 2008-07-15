@@ -2,6 +2,9 @@
 #
 # libplayer statistics script - (c) 2008 Mathieu Schroeter
 
+ECHO=echo
+[ -f /bin/echo ] && ECHO=/bin/echo
+
 bargraph ()
 {
   local PERCENT J I
@@ -57,7 +60,7 @@ imp_functions ()
   PERCENT=`expr $NB_OK \* 100 / $TOTAL`
 
   bargraph $PERCENT
-  echo "     $NAME\t: ($NB_OK)\t$PERCENT% \t[$BARGRAPH]"
+  $ECHO -e "     $NAME\t: ($NB_OK)\t$PERCENT% \t[$BARGRAPH]"
 }
 
 sup_output ()
@@ -74,7 +77,7 @@ sup_output ()
   VAR=`grep PLAYER_${TYPE}_ $wrapper | sed "s%$PATTERN%\1%" | sort -u`
 
   varlist "$VAR"
-  echo "     $NAME\t: ($NB_OK)\t$PERCENT%\t$LIST"
+  $ECHO -e "     $NAME\t: ($NB_OK)\t$PERCENT%\t$LIST"
 }
 
 sup_resource ()
@@ -90,28 +93,28 @@ sup_resource ()
   VAR=`grep MRL_RESOURCE_ $wrapper | sed "s%$PATTERN%\1%" | sort -u`
 
   varlist "$VAR"
-  echo "     $NAME\t: ($NB_OK)\t$PERCENT%\t$LIST"
+  $ECHO -e "     $NAME\t: ($NB_OK)\t$PERCENT%\t$LIST"
 }
 
-echo ""
-echo " libplayer-r`hg tip --template={rev}`\t\t\t\t\t\t\t`date +%Y"-"%m"-"%d`"
-echo ""
-echo " These statistics are not relevant. But you can see approximately which"
-echo " is the progress for every wrapper."
+$ECHO -e ""
+$ECHO -e " libplayer-r`hg tip --template={rev}`\t\t\t\t\t\t\t`date +%Y"-"%m"-"%d`"
+$ECHO -e ""
+$ECHO -e " These statistics are not relevant. But you can see approximately which"
+$ECHO -e " is the progress for every wrapper."
 
 WRAPPER_LIST=`ls src/wrapper_*.c | grep -v dummy`
 
-echo ""
-echo ""
-echo "  Implemented Functions:"
-echo "  ~~~~~~~~~~~~~~~~~~~~~~"
-echo ""
+$ECHO -e ""
+$ECHO -e ""
+$ECHO -e "  Implemented Functions:"
+$ECHO -e "  ~~~~~~~~~~~~~~~~~~~~~~"
+$ECHO -e ""
 
 TOTAL_FCT=`grep -h -c "funcs->" src/wrapper_dummy.c`
 I=0
 for wrapper in $WRAPPER_LIST;
 do
-  NAME=`echo $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
+  NAME=`$ECHO -e $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
 
   imp_functions $NAME $TOTAL_FCT
 
@@ -120,14 +123,14 @@ do
   I=`expr $I + 1`
 done
 
-echo ""
-echo "   Maximum: $TOTAL_FCT"
+$ECHO -e ""
+$ECHO -e "   Maximum: $TOTAL_FCT"
 
-echo ""
-echo ""
-echo "  Supported Audio Outputs:"
-echo "  ~~~~~~~~~~~~~~~~~~~~~~~~"
-echo ""
+$ECHO -e ""
+$ECHO -e ""
+$ECHO -e "  Supported Audio Outputs:"
+$ECHO -e "  ~~~~~~~~~~~~~~~~~~~~~~~~"
+$ECHO -e ""
 
 TYPE=AO
 PATTERN=".*PLAYER_${TYPE}_\([A-Z0-9_]*\).*"
@@ -135,7 +138,7 @@ TOTAL_AO=`grep PLAYER_${TYPE}_ src/player.h | sed "s%$PATTERN%\1%" | sort -u | g
 I=0
 for wrapper in $WRAPPER_LIST;
 do
-  NAME=`echo $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
+  NAME=`$ECHO -e $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
 
   sup_output $TYPE $NAME $TOTAL_AO $PATTERN
 
@@ -146,14 +149,14 @@ do
   I=`expr $I + 1`
 done
 
-echo ""
-echo "   Maximum: $TOTAL_AO"
+$ECHO -e ""
+$ECHO -e "   Maximum: $TOTAL_AO"
 
-echo ""
-echo ""
-echo "  Supported Video Outputs:"
-echo "  ~~~~~~~~~~~~~~~~~~~~~~~~"
-echo ""
+$ECHO -e ""
+$ECHO -e ""
+$ECHO -e "  Supported Video Outputs:"
+$ECHO -e "  ~~~~~~~~~~~~~~~~~~~~~~~~"
+$ECHO -e ""
 
 TYPE=VO
 PATTERN=".*PLAYER_${TYPE}_\([A-Z0-9_]*\).*"
@@ -161,7 +164,7 @@ TOTAL_VO=`grep PLAYER_${TYPE}_ src/player.h | sed "s%$PATTERN%\1%" | sort -u | g
 I=0
 for wrapper in $WRAPPER_LIST;
 do
-  NAME=`echo $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
+  NAME=`$ECHO -e $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
 
   sup_output $TYPE $NAME $TOTAL_VO $PATTERN
 
@@ -172,21 +175,21 @@ do
   I=`expr $I + 1`
 done
 
-echo ""
-echo "   Maximum: $TOTAL_VO"
+$ECHO -e ""
+$ECHO -e "   Maximum: $TOTAL_VO"
 
-echo ""
-echo ""
-echo "  Supported Resources:"
-echo "  ~~~~~~~~~~~~~~~~~~~~"
-echo ""
+$ECHO -e ""
+$ECHO -e ""
+$ECHO -e "  Supported Resources:"
+$ECHO -e "  ~~~~~~~~~~~~~~~~~~~~"
+$ECHO -e ""
 
 PATTERN=".*MRL_RESOURCE_\([A-Z0-9_]*\).*"
 TOTAL_RES=`grep MRL_RESOURCE_ src/player.h | sed "s%$PATTERN%\1%" | sort -u | grep ".*" -c`
 I=0
 for wrapper in $WRAPPER_LIST;
 do
-  NAME=`echo $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
+  NAME=`$ECHO -e $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
 
   sup_resource $NAME $TOTAL_RES $PATTERN
 
@@ -197,37 +200,37 @@ do
   I=`expr $I + 1`
 done
 
-echo ""
-echo "   Maximum: $TOTAL_RES"
+$ECHO -e ""
+$ECHO -e "   Maximum: $TOTAL_RES"
 
-echo ""
-echo ""
-echo "  Global statistics (sum):"
-echo "  ~~~~~~~~~~~~~~~~~~~~~~~~"
-echo ""
+$ECHO -e ""
+$ECHO -e ""
+$ECHO -e "  Global statistics (sum):"
+$ECHO -e "  ~~~~~~~~~~~~~~~~~~~~~~~~"
+$ECHO -e ""
 
 TOTAL_W=0
 TOTAL=`expr $TOTAL_FCT + $TOTAL_AO + $TOTAL_VO + $TOTAL_RES`
 I=0
 for wrapper in $WRAPPER_LIST;
 do
-  NAME=`echo $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
+  NAME=`$ECHO -e $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
   eval TOTAL_S=\$TOTAL_$I
   TOTAL_W=`expr $TOTAL_W + $TOTAL_S`
   PERCENT=`expr $TOTAL_S \* 100 / $TOTAL`
 
   bargraph $PERCENT
-  echo "     $NAME\t: ($TOTAL_S)\t$PERCENT% \t[$BARGRAPH]"
+  $ECHO -e "     $NAME\t: ($TOTAL_S)\t$PERCENT% \t[$BARGRAPH]"
 
   I=`expr $I + 1`
 done
 
-echo ""
-echo "   Maximum: $TOTAL"
+$ECHO -e ""
+$ECHO -e "   Maximum: $TOTAL"
 
 PERCENT=`expr $TOTAL_W \* 100 / \( $TOTAL \* \( $I + 1 \) \)`
 bargraph $PERCENT
-echo ""
-echo ""
-echo "   libplayer\t:\t$PERCENT%\t[$BARGRAPH]"
-echo ""
+$ECHO -e ""
+$ECHO -e ""
+$ECHO -e "   libplayer\t:\t$PERCENT%\t[$BARGRAPH]"
+$ECHO -e ""
