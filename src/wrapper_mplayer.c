@@ -870,7 +870,9 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   default:
-    return;
+    plog (player, PLAYER_MSG_ERROR,
+          MODULE_NAME, "what to do with the slave command '%s'?", command);
+    break;
   }
 }
 
