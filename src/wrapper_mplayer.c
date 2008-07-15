@@ -864,6 +864,11 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
       send_to_slave (player, "%s \"%s\"", command, value->s_val);
     break;
 
+  case SLAVE_SWITCH_TITLE:
+    if (state_cmd == ITEM_ENABLE && value)
+      send_to_slave (player, "%s %i", command, value->i_val);
+    break;
+
   default:
     return;
   }
