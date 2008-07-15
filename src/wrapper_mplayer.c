@@ -758,7 +758,9 @@ slave_set_property (player_t *player, slave_property_t property,
     break;
 
   default:
-    return;
+    plog (player, PLAYER_MSG_ERROR,
+          MODULE_NAME, "the property %i can not be set", property);
+    break;
   }
 }
 
