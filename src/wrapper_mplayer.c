@@ -967,10 +967,19 @@ mp_resource_get_uri (mrl_t *mrl)
   {
   case MRL_RESOURCE_FILE:
   {
+    const char *protocol = protocols[mrl->resource];
     mrl_resource_local_args_t *args = mrl->priv;
-    if (args && args->location)
+
+    if (!args || !args->location)
+      return NULL;
+
+    if (strstr (args->location, "://")
+        && strncmp (args->location, protocol, strlen (protocol)))
+    {
+      return NULL;
+    }
+
       return strdup (args->location);
-    break;
   }
 
   case MRL_RESOURCE_CDDA: /* cdda://track_start-track_end:speed/device */
