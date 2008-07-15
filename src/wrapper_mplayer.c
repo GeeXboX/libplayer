@@ -743,6 +743,7 @@ slave_set_property (player_t *player, slave_property_t property,
   snprintf (cmd, sizeof (cmd), "%s %s", command, prop);
 
   switch (property) {
+  case PROPERTY_ANGLE:
   case PROPERTY_LOOP:
   case PROPERTY_MUTE:
   case PROPERTY_SUB:
