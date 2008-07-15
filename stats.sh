@@ -4,7 +4,7 @@
 
 bargraph ()
 {
-  local PERCENT - J - I
+  local PERCENT J I
 
   PERCENT=$1
 
@@ -25,7 +25,7 @@ bargraph ()
 
 varlist ()
 {
-  local VAR - I - PRE
+  local VAR I PRE
 
   VAR=$1
 
@@ -47,7 +47,7 @@ varlist ()
 
 imp_functions ()
 {
-  local NAME - TOTAL - NB_NULL - PERCENT - I - J - BARGRAPH
+  local NAME TOTAL NB_NULL PERCENT I J BARGRAPH
 
   NAME=$1
   TOTAL=$2
@@ -62,7 +62,7 @@ imp_functions ()
 
 sup_output ()
 {
-  local NAME - LIST - TYPE - TOTAL - PERCENT - PATTERN - I - VAR
+  local NAME LIST TYPE TOTAL PERCENT PATTERN I VAR
 
   TYPE=$1
   NAME=$2
@@ -79,7 +79,7 @@ sup_output ()
 
 sup_resource ()
 {
-  local NAME - LIST - TOTAL - PERCENT - I - PATTERN - VAR
+  local NAME LIST TOTAL PERCENT I PATTERN VAR
 
   NAME=$1
   TOTAL=$2
