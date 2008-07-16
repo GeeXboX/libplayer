@@ -636,7 +636,7 @@ thread_fifo (void *arg)
      * Check language used by MPlayer. Only english is supported. A signal
      * is sent to the init as fast as possible. If --language is not found,
      * then MPlayer is in english. But if --language is found, then the
-     * first language must be 'en'.
+     * first language must be 'en' or 'all'.
      */
     else if (check_lang)
     {
@@ -644,8 +644,11 @@ thread_fifo (void *arg)
 
       if ((it = strstr (buffer, "--language=")))
       {
-        if (strncmp (it + 11, "en", 2))
+        if (strncmp (it + 11, "en", 2) &&
+            strncmp (it + 11, "all", 3))
+        {
           start_ok = 0;
+        }
       }
       else if (strstr (buffer, "-slave") && strstr (buffer, "-idle"))
       {
