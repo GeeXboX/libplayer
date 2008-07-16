@@ -644,7 +644,7 @@ thread_fifo (void *arg)
 
       if ((it = strstr (buffer, "--language=")))
       {
-        if (*(it + 11) != 'e' || *(it + 12) != 'n')
+        if (strncmp (it + 11, "en", 2))
           start_ok = 0;
       }
       else if (strstr (buffer, "-slave") && strstr (buffer, "-idle"))
