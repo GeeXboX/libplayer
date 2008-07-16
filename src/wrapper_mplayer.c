@@ -336,12 +336,12 @@ static int
 check_range (player_t *player,
              slave_property_t property, int *value, int update)
 {
-  int prev, new, ret = 0;
+  int new;
 
   if (!value)
     return 0;
 
-  new = prev = *value;
+  new = *value;
 
   switch (property)
   {
@@ -356,25 +356,24 @@ check_range (player_t *player,
     break;
   }
 
-  if (new == prev)
-    ret = 1;
-
-  if (!ret)
+  if (new != *value)
   {
     const char *p = get_prop (property, NULL);
 
     if (update)
     {
       plog (player, PLAYER_MSG_INFO, MODULE_NAME,
-            "fix value for property '%s', %i -> %i", p ? p : "?", prev, new);
+            "fix value for property '%s', %i -> %i", p ? p : "?", *value, new);
       *value = new;
     }
     else
       plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
-            "bad value (%i) for property '%s'", prev, p ? p : "?");
+            "bad value (%i) for property '%s'", *value, p ? p : "?");
+
+    return 0;
   }
 
-  return ret;
+  return 1;
 }
 
 /**
