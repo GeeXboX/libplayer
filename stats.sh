@@ -228,7 +228,7 @@ done
 $ECHO -e ""
 $ECHO -e "   Maximum: $TOTAL"
 
-PERCENT=`expr $TOTAL_W \* 100 / \( $TOTAL \* \( $I + 1 \) \)`
+PERCENT=`expr $TOTAL_W \* 100 / \( $TOTAL \* $I \)`
 bargraph $PERCENT
 $ECHO -e ""
 $ECHO -e ""
