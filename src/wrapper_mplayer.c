@@ -392,7 +392,7 @@ static void *
 thread_fifo (void *arg)
 {
   unsigned int skip_msg = 0;
-  int start_ok = 1, check_lang = 1;
+  int start_ok = 1, check_lang = 1, verbosity = 0;
   mplayer_eof_t wait_uninit = MPLAYER_EOF_NO;
   char buffer[FIFO_BUFFER];
   char *it;
@@ -412,6 +412,10 @@ thread_fifo (void *arg)
   /* MPlayer's stdout parser */
   while (fgets (buffer, FIFO_BUFFER, mplayer->fifo_out))
   {
+    pthread_mutex_lock (&mplayer->mutex_verbosity);
+    verbosity = mplayer->verbosity;
+    pthread_mutex_unlock (&mplayer->mutex_verbosity);
+
     /*
      * NOTE: In order to detect EOF code, that is necessary to set the
      *       msglevel of 'global' to 6. And in this case, the verbosity of
@@ -429,11 +433,8 @@ thread_fifo (void *arg)
       continue;
     }
 
-    pthread_mutex_lock (&mplayer->mutex_verbosity);
-    if (mplayer->verbosity)
+    if (verbosity)
     {
-      pthread_mutex_unlock (&mplayer->mutex_verbosity);
-
       static player_verbosity_level_t level = PLAYER_MSG_INFO;
 
       *(buffer + strlen (buffer) - 1) = '\0';
@@ -453,8 +454,6 @@ thread_fifo (void *arg)
 
       plog (player, level, MODULE_NAME, "[process] %s", buffer);
     }
-    else
-      pthread_mutex_unlock (&mplayer->mutex_verbosity);
 
     /*
      * Here, the result of a property requested by the slave command
