@@ -352,6 +352,13 @@ check_range (player_t *player,
       new = 10;
     break;
 
+  case PROPERTY_VOLUME:
+    if (*value < 0)
+      new = 0;
+    else if (*value > 100)
+      new = 100;
+    break;
+
   default:
     break;
   }
