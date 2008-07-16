@@ -2460,6 +2460,9 @@ mplayer_set_volume (player_t *player, int value)
   if (!player)
     return;
 
+  if (!check_range (player, PROPERTY_VOLUME, &value, 0))
+    return;
+
   slave_set_property_int (player, PROPERTY_VOLUME, value);
 }
 
