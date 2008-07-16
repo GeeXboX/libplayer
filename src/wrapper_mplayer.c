@@ -429,6 +429,7 @@ thread_fifo (void *arg)
         && (it = strchr (buffer, '@')) > buffer
         && strchr (buffer, ']') > it)
     {
+      if (verbosity)
       skip_msg++;
       continue;
     }
