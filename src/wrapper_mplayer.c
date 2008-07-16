@@ -391,6 +391,7 @@ check_range (player_t *player,
 static void *
 thread_fifo (void *arg)
 {
+  unsigned int skip_msg = 0;
   int start_ok = 1, check_lang = 1;
   mplayer_eof_t wait_uninit = MPLAYER_EOF_NO;
   char buffer[FIFO_BUFFER];
@@ -411,6 +412,23 @@ thread_fifo (void *arg)
   /* MPlayer's stdout parser */
   while (fgets (buffer, FIFO_BUFFER, mplayer->fifo_out))
   {
+    /*
+     * NOTE: In order to detect EOF code, that is necessary to set the
+     *       msglevel of 'global' to 6. And in this case, the verbosity of
+     *       vd_ffmpeg is increased with _a lot of_ useless messages related
+     *       to libpostproc for example.
+     *
+     * This test will search and skip all strings matching this pattern:
+     * \[.*@.*\].*
+     */
+    if (buffer[0] == '['
+        && (it = strchr (buffer, '@')) > buffer
+        && strchr (buffer, ']') > it)
+    {
+      skip_msg++;
+      continue;
+    }
+
     pthread_mutex_lock (&mplayer->mutex_verbosity);
     if (mplayer->verbosity)
     {
@@ -424,6 +442,13 @@ thread_fifo (void *arg)
           && strstr (buffer, "MPlayer interrupted by signal") == buffer)
       {
         level = PLAYER_MSG_CRITICAL;
+      }
+
+      if (skip_msg)
+      {
+        plog (player, PLAYER_MSG_INFO, MODULE_NAME,
+              "libplayer has ignored %u msg from MPlayer", skip_msg);
+        skip_msg = 0;
       }
 
       plog (player, level, MODULE_NAME, "[process] %s", buffer);
