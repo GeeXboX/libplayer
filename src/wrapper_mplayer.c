@@ -430,7 +430,7 @@ thread_fifo (void *arg)
         && strchr (buffer, ']') > it)
     {
       if (verbosity)
-      skip_msg++;
+        skip_msg++;
       continue;
     }
 
