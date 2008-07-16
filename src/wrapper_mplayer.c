@@ -332,6 +332,51 @@ parse_field (char *line, char *field)
   return its;
 }
 
+static int
+check_range (player_t *player,
+             slave_property_t property, int *value, int update)
+{
+  int prev, new, ret = 0;
+
+  if (!value)
+    return 0;
+
+  new = prev = *value;
+
+  switch (property)
+  {
+  case PROPERTY_ANGLE:
+    if (*value < 1)
+      new = 1;
+    else if (*value > 10)
+      new = 10;
+    break;
+
+  default:
+    break;
+  }
+
+  if (new == prev)
+    ret = 1;
+
+  if (!ret)
+  {
+    const char *p = get_prop (property, NULL);
+
+    if (update)
+    {
+      plog (player, PLAYER_MSG_INFO, MODULE_NAME,
+            "fix value for property '%s', %i -> %i", p ? p : "?", prev, new);
+      *value = new;
+    }
+    else
+      plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
+            "bad value (%i) for property '%s'", prev, p ? p : "?");
+  }
+
+  return ret;
+}
+
 /**
  * Thread for parse the fifo_out of MPlayer. This thread must be used only
  * with slave_result() when a property is needed. The rest of the time,
