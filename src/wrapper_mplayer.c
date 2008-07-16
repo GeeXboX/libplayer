@@ -2531,7 +2531,7 @@ mplayer_dvd_angle_set (player_t *player, int value)
   if (!player)
     return;
 
-  if (value < 0 || value > 10)
+  if (value < 1 || value > 10)
     return;
 
   slave_set_property_int (player, PROPERTY_ANGLE, value);
@@ -2550,8 +2550,8 @@ mplayer_dvd_angle_prev (player_t *player)
   angle = slave_get_property_int (player, PROPERTY_ANGLE);
   angle--;
 
-  if (angle < 0)
-    angle = 0;
+  if (angle < 1)
+    angle = 1;
   else if (angle > 10)
     angle = 10;
 
@@ -2571,8 +2571,8 @@ mplayer_dvd_angle_next (player_t *player)
   angle = slave_get_property_int (player, PROPERTY_ANGLE);
   angle++;
 
-  if (angle < 0)
-    angle = 0;
+  if (angle < 1)
+    angle = 1;
   else if (angle > 10)
     angle = 10;
 
