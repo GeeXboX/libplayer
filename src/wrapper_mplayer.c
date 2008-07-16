@@ -1221,7 +1221,7 @@ mp_resource_load_args (player_t *player, mrl_t *mrl)
     {
       int angle = args->angle;
       if (check_range (player, PROPERTY_ANGLE, &angle, 0))
-    slave_set_property_int (player, PROPERTY_ANGLE, args->angle);
+        slave_set_property_int (player, PROPERTY_ANGLE, args->angle);
     }
     break;
   }
