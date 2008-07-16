@@ -1217,7 +1217,12 @@ mp_resource_load_args (player_t *player, mrl_t *mrl)
   {
     mrl_resource_videodisc_args_t *args = mrl->priv;
 
+    if (args->angle)
+    {
+      int angle = args->angle;
+      if (check_range (player, PROPERTY_ANGLE, &angle, 0))
     slave_set_property_int (player, PROPERTY_ANGLE, args->angle);
+    }
     break;
   }
 
@@ -2576,7 +2581,7 @@ mplayer_dvd_angle_set (player_t *player, int value)
   if (!player)
     return;
 
-  if (value < 1 || value > 10)
+  if (!check_range (player, PROPERTY_ANGLE, &value, 0))
     return;
 
   slave_set_property_int (player, PROPERTY_ANGLE, value);
@@ -2595,11 +2600,7 @@ mplayer_dvd_angle_prev (player_t *player)
   angle = slave_get_property_int (player, PROPERTY_ANGLE);
   angle--;
 
-  if (angle < 1)
-    angle = 1;
-  else if (angle > 10)
-    angle = 10;
-
+  check_range (player, PROPERTY_ANGLE, &angle, 1);
   slave_set_property_int (player, PROPERTY_ANGLE, angle);
 }
 
@@ -2616,11 +2617,7 @@ mplayer_dvd_angle_next (player_t *player)
   angle = slave_get_property_int (player, PROPERTY_ANGLE);
   angle++;
 
-  if (angle < 1)
-    angle = 1;
-  else if (angle > 10)
-    angle = 10;
-
+  check_range (player, PROPERTY_ANGLE, &angle, 1);
   slave_set_property_int (player, PROPERTY_ANGLE, angle);
 }
 
