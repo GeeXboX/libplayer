@@ -1158,6 +1158,29 @@ mp_resource_get_uri (mrl_t *mrl)
   return NULL;
 }
 
+static void
+mp_resource_load_args (player_t *player, mrl_t *mrl)
+{
+  if (!player || !mrl || !mrl->priv)
+    return;
+
+  switch (mrl->resource)
+  {
+  /* speed, angle, audio_lang, sub_lang, sub_cc */
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
+  {
+    mrl_resource_videodisc_args_t *args = mrl->priv;
+
+    slave_set_property_int (player, PROPERTY_ANGLE, args->angle);
+    break;
+  }
+
+  default:
+    break;
+  }
+}
+
 static int
 mp_identify_metadata (mrl_t *mrl, const char *buffer)
 {
@@ -2220,6 +2243,9 @@ mplayer_playback_start (player_t *player)
     return PLAYER_PB_ERROR;
   }
   pthread_mutex_unlock (&mplayer->mutex_status);
+
+  /* set parameters */
+  mp_resource_load_args (player, player->mrl);
 
   /* load subtitle if exists */
   if (player->mrl->subs) {
