@@ -376,25 +376,6 @@ get_prop_range (player_t *player, slave_property_t property, int *min, int *max)
   return opt->conf;
 }
 
-static char *
-parse_field (char *line, char *field)
-{
-  char *its, *ite;
-
-  its = line;
-
-  /* value start */
-  its += strlen (field);
-  ite = its;
-  while (*ite != '\0' && *ite != '\n')
-    ite++;
-
-  /* value end */
-  *ite = '\0';
-
-  return its;
-}
-
 static int
 check_range (player_t *player,
              slave_property_t property, int *value, int update)
@@ -451,6 +432,25 @@ check_range (player_t *player,
 /*****************************************************************************/
 /*                          MPlayer messages Parser                          */
 /*****************************************************************************/
+
+static char *
+parse_field (char *line, char *field)
+{
+  char *its, *ite;
+
+  its = line;
+
+  /* value start */
+  its += strlen (field);
+  ite = its;
+  while (*ite != '\0' && *ite != '\n')
+    ite++;
+
+  /* value end */
+  *ite = '\0';
+
+  return its;
+}
 
 static void *
 thread_fifo (void *arg)
