@@ -155,6 +155,11 @@ static item_list_t g_slave_cmds[] = {
   [SLAVE_SWITCH_TITLE] = {"switch_title", ITEM_ON,             ITEM_OFF},
   [SLAVE_UNKNOWN]      = {NULL,           ITEM_OFF,            ITEM_OFF}
 };
+/*                              ^                   ^             ^
+ * slave command (const) -------'                   |             |
+ * state in libplayer (const flags) ----------------'             |
+ * state in MPlayer (set at the init) ----------------------------'
+ */
 
 /* slave properties */
 typedef enum slave_property {
@@ -216,7 +221,11 @@ static item_list_t g_slave_props[] = {
   [PROPERTY_WIDTH]            = {"width",            ITEM_ON,  ITEM_OFF},
   [PROPERTY_UNKNOWN]          = {NULL,               ITEM_OFF, ITEM_OFF}
 };
-
+/*                                       ^              ^         ^
+ * slave property (const) ---------------'              |         |
+ * state in libplayer (const flags) --------------------'         |
+ * state in MPlayer (set at the init) ----------------------------'
+ */
 
 static void
 sig_handler (int signal)
