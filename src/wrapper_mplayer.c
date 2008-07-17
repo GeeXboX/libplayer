@@ -283,7 +283,7 @@ static const char *
 get_cmd (player_t *player, slave_cmd_t cmd, item_state_t *state)
 {
   mplayer_t *mplayer;
-  const int size = sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
+  const int size = g_slave_cmds_nb;
   slave_cmd_t command = SLAVE_UNKNOWN;
 
   if (!player)
@@ -312,7 +312,7 @@ static const char *
 get_prop (player_t *player, slave_property_t property, item_state_t *state)
 {
   mplayer_t *mplayer;
-  const int size = sizeof (g_slave_props) / sizeof (g_slave_props[0]);
+  const int size = g_slave_props_nb;
   slave_property_t prop = PROPERTY_UNKNOWN;
 
   if (!player)
@@ -1746,13 +1746,13 @@ mp_check_compatibility (player_t *player, checklist_t check)
   switch (check)
   {
   case CHECKLIST_COMMANDS:
-    nb = sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
+    nb = g_slave_cmds_nb;
     list = mplayer->slave_cmds;
     what = "slave command";
     break;
 
   case CHECKLIST_PROPERTIES:
-    nb = sizeof (g_slave_props) / sizeof (g_slave_props[0]);
+    nb = g_slave_props_nb;
     list = mplayer->slave_props;
     what = "slave property";
     break;
@@ -2250,8 +2250,8 @@ mplayer_uninit (player_t *player)
       x11_uninit (player);
   }
 
-  item_list_free (mplayer->slave_cmds, sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]));
-  item_list_free (mplayer->slave_props, sizeof (g_slave_props) / sizeof (g_slave_props[0]));
+  item_list_free (mplayer->slave_cmds, g_slave_cmds_nb);
+  item_list_free (mplayer->slave_props, g_slave_props_nb);
 
   pthread_cond_destroy (&mplayer->cond_start);
   pthread_cond_destroy (&mplayer->cond_status);
