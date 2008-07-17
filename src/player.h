@@ -257,10 +257,16 @@ void player_mrl_next (player_t *player);
 /*                                                                         */
 /***************************************************************************/
 
+typedef enum player_framedrop {
+  PLAYER_FRAMEDROP_DISABLE,
+  PLAYER_FRAMEDROP_SOFT,
+  PLAYER_FRAMEDROP_HARD,
+} player_framedrop_t;
+
 int player_get_time_pos (player_t *player);
 void player_set_loop (player_t *player, int value);
 void player_set_shuffle (player_t *player, int value);
-void player_set_framedrop (player_t *player, int value);
+void player_set_framedrop (player_t *player, player_framedrop_t fd);
 
 /***************************************************************************/
 /*                                                                         */

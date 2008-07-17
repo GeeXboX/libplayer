@@ -111,7 +111,7 @@ typedef struct player_funcs_s {
 
   /* Player properties */
   int (* get_time_pos) (player_t *player);
-  void (* set_framedrop) (player_t *player, int value);
+  void (* set_framedrop) (player_t *player, player_framedrop_t fd);
 
   /* Playback */
   playback_status_t (* pb_start) (player_t *player);

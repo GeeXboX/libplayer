@@ -378,7 +378,7 @@ player_set_shuffle (player_t *player, int value)
 }
 
 void
-player_set_framedrop (player_t *player, int value)
+player_set_framedrop (player_t *player, player_framedrop_t fd)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -387,7 +387,7 @@ player_set_framedrop (player_t *player, int value)
 
   /* player specific set_framedrop() */
   if (player->funcs->set_framedrop)
-    player->funcs->set_framedrop (player, value);
+    player->funcs->set_framedrop (player, fd);
 }
 
 /***************************************************************************/
