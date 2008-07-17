@@ -2383,7 +2383,12 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
     mrl_resource_local_args_t *args = mrl->priv;
     if (args && args->location)
     {
-      stat (args->location, &st);
+      const char *location = args->location;
+
+      if (strstr (location, "file://") == location)
+        location += 7;
+
+      stat (location, &st);
       mrl->prop->size = st.st_size;
       plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
             (float) mrl->prop->size / 1024 / 1024);
