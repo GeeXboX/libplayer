@@ -548,7 +548,7 @@ thread_fifo (void *arg)
        */
       if (strchr (buffer, '4'))
       {
-        item_state_t state;
+        item_state_t state = ITEM_OFF;
         get_cmd (player, SLAVE_STOP, &state);
 
         if (state == ITEM_ON)
@@ -590,7 +590,7 @@ thread_fifo (void *arg)
       {
         pthread_mutex_unlock (&mplayer->mutex_status);
 
-        item_state_t state;
+        item_state_t state = ITEM_OFF;
         get_cmd (player, SLAVE_STOP, &state);
 
         /*
@@ -612,7 +612,7 @@ thread_fifo (void *arg)
      */
     else if (strstr (buffer, "File not found: ''") == buffer)
     {
-      item_state_t state;
+      item_state_t state = ITEM_OFF;
       get_cmd (player, SLAVE_STOP, &state);
 
       if (state != ITEM_HACK)
