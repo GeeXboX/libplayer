@@ -116,7 +116,7 @@ typedef union slave_value {
 typedef enum item_state {
   ITEM_OFF  = 0,
   ITEM_ON   = (1 << 0),
-  ITEM_HACK     = (1 << 1),
+  ITEM_HACK = (1 << 1),
 } item_state_t;
 
 #define ALL_ITEM_STATES (ITEM_HACK | ITEM_ON)
@@ -143,17 +143,17 @@ typedef enum slave_cmd {
 } slave_cmd_t;
 
 static item_list_t g_slave_cmds[] = {
-  [SLAVE_DVDNAV]        = {"dvdnav",       ITEM_ON,           ITEM_OFF},
-  [SLAVE_GET_PROPERTY]  = {"get_property", ITEM_ON,           ITEM_OFF},
-  [SLAVE_LOADFILE]      = {"loadfile",     ITEM_ON,           ITEM_OFF},
-  [SLAVE_PAUSE]         = {"pause",        ITEM_ON,           ITEM_OFF},
-  [SLAVE_QUIT]          = {"quit",         ITEM_ON,           ITEM_OFF},
-  [SLAVE_SEEK]          = {"seek",         ITEM_ON,           ITEM_OFF},
-  [SLAVE_SET_PROPERTY]  = {"set_property", ITEM_ON,           ITEM_OFF},
-  [SLAVE_STOP]          = {"stop",         ITEM_ON|ITEM_HACK, ITEM_OFF},
-  [SLAVE_SUB_LOAD]      = {"sub_load",     ITEM_ON,           ITEM_OFF},
-  [SLAVE_SWITCH_TITLE]  = {"switch_title", ITEM_ON,           ITEM_OFF},
-  [SLAVE_UNKNOWN]       = {NULL,           ITEM_OFF,          ITEM_OFF}
+  [SLAVE_DVDNAV]       = {"dvdnav",       ITEM_ON,             ITEM_OFF},
+  [SLAVE_GET_PROPERTY] = {"get_property", ITEM_ON,             ITEM_OFF},
+  [SLAVE_LOADFILE]     = {"loadfile",     ITEM_ON,             ITEM_OFF},
+  [SLAVE_PAUSE]        = {"pause",        ITEM_ON,             ITEM_OFF},
+  [SLAVE_QUIT]         = {"quit",         ITEM_ON,             ITEM_OFF},
+  [SLAVE_SEEK]         = {"seek",         ITEM_ON,             ITEM_OFF},
+  [SLAVE_SET_PROPERTY] = {"set_property", ITEM_ON,             ITEM_OFF},
+  [SLAVE_STOP]         = {"stop",         ITEM_ON | ITEM_HACK, ITEM_OFF},
+  [SLAVE_SUB_LOAD]     = {"sub_load",     ITEM_ON,             ITEM_OFF},
+  [SLAVE_SWITCH_TITLE] = {"switch_title", ITEM_ON,             ITEM_OFF},
+  [SLAVE_UNKNOWN]      = {NULL,           ITEM_OFF,            ITEM_OFF}
 };
 
 /* slave properties */
