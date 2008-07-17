@@ -418,28 +418,30 @@ check_range (player_t *player,
              slave_property_t property, int *value, int update)
 {
   int new;
+  int min = 0, max = 0;
+  opt_conf_t conf;
 
   if (!value)
     return 0;
 
   new = *value;
 
-  switch (property)
+  conf = get_prop_range (player, property, &min, &max);
+  switch (conf)
   {
-  case PROPERTY_ANGLE:
-    if (*value < 1)
-      new = 1;
-    else if (*value > 10)
-      new = 10;
+  case OPT_RANGE:
+  case OPT_MIN:
+    if (*value < min)
+      new = min;
+    if (conf == OPT_MIN)
+      break;
+
+  case OPT_MAX:
+    if (*value > max)
+      new = max;
     break;
 
-  case PROPERTY_VOLUME:
-    if (*value < 0)
-      new = 0;
-    else if (*value > 100)
-      new = 100;
-    break;
-
+  case OPT_OFF:
   default:
     break;
   }
