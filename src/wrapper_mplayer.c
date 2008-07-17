@@ -811,7 +811,8 @@ slave_result (slave_property_t property, player_t *player)
   pthread_mutex_lock (&mplayer->mutex_search);
   mplayer->search = malloc (sizeof (mp_search_t));
 
-  if (mplayer->search) {
+  if (mplayer->search)
+  {
     mplayer->search->property = strdup (str);
     mplayer->search->value = NULL;
     pthread_mutex_unlock (&mplayer->mutex_search);
@@ -852,7 +853,8 @@ slave_get_property_int (player_t *player, slave_property_t property)
 
   result = slave_result (property, player);
 
-  if (result) {
+  if (result)
+  {
     value = (int) rintf (atof (result));
     free (result);
   }
@@ -868,7 +870,8 @@ slave_get_property_float (player_t *player, slave_property_t property)
 
   result = slave_result (property, player);
 
-  if (result) {
+  if (result)
+  {
     value = atof (result);
     free (result);
   }
@@ -904,7 +907,8 @@ slave_set_property (player_t *player, slave_property_t property,
 
   snprintf (cmd, sizeof (cmd), "%s %s", command, prop);
 
-  switch (property) {
+  switch (property)
+  {
   case PROPERTY_ANGLE:
   case PROPERTY_FRAMEDROPPING:
   case PROPERTY_LOOP:
@@ -980,7 +984,8 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     plog (player, PLAYER_MSG_WARNING,
           MODULE_NAME, "[hack] slave command '%s'", command);
 
-  switch (cmd) {
+  switch (cmd)
+  {
   case SLAVE_DVDNAV:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player, "%s %i", command, value->i_val);
@@ -1370,7 +1375,8 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
     return 0;
 
   /* no new metadata */
-  if (strstr (buffer, "ID_CLIP_INFO_N=") == buffer) {
+  if (strstr (buffer, "ID_CLIP_INFO_N=") == buffer)
+  {
     cnt = 0;
     property = PROPERTY_UNKNOWN;
     return 0;
@@ -1380,7 +1386,8 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
 
   snprintf (str, sizeof (str), "ID_CLIP_INFO_NAME%i=", cnt);
   it = strstr (buffer, str);
-  if (it == buffer) {
+  if (it == buffer)
+  {
     if (!strcasecmp (parse_field (it, str), "title"))
       property = PROPERTY_METADATA_TITLE;
     else if (!strcasecmp (parse_field (it, str), "name"))
@@ -1408,7 +1415,8 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
   if (it != buffer)
     return 0;
 
-  switch (property) {
+  switch (property)
+  {
   case PROPERTY_METADATA_NAME:
   case PROPERTY_METADATA_TITLE:
     if (meta->title)
@@ -1476,7 +1484,8 @@ mp_identify_audio (mrl_t *mrl, const char *buffer)
   audio = mrl->prop->audio;
 
   it = strstr (buffer, "ID_AUDIO_CODEC=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     if (audio->codec)
       free (audio->codec);
     audio->codec = strdup (parse_field (it, "ID_AUDIO_CODEC="));
@@ -1484,19 +1493,22 @@ mp_identify_audio (mrl_t *mrl, const char *buffer)
   }
 
   it = strstr (buffer, "ID_AUDIO_BITRATE=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     audio->bitrate = atoi (parse_field (it, "ID_AUDIO_BITRATE="));
     return 1;
   }
 
   it = strstr (buffer, "ID_AUDIO_NCH=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     audio->channels = atoi (parse_field (it, "ID_AUDIO_NCH="));
     return 1;
   }
 
   it = strstr (buffer, "ID_AUDIO_RATE=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     audio->samplerate = atoi (parse_field (it, "ID_AUDIO_RATE="));
     return 1;
   }
@@ -1520,7 +1532,8 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   video = mrl->prop->video;
 
   it = strstr (buffer, "ID_VIDEO_CODEC=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     if (video->codec)
       free (video->codec);
     video->codec = strdup (parse_field (it, "ID_VIDEO_CODEC="));
@@ -1528,32 +1541,37 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   }
 
   it = strstr (buffer, "ID_VIDEO_BITRATE=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     video->bitrate = atoi (parse_field (it, "ID_VIDEO_BITRATE="));
     return 1;
   }
 
   it = strstr (buffer, "ID_VIDEO_WIDTH=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     video->width = atoi (parse_field (it, "ID_VIDEO_WIDTH="));
     return 1;
   }
 
   it = strstr (buffer, "ID_VIDEO_HEIGHT=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     video->height = atoi (parse_field (it, "ID_VIDEO_HEIGHT="));
     return 1;
   }
 
   it = strstr (buffer, "ID_VIDEO_ASPECT=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     video->aspect =
       (uint32_t) (atof (parse_field (it, "ID_VIDEO_ASPECT=")) * 10000.0);
     return 1;
   }
 
   it = strstr (buffer, "ID_VIDEO_FPS=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     val = atof (parse_field (it, "ID_VIDEO_FPS="));
     video->frameduration = (uint32_t) (val ? 90000.0 / val : 0);
     return 1;
@@ -1571,14 +1589,16 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
     return 0;
 
   it = strstr (buffer, "ID_LENGTH=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     mrl->prop->length =
       (uint32_t) (atof (parse_field (it, "ID_LENGTH=")) * 1000.0);
     return 1;
   }
 
   it = strstr (buffer, "ID_SEEKABLE=");
-  if (it == buffer) {
+  if (it == buffer)
+  {
     mrl->prop->seekable = atoi (parse_field (it, "ID_SEEKABLE="));
     return 1;
   }
@@ -1600,14 +1620,16 @@ mp_identify (mrl_t *mrl, int flags)
   if (!uri)
     return;
 
-  if (pipe (mp_pipe)) {
+  if (pipe (mp_pipe))
+  {
     free (uri);
     return;
   }
 
   pid = fork ();
 
-  switch (pid) {
+  switch (pid)
+  {
   /* the son (a new hope) */
   case 0:
   {
@@ -1653,7 +1675,8 @@ mp_identify (mrl_t *mrl, int flags)
 
     mp_fifo = fdopen (mp_pipe[0], "r");
 
-    while (fgets (buffer, FIFO_BUFFER, mp_fifo)) {
+    while (fgets (buffer, FIFO_BUFFER, mp_fifo))
+    {
       found = 0;
 
       if (flags & IDENTIFY_VIDEO)
@@ -1978,9 +2001,11 @@ executable_is_available (player_t *player, const char *bin)
   if (!fp)
     return 0;
 
-  for (p = strtok (p, ":"); p; p = strtok (NULL, ":")) {
+  for (p = strtok (p, ":"); p; p = strtok (NULL, ":"))
+  {
     snprintf (prog, sizeof (prog), "%s/%s", p, bin);
-    if (!access (prog, X_OK)) {
+    if (!access (prog, X_OK))
+    {
       free (fp);
       return 1;
     }
@@ -2264,7 +2289,8 @@ mplayer_uninit (player_t *player)
   if (!mplayer)
     return;
 
-  if (mplayer->fifo_in) {
+  if (mplayer->fifo_in)
+  {
     /* suicide of MPlayer */
     slave_cmd (player, SLAVE_QUIT);
 
@@ -2414,7 +2440,8 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
   plog (player, PLAYER_MSG_INFO,
         MODULE_NAME, "Length: %i ms", mrl->prop->length);
 
-  if (video) {
+  if (video)
+  {
     if (video->codec)
       plog (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Video Codec: %s", video->codec);
@@ -2440,7 +2467,8 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
             MODULE_NAME, "Video Framerate: %i", video->frameduration);
   }
 
-  if (audio) {
+  if (audio)
+  {
     if (audio->codec)
       plog (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Audio Codec: %s", audio->codec);
@@ -2533,7 +2561,8 @@ mplayer_playback_start (player_t *player)
   free (uri);
 
   pthread_mutex_lock (&mplayer->mutex_status);
-  if (mplayer->status != MPLAYER_IS_PLAYING) {
+  if (mplayer->status != MPLAYER_IS_PLAYING)
+  {
     pthread_mutex_unlock (&mplayer->mutex_status);
     return PLAYER_PB_ERROR;
   }
@@ -2543,7 +2572,8 @@ mplayer_playback_start (player_t *player)
   mp_resource_load_args (player, player->mrl);
 
   /* load subtitle if exists */
-  if (player->mrl->subs) {
+  if (player->mrl->subs)
+  {
     char **sub = player->mrl->subs;
     slave_set_property_flag (player, PROPERTY_SUB_VISIBILITY, 1);
     while (*sub)
@@ -2576,7 +2606,8 @@ mplayer_playback_stop (player_t *player)
     return;
 
   pthread_mutex_lock (&mplayer->mutex_status);
-  if (mplayer->status != MPLAYER_IS_PLAYING) {
+  if (mplayer->status != MPLAYER_IS_PLAYING)
+  {
     pthread_mutex_unlock (&mplayer->mutex_status);
     return;
   }
@@ -2614,7 +2645,8 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   if (!player)
     return;
 
-  switch (seek) {
+  switch (seek)
+  {
   default:
   case PLAYER_PB_SEEK_RELATIVE:
     opt = 0;
@@ -2685,7 +2717,8 @@ mplayer_get_mute (player_t *player)
 
   buffer = slave_get_property_str (player, PROPERTY_MUTE);
 
-  if (buffer) {
+  if (buffer)
+  {
     if (!strcmp (buffer, "yes"))
       mute = PLAYER_MUTE_ON;
     else
