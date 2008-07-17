@@ -122,6 +122,8 @@ typedef struct item_list_s {
 
 /* player specific structure */
 typedef struct mplayer_s {
+  item_list_t *slave_cmds;
+  item_list_t *slave_props;
   mplayer_status_t status;
   pid_t pid;          /* process pid */
   int pipe_in[2];     /* pipe for send commands to MPlayer */
@@ -271,19 +273,27 @@ get_state (int lib, item_state_t mp)
 }
 
 static const char *
-get_cmd (slave_cmd_t cmd, item_state_t *state)
+get_cmd (player_t *player, slave_cmd_t cmd, item_state_t *state)
 {
+  mplayer_t *mplayer;
   const int size = sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
   slave_cmd_t command = SLAVE_UNKNOWN;
+
+  if (!player)
+    return NULL;
+
+  mplayer = (mplayer_t *) player->priv;
+  if (!mplayer || !mplayer->slave_cmds)
+    return NULL;
 
   if (cmd < size && cmd >= 0)
     command = cmd;
 
   if (state)
-    *state = get_state (g_slave_cmds[command].state_lib,
-                        g_slave_cmds[command].state_mp);
+    *state = get_state (mplayer->slave_cmds[command].state_lib,
+                        mplayer->slave_cmds[command].state_mp);
 
-  return g_slave_cmds[command].str;
+  return mplayer->slave_cmds[command].str;
 }
 
 /**
@@ -292,19 +302,27 @@ get_cmd (slave_cmd_t cmd, item_state_t *state)
  * in the table.
  */
 static const char *
-get_prop (slave_property_t property, item_state_t *state)
+get_prop (player_t *player, slave_property_t property, item_state_t *state)
 {
+  mplayer_t *mplayer;
   const int size = sizeof (g_slave_props) / sizeof (g_slave_props[0]);
   slave_property_t prop = PROPERTY_UNKNOWN;
+
+  if (!player)
+    return NULL;
+
+  mplayer = (mplayer_t *) player->priv;
+  if (!mplayer || !mplayer->slave_props)
+    return NULL;
 
   if (property < size && property >= 0)
     prop = property;
 
   if (state)
-    *state = get_state (g_slave_props[prop].state_lib,
-                        g_slave_props[prop].state_mp);
+    *state = get_state (mplayer->slave_props[prop].state_lib,
+                        mplayer->slave_props[prop].state_mp);
 
-  return g_slave_props[prop].str;
+  return mplayer->slave_props[prop].str;
 }
 
 /**
@@ -391,7 +409,7 @@ check_range (player_t *player,
 
   if (new != *value)
   {
-    const char *p = get_prop (property, NULL);
+    const char *p = get_prop (player, property, NULL);
 
     if (update)
     {
@@ -531,7 +549,7 @@ thread_fifo (void *arg)
       if (strchr (buffer, '4'))
       {
         item_state_t state;
-        get_cmd (SLAVE_STOP, &state);
+        get_cmd (player, SLAVE_STOP, &state);
 
         if (state == ITEM_ON)
         {
@@ -573,7 +591,7 @@ thread_fifo (void *arg)
         pthread_mutex_unlock (&mplayer->mutex_status);
 
         item_state_t state;
-        get_cmd (SLAVE_STOP, &state);
+        get_cmd (player, SLAVE_STOP, &state);
 
         /*
          * Oops, 'stop' is arrived just before "EOF code != 1" and was not
@@ -595,7 +613,7 @@ thread_fifo (void *arg)
     else if (strstr (buffer, "File not found: ''") == buffer)
     {
       item_state_t state;
-      get_cmd (SLAVE_STOP, &state);
+      get_cmd (player, SLAVE_STOP, &state);
 
       if (state != ITEM_HACK)
         continue;
@@ -708,11 +726,11 @@ slave_get_property (player_t *player, slave_property_t property)
   if (!player)
     return;
 
-  prop = get_prop (property, &state);
+  prop = get_prop (player, property, &state);
   if (!prop || state != ITEM_ON)
     return;
 
-  command = get_cmd (SLAVE_GET_PROPERTY, &state);
+  command = get_cmd (player, SLAVE_GET_PROPERTY, &state);
   if (!command || state != ITEM_ON)
     return;
 
@@ -741,7 +759,7 @@ slave_result (slave_property_t property, player_t *player)
   if (!mplayer || !mplayer->fifo_in || !mplayer->fifo_out)
     return NULL;
 
-  prop = get_prop (property, &state);
+  prop = get_prop (player, property, &state);
   if (!prop || state != ITEM_ON)
     return NULL;
 
@@ -837,11 +855,11 @@ slave_set_property (player_t *player, slave_property_t property,
   if (!player)
     return;
 
-  prop = get_prop (property, &state);
+  prop = get_prop (player, property, &state);
   if (!prop || state != ITEM_ON)
     return;
 
-  command = get_cmd (SLAVE_SET_PROPERTY, &state);
+  command = get_cmd (player, SLAVE_SET_PROPERTY, &state);
   if (!command || state != ITEM_ON)
     return;
 
@@ -913,7 +931,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   if (!mplayer)
     return;
 
-  command = get_cmd (cmd, &state_cmd);
+  command = get_cmd (player, cmd, &state_cmd);
   if (!command || state_cmd == ITEM_OFF)
     return;
 
@@ -1684,6 +1702,7 @@ mp_identify (mrl_t *mrl, int flags)
 static int
 mp_check_compatibility (player_t *player, checklist_t check)
 {
+  mplayer_t *mplayer;
   int i, nb = 0, res = 1;
   int mp_pipe[2];
   pid_t pid;
@@ -1695,6 +1714,10 @@ mp_check_compatibility (player_t *player, checklist_t check)
   if (!player)
     return 0;
 
+  mplayer = (mplayer_t *) player->priv;
+  if (!mplayer)
+    return 0;
+
   if (pipe (mp_pipe))
     return 0;
 
@@ -1702,13 +1725,13 @@ mp_check_compatibility (player_t *player, checklist_t check)
   {
   case CHECKLIST_COMMANDS:
     nb = sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
-    list = g_slave_cmds;
+    list = mplayer->slave_cmds;
     what = "slave command";
     break;
 
   case CHECKLIST_PROPERTIES:
     nb = sizeof (g_slave_props) / sizeof (g_slave_props[0]);
-    list = g_slave_props;
+    list = mplayer->slave_props;
     what = "slave property";
     break;
 
@@ -1948,6 +1971,16 @@ mplayer_init (player_t *player)
   /* test if MPlayer is available */
   if (!executable_is_available (player, MPLAYER_NAME))
     return PLAYER_INIT_ERROR;
+
+  /* copy g_slave_cmds and g_slave_props */
+  mplayer->slave_cmds = malloc (sizeof (g_slave_cmds));
+  mplayer->slave_props = malloc (sizeof (g_slave_props));
+
+  if (!mplayer->slave_cmds || !mplayer->slave_props)
+    return PLAYER_INIT_ERROR;
+
+  memcpy (mplayer->slave_cmds, g_slave_cmds, sizeof (g_slave_cmds));
+  memcpy (mplayer->slave_props, g_slave_props, sizeof (g_slave_props));
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "check MPlayer compatibility");
 
