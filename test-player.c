@@ -49,6 +49,8 @@
 #define TESTPLAYER_COMMANDS \
   "Commands for use test-player:\n" \
   "\n" \
+  " + : increase speed\n" \
+  " - : decrease speed\n" \
   " 0 : increase volume\n" \
   " 9 : decrease volume\n" \
   " m : set/unset mute\n" \
@@ -504,6 +506,7 @@ main (int argc, char **argv)
   int run = 1;
   int volume = 85;
   int time_pos;
+  float speed = 1.0;
   player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
 
   int c, index;
@@ -631,6 +634,20 @@ main (int argc, char **argv)
     input = getch ();
 
     switch (input) {
+    case '+':
+      speed += 0.1;
+      if (speed > 100.0)
+        speed = 100.0;
+      player_playback_speed (player, speed);
+      printf ("SPEED %.2f\n", speed);
+      break;
+    case '-':
+      speed -= 0.1;
+      if (speed < 0.1)
+        speed = 0.1;
+      player_playback_speed (player, speed);
+      printf ("SPEED %.2f\n", speed);
+      break;
     case '0':   /* increase volume */
       if (++volume > 100)
         volume = 100;
@@ -684,6 +701,7 @@ main (int argc, char **argv)
     case 'p':   /* start a new playback */
       player_playback_start (player);
       printf ("START PLAYBACK\n");
+      speed = 1.0;
       break;
     case 'q':   /* quit test-player */
       run = 0;
