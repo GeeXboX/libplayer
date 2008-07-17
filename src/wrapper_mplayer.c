@@ -121,10 +121,25 @@ typedef enum item_state {
 
 #define ALL_ITEM_STATES (ITEM_HACK | ITEM_ON)
 
+typedef enum opt_conf {
+  OPT_OFF = 0,
+  OPT_MIN,
+  OPT_MAX,
+  OPT_RANGE,
+} opt_conf_t;
+
+typedef struct item_opt_s {
+  opt_conf_t conf;
+  int min;
+  int max;
+  struct item_opt_s *next;  /* unused ATM */
+} item_opt_t;
+
 typedef struct item_list_s {
   const char *str;
   const int state_lib;    /* states of the item in libplayer */
   item_state_t state_mp;  /* state of the item in MPlayer */
+  item_opt_t *opt;        /* options of the item in MPlayer */
 } item_list_t;
 
 /* slave commands */
@@ -143,22 +158,23 @@ typedef enum slave_cmd {
 } slave_cmd_t;
 
 static item_list_t g_slave_cmds[] = {
-  [SLAVE_DVDNAV]       = {"dvdnav",       ITEM_ON,             ITEM_OFF},
-  [SLAVE_GET_PROPERTY] = {"get_property", ITEM_ON,             ITEM_OFF},
-  [SLAVE_LOADFILE]     = {"loadfile",     ITEM_ON,             ITEM_OFF},
-  [SLAVE_PAUSE]        = {"pause",        ITEM_ON,             ITEM_OFF},
-  [SLAVE_QUIT]         = {"quit",         ITEM_ON,             ITEM_OFF},
-  [SLAVE_SEEK]         = {"seek",         ITEM_ON,             ITEM_OFF},
-  [SLAVE_SET_PROPERTY] = {"set_property", ITEM_ON,             ITEM_OFF},
-  [SLAVE_STOP]         = {"stop",         ITEM_ON | ITEM_HACK, ITEM_OFF},
-  [SLAVE_SUB_LOAD]     = {"sub_load",     ITEM_ON,             ITEM_OFF},
-  [SLAVE_SWITCH_TITLE] = {"switch_title", ITEM_ON,             ITEM_OFF},
-  [SLAVE_UNKNOWN]      = {NULL,           ITEM_OFF,            ITEM_OFF}
+  [SLAVE_DVDNAV]       = {"dvdnav",       ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_GET_PROPERTY] = {"get_property", ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_LOADFILE]     = {"loadfile",     ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_PAUSE]        = {"pause",        ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_QUIT]         = {"quit",         ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SEEK]         = {"seek",         ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SET_PROPERTY] = {"set_property", ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_STOP]         = {"stop",         ITEM_ON | ITEM_HACK, ITEM_OFF, NULL},
+  [SLAVE_SUB_LOAD]     = {"sub_load",     ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SWITCH_TITLE] = {"switch_title", ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_UNKNOWN]      = {NULL,           ITEM_OFF,            ITEM_OFF, NULL}
 };
-/*                              ^                   ^             ^
- * slave command (const) -------'                   |             |
- * state in libplayer (const flags) ----------------'             |
- * state in MPlayer (set at the init) ----------------------------'
+/*                              ^                   ^             ^       ^
+ * slave command (const) -------'                   |             |       |
+ * state in libplayer (const flags) ----------------'             |       |
+ * state in MPlayer (set at the init) ----------------------------'       |
+ * options with the command (unused) -------------------------------------'
  */
 
 /* slave properties */
@@ -193,38 +209,39 @@ typedef enum slave_property {
 } slave_property_t;
 
 static item_list_t g_slave_props[] = {
-  [PROPERTY_ANGLE]            = {"angle",            ITEM_ON,  ITEM_OFF},
-  [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ON,  ITEM_OFF},
-  [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ON,  ITEM_OFF},
-  [PROPERTY_CHANNELS]         = {"channels",         ITEM_ON,  ITEM_OFF},
-  [PROPERTY_HEIGHT]           = {"height",           ITEM_ON,  ITEM_OFF},
-  [PROPERTY_LOOP]             = {"loop",             ITEM_ON,  ITEM_OFF},
-  [PROPERTY_METADATA]         = {"metadata",         ITEM_ON,  ITEM_OFF},
-  [PROPERTY_METADATA_ALBUM]   = {"metadata/album",   ITEM_ON,  ITEM_OFF},
-  [PROPERTY_METADATA_ARTIST]  = {"metadata/artist",  ITEM_ON,  ITEM_OFF},
-  [PROPERTY_METADATA_COMMENT] = {"metadata/comment", ITEM_ON,  ITEM_OFF},
-  [PROPERTY_METADATA_GENRE]   = {"metadata/genre",   ITEM_ON,  ITEM_OFF},
-  [PROPERTY_METADATA_NAME]    = {"metadata/name",    ITEM_ON,  ITEM_OFF},
-  [PROPERTY_METADATA_TITLE]   = {"metadata/title",   ITEM_ON,  ITEM_OFF},
-  [PROPERTY_METADATA_TRACK]   = {"metadata/track",   ITEM_ON,  ITEM_OFF},
-  [PROPERTY_METADATA_YEAR]    = {"metadata/year",    ITEM_ON,  ITEM_OFF},
-  [PROPERTY_MUTE]             = {"mute",             ITEM_ON,  ITEM_OFF},
-  [PROPERTY_SAMPLERATE]       = {"samplerate",       ITEM_ON,  ITEM_OFF},
-  [PROPERTY_SUB]              = {"sub",              ITEM_ON,  ITEM_OFF},
-  [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ON,  ITEM_OFF},
-  [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ON,  ITEM_OFF},
-  [PROPERTY_SUB_VISIBILITY]   = {"sub_visibility",   ITEM_ON,  ITEM_OFF},
-  [PROPERTY_TIME_POS]         = {"time_pos",         ITEM_ON,  ITEM_OFF},
-  [PROPERTY_VIDEO_BITRATE]    = {"video_bitrate",    ITEM_ON,  ITEM_OFF},
-  [PROPERTY_VIDEO_CODEC]      = {"video_codec",      ITEM_ON,  ITEM_OFF},
-  [PROPERTY_VOLUME]           = {"volume",           ITEM_ON,  ITEM_OFF},
-  [PROPERTY_WIDTH]            = {"width",            ITEM_ON,  ITEM_OFF},
-  [PROPERTY_UNKNOWN]          = {NULL,               ITEM_OFF, ITEM_OFF}
+  [PROPERTY_ANGLE]            = {"angle",            ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_CHANNELS]         = {"channels",         ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_HEIGHT]           = {"height",           ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_LOOP]             = {"loop",             ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_METADATA]         = {"metadata",         ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_METADATA_ALBUM]   = {"metadata/album",   ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_METADATA_ARTIST]  = {"metadata/artist",  ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_METADATA_COMMENT] = {"metadata/comment", ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_METADATA_GENRE]   = {"metadata/genre",   ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_METADATA_NAME]    = {"metadata/name",    ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_METADATA_TITLE]   = {"metadata/title",   ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_METADATA_TRACK]   = {"metadata/track",   ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_METADATA_YEAR]    = {"metadata/year",    ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_MUTE]             = {"mute",             ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_SAMPLERATE]       = {"samplerate",       ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_SUB]              = {"sub",              ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_SUB_VISIBILITY]   = {"sub_visibility",   ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_TIME_POS]         = {"time_pos",         ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_VIDEO_BITRATE]    = {"video_bitrate",    ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_VIDEO_CODEC]      = {"video_codec",      ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_VOLUME]           = {"volume",           ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_WIDTH]            = {"width",            ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_UNKNOWN]          = {NULL,               ITEM_OFF, ITEM_OFF, NULL}
 };
-/*                                       ^              ^         ^
- * slave property (const) ---------------'              |         |
- * state in libplayer (const flags) --------------------'         |
- * state in MPlayer (set at the init) ----------------------------'
+/*                                       ^              ^         ^       ^
+ * slave property (const) ---------------'              |         |       |
+ * state in libplayer (const flags) --------------------'         |       |
+ * state in MPlayer (set at the init) ----------------------------'       |
+ * options with the property (set at the init) ---------------------------'
  */
 
 static void
@@ -1507,6 +1524,72 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
 }
 
 static void
+option_parse_value (char *it)
+{
+  while (*it != '\0' && *it != '\n' && *it != ' ' && *it != '\t')
+    it++;
+
+  *it = '\0';
+}
+
+static void
+opt_free (item_opt_t *opts)
+{
+  item_opt_t *opt = opts;
+
+  while (opt)
+  {
+    opt = opts->next;
+    free (opts);
+  }
+}
+
+static item_opt_t *
+mp_prop_get_option (char *buffer, char *it_min, char *it_max)
+{
+  item_opt_t *opt;
+  opt_conf_t opt_min = OPT_MIN;
+  opt_conf_t opt_max = OPT_MAX;
+
+  option_parse_value (it_min);
+  option_parse_value (it_max);
+
+  if (*it_min == '\0' || *it_max == '\0')
+    return NULL;
+
+  if (!strcmp (it_min, "No"))
+    opt_min = OPT_OFF;
+  if (!strcmp (it_max, "No"))
+    opt_max = OPT_OFF;
+
+  if (opt_min == OPT_OFF && opt_max == OPT_OFF)
+    return NULL;
+
+  opt = calloc (1, sizeof (item_opt_t));
+  if (!opt)
+    return NULL;
+
+  if (opt_max == OPT_OFF)
+  {
+    opt->conf = OPT_MIN;
+    opt->min = atoi (it_min);
+  }
+  else if (opt_min == OPT_OFF)
+  {
+    opt->conf = OPT_MAX;
+    opt->max = atoi (it_max);
+  }
+  else
+  {
+    opt->conf = OPT_RANGE;
+    opt->min = atoi (it_min);
+    opt->max = atoi (it_max);
+  }
+
+  return opt;
+}
+
+static void
 mp_identify (mrl_t *mrl, int flags)
 {
   int mp_pipe[2];
@@ -1678,12 +1761,20 @@ mp_check_compatibility (player_t *player, checklist_t check)
     FILE *mp_fifo;
     char buffer[FIFO_BUFFER];
     char *buf;
+    char *it_min = NULL, *it_max = NULL;
 
     close (mp_pipe[1]);
     mp_fifo = fdopen (mp_pipe[0], "r");
 
     while (fgets (buffer, FIFO_BUFFER, mp_fifo))
     {
+      if (check == CHECKLIST_PROPERTIES && !it_min && !it_max
+          && strstr (buffer, "Name") && strstr (buffer, "Type"))
+      {
+        it_min = strstr (buffer, "Min");
+        it_max = strstr (buffer, "Max");
+      }
+
       for (i = 1; i < nb; i++)
       {
         state_mp = &list[i].state_mp;
@@ -1708,6 +1799,10 @@ mp_check_compatibility (player_t *player, checklist_t check)
             && (*(buf + strlen (str)) == ' ' || *(buf + strlen (str)) == '\n'))
         {
           *state_mp = ITEM_ON;
+
+          /* only for properties, no range with 'cmdlist' */
+          if (it_min && it_max)
+            list[i].opt = mp_prop_get_option (buffer, it_min, it_max);
           break;
         }
       }
@@ -1723,10 +1818,12 @@ mp_check_compatibility (player_t *player, checklist_t check)
   for (i = 1; i < nb; i++)
   {
     int state_libplayer;
+    item_opt_t *opt;
 
     state_mp = &list[i].state_mp;
     state_lib = &list[i].state_lib;
     str = list[i].str;
+    opt = list[i].opt;
 
     if (!str || !state_mp || !state_lib)
       continue;
@@ -1766,6 +1863,10 @@ mp_check_compatibility (player_t *player, checklist_t check)
     {
       plog (player, PLAYER_MSG_INFO, MODULE_NAME,
             "%s '%s' is supported by your version of MPlayer", what, str);
+
+      if (opt)
+        plog (player, PLAYER_MSG_INFO, MODULE_NAME,
+              " *** conf:%i min:%i max:%i", opt->conf, opt->min, opt->max);
     }
   }
 
