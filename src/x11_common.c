@@ -400,33 +400,48 @@ x11_init (player_t *player)
   {
     /* create a window for the black background */
     screeninfo->win_black = XCreateWindow (x11->display,
-                                      XDefaultRootWindow (x11->display),
-                                      0, 0, width, height, 0, 0, InputOutput,
-                                      XDefaultVisual (x11->display, screen),
-                                      CWOverrideRedirect | CWBackPixel, &atts);
+                                           XDefaultRootWindow (x11->display),
+                                           0, 0, width, height,
+                                           0, 0,
+                                           InputOutput,
+                                           XDefaultVisual (x11->display, screen),
+                                           CWOverrideRedirect | CWBackPixel, &atts);
 
-    XChangeProperty (x11->display, screeninfo->win_black, XA_NO_BORDER,
-                     XA_NO_BORDER, 32, PropModeReplace,
-                     (unsigned char *) &mwmhints, PROP_MWM_HINTS_ELEMENTS);
+    XChangeProperty (x11->display,
+                     screeninfo->win_black,
+                     XA_NO_BORDER, XA_NO_BORDER, 32,
+                     PropModeReplace,
+                     (unsigned char *) &mwmhints,
+                     PROP_MWM_HINTS_ELEMENTS);
 
     /* create a window for the video out */
-    x11->window = XCreateWindow (x11->display, screeninfo->win_black,
-                                0, 0, width, height, 0, 0, InputOutput,
-                                XDefaultVisual (x11->display, screen),
-                                CWOverrideRedirect | CWBackPixel, &atts);
+    x11->window = XCreateWindow (x11->display,
+                                 screeninfo->win_black,
+                                 0, 0, width, height,
+                                 0, 0,
+                                 InputOutput,
+                                 XDefaultVisual (x11->display, screen),
+                                 CWOverrideRedirect | CWBackPixel, &atts);
+
     XMapWindow (x11->display,  x11->window);
   }
   else
   {
     /* create a window for the video out */
-    x11->window = XCreateWindow (x11->display, XDefaultRootWindow (x11->display),
-                                0, 0, width, height, 0, 0, InputOutput,
-                                XDefaultVisual (x11->display, screen),
-                                CWOverrideRedirect | CWBackPixel, &atts);
+    x11->window = XCreateWindow (x11->display,
+                                 XDefaultRootWindow (x11->display),
+                                 0, 0, width, height,
+                                 0, 0,
+                                 InputOutput,
+                                 XDefaultVisual (x11->display, screen),
+                                 CWOverrideRedirect | CWBackPixel, &atts);
   }
 
-  XChangeProperty (x11->display, x11->window, XA_NO_BORDER, XA_NO_BORDER, 32,
-                   PropModeReplace, (unsigned char *) &mwmhints,
+  XChangeProperty (x11->display,
+                   x11->window,
+                   XA_NO_BORDER, XA_NO_BORDER, 32,
+                   PropModeReplace,
+                   (unsigned char *) &mwmhints,
                    PROP_MWM_HINTS_ELEMENTS);
 
   /* calcul pixel aspect */
