@@ -332,6 +332,36 @@ get_prop (player_t *player, slave_property_t property, item_state_t *state)
   return mplayer->slave_props[prop].str;
 }
 
+static opt_conf_t
+get_prop_range (player_t *player, slave_property_t property, int *min, int *max)
+{
+  mplayer_t *mplayer;
+  slave_property_t prop = PROPERTY_UNKNOWN;
+  item_opt_t *opt;
+
+  if (!player)
+    return OPT_OFF;
+
+  mplayer = (mplayer_t *) player->priv;
+  if (!mplayer || !mplayer->slave_props)
+    return OPT_OFF;
+
+  if (property < g_slave_props_nb && property >= 0)
+    prop = property;
+
+  opt = mplayer->slave_props[prop].opt;
+  if (!opt)
+    return OPT_OFF;
+
+  if (opt->conf == OPT_RANGE || opt->conf == OPT_MIN)
+    *min = opt->min;
+
+  if (opt->conf == OPT_RANGE || opt->conf == OPT_MAX)
+    *max = opt->max;
+
+  return opt->conf;
+}
+
 /**
  * Send a formatted command to the MPlayer's slave. fifo_in is a file
  * descriptor on a pipe for the MPlayer's stdin.
