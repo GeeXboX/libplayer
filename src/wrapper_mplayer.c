@@ -301,8 +301,8 @@ get_prop (slave_property_t property, item_state_t *state)
     prop = property;
 
   if (state)
-    *state = get_state (g_slave_cmds[prop].state_lib,
-                        g_slave_cmds[prop].state_mp);
+    *state = get_state (g_slave_props[prop].state_lib,
+                        g_slave_props[prop].state_mp);
 
   return g_slave_props[prop].str;
 }
