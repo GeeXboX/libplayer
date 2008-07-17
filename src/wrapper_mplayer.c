@@ -159,7 +159,7 @@ typedef enum slave_cmd {
   SLAVE_SWITCH_TITLE, /* switch_title [int] */
 } slave_cmd_t;
 
-static item_list_t g_slave_cmds[] = {
+static const item_list_t g_slave_cmds[] = {
   [SLAVE_DVDNAV]       = {"dvdnav",       ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_GET_PROPERTY] = {"get_property", ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_LOADFILE]     = {"loadfile",     ITEM_ON,             ITEM_OFF, NULL},
@@ -210,7 +210,7 @@ typedef enum slave_property {
   PROPERTY_WIDTH
 } slave_property_t;
 
-static item_list_t g_slave_props[] = {
+static const item_list_t g_slave_props[] = {
   [PROPERTY_ANGLE]            = {"angle",            ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ON,  ITEM_OFF, NULL},
