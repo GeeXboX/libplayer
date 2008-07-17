@@ -199,6 +199,7 @@ typedef enum slave_property {
   PROPERTY_METADATA_YEAR,
   PROPERTY_MUTE,
   PROPERTY_SAMPLERATE,
+  PROPERTY_SPEED,
   PROPERTY_SUB,
   PROPERTY_SUB_ALIGNMENT,
   PROPERTY_SUB_DELAY,
@@ -228,6 +229,7 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_METADATA_YEAR]    = {"metadata/year",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_MUTE]             = {"mute",             ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SAMPLERATE]       = {"samplerate",       ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_SPEED]            = {"speed",            ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB]              = {"sub",              ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ON,  ITEM_OFF, NULL},
@@ -908,6 +910,7 @@ slave_set_property (player_t *player, slave_property_t property,
     send_to_slave (player, "%s %i", cmd, value.i_val);
     break;
 
+  case PROPERTY_SPEED:
   case PROPERTY_SUB_DELAY:
     send_to_slave (player, "%s %.2f", cmd, value.f_val);
     break;
@@ -2617,6 +2620,30 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   slave_cmd_int_opt (player, SLAVE_SEEK, value, opt);
 }
 
+static void
+mplayer_playback_set_speed (player_t *player, float value)
+{
+  int speed;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_set_speed %.2f", value);
+
+  if (!player)
+    return;
+
+  /*
+   * min value for 'speed' must be 0.01 but `mplayer -list-properties`
+   * returns only int and 0 for this property.
+   */
+  if (value <= 0.0)
+    return;
+
+  speed = (int) rintf (value);
+  if (!check_range (player, PROPERTY_SPEED, &speed, 0))
+    return;
+
+  slave_set_property_float (player, PROPERTY_SPEED, value);
+}
+
 static int
 mplayer_get_volume (player_t *player)
 {
@@ -2894,7 +2921,7 @@ register_functions_mplayer (void)
   funcs->pb_pause           = mplayer_playback_pause;
   funcs->pb_seek            = mplayer_playback_seek;
   funcs->pb_seek_chapter    = NULL;
-  funcs->pb_set_speed       = NULL;
+  funcs->pb_set_speed       = mplayer_playback_set_speed;
 
   funcs->get_volume         = mplayer_get_volume;
   funcs->set_volume         = mplayer_set_volume;
