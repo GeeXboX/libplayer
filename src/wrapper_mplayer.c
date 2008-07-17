@@ -84,28 +84,6 @@ typedef struct mp_search_s {
   char *value;
 } mp_search_t;
 
-/* player specific structure */
-typedef struct mplayer_s {
-  mplayer_status_t status;
-  pid_t pid;          /* process pid */
-  int pipe_in[2];     /* pipe for send commands to MPlayer */
-  int pipe_out[2];    /* pipe for receive results */
-  FILE *fifo_in;      /* fifo on the pipe_in  (write only) */
-  FILE *fifo_out;     /* fifo on the pipe_out (read only) */
-  int verbosity;
-  int start_ok;
-  /* specific to thread */
-  pthread_t th_fifo;      /* thread for the fifo_out parser */
-  pthread_mutex_t mutex_search;
-  pthread_mutex_t mutex_status;
-  pthread_mutex_t mutex_verbosity;
-  pthread_mutex_t mutex_start;
-  pthread_cond_t cond_start;
-  pthread_cond_t cond_status;
-  sem_t sem;
-  mp_search_t *search;    /* use when a property is searched */
-} mplayer_t;
-
 /* union for set_property */
 typedef union slave_value {
   int i_val;
@@ -141,6 +119,28 @@ typedef struct item_list_s {
   item_state_t state_mp;  /* state of the item in MPlayer */
   item_opt_t *opt;        /* options of the item in MPlayer */
 } item_list_t;
+
+/* player specific structure */
+typedef struct mplayer_s {
+  mplayer_status_t status;
+  pid_t pid;          /* process pid */
+  int pipe_in[2];     /* pipe for send commands to MPlayer */
+  int pipe_out[2];    /* pipe for receive results */
+  FILE *fifo_in;      /* fifo on the pipe_in  (write only) */
+  FILE *fifo_out;     /* fifo on the pipe_out (read only) */
+  int verbosity;
+  int start_ok;
+  /* specific to thread */
+  pthread_t th_fifo;      /* thread for the fifo_out parser */
+  pthread_mutex_t mutex_search;
+  pthread_mutex_t mutex_status;
+  pthread_mutex_t mutex_verbosity;
+  pthread_mutex_t mutex_start;
+  pthread_cond_t cond_start;
+  pthread_cond_t cond_status;
+  sem_t sem;
+  mp_search_t *search;    /* use when a property is searched */
+} mplayer_t;
 
 /* slave commands */
 typedef enum slave_cmd {
