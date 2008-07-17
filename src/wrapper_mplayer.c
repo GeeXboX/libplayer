@@ -351,10 +351,10 @@ get_prop_range (player_t *player, slave_property_t property, int *min, int *max)
   if (!opt)
     return OPT_OFF;
 
-  if (opt->conf == OPT_RANGE || opt->conf == OPT_MIN)
+  if (min && (opt->conf == OPT_RANGE || opt->conf == OPT_MIN))
     *min = opt->min;
 
-  if (opt->conf == OPT_RANGE || opt->conf == OPT_MAX)
+  if (max && (opt->conf == OPT_RANGE || opt->conf == OPT_MAX))
     *max = opt->max;
 
   return opt->conf;
