@@ -513,7 +513,7 @@ player_playback_seek_chapter (player_t *player, int value, int absolute)
 }
 
 void
-player_playback_speed (player_t *player, int value)
+player_playback_speed (player_t *player, float value)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 

@@ -119,7 +119,7 @@ typedef struct player_funcs_s {
   playback_status_t (* pb_pause) (player_t *player);
   void (* pb_seek) (player_t *player, int value, player_pb_seek_t seek);
   void (* pb_seek_chapter) (player_t *player, int value, int absolute);
-  void (* pb_set_speed) (player_t *player, int value);
+  void (* pb_set_speed) (player_t *player, float value);
 
   /* Audio */
   int (* get_volume) (player_t *player);
