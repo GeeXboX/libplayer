@@ -114,12 +114,12 @@ typedef union slave_value {
 } slave_value_t;
 
 typedef enum item_state {
-  ITEM_DISABLE  = 0,
-  ITEM_ENABLE   = (1 << 0),
+  ITEM_OFF  = 0,
+  ITEM_ON   = (1 << 0),
   ITEM_HACK     = (1 << 1),
 } item_state_t;
 
-#define ALL_ITEM_STATES (ITEM_HACK | ITEM_ENABLE)
+#define ALL_ITEM_STATES (ITEM_HACK | ITEM_ON)
 
 typedef struct item_list_s {
   const char *str;
@@ -143,17 +143,17 @@ typedef enum slave_cmd {
 } slave_cmd_t;
 
 static item_list_t g_slave_cmds[] = {
-  [SLAVE_DVDNAV]        = {"dvdnav",       ITEM_ENABLE,           ITEM_DISABLE},
-  [SLAVE_GET_PROPERTY]  = {"get_property", ITEM_ENABLE,           ITEM_DISABLE},
-  [SLAVE_LOADFILE]      = {"loadfile",     ITEM_ENABLE,           ITEM_DISABLE},
-  [SLAVE_PAUSE]         = {"pause",        ITEM_ENABLE,           ITEM_DISABLE},
-  [SLAVE_QUIT]          = {"quit",         ITEM_ENABLE,           ITEM_DISABLE},
-  [SLAVE_SEEK]          = {"seek",         ITEM_ENABLE,           ITEM_DISABLE},
-  [SLAVE_SET_PROPERTY]  = {"set_property", ITEM_ENABLE,           ITEM_DISABLE},
-  [SLAVE_STOP]          = {"stop",         ITEM_ENABLE|ITEM_HACK, ITEM_DISABLE},
-  [SLAVE_SUB_LOAD]      = {"sub_load",     ITEM_ENABLE,           ITEM_DISABLE},
-  [SLAVE_SWITCH_TITLE]  = {"switch_title", ITEM_ENABLE,           ITEM_DISABLE},
-  [SLAVE_UNKNOWN]       = {NULL,           ITEM_DISABLE,          ITEM_DISABLE}
+  [SLAVE_DVDNAV]        = {"dvdnav",       ITEM_ON,           ITEM_OFF},
+  [SLAVE_GET_PROPERTY]  = {"get_property", ITEM_ON,           ITEM_OFF},
+  [SLAVE_LOADFILE]      = {"loadfile",     ITEM_ON,           ITEM_OFF},
+  [SLAVE_PAUSE]         = {"pause",        ITEM_ON,           ITEM_OFF},
+  [SLAVE_QUIT]          = {"quit",         ITEM_ON,           ITEM_OFF},
+  [SLAVE_SEEK]          = {"seek",         ITEM_ON,           ITEM_OFF},
+  [SLAVE_SET_PROPERTY]  = {"set_property", ITEM_ON,           ITEM_OFF},
+  [SLAVE_STOP]          = {"stop",         ITEM_ON|ITEM_HACK, ITEM_OFF},
+  [SLAVE_SUB_LOAD]      = {"sub_load",     ITEM_ON,           ITEM_OFF},
+  [SLAVE_SWITCH_TITLE]  = {"switch_title", ITEM_ON,           ITEM_OFF},
+  [SLAVE_UNKNOWN]       = {NULL,           ITEM_OFF,          ITEM_OFF}
 };
 
 /* slave properties */
@@ -188,33 +188,33 @@ typedef enum slave_property {
 } slave_property_t;
 
 static item_list_t g_slave_props[] = {
-  [PROPERTY_ANGLE]            = {"angle",            ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_CHANNELS]         = {"channels",         ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_HEIGHT]           = {"height",           ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_LOOP]             = {"loop",             ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_METADATA]         = {"metadata",         ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_METADATA_ALBUM]   = {"metadata/album",   ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_METADATA_ARTIST]  = {"metadata/artist",  ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_METADATA_COMMENT] = {"metadata/comment", ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_METADATA_GENRE]   = {"metadata/genre",   ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_METADATA_NAME]    = {"metadata/name",    ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_METADATA_TITLE]   = {"metadata/title",   ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_METADATA_TRACK]   = {"metadata/track",   ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_METADATA_YEAR]    = {"metadata/year",    ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_MUTE]             = {"mute",             ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_SAMPLERATE]       = {"samplerate",       ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_SUB]              = {"sub",              ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_SUB_VISIBILITY]   = {"sub_visibility",   ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_TIME_POS]         = {"time_pos",         ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_VIDEO_BITRATE]    = {"video_bitrate",    ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_VIDEO_CODEC]      = {"video_codec",      ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_VOLUME]           = {"volume",           ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_WIDTH]            = {"width",            ITEM_ENABLE,  ITEM_DISABLE},
-  [PROPERTY_UNKNOWN]          = {NULL,               ITEM_DISABLE, ITEM_DISABLE}
+  [PROPERTY_ANGLE]            = {"angle",            ITEM_ON,  ITEM_OFF},
+  [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ON,  ITEM_OFF},
+  [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ON,  ITEM_OFF},
+  [PROPERTY_CHANNELS]         = {"channels",         ITEM_ON,  ITEM_OFF},
+  [PROPERTY_HEIGHT]           = {"height",           ITEM_ON,  ITEM_OFF},
+  [PROPERTY_LOOP]             = {"loop",             ITEM_ON,  ITEM_OFF},
+  [PROPERTY_METADATA]         = {"metadata",         ITEM_ON,  ITEM_OFF},
+  [PROPERTY_METADATA_ALBUM]   = {"metadata/album",   ITEM_ON,  ITEM_OFF},
+  [PROPERTY_METADATA_ARTIST]  = {"metadata/artist",  ITEM_ON,  ITEM_OFF},
+  [PROPERTY_METADATA_COMMENT] = {"metadata/comment", ITEM_ON,  ITEM_OFF},
+  [PROPERTY_METADATA_GENRE]   = {"metadata/genre",   ITEM_ON,  ITEM_OFF},
+  [PROPERTY_METADATA_NAME]    = {"metadata/name",    ITEM_ON,  ITEM_OFF},
+  [PROPERTY_METADATA_TITLE]   = {"metadata/title",   ITEM_ON,  ITEM_OFF},
+  [PROPERTY_METADATA_TRACK]   = {"metadata/track",   ITEM_ON,  ITEM_OFF},
+  [PROPERTY_METADATA_YEAR]    = {"metadata/year",    ITEM_ON,  ITEM_OFF},
+  [PROPERTY_MUTE]             = {"mute",             ITEM_ON,  ITEM_OFF},
+  [PROPERTY_SAMPLERATE]       = {"samplerate",       ITEM_ON,  ITEM_OFF},
+  [PROPERTY_SUB]              = {"sub",              ITEM_ON,  ITEM_OFF},
+  [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ON,  ITEM_OFF},
+  [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ON,  ITEM_OFF},
+  [PROPERTY_SUB_VISIBILITY]   = {"sub_visibility",   ITEM_ON,  ITEM_OFF},
+  [PROPERTY_TIME_POS]         = {"time_pos",         ITEM_ON,  ITEM_OFF},
+  [PROPERTY_VIDEO_BITRATE]    = {"video_bitrate",    ITEM_ON,  ITEM_OFF},
+  [PROPERTY_VIDEO_CODEC]      = {"video_codec",      ITEM_ON,  ITEM_OFF},
+  [PROPERTY_VOLUME]           = {"volume",           ITEM_ON,  ITEM_OFF},
+  [PROPERTY_WIDTH]            = {"width",            ITEM_ON,  ITEM_OFF},
+  [PROPERTY_UNKNOWN]          = {NULL,               ITEM_OFF, ITEM_OFF}
 };
 
 
@@ -231,17 +231,17 @@ get_state (int lib, item_state_t mp)
   int state_lib = lib & ALL_ITEM_STATES;
 
   if ((state_lib == ITEM_HACK) ||
-      (state_lib == ALL_ITEM_STATES && mp == ITEM_DISABLE))
+      (state_lib == ALL_ITEM_STATES && mp == ITEM_OFF))
   {
     return ITEM_HACK;
   }
-  else if ((state_lib == ITEM_ENABLE && mp == ITEM_ENABLE) ||
-           (state_lib == ALL_ITEM_STATES && mp == ITEM_ENABLE))
+  else if ((state_lib == ITEM_ON && mp == ITEM_ON) ||
+           (state_lib == ALL_ITEM_STATES && mp == ITEM_ON))
   {
-    return ITEM_ENABLE;
+    return ITEM_ON;
   }
 
-  return ITEM_DISABLE;
+  return ITEM_OFF;
 }
 
 static const char *
@@ -507,7 +507,7 @@ thread_fifo (void *arg)
         item_state_t state;
         get_cmd (SLAVE_STOP, &state);
 
-        if (state == ITEM_ENABLE)
+        if (state == ITEM_ON)
         {
           pthread_mutex_lock (&mplayer->mutex_status);
           if (mplayer->status == MPLAYER_IS_IDLE)
@@ -553,7 +553,7 @@ thread_fifo (void *arg)
          * Oops, 'stop' is arrived just before "EOF code != 1" and was not
          * handled like a stop.
          */
-        if (state == ITEM_ENABLE)
+        if (state == ITEM_ON)
         {
           plog (player, PLAYER_MSG_WARNING,
                 MODULE_NAME, "'stop' unexpected detected");
@@ -683,11 +683,11 @@ slave_get_property (player_t *player, slave_property_t property)
     return;
 
   prop = get_prop (property, &state);
-  if (!prop || state != ITEM_ENABLE)
+  if (!prop || state != ITEM_ON)
     return;
 
   command = get_cmd (SLAVE_GET_PROPERTY, &state);
-  if (!command || state != ITEM_ENABLE)
+  if (!command || state != ITEM_ON)
     return;
 
   send_to_slave (player, "%s %s", command, prop);
@@ -716,7 +716,7 @@ slave_result (slave_property_t property, player_t *player)
     return NULL;
 
   prop = get_prop (property, &state);
-  if (!prop || state != ITEM_ENABLE)
+  if (!prop || state != ITEM_ON)
     return NULL;
 
   snprintf (str, sizeof (str), "ANS_%s=", prop);
@@ -812,11 +812,11 @@ slave_set_property (player_t *player, slave_property_t property,
     return;
 
   prop = get_prop (property, &state);
-  if (!prop || state != ITEM_ENABLE)
+  if (!prop || state != ITEM_ON)
     return;
 
   command = get_cmd (SLAVE_SET_PROPERTY, &state);
-  if (!command || state != ITEM_ENABLE)
+  if (!command || state != ITEM_ON)
     return;
 
   snprintf (cmd, sizeof (cmd), "%s %s", command, prop);
@@ -888,7 +888,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     return;
 
   command = get_cmd (cmd, &state_cmd);
-  if (!command || state_cmd == ITEM_DISABLE)
+  if (!command || state_cmd == ITEM_OFF)
     return;
 
   if (state_cmd == ITEM_HACK)
@@ -897,12 +897,12 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   switch (cmd) {
   case SLAVE_DVDNAV:
-    if (state_cmd == ITEM_ENABLE && value)
+    if (state_cmd == ITEM_ON && value)
       send_to_slave (player, "%s %i", command, value->i_val);
     break;
 
   case SLAVE_LOADFILE:
-    if (state_cmd == ITEM_ENABLE && value && value->s_val)
+    if (state_cmd == ITEM_ON && value && value->s_val)
     {
       pthread_mutex_lock (&mplayer->mutex_status);
       mplayer->status = MPLAYER_IS_LOADING;
@@ -917,24 +917,24 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   case SLAVE_PAUSE:
-    if (state_cmd == ITEM_ENABLE)
+    if (state_cmd == ITEM_ON)
       send_to_slave (player, command);
     break;
 
   case SLAVE_QUIT:
-    if (state_cmd == ITEM_ENABLE)
+    if (state_cmd == ITEM_ON)
       send_to_slave (player, command);
     break;
 
   case SLAVE_SEEK:
-    if (state_cmd == ITEM_ENABLE && value)
+    if (state_cmd == ITEM_ON && value)
       send_to_slave (player, "%s %i %i", command, value->i_val, opt);
     break;
 
   case SLAVE_STOP:
     if (state_cmd == ITEM_HACK)
       send_to_slave (player, "loadfile \"\"");
-    else if (state_cmd == ITEM_ENABLE)
+    else if (state_cmd == ITEM_ON)
       send_to_slave (player, command);
 
     /* wait that the thread will found the EOF */
@@ -942,12 +942,12 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   case SLAVE_SUB_LOAD:
-    if (state_cmd == ITEM_ENABLE && value && value->s_val)
+    if (state_cmd == ITEM_ON && value && value->s_val)
       send_to_slave (player, "%s \"%s\"", command, value->s_val);
     break;
 
   case SLAVE_SWITCH_TITLE:
-    if (state_cmd == ITEM_ENABLE && value)
+    if (state_cmd == ITEM_ON && value)
       send_to_slave (player, "%s %i", command, value->i_val);
     break;
 
@@ -1680,13 +1680,13 @@ mp_check_compatibility (player_t *player, checklist_t check)
         state_mp = &list[i].state_mp;
         str = list[i].str;
 
-        if (!str || !state_mp || *state_mp != ITEM_DISABLE)
+        if (!str || !state_mp || *state_mp != ITEM_OFF)
           continue;
 
         /* all items with '/' will be ignored and automatically set to ENABLE */
         if (strchr (str, '/'))
         {
-          *state_mp = ITEM_ENABLE;
+          *state_mp = ITEM_ON;
           continue;
         }
 
@@ -1698,7 +1698,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
         if ((buf == buffer || (buf > buffer && *(buf - 1) == ' '))
             && (*(buf + strlen (str)) == ' ' || *(buf + strlen (str)) == '\n'))
         {
-          *state_mp = ITEM_ENABLE;
+          *state_mp = ITEM_ON;
           break;
         }
       }
@@ -1727,33 +1727,33 @@ mp_check_compatibility (player_t *player, checklist_t check)
     if (strchr (str, '/'))
       continue;
 
-    if (state_libplayer == ITEM_ENABLE && *state_mp == ITEM_DISABLE)
+    if (state_libplayer == ITEM_ON && *state_mp == ITEM_OFF)
     {
       plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
             "%s '%s' is needed and not supported by your version of MPlayer",
             what, str);
       res = 0;
     }
-    else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_DISABLE)
+    else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_OFF)
     {
       plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
             "%s '%s' is needed and not supported by your version of MPlayer "
             "and libplayer, then a hack is used", what, str);
     }
-    else if (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_DISABLE)
+    else if (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_OFF)
     {
       plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
             "%s '%s' is needed and not supported by your version of MPlayer, "
             "then a hack is used", what, str);
     }
-    else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_ENABLE)
+    else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_ON)
     {
       plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
             "%s '%s' is supported by your version of MPlayer but not by "
             "libplayer, then a hack is used", what, str);
     }
-    else if ((state_libplayer == ITEM_ENABLE && *state_mp == ITEM_ENABLE) ||
-             (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_ENABLE))
+    else if ((state_libplayer == ITEM_ON && *state_mp == ITEM_ON) ||
+             (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_ON))
     {
       plog (player, PLAYER_MSG_INFO, MODULE_NAME,
             "%s '%s' is supported by your version of MPlayer", what, str);
