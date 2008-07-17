@@ -2634,7 +2634,7 @@ mplayer_playback_set_speed (player_t *player, float value)
    * min value for 'speed' must be 0.01 but `mplayer -list-properties`
    * returns only int and 0 for this property.
    */
-  if (value <= 0.0)
+  if (value < 0.01)
     return;
 
   speed = (int) rintf (value);
