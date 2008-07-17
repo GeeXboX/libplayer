@@ -283,7 +283,6 @@ static const char *
 get_cmd (player_t *player, slave_cmd_t cmd, item_state_t *state)
 {
   mplayer_t *mplayer;
-  const int size = g_slave_cmds_nb;
   slave_cmd_t command = SLAVE_UNKNOWN;
 
   if (!player)
@@ -293,7 +292,7 @@ get_cmd (player_t *player, slave_cmd_t cmd, item_state_t *state)
   if (!mplayer || !mplayer->slave_cmds)
     return NULL;
 
-  if (cmd < size && cmd >= 0)
+  if (cmd < g_slave_cmds_nb && cmd >= 0)
     command = cmd;
 
   if (state)
@@ -312,7 +311,6 @@ static const char *
 get_prop (player_t *player, slave_property_t property, item_state_t *state)
 {
   mplayer_t *mplayer;
-  const int size = g_slave_props_nb;
   slave_property_t prop = PROPERTY_UNKNOWN;
 
   if (!player)
@@ -322,7 +320,7 @@ get_prop (player_t *player, slave_property_t property, item_state_t *state)
   if (!mplayer || !mplayer->slave_props)
     return NULL;
 
-  if (property < size && property >= 0)
+  if (property < g_slave_props_nb && property >= 0)
     prop = property;
 
   if (state)
