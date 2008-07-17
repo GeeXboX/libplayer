@@ -302,11 +302,6 @@ get_cmd (player_t *player, slave_cmd_t cmd, item_state_t *state)
   return mplayer->slave_cmds[command].str;
 }
 
-/**
- * Get the text for a specific property in the g_slave_props. This function
- * should never return NULL. If that is the case, then a property is missed
- * in the table.
- */
 static const char *
 get_prop (player_t *player, slave_property_t property, item_state_t *state)
 {
