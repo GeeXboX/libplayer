@@ -1654,6 +1654,21 @@ opt_free (item_opt_t *opts)
   }
 }
 
+static void
+item_list_free (item_list_t *list, int nb)
+{
+  int i;
+
+  if (!list)
+    return;
+
+  for (i = 0; i < nb; i++)
+    if (list[i].opt)
+      opt_free (list[i].opt);
+
+  free (list);
+}
+
 static item_opt_t *
 mp_prop_get_option (char *buffer, char *it_min, char *it_max)
 {
@@ -2227,6 +2242,9 @@ mplayer_uninit (player_t *player)
     if (player->x11)
       x11_uninit (player);
   }
+
+  item_list_free (mplayer->slave_cmds, sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]));
+  item_list_free (mplayer->slave_props, sizeof (g_slave_props) / sizeof (g_slave_props[0]));
 
   pthread_cond_destroy (&mplayer->cond_start);
   pthread_cond_destroy (&mplayer->cond_status);
