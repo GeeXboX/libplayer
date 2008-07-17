@@ -376,34 +376,6 @@ get_prop_range (player_t *player, slave_property_t property, int *min, int *max)
   return opt->conf;
 }
 
-static void
-send_to_slave (player_t *player, const char *format, ...)
-{
-  mplayer_t *mplayer;
-  va_list va;
-
-  if (!player)
-    return;
-
-  mplayer = (mplayer_t *) player->priv;
-
-  if (!mplayer)
-    return;
-
-  if (!mplayer->fifo_in)
-  {
-    plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
-          "the command can not be sent to slave, stdin unavailable");
-    return;
-  }
-
-  va_start (va, format);
-  vfprintf (mplayer->fifo_in, format, va);
-  fprintf (mplayer->fifo_in, "\n");
-  fflush (mplayer->fifo_in);
-  va_end (va);
-}
-
 static char *
 parse_field (char *line, char *field)
 {
@@ -763,6 +735,34 @@ thread_fifo (void *arg)
 /*****************************************************************************/
 /*                              Slave functions                              */
 /*****************************************************************************/
+
+static void
+send_to_slave (player_t *player, const char *format, ...)
+{
+  mplayer_t *mplayer;
+  va_list va;
+
+  if (!player)
+    return;
+
+  mplayer = (mplayer_t *) player->priv;
+
+  if (!mplayer)
+    return;
+
+  if (!mplayer->fifo_in)
+  {
+    plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
+          "the command can not be sent to slave, stdin unavailable");
+    return;
+  }
+
+  va_start (va, format);
+  vfprintf (mplayer->fifo_in, format, va);
+  fprintf (mplayer->fifo_in, "\n");
+  fflush (mplayer->fifo_in);
+  va_end (va);
+}
 
 static void
 slave_get_property (player_t *player, slave_property_t property)
