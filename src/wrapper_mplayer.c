@@ -246,6 +246,13 @@ static const item_list_t g_slave_props[] = {
  * options with the property (set at the init) ---------------------------'
  */
 
+static const int g_slave_cmds_nb =
+  sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
+
+static const int g_slave_props_nb =
+  sizeof (g_slave_props) / sizeof (g_slave_props[0]);
+
+
 static void
 sig_handler (int signal)
 {
