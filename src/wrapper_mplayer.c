@@ -1542,72 +1542,6 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
 }
 
 static void
-option_parse_value (char *it)
-{
-  while (*it != '\0' && *it != '\n' && *it != ' ' && *it != '\t')
-    it++;
-
-  *it = '\0';
-}
-
-static void
-opt_free (item_opt_t *opts)
-{
-  item_opt_t *opt = opts;
-
-  while (opt)
-  {
-    opt = opts->next;
-    free (opts);
-  }
-}
-
-static item_opt_t *
-mp_prop_get_option (char *buffer, char *it_min, char *it_max)
-{
-  item_opt_t *opt;
-  opt_conf_t opt_min = OPT_MIN;
-  opt_conf_t opt_max = OPT_MAX;
-
-  option_parse_value (it_min);
-  option_parse_value (it_max);
-
-  if (*it_min == '\0' || *it_max == '\0')
-    return NULL;
-
-  if (!strcmp (it_min, "No"))
-    opt_min = OPT_OFF;
-  if (!strcmp (it_max, "No"))
-    opt_max = OPT_OFF;
-
-  if (opt_min == OPT_OFF && opt_max == OPT_OFF)
-    return NULL;
-
-  opt = calloc (1, sizeof (item_opt_t));
-  if (!opt)
-    return NULL;
-
-  if (opt_max == OPT_OFF)
-  {
-    opt->conf = OPT_MIN;
-    opt->min = atoi (it_min);
-  }
-  else if (opt_min == OPT_OFF)
-  {
-    opt->conf = OPT_MAX;
-    opt->max = atoi (it_max);
-  }
-  else
-  {
-    opt->conf = OPT_RANGE;
-    opt->min = atoi (it_min);
-    opt->max = atoi (it_max);
-  }
-
-  return opt;
-}
-
-static void
 mp_identify (mrl_t *mrl, int flags)
 {
   int mp_pipe[2];
@@ -1697,6 +1631,72 @@ mp_identify (mrl_t *mrl, int flags)
     fclose (mp_fifo);
   }
   }
+}
+
+static void
+option_parse_value (char *it)
+{
+  while (*it != '\0' && *it != '\n' && *it != ' ' && *it != '\t')
+    it++;
+
+  *it = '\0';
+}
+
+static void
+opt_free (item_opt_t *opts)
+{
+  item_opt_t *opt = opts;
+
+  while (opt)
+  {
+    opt = opts->next;
+    free (opts);
+  }
+}
+
+static item_opt_t *
+mp_prop_get_option (char *buffer, char *it_min, char *it_max)
+{
+  item_opt_t *opt;
+  opt_conf_t opt_min = OPT_MIN;
+  opt_conf_t opt_max = OPT_MAX;
+
+  option_parse_value (it_min);
+  option_parse_value (it_max);
+
+  if (*it_min == '\0' || *it_max == '\0')
+    return NULL;
+
+  if (!strcmp (it_min, "No"))
+    opt_min = OPT_OFF;
+  if (!strcmp (it_max, "No"))
+    opt_max = OPT_OFF;
+
+  if (opt_min == OPT_OFF && opt_max == OPT_OFF)
+    return NULL;
+
+  opt = calloc (1, sizeof (item_opt_t));
+  if (!opt)
+    return NULL;
+
+  if (opt_max == OPT_OFF)
+  {
+    opt->conf = OPT_MIN;
+    opt->min = atoi (it_min);
+  }
+  else if (opt_min == OPT_OFF)
+  {
+    opt->conf = OPT_MAX;
+    opt->max = atoi (it_max);
+  }
+  else
+  {
+    opt->conf = OPT_RANGE;
+    opt->min = atoi (it_min);
+    opt->max = atoi (it_max);
+  }
+
+  return opt;
 }
 
 static int
