@@ -150,7 +150,10 @@ typedef struct mplayer_s {
   mp_search_t *search;    /* use when a property is searched */
 } mplayer_t;
 
-/* slave commands */
+/*****************************************************************************/
+/*                              Slave Commands                               */
+/*****************************************************************************/
+
 typedef enum slave_cmd {
   SLAVE_UNKNOWN = 0,
   SLAVE_DVDNAV,       /* dvdnav int */
@@ -185,7 +188,10 @@ static const item_list_t g_slave_cmds[] = {
  * options with the command (unused) -------------------------------------'
  */
 
-/* slave properties */
+/*****************************************************************************/
+/*                             Slave Properties                              */
+/*****************************************************************************/
+
 typedef enum slave_property {
   PROPERTY_UNKNOWN = 0,
   PROPERTY_ANGLE,
@@ -256,6 +262,7 @@ static const item_list_t g_slave_props[] = {
  * options with the property (set at the init) ---------------------------'
  */
 
+
 static const int g_slave_cmds_nb =
   sizeof (g_slave_cmds) / sizeof (g_slave_cmds[0]);
 
@@ -269,6 +276,10 @@ sig_handler (int signal)
   if (signal == SIGPIPE)
     fprintf (stderr, "SIGPIPE detected by the death of MPlayer\n");
 }
+
+/*****************************************************************************/
+/*                      Properties and Commands Utils                        */
+/*****************************************************************************/
 
 static item_state_t
 get_state (int lib, item_state_t mp)
@@ -365,10 +376,6 @@ get_prop_range (player_t *player, slave_property_t property, int *min, int *max)
   return opt->conf;
 }
 
-/**
- * Send a formatted command to the MPlayer's slave. fifo_in is a file
- * descriptor on a pipe for the MPlayer's stdin.
- */
 static void
 send_to_slave (player_t *player, const char *format, ...)
 {
@@ -469,11 +476,10 @@ check_range (player_t *player,
   return 1;
 }
 
-/**
- * Thread for parse the fifo_out of MPlayer. This thread must be used only
- * with slave_result() when a property is needed. The rest of the time,
- * this thread will just respond to some events.
- */
+/*****************************************************************************/
+/*                          MPlayer messages Parser                          */
+/*****************************************************************************/
+
 static void *
 thread_fifo (void *arg)
 {
@@ -754,10 +760,10 @@ thread_fifo (void *arg)
   pthread_exit (0);
 }
 
-/**
- * Send a command to slave for get a property. That will return nothing
- * because the response is grabbed with slave_result().
- */
+/*****************************************************************************/
+/*                              Slave functions                              */
+/*****************************************************************************/
+
 static void
 slave_get_property (player_t *player, slave_property_t property)
 {
@@ -779,11 +785,6 @@ slave_get_property (player_t *player, slave_property_t property)
   send_to_slave (player, "%s %s", command, prop);
 }
 
-/**
- * Get results of commands sent to MPlayer. The MPlayer's stdout and sterr
- * are connected to fifo_out. This function uses the thread_fifo for get
- * the result. That uses semaphore and mutex.
- */
 static char *
 slave_result (slave_property_t property, player_t *player)
 {
@@ -815,18 +816,14 @@ slave_result (slave_property_t property, player_t *player)
     mplayer->search->value = NULL;
     pthread_mutex_unlock (&mplayer->mutex_search);
 
-    /* send the slave command for get a response from MPlayer */
     slave_get_property (player, property);
 
-    /* NOTE: /!\ That is ugly but it works pretty well :o)
-    * Because MPlayer doesn't confirm commands, that is necessary for
-    * have a text in the fifo_out for know if there is no new message
-    * because MPlayer will not response all the time to get_property.
-    *
-    * An error is created by the command 'loadfile' without argument. This
-    * error is got with fgets() and the search is ended if there is no
-    * result for the real command.
-    */
+    /* HACK: Old MPlayer versions needs this hack to detect when a property
+     *       is unavailable. An error message is returned by the command
+     *       'loadfile' (without argument).
+     *
+     * NOTE: This hack is no longer necessary since MPlayer r26296.
+     */
     send_to_slave (player, "loadfile");
 
     /* wait that the thread will found the value */
@@ -1025,7 +1022,6 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     else if (state_cmd == ITEM_ON)
       send_to_slave (player, command);
 
-    /* wait that the thread will found the EOF */
     sem_wait (&mplayer->sem);
     break;
 
@@ -1088,6 +1084,10 @@ slave_cmd_str_opt (player_t *player, slave_cmd_t cmd, char *str, int opt)
   slave_action (player, cmd, &param, opt);
 }
 
+/*****************************************************************************/
+/*                                MRL's args                                 */
+/*****************************************************************************/
+
 static int
 count_nb_dec (int dec)
 {
@@ -1132,7 +1132,7 @@ mp_resource_get_uri (mrl_t *mrl)
 
   switch (mrl->resource)
   {
-  case MRL_RESOURCE_FILE:
+  case MRL_RESOURCE_FILE: /* file://location */
   {
     const char *protocol = protocols[mrl->resource];
     mrl_resource_local_args_t *args = mrl->priv;
@@ -1353,6 +1353,10 @@ mp_resource_load_args (player_t *player, mrl_t *mrl)
   }
 }
 
+/*****************************************************************************/
+/*                            MPlayer -identify                              */
+/*****************************************************************************/
+
 static int
 mp_identify_metadata (mrl_t *mrl, const char *buffer)
 {
@@ -1541,9 +1545,6 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
     return 1;
   }
 
-  /* Maybe this field is got more that one time,
-   * but the last is the right value.
-   */
   it = strstr (buffer, "ID_VIDEO_ASPECT=");
   if (it == buffer) {
     video->aspect =
@@ -1676,6 +1677,11 @@ mp_identify (mrl_t *mrl, int flags)
   }
   }
 }
+
+/*****************************************************************************/
+/*                            Pre-Init functions                             */
+/*                             - check compatibility, availability           */
+/*****************************************************************************/
 
 static void
 option_parse_value (char *it)
@@ -1987,28 +1993,31 @@ executable_is_available (player_t *player, const char *bin)
   return 0;
 }
 
-
-/* Use only these commands for speak with MPlayer!
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * void  slave_cmd                (player_t, slave_cmd_t)
- * void  slave_cmd_int            (player_t, slave_cmd_t,      int)
- * void  slave_cmd_int_opt        (player_t, slave_cmd_t,      int,   int)
- * void  slave_cmd_str            (player_t, slave_cmd_t,      char*)
- * void  slave_cmd_str_opt        (player_t, slave_cmd_t,      char*, int)
- * int   slave_get_property_int   (player_t, slave_property_t)
- * float slave_get_property_float (player_t, slave_property_t)
- * char *slave_get_property_str   (player_t, slave_property_t)
- * void  slave_set_property_int   (player_t, slave_property_t, int)
- * void  slave_set_property_float (player_t, slave_property_t, float)
- * void  slave_set_property_flag  (player_t, slave_property_t, int)
+/*****************************************************************************/
+/*                           Private Wrapper funcs                           */
+/*****************************************************************************/
+/*
+ *                              Slave functions
+ *                     Only use these to command MPlayer.
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Commands
+ *   void  slave_cmd                (player_t, slave_cmd_t)
+ *   void  slave_cmd_int            (player_t, slave_cmd_t,      int)
+ *   void  slave_cmd_int_opt        (player_t, slave_cmd_t,      int,    int)
+ *   void  slave_cmd_str            (player_t, slave_cmd_t,      char *)
+ *   void  slave_cmd_str_opt        (player_t, slave_cmd_t,      char *, int)
+ *
+ * Get properties
+ *   int   slave_get_property_int   (player_t, slave_property_t)
+ *   float slave_get_property_float (player_t, slave_property_t)
+ *   char *slave_get_property_str   (player_t, slave_property_t)
+ *
+ * Set properties
+ *   void  slave_set_property_int   (player_t, slave_property_t, int)
+ *   void  slave_set_property_float (player_t, slave_property_t, float)
+ *   void  slave_set_property_flag  (player_t, slave_property_t, int)
  */
 
-/**
- * Init MPlayer as a forked process (son) and speak with libplayer (father)
- * throught two pipes. One for send command to slave mode and a second
- * for get results. MPlayer must not dead, else the pipes are broken and a
- * SIGPIPE is sent to libplayer. In this case, a new init is necessary.
- */
 static init_status_t
 mplayer_init (player_t *player)
 {
@@ -2055,11 +2064,7 @@ mplayer_init (player_t *player)
   action.sa_flags = 0;
   sigaction (SIGPIPE, &action, NULL);
 
-  /* The video out is sent in our X11 window, winid is used for -wid arg.
-   * The advantage is important, because MPlayer will not create the window
-   * then we take the control on X11 events and only libplayer can send
-   * commands to MPlayer.
-   */
+  /* The video out is sent in our X11 window, winid is used for -wid arg. */
   switch (player->vo)
   {
   case PLAYER_VO_X11:
@@ -2101,9 +2106,8 @@ mplayer_init (player_t *player)
     close (mplayer->pipe_in[1]);
     close (mplayer->pipe_out[0]);
 
-    /* connect the pipe to MPlayer's stdin */
     dup2 (mplayer->pipe_in[0], STDIN_FILENO);
-    /* connect stdout and stderr to the second pipe */
+
     dup2 (mplayer->pipe_out[1], STDERR_FILENO);
     dup2 (mplayer->pipe_out[1], STDOUT_FILENO);
 
@@ -2138,9 +2142,6 @@ mplayer_init (player_t *player)
       params[pp++] = "x11";
       break;
 
-    /* with xv and wid, zoom, fs and aspect have no effect.
-     * The image is always scaled on all the window.
-     */
     case PLAYER_VO_XV:
       params[pp++] = "-vo";
       params[pp++] = "xv";
@@ -2937,7 +2938,10 @@ mplayer_dvd_title_set (player_t *player, int value)
   slave_cmd_int (player, SLAVE_SWITCH_TITLE, value);
 }
 
-/* public API */
+/*****************************************************************************/
+/*                           Public Wrapper API                              */
+/*****************************************************************************/
+
 player_funcs_t *
 register_functions_mplayer (void)
 {
