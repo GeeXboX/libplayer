@@ -624,7 +624,6 @@ main (int argc, char **argv)
     putchar ('\n');
   }
 
-  player_audio_volume_set (player, volume);
   printf (TESTPLAYER_COMMANDS);
 
   /* main loop */
@@ -701,6 +700,7 @@ main (int argc, char **argv)
     case 'p':   /* start a new playback */
       player_playback_start (player);
       printf ("START PLAYBACK\n");
+      volume = player_audio_volume_get (player);
       speed = 1.0;
       break;
     case 'q':   /* quit test-player */
