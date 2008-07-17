@@ -59,6 +59,12 @@ typedef enum mplayer_sub_alignment {
   MPLAYER_SUB_ALIGNMENT_BOTTOM = 2,
 } mplayer_sub_alignment_t;
 
+typedef enum mplayer_framedropping {
+  MPLAYER_FRAMEDROPPING_DISABLE = 0,
+  MPLAYER_FRAMEDROPPING_SOFT    = 1,
+  MPLAYER_FRAMEDROPPING_HARD    = 2,
+} mplayer_framedropping_t;
+
 /* Status of MPlayer child */
 typedef enum mplayer_status {
   MPLAYER_IS_IDLE,
@@ -186,6 +192,7 @@ typedef enum slave_property {
   PROPERTY_AUDIO_BITRATE,
   PROPERTY_AUDIO_CODEC,
   PROPERTY_CHANNELS,
+  PROPERTY_FRAMEDROPPING,
   PROPERTY_HEIGHT,
   PROPERTY_LOOP,
   PROPERTY_METADATA,
@@ -216,6 +223,7 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_CHANNELS]         = {"channels",         ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_FRAMEDROPPING]    = {"framedropping",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_HEIGHT]           = {"height",           ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_LOOP]             = {"loop",             ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_METADATA]         = {"metadata",         ITEM_ON,  ITEM_OFF, NULL},
@@ -901,6 +909,7 @@ slave_set_property (player_t *player, slave_property_t property,
 
   switch (property) {
   case PROPERTY_ANGLE:
+  case PROPERTY_FRAMEDROPPING:
   case PROPERTY_LOOP:
   case PROPERTY_MUTE:
   case PROPERTY_SUB:
@@ -2706,6 +2715,37 @@ mplayer_get_time_pos (player_t *player)
 }
 
 static void
+mplayer_set_framedrop (player_t *player, player_framedrop_t fd)
+{
+  mplayer_framedropping_t framedrop;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_framedrop: %i", fd);
+
+  if (!player)
+    return;
+
+  switch (fd)
+  {
+  case PLAYER_FRAMEDROP_DISABLE:
+    framedrop = MPLAYER_FRAMEDROPPING_DISABLE;
+    break;
+
+  case PLAYER_FRAMEDROP_SOFT:
+    framedrop = MPLAYER_FRAMEDROPPING_SOFT;
+    break;
+
+  case PLAYER_FRAMEDROP_HARD:
+    framedrop = MPLAYER_FRAMEDROPPING_HARD;
+    break;
+
+  default:
+    return;
+  }
+
+  slave_set_property_int (player, PROPERTY_FRAMEDROPPING, framedrop);
+}
+
+static void
 mplayer_set_volume (player_t *player, int value)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_volume: %d", value);
@@ -2914,7 +2954,7 @@ register_functions_mplayer (void)
   funcs->mrl_retrieve_meta  = mplayer_mrl_retrieve_metadata;
 
   funcs->get_time_pos       = mplayer_get_time_pos;
-  funcs->set_framedrop      = NULL;
+  funcs->set_framedrop      = mplayer_set_framedrop;
 
   funcs->pb_start           = mplayer_playback_start;
   funcs->pb_stop            = mplayer_playback_stop;
