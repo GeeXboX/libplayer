@@ -1565,7 +1565,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   if (it == buffer)
   {
     video->aspect =
-      (uint32_t) (atof (parse_field (it, "ID_VIDEO_ASPECT=")) * 10000.0);
+      (uint32_t) (atof (parse_field (it, "ID_VIDEO_ASPECT=")) * PLAYER_VIDEO_ASPECT_RATIO_MULT);
     return 1;
   }
 
@@ -1573,7 +1573,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   if (it == buffer)
   {
     val = atof (parse_field (it, "ID_VIDEO_FPS="));
-    video->frameduration = (uint32_t) (val ? 90000.0 / val : 0);
+    video->frameduration = (uint32_t) (val ? PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV / val : 0);
     return 1;
   }
 

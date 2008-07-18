@@ -419,7 +419,7 @@ player_playback_start (player_t *player)
     video = mrl->prop->video;
     player->w = video->width;
     player->h = video->height;
-    player->aspect = video->aspect / 10000.0;
+    player->aspect = video->aspect / PLAYER_VIDEO_ASPECT_RATIO_MULT;
   }
 
   /* player specific playback_start() */

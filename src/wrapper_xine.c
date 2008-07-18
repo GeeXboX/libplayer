@@ -1003,7 +1003,7 @@ xine_player_set_sub_delay (player_t *player, float value)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %.2f", value);
 
   /* unit is 1/90000 sec */
-  delay = (int) rintf (value * 90000.0);
+  delay = (int) rintf (value * PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV);
 
   if (!player)
     return;

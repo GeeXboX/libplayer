@@ -416,7 +416,7 @@ show_info (player_t *player, mrl_t *mrl)
 
   prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_ASPECT);
   if (prop)
-    printf (" Video Aspect: %.2f\n", prop / 10000.0);
+    printf (" Video Aspect: %.2f\n", prop / PLAYER_VIDEO_ASPECT_RATIO_MULT);
 
   prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_CHANNELS);
   if (prop)
@@ -428,7 +428,7 @@ show_info (player_t *player, mrl_t *mrl)
 
   prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_FRAMEDURATION);
   if (prop)
-    printf (" Video Framerate: %.2f\n", 90000.0 / prop);
+    printf (" Video Framerate: %.2f\n", PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV / prop);
 
   codec = mrl_get_audio_codec (player, mrl);
   if (codec) {
