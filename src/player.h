@@ -219,6 +219,9 @@ typedef enum mrl_properties_type {
   MRL_PROPERTY_VIDEO_FRAMEDURATION,
 } mrl_properties_type_t;
 
+#define PLAYER_VIDEO_ASPECT_RATIO_MULT         10000.0    /* *10000         */
+#define PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV   90000.0    /* 1/90000 sec    */
+
 mrl_t *mrl_new (player_t *player, mrl_resource_t res, void *args);
 void mrl_add_subtitle (mrl_t *mrl, char *subtitle);
 void mrl_free (mrl_t *mrl, int recursive);
