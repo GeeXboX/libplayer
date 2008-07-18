@@ -57,7 +57,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
              int event_cb (player_event_t e, void *data))
 {
   player_t *player = NULL;
-  int res = PLAYER_INIT_ERROR;
+  init_status_t res = PLAYER_INIT_ERROR;
 
   player = calloc (1, sizeof (player_t));
   player->type = type;
