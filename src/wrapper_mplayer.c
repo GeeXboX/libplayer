@@ -816,31 +816,31 @@ slave_result (slave_property_t property, player_t *player)
     return NULL;
   }
 
-    mplayer->search->property = strdup (str);
-    mplayer->search->value = NULL;
-    pthread_mutex_unlock (&mplayer->mutex_search);
+  mplayer->search->property = strdup (str);
+  mplayer->search->value = NULL;
+  pthread_mutex_unlock (&mplayer->mutex_search);
 
-    slave_get_property (player, property);
+  slave_get_property (player, property);
 
-    /* HACK: Old MPlayer versions needs this hack to detect when a property
-     *       is unavailable. An error message is returned by the command
-     *       'loadfile' (without argument).
-     *
-     * NOTE: This hack is no longer necessary since MPlayer r26296.
-     */
-    send_to_slave (player, "loadfile");
+  /* HACK: Old MPlayer versions needs this hack to detect when a property
+   *       is unavailable. An error message is returned by the command
+   *       'loadfile' (without argument).
+   *
+   * NOTE: This hack is no longer necessary since MPlayer r26296.
+   */
+  send_to_slave (player, "loadfile");
 
-    /* wait that the thread will found the value */
-    sem_wait (&mplayer->sem);
+  /* wait that the thread will found the value */
+  sem_wait (&mplayer->sem);
 
-    /* we take the result */
-    ret = mplayer->search->value;
+  /* we take the result */
+  ret = mplayer->search->value;
 
-    /* the search is ended */
-    pthread_mutex_lock (&mplayer->mutex_search);
-    free (mplayer->search);
-    mplayer->search = NULL;
-    pthread_mutex_unlock (&mplayer->mutex_search);
+  /* the search is ended */
+  pthread_mutex_lock (&mplayer->mutex_search);
+  free (mplayer->search);
+  mplayer->search = NULL;
+  pthread_mutex_unlock (&mplayer->mutex_search);
 
   return ret;
 }
