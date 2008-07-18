@@ -810,9 +810,12 @@ slave_result (slave_property_t property, player_t *player)
 
   pthread_mutex_lock (&mplayer->mutex_search);
   mplayer->search = malloc (sizeof (mp_search_t));
-
-  if (mplayer->search)
+  if (!mplayer->search)
   {
+    pthread_mutex_unlock (&mplayer->mutex_search);
+    return NULL;
+  }
+
     mplayer->search->property = strdup (str);
     mplayer->search->value = NULL;
     pthread_mutex_unlock (&mplayer->mutex_search);
@@ -837,9 +840,6 @@ slave_result (slave_property_t property, player_t *player)
     pthread_mutex_lock (&mplayer->mutex_search);
     free (mplayer->search);
     mplayer->search = NULL;
-    pthread_mutex_unlock (&mplayer->mutex_search);
-  }
-  else
     pthread_mutex_unlock (&mplayer->mutex_search);
 
   return ret;
