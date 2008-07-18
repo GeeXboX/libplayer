@@ -59,24 +59,13 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   player_t *player = NULL;
   int res = PLAYER_INIT_ERROR;
 
-  player = malloc (sizeof (player_t));
+  player = calloc (1, sizeof (player_t));
   player->type = type;
   player->verbosity = verbosity;
-  player->mrl = NULL;  
   player->state = PLAYER_STATE_IDLE;
-  player->loop = 0;
-  player->shuffle = 0;
   player->ao = ao;
   player->vo = vo;
-  player->x = 0;
-  player->y = 0;
-  player->w = 0;
-  player->h = 0;
-  player->aspect = 0.0;
-  player->x11 = NULL;
   player->event_cb = event_cb;
-  player->funcs = NULL;
-  player->priv = NULL;
 
   switch (player->type)
   {
