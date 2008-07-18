@@ -428,7 +428,8 @@ show_info (player_t *player, mrl_t *mrl)
 
   prop = mrl_get_property (player, mrl, MRL_PROPERTY_VIDEO_FRAMEDURATION);
   if (prop)
-    printf (" Video Framerate: %.2f\n", PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV / prop);
+    printf (" Video Framerate: %.2f\n",
+            PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV / prop);
 
   codec = mrl_get_audio_codec (player, mrl);
   if (codec) {
