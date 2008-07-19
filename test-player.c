@@ -148,6 +148,7 @@ load_res_cdda (player_t *player)
   char device[256] = "";
   mrl_t *mrl = NULL;
   mrl_resource_cd_args_t *args;
+  mrl_resource_t res;
 
   args = calloc (1, sizeof (mrl_resource_cd_args_t));
   if (!args)
@@ -159,6 +160,10 @@ load_res_cdda (player_t *player)
     *(device + strlen (device) - 1) = '\0';
   }
   args->device = strdup (device);
+
+  printf ("cddb [0|1]: ");
+  scanf ("%1u", &val);
+  res = val ? MRL_RESOURCE_CDDB : MRL_RESOURCE_CDDA;
 
   printf ("Track start: ");
   scanf ("%3u", &val);
@@ -172,7 +177,7 @@ load_res_cdda (player_t *player)
   scanf ("%3u", &val);
   args->speed = (uint8_t) val;
 
-  mrl = mrl_new (player, MRL_RESOURCE_CDDA, args);
+  mrl = mrl_new (player, res, args);
   if (!mrl) {
     if (args->device)
       free (args->device);
@@ -280,7 +285,7 @@ load_media (player_t *player)
 
   printf ("What resource to load?\n");
   printf (" 1 - Local file\n");
-  printf (" 2 - Compact Disc Digital Audio\n");
+  printf (" 2 - Compact Disc (CDDA/CDDB)\n");
   printf (" 3 - Digital Versatile Disc (Video)\n");
   printf (" 4 - Network stream (HTTP/MMS)\n");
   c = getch ();
