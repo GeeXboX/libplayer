@@ -433,6 +433,34 @@ check_range (player_t *player,
 /*                          MPlayer messages Parser                          */
 /*****************************************************************************/
 
+static int
+parse_msf (const char *str)
+{
+  char buf[4];
+  const char *_s = NULL, *_f = NULL;
+  int m, s, f;
+
+  if (!str)
+    return 0;
+
+  _s = strchr (str, ':');
+  _f = strrchr (str, ':');
+
+  if (!_s || !_f)
+    return 0;
+  if (_s == _f)
+    return 0;
+
+  snprintf (buf, 3, "%s", str);
+  m = atoi (buf);
+  snprintf (buf, 3, "%s", _s + 1);
+  s = atoi (buf);
+  snprintf (buf, 3, "%s", _f + 1);
+  f = atoi (buf);
+
+  return m * 60 * 1000 + s * 1000 + f;
+}
+
 static char *
 parse_field (char *line, char *field)
 {
@@ -1363,7 +1391,7 @@ mp_resource_load_args (player_t *player, mrl_t *mrl)
 /*****************************************************************************/
 
 static int
-mp_identify_metadata (mrl_t *mrl, const char *buffer)
+mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
 {
   static int cnt;
   static slave_property_t property = PROPERTY_UNKNOWN;
@@ -1467,6 +1495,147 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
   cnt++;
   property = PROPERTY_UNKNOWN;
   return 1;
+}
+
+static int
+mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
+{
+  static int cnt;
+  char *it;
+  char str[256];
+  mrl_metadata_t *meta;
+  mrl_metadata_cd_t *cd;
+
+  if (!mrl || !mrl->meta || !mrl->meta->priv)
+    return 0;
+
+  if (!buffer || !strstr (buffer, "ID_CDD"))
+    return 0;
+
+  meta = mrl->meta;
+  cd = meta->priv;
+
+  /* CDDA track length */
+
+  it = strstr (buffer, "ID_CDDA_TRACKS=");
+  if (it == buffer)
+  {
+    cnt = 1;
+    cd->tracks = atoi (parse_field (it, "ID_CDDA_TRACKS="));
+    return 1;
+  }
+
+  snprintf (str, sizeof (str), "ID_CDDA_TRACK_%i_MSF=", cnt);
+  it = strstr (buffer, str);
+  if (it == buffer)
+  {
+    mrl_metadata_cd_track_t *track = mrl_metadata_cd_track_new ();
+    if (!track)
+    {
+      cnt++;
+      return 1;
+    }
+
+    track->length = parse_msf (parse_field (it, str));
+    mrl_metadata_cd_track_append (cd, track);
+    cnt++;
+    return 1;
+  }
+
+  /*
+   * NOTE: This part needs at least MPlayer >= r27207 to identify CDDB, with
+   *       older version it is just ignored. Sometimes not all track names
+   *       are retrieved, it seems to be a bug in MPlayer. The file from
+   *       FreeDB is not always fully downloaded for an unknown reason.
+   *       You can check the result in ~/.cddb/discid.
+   */
+
+  /* CDDB tracks */
+
+  it = strstr (buffer, "ID_CDDB_INFO_TRACKS=");
+  if (it == buffer)
+  {
+    cnt = 1;
+    return 1;
+  }
+
+  snprintf (str, sizeof (str), "ID_CDDB_INFO_TRACK_%i_NAME=", cnt);
+  it = strstr (buffer, str);
+  if (it == buffer)
+  {
+    int i;
+    mrl_metadata_cd_track_t *track;
+
+    track = cd->track;
+    for (i = 1; i < cnt && track; i++)
+      track = track->next;
+
+    /* track unavailable */
+    if (i != cnt || !track)
+      return 1;
+
+    if (track->name)
+      free (track->name);
+    track->name = strdup (parse_field (it, str));
+    cnt++;
+    return 1;
+  }
+
+  /* CDDB global infos */
+
+  it = strstr (buffer, "ID_CDDB_DISCID=");
+  if (it == buffer)
+  {
+    cd->discid =
+      (uint32_t) strtol (parse_field (it, "ID_CDDB_DISCID="), NULL, 16);
+    return 1;
+  }
+
+  it = strstr (buffer, "ID_CDDB_INFO_ARTIST=");
+  if (it == buffer)
+  {
+    if (meta->artist)
+      free (meta->artist);
+    meta->artist = strdup (parse_field (it, "ID_CDDB_INFO_ARTIST="));
+    return 1;
+  }
+
+  it = strstr (buffer, "ID_CDDB_INFO_ALBUM=");
+  if (it == buffer)
+  {
+    if (meta->album)
+      free (meta->album);
+    meta->album = strdup (parse_field (it, "ID_CDDB_INFO_ALBUM="));
+    return 1;
+  }
+
+  it = strstr (buffer, "ID_CDDB_INFO_GENRE=");
+  if (it == buffer)
+  {
+    if (meta->genre)
+      free (meta->genre);
+    meta->genre = strdup (parse_field (it, "ID_CDDB_INFO_GENRE="));
+    return 1;
+  }
+
+  return 0;
+}
+
+static int
+mp_identify_metadata (mrl_t *mrl, const char *buffer)
+{
+  if (!mrl || !mrl->meta || !buffer)
+    return 0;
+
+  switch (mrl->resource)
+  {
+  case MRL_RESOURCE_CDDA:
+  case MRL_RESOURCE_CDDB:
+    return mp_identify_metadata_cd (mrl, buffer);
+
+  default:
+    return mp_identify_metadata_clip (mrl, buffer);
+  }
 }
 
 static int
@@ -2529,6 +2698,42 @@ mplayer_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   if (meta->comment)
     plog (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Comment: %s", meta->comment);
+
+  if (meta->priv)
+  {
+    switch (mrl->resource)
+    {
+    case MRL_RESOURCE_CDDA:
+    case MRL_RESOURCE_CDDB:
+    {
+      int cnt = 1;
+      mrl_metadata_cd_t *cd = meta->priv;
+      mrl_metadata_cd_track_t *track = cd->track;
+
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Meta CD DiscID: %08lx", cd->discid);
+
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Meta CD Tracks: %i", cd->tracks);
+
+      while (track)
+      {
+        if (track->name)
+          plog (player, PLAYER_MSG_INFO,
+                MODULE_NAME, "Meta CD Track %i Name: %s", cnt, track->name);
+
+        plog (player, PLAYER_MSG_INFO,
+              MODULE_NAME, "Meta CD Track %i Length: %i ms", cnt, track->length);
+
+        cnt++;
+        track = track->next;
+      }
+    }
+
+    default:
+      break;
+    }
+  }
 }
 
 static playback_status_t
