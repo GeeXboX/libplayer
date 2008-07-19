@@ -2572,8 +2572,6 @@ mplayer_mrl_supported_res (player_t *player, mrl_resource_t res)
 static void
 mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  mrl_properties_video_t *video;
-  mrl_properties_audio_t *audio;
   struct stat st;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
@@ -2594,67 +2592,10 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 
       stat (location, &st);
       mrl->prop->size = st.st_size;
-      plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
-            (float) mrl->prop->size / 1024 / 1024);
     }
   }
 
   mp_identify (mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
-
-  audio = mrl->prop->audio;
-  video = mrl->prop->video;
-
-  plog (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "Seekable: %i", mrl->prop->seekable);
-
-  plog (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "Length: %i ms", mrl->prop->length);
-
-  if (video)
-  {
-    if (video->codec)
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Codec: %s", video->codec);
-
-    if (video->bitrate)
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Bitrate: %i kbps", video->bitrate / 1000);
-
-    if (video->width)
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Width: %i", video->width);
-
-    if (video->height)
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Height: %i", video->height);
-
-    if (video->aspect)
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Aspect: %i", video->aspect);
-
-    if (video->frameduration)
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Video Framerate: %i", video->frameduration);
-  }
-
-  if (audio)
-  {
-    if (audio->codec)
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Audio Codec: %s", audio->codec);
-
-    if (audio->bitrate)
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Audio Bitrate: %i kbps", audio->bitrate / 1000);
-
-    if (audio->channels)
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Audio Channels: %i", audio->channels);
-
-    if (audio->samplerate)
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Audio Sample Rate: %i Hz", audio->samplerate);
-  }
 }
 
 static void

@@ -411,6 +411,80 @@ mrl_uses_ao (mrl_t *mrl)
 }
 
 static void
+mrl_properties_plog (player_t *player, mrl_t *mrl)
+{
+  mrl_properties_t *prop;
+  mrl_properties_audio_t *audio;
+  mrl_properties_video_t *video;
+
+  if (!player || !mrl)
+    return;
+
+  prop = mrl->prop;
+  if (!prop)
+    return;
+
+  audio = mrl->prop->audio;
+  video = mrl->prop->video;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
+        (float) mrl->prop->size / 1024 / 1024);
+
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "Seekable: %i", mrl->prop->seekable);
+
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "Length: %i ms", mrl->prop->length);
+
+  if (audio)
+  {
+    if (audio->codec)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Codec: %s", audio->codec);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Audio Bitrate: %i kbps", audio->bitrate / 1000);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Audio Bits: %i bps", audio->bits);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Audio Channels: %i", audio->channels);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Audio Sample Rate: %i Hz", audio->samplerate);
+  }
+
+  if (video)
+  {
+    if (video->codec)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Video Codec: %s", video->codec);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Bitrate: %i kbps", video->bitrate / 1000);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Width: %i", video->width);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Height: %i", video->height);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Aspect: %i", video->aspect);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Channels: %i", video->channels);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Streams: %i", video->streams);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Video Framerate: %i", video->frameduration);
+  }
+}
+
+static void
 mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
@@ -426,6 +500,8 @@ mrl_retrieve_properties (player_t *player, mrl_t *mrl)
   /* player specific init */
   if (player->funcs->mrl_retrieve_props)
     player->funcs->mrl_retrieve_props (player, mrl);
+
+  mrl_properties_plog (player, mrl);
 }
 
 uint32_t
