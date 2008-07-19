@@ -142,7 +142,7 @@ load_res_local (player_t *player)
 }
 
 static mrl_t *
-load_res_cdda (player_t *player)
+load_res_cd (player_t *player)
 {
   int val;
   char device[256] = "";
@@ -299,7 +299,7 @@ load_media (player_t *player)
     break;
 
   case '2':
-    mrl = load_res_cdda (player);
+    mrl = load_res_cd (player);
     break;
 
   case '3':
