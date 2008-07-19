@@ -494,6 +494,34 @@ show_info (player_t *player, mrl_t *mrl)
     printf (" Meta Comment: %s\n", meta);
     free (meta);
   }
+
+  /* CDDA/CDDB */
+
+  prop = mrl_get_metadata_cd (player, mrl, MRL_METADATA_CD_DISCID);
+  if (prop)
+    printf (" Meta CD DiscID: %08x\n", prop);
+
+  prop = mrl_get_metadata_cd (player, mrl, MRL_METADATA_CD_TRACKS);
+  if (prop)
+  {
+    int i;
+
+    printf (" Meta CD Tracks: %i\n", prop);
+
+    for (i = 1; i <= prop; i++)
+    {
+      uint32_t length = 0;
+      meta = mrl_get_metadata_cd_track (player, mrl, i, &length);
+
+      if (meta)
+      {
+        printf (" Meta CD Track %i Name: %s (%i sec)\n", i, meta, length / 1000);
+        free (meta);
+      }
+      else
+        printf (" Meta CD Track %i Length: %i sec\n", i, length / 1000);
+    }
+  }
 }
 
 int
