@@ -204,6 +204,11 @@ typedef enum mrl_metadata_type {
   MRL_METADATA_COMMENT,
 } mrl_metadata_type_t;
 
+typedef enum mrl_metadata_cd_type {
+  MRL_METADATA_CD_DISCID,
+  MRL_METADATA_CD_TRACKS,
+} mrl_metadata_cd_type_t;
+
 typedef enum mrl_properties_type {
   MRL_PROPERTY_SEEKABLE,
   MRL_PROPERTY_LENGTH,
@@ -230,6 +235,10 @@ void mrl_list_free (mrl_t *mrl);
 mrl_type_t mrl_get_type (player_t *player, mrl_t *mrl);
 mrl_resource_t mrl_get_resource (player_t *player, mrl_t *mrl);
 char *mrl_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m);
+char *mrl_get_metadata_cd_track (player_t *player,
+                                 mrl_t *mrl, int trackid, uint32_t *length);
+uint32_t mrl_get_metadata_cd (player_t *player,
+                              mrl_t *mrl, mrl_metadata_cd_type_t m);
 uint32_t mrl_get_property (player_t *player,
                            mrl_t *mrl, mrl_properties_type_t p);
 char *mrl_get_audio_codec (player_t *player, mrl_t *mrl);

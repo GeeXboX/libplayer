@@ -642,6 +642,94 @@ mrl_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m)
   }
 }
 
+char *
+mrl_get_metadata_cd_track (player_t *player,
+                           mrl_t *mrl, int trackid, uint32_t *length)
+{
+  int i;
+  mrl_metadata_t *meta;
+  mrl_metadata_cd_t *cd;
+  mrl_metadata_cd_track_t *track;
+
+  if (!player)
+    return NULL;
+
+  /* try to use internal mrl? */
+  if (!mrl && player->mrl)
+    mrl = player->mrl;
+  else if (!mrl)
+    return NULL;
+
+  if (mrl->resource != MRL_RESOURCE_CDDA && mrl->resource != MRL_RESOURCE_CDDB)
+    return NULL;
+
+  if (!mrl->meta)
+    mrl_retrieve_metadata (player, mrl);
+
+  meta = mrl->meta;
+  if (!meta)
+    return NULL;
+
+  cd = meta->priv;
+  if (!cd)
+    return NULL;
+
+  track = cd->track;
+  for (i = 1; i < trackid && track; i++)
+    track = track->next;
+
+  /* track unavailable */
+  if (i != trackid || !track)
+    return NULL;
+
+  if (length)
+    *length = track->length;
+
+  return track->name ? strdup (track->name) : NULL;
+}
+
+uint32_t
+mrl_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
+{
+  mrl_metadata_t *meta;
+  mrl_metadata_cd_t *cd;
+
+  if (!player)
+    return 0;
+
+  /* try to use internal mrl? */
+  if (!mrl && player->mrl)
+    mrl = player->mrl;
+  else if (!mrl)
+    return 0;
+
+  if (mrl->resource != MRL_RESOURCE_CDDA && mrl->resource != MRL_RESOURCE_CDDB)
+    return 0;
+
+  if (!mrl->meta)
+    mrl_retrieve_metadata (player, mrl);
+
+  meta = mrl->meta;
+  if (!meta)
+    return 0;
+
+  cd = meta->priv;
+  if (!cd)
+    return 0;
+
+  switch (m)
+  {
+  case MRL_METADATA_CD_DISCID:
+    return cd->discid;
+
+  case MRL_METADATA_CD_TRACKS:
+    return cd->tracks;
+
+  default:
+    return 0;
+  }
+}
+
 static int
 get_list_length (void *list)
 {
