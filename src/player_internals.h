@@ -188,7 +188,8 @@ struct player_s {
   player_verbosity_level_t verbosity;
   mrl_t *mrl;    /* current MRL */
   player_state_t state; /* state of the playback */
-  int loop;             /* loop elements from playlist */
+  player_loop_t loop_mode; /* loop an element or the playlist */
+  int loop;             /* how many loops */
   int shuffle;          /* shuffle MRLs from playlist */
   player_ao_t ao;       /* audio output driver name */
   player_vo_t vo;       /* video output driver name */
