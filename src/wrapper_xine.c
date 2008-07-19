@@ -667,44 +667,12 @@ xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 static void
 xine_player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
-  mrl_metadata_t *meta;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
 
   if (!player || !mrl || !mrl->meta)
     return;
 
   xine_identify (player, mrl, IDENTIFY_METADATA);
-
-  meta = mrl->meta;
-
-  if (meta->title)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Title: %s", meta->title);
-
-  if (meta->artist)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Artist: %s", meta->artist);
-
-  if (meta->genre)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Genre: %s", meta->genre);
-
-  if (meta->album)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Album: %s", meta->album);
-
-  if (meta->year)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Year: %s", meta->year);
-
-  if (meta->track)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Track: %s", meta->track);
-
-  if (meta->comment)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Comment: %s", meta->comment);
 }
 
 static playback_status_t

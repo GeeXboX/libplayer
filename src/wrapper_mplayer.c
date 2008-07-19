@@ -2660,80 +2660,12 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 static void
 mplayer_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
-  mrl_metadata_t *meta;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
 
   if (!player || !mrl || !mrl->meta)
     return;
 
   mp_identify (mrl, IDENTIFY_METADATA);
-
-  meta = mrl->meta;
-
-  if (meta->title)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Title: %s", meta->title);
-
-  if (meta->artist)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Artist: %s", meta->artist);
-
-  if (meta->genre)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Genre: %s", meta->genre);
-
-  if (meta->album)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Album: %s", meta->album);
-
-  if (meta->year)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Year: %s", meta->year);
-
-  if (meta->track)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Track: %s", meta->track);
-
-  if (meta->comment)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Comment: %s", meta->comment);
-
-  if (meta->priv)
-  {
-    switch (mrl->resource)
-    {
-    case MRL_RESOURCE_CDDA:
-    case MRL_RESOURCE_CDDB:
-    {
-      int cnt = 1;
-      mrl_metadata_cd_t *cd = meta->priv;
-      mrl_metadata_cd_track_t *track = cd->track;
-
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Meta CD DiscID: %08lx", cd->discid);
-
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Meta CD Tracks: %i", cd->tracks);
-
-      while (track)
-      {
-        if (track->name)
-          plog (player, PLAYER_MSG_INFO,
-                MODULE_NAME, "Meta CD Track %i Name: %s", cnt, track->name);
-
-        plog (player, PLAYER_MSG_INFO,
-              MODULE_NAME, "Meta CD Track %i Length: %i ms", cnt, track->length);
-
-        cnt++;
-        track = track->next;
-      }
-    }
-
-    default:
-      break;
-    }
-  }
 }
 
 static playback_status_t
