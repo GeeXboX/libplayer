@@ -1655,7 +1655,7 @@ mp_identify (mrl_t *mrl, int flags)
     params[pp++] = "0";
     params[pp++] = uri;
     params[pp++] = "-msglevel";
-    params[pp++] = "all=0:identify=6";
+    params[pp++] = "all=0:global=4:identify=6";
     params[pp] = NULL;
 
     execvp (MPLAYER_NAME, params);
