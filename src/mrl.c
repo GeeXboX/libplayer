@@ -110,18 +110,92 @@ mrl_properties_free (mrl_properties_t *prop)
   free (prop);
 }
 
+mrl_metadata_cd_track_t *
+mrl_metadata_cd_track_new (void)
+{
+  mrl_metadata_cd_track_t *track;
+
+  track = calloc (1, sizeof (mrl_metadata_cd_track_t));
+
+  return track;
+}
+
+void
+mrl_metadata_cd_track_append (mrl_metadata_cd_t *cd,
+                              mrl_metadata_cd_track_t *track)
+{
+  mrl_metadata_cd_track_t *track_p;
+
+  if (!cd || !track)
+    return;
+
+  if (!cd->track)
+  {
+    cd->track = track;
+    return;
+  }
+
+  track_p = cd->track;
+  while (track_p->next)
+    track_p = track_p->next;
+
+  track_p->next = track;
+}
+
+static mrl_metadata_cd_t *
+mrl_metadata_cd_new (void)
+{
+  mrl_metadata_cd_t *cd;
+
+  cd = calloc (1, sizeof (mrl_metadata_cd_t));
+
+  return cd;
+}
+
 mrl_metadata_t *
-mrl_metadata_new (void)
+mrl_metadata_new (mrl_resource_t res)
 {
   mrl_metadata_t *meta;
 
   meta = calloc (1, sizeof (mrl_metadata_t));
+  if (!meta)
+    return NULL;
+
+  switch (res)
+  {
+  case MRL_RESOURCE_CDDA:
+  case MRL_RESOURCE_CDDB:
+    meta->priv = mrl_metadata_cd_new ();
+    break;
+
+  default:
+    break;
+  }
 
   return meta;
 }
 
+static void
+mrl_metadata_cd_free (mrl_metadata_cd_t *cd)
+{
+  mrl_metadata_cd_track_t *track, *track_p;
+
+  if (!cd)
+    return;
+
+  track = cd->track;
+  while (track)
+  {
+    if (track->name)
+      free (track->name);
+    track_p = track;
+    track = track->next;
+    free (track_p);
+  }
+}
+
 void
-mrl_metadata_free (mrl_metadata_t *meta)
+mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res)
 {
   if (!meta)
     return;
@@ -140,6 +214,22 @@ mrl_metadata_free (mrl_metadata_t *meta)
     free (meta->track);
   if (meta->comment)
     free (meta->comment);
+
+  if (meta->priv)
+  {
+    switch (res)
+    {
+    case MRL_RESOURCE_CDDA:
+    case MRL_RESOURCE_CDDB:
+      mrl_metadata_cd_free (meta->priv);
+      break;
+
+    default:
+      break;
+    }
+    free (meta->priv);
+  }
+
   free (meta);
 }
 
@@ -229,7 +319,7 @@ mrl_free (mrl_t *mrl, int recursive)
   if (mrl->prop)
     mrl_properties_free (mrl->prop);
   if (mrl->meta)
-    mrl_metadata_free (mrl->meta);
+    mrl_metadata_free (mrl->meta, mrl->resource);
 
   if (mrl->priv)
   {
@@ -497,7 +587,7 @@ mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   if (mrl->meta) /* already retrieved */
     return;
 
-  mrl->meta = mrl_metadata_new ();
+  mrl->meta = mrl_metadata_new (mrl->resource);
 
   /* player specific init */
   if (player->funcs->mrl_retrieve_meta)

@@ -49,6 +49,18 @@ typedef enum identify_flags {
   IDENTIFY_PROPERTIES = (1 << 3),
 } identify_flags_t;
 
+typedef struct mrl_metadata_cd_track_s {
+  char *name;
+  uint32_t length;
+  struct mrl_metadata_cd_track_s *next;
+} mrl_metadata_cd_track_t;
+
+typedef struct mrl_metadata_cd_s {
+  uint32_t discid;
+  uint32_t tracks;
+  mrl_metadata_cd_track_t *track;
+} mrl_metadata_cd_t;
+
 typedef struct mrl_metadata_s {
   char *title;
   char *artist;
@@ -57,6 +69,7 @@ typedef struct mrl_metadata_s {
   char *year;
   char *track;
   char *comment;
+  void *priv; /* private metadata, depending on resource type */
 } mrl_metadata_t;
 
 typedef struct mrl_properties_audio_s {
@@ -194,8 +207,11 @@ mrl_properties_video_t *mrl_properties_video_new (void);
 void mrl_properties_video_free (mrl_properties_video_t *video);
 mrl_properties_t *mrl_properties_new (void);
 void mrl_properties_free (mrl_properties_t *prop);
-mrl_metadata_t *mrl_metadata_new (void);
-void mrl_metadata_free (mrl_metadata_t *meta);
+mrl_metadata_t *mrl_metadata_new (mrl_resource_t res);
+void mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res);
+mrl_metadata_cd_track_t *mrl_metadata_cd_track_new (void);
+void mrl_metadata_cd_track_append (mrl_metadata_cd_t *cd,
+                                   mrl_metadata_cd_track_t *track);
 
 int mrl_uses_vo (mrl_t *mrl);
 int mrl_uses_ao (mrl_t *mrl);
