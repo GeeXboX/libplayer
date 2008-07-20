@@ -174,9 +174,9 @@ dummy_set_mute (player_t *player, player_mute_t value)
 }
 
 static void
-dummy_set_sub_delay (player_t *player, int value)
+dummy_sub_set_delay (player_t *player, int value)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %i", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_delay: %i", value);
 }
 
 /* public API */
@@ -219,10 +219,10 @@ register_functions_dummy (void)
   funcs->video_set_panscan  = NULL;
   funcs->video_set_ar       = NULL;
 
-  funcs->set_sub_delay      = dummy_set_sub_delay;
-  funcs->set_sub_alignment  = NULL;
-  funcs->set_sub_pos        = NULL;
-  funcs->set_sub_visibility = NULL;
+  funcs->sub_set_delay      = dummy_sub_set_delay;
+  funcs->sub_set_alignment  = NULL;
+  funcs->sub_set_pos        = NULL;
+  funcs->sub_set_visibility = NULL;
   funcs->sub_scale          = NULL;
   funcs->sub_select         = NULL;
   funcs->sub_prev           = NULL;

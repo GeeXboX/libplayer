@@ -707,9 +707,9 @@ player_subtitle_set_delay (player_t *player, int value)
   if (!player)
     return;
 
-  /* player specific set_sub_delay() */
-  if (player->funcs->set_sub_delay)
-    player->funcs->set_sub_delay (player, value);
+  /* player specific sub_set_delay() */
+  if (player->funcs->sub_set_delay)
+    player->funcs->sub_set_delay (player, value);
 }
 
 void
@@ -721,9 +721,9 @@ player_subtitle_set_alignment (player_t *player,
   if (!player)
     return;
 
-  /* player specific set_sub_alignment() */
-  if (player->funcs->set_sub_alignment)
-    player->funcs->set_sub_alignment (player, a);
+  /* player specific sub_set_alignment() */
+  if (player->funcs->sub_set_alignment)
+    player->funcs->sub_set_alignment (player, a);
 }
 
 void
@@ -734,9 +734,9 @@ player_subtitle_set_position (player_t *player, int value)
   if (!player)
     return;
 
-  /* player specific set_sub_pos() */
-  if (player->funcs->set_sub_pos)
-    player->funcs->set_sub_pos (player, value);
+  /* player specific sub_set_pos() */
+  if (player->funcs->sub_set_pos)
+    player->funcs->sub_set_pos (player, value);
 }
 
 void
@@ -747,9 +747,9 @@ player_subtitle_set_visibility (player_t *player, int value)
   if (!player)
     return;
 
-  /* player specific set_sub_visibility() */
-  if (player->funcs->set_sub_visibility)
-    player->funcs->set_sub_visibility (player, value);
+  /* player specific sub_set_visibility() */
+  if (player->funcs->sub_set_visibility)
+    player->funcs->sub_set_visibility (player, value);
 }
 
 void

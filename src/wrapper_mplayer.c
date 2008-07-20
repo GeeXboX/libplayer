@@ -2919,11 +2919,11 @@ mplayer_audio_set_delay (player_t *player, int value, int absolute)
 }
 
 static void
-mplayer_set_sub_delay (player_t *player, int value)
+mplayer_sub_set_delay (player_t *player, int value)
 {
   float delay;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %i", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_delay: %i", value);
 
   if (!player)
     return;
@@ -2934,11 +2934,11 @@ mplayer_set_sub_delay (player_t *player, int value)
 }
 
 static void
-mplayer_set_sub_alignment (player_t *player, player_sub_alignment_t a)
+mplayer_sub_set_alignment (player_t *player, player_sub_alignment_t a)
 {
   mplayer_sub_alignment_t alignment;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_alignment: %i", a);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_alignment: %i", a);
 
   if (!player)
     return;
@@ -2965,9 +2965,9 @@ mplayer_set_sub_alignment (player_t *player, player_sub_alignment_t a)
 }
 
 static void
-mplayer_set_sub_visibility (player_t *player, int value)
+mplayer_sub_set_visibility (player_t *player, int value)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_visibility: %i", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_visibility: %i", value);
 
   if (!player)
     return;
@@ -3123,10 +3123,10 @@ register_functions_mplayer (void)
   funcs->video_set_panscan  = NULL;
   funcs->video_set_ar       = NULL;
 
-  funcs->set_sub_delay      = mplayer_set_sub_delay;
-  funcs->set_sub_alignment  = mplayer_set_sub_alignment;
-  funcs->set_sub_pos        = NULL;
-  funcs->set_sub_visibility = mplayer_set_sub_visibility;
+  funcs->sub_set_delay      = mplayer_sub_set_delay;
+  funcs->sub_set_alignment  = mplayer_sub_set_alignment;
+  funcs->sub_set_pos        = NULL;
+  funcs->sub_set_visibility = mplayer_sub_set_visibility;
   funcs->sub_scale          = NULL;
   funcs->sub_select         = NULL;
   funcs->sub_prev           = NULL;

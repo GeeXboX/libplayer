@@ -897,12 +897,12 @@ xine_player_set_mute (player_t *player, player_mute_t value)
 }
 
 static void
-xine_player_set_sub_delay (player_t *player, int value)
+xine_player_sub_set_delay (player_t *player, int value)
 {
   int delay;
   xine_player_t *x = NULL;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %i", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_delay: %i", value);
 
   /* unit is 1/90000 sec */
   delay = (int) rintf (value / 1000.0 * PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV);
@@ -958,10 +958,10 @@ register_functions_xine (void)
   funcs->video_set_panscan  = NULL;
   funcs->video_set_ar       = NULL;
 
-  funcs->set_sub_delay      = xine_player_set_sub_delay;
-  funcs->set_sub_alignment  = NULL;
-  funcs->set_sub_pos        = NULL;
-  funcs->set_sub_visibility = NULL;
+  funcs->sub_set_delay      = xine_player_sub_set_delay;
+  funcs->sub_set_alignment  = NULL;
+  funcs->sub_set_pos        = NULL;
+  funcs->sub_set_visibility = NULL;
   funcs->sub_scale          = NULL;
   funcs->sub_select         = NULL;
   funcs->sub_prev           = NULL;

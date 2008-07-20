@@ -159,10 +159,10 @@ register_functions_vlc (void)
   funcs->video_set_panscan  = NULL;
   funcs->video_set_ar       = NULL;
 
-  funcs->set_sub_delay      = NULL;
-  funcs->set_sub_alignment  = NULL;
-  funcs->set_sub_pos        = NULL;
-  funcs->set_sub_visibility = NULL;
+  funcs->sub_set_delay      = NULL;
+  funcs->sub_set_alignment  = NULL;
+  funcs->sub_set_pos        = NULL;
+  funcs->sub_set_visibility = NULL;
   funcs->sub_scale          = NULL;
   funcs->sub_select         = NULL;
   funcs->sub_prev           = NULL;
