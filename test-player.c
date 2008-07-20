@@ -51,6 +51,8 @@
   "\n" \
   " + : increase speed\n" \
   " - : decrease speed\n" \
+  " ] : audio delay +100 ms\n" \
+  " [ : audio delay -100 ms\n" \
   " 0 : increase volume\n" \
   " 9 : decrease volume\n" \
   " m : set/unset mute\n" \
@@ -680,6 +682,14 @@ main (int argc, char **argv)
         speed = 0.1;
       player_playback_speed (player, speed);
       printf ("SPEED %.2f\n", speed);
+      break;
+    case '[':
+      player_audio_set_delay (player, -100, 0);
+      printf ("AUDIO DELAY -100 ms\n");
+      break;
+    case ']':
+      player_audio_set_delay (player, 100, 0);
+      printf ("AUDIO DELAY +100 ms\n");
       break;
     case '0':   /* increase volume */
       if (++volume > 100)
