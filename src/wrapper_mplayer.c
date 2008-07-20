@@ -1763,12 +1763,38 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
   if (!mrl || !mrl->prop || !buffer)
     return 0;
 
+  /*
+   * ID_LENGTH is not usable with all resources. For CDDA/CDDB the length is
+   * calculated by the MSF sum of each track.
+   */
+  switch (mrl->resource)
+  {
+  case MRL_RESOURCE_CDDA:
+  case MRL_RESOURCE_CDDB:
+    it = strstr (buffer, "ID_CDDA_TRACKS=");
+    if (it == buffer)
+    {
+      mrl->prop->length = 0;
+      return 1;
+    }
+
+    it = strstr (buffer, "ID_CDDA_TRACK_");
+    if (it == buffer && strstr (buffer, "_MSF="))
+    {
+      mrl->prop->length += (uint32_t) parse_msf (parse_field (it));
+      return 1;
+    }
+    break;
+
+  default:
   it = strstr (buffer, "ID_LENGTH=");
   if (it == buffer)
   {
     mrl->prop->length =
       (uint32_t) (atof (parse_field (it)) * 1000.0);
     return 1;
+  }
+    break;
   }
 
   it = strstr (buffer, "ID_SEEKABLE=");
