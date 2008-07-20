@@ -298,10 +298,10 @@ register_functions_gstreamer (void)
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = NULL;
 
-  funcs->get_volume         = NULL;
-  funcs->set_volume         = NULL;
-  funcs->get_mute           = NULL;
-  funcs->set_mute           = NULL;
+  funcs->audio_get_volume   = NULL;
+  funcs->audio_set_volume   = NULL;
+  funcs->audio_get_mute     = NULL;
+  funcs->audio_set_mute     = NULL;
   funcs->audio_set_delay    = NULL;
   funcs->audio_select       = NULL;
   funcs->audio_prev         = NULL;

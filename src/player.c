@@ -532,9 +532,9 @@ player_audio_volume_get (player_t *player)
   if (!player)
     return -1;
 
-  /* player specific get_volume() */
-  if (player->funcs->get_volume)
-    res = player->funcs->get_volume (player);
+  /* player specific audio_get_volume() */
+  if (player->funcs->audio_get_volume)
+    res = player->funcs->audio_get_volume (player);
 
   return res;
 }
@@ -547,9 +547,9 @@ player_audio_volume_set (player_t *player, int value)
   if (!player)
     return;
 
-  /* player specific set_volume() */
-  if (player->funcs->set_volume)
-    player->funcs->set_volume (player, value);
+  /* player specific audio_set_volume() */
+  if (player->funcs->audio_set_volume)
+    player->funcs->audio_set_volume (player, value);
 }
 
 player_mute_t
@@ -562,9 +562,9 @@ player_audio_mute_get (player_t *player)
   if (!player)
     return res;
 
-  /* player specific get_mute() */
-  if (player->funcs->get_mute)
-    res = player->funcs->get_mute (player);
+  /* player specific audio_get_mute() */
+  if (player->funcs->audio_get_mute)
+    res = player->funcs->audio_get_mute (player);
 
   return res;
 }
@@ -577,9 +577,9 @@ player_audio_mute_set (player_t *player, player_mute_t value)
   if (!player)
     return;
 
-  /* player specific set_mute() */
-  if (player->funcs->set_mute)
-    player->funcs->set_mute (player, value);
+  /* player specific audio_set_mute() */
+  if (player->funcs->audio_set_mute)
+    player->funcs->audio_set_mute (player, value);
 }
 
 void

@@ -2769,11 +2769,11 @@ mplayer_playback_set_speed (player_t *player, float value)
 }
 
 static int
-mplayer_get_volume (player_t *player)
+mplayer_audio_get_volume (player_t *player)
 {
   int volume = -1;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_volume");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_volume");
 
   if (!player)
     return volume;
@@ -2787,12 +2787,12 @@ mplayer_get_volume (player_t *player)
 }
 
 static player_mute_t
-mplayer_get_mute (player_t *player)
+mplayer_audio_get_mute (player_t *player)
 {
   player_mute_t mute = PLAYER_MUTE_UNKNOWN;
   char *buffer;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_mute");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_mute");
 
   if (!player)
     return mute;
@@ -2862,9 +2862,9 @@ mplayer_set_framedrop (player_t *player, player_framedrop_t fd)
 }
 
 static void
-mplayer_set_volume (player_t *player, int value)
+mplayer_audio_set_volume (player_t *player, int value)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_volume: %d", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
 
   if (!player)
     return;
@@ -2876,7 +2876,7 @@ mplayer_set_volume (player_t *player, int value)
 }
 
 static void
-mplayer_set_mute (player_t *player, player_mute_t value)
+mplayer_audio_set_mute (player_t *player, player_mute_t value)
 {
   int mute = 0;
 
@@ -2887,7 +2887,7 @@ mplayer_set_mute (player_t *player, player_mute_t value)
     mute = 1;
 
   plog (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "set_mute: %s", mute ? "on" : "off");
+        MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
 
   if (!player)
     return;
@@ -3109,10 +3109,10 @@ register_functions_mplayer (void)
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = mplayer_playback_set_speed;
 
-  funcs->get_volume         = mplayer_get_volume;
-  funcs->set_volume         = mplayer_set_volume;
-  funcs->get_mute           = mplayer_get_mute;
-  funcs->set_mute           = mplayer_set_mute;
+  funcs->audio_get_volume   = mplayer_audio_get_volume;
+  funcs->audio_set_volume   = mplayer_audio_set_volume;
+  funcs->audio_get_mute     = mplayer_audio_get_mute;
+  funcs->audio_set_mute     = mplayer_audio_set_mute;
   funcs->audio_set_delay    = mplayer_audio_set_delay;
   funcs->audio_select       = NULL;
   funcs->audio_prev         = NULL;

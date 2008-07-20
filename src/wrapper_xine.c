@@ -790,11 +790,11 @@ xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
 }
 
 static int
-xine_player_get_volume (player_t *player)
+xine_player_audio_get_volume (player_t *player)
 {
   xine_player_t *x = NULL;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_volume");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_volume");
 
   if (!player)
     return -1;
@@ -808,11 +808,11 @@ xine_player_get_volume (player_t *player)
 }
 
 static player_mute_t
-xine_player_get_mute (player_t *player)
+xine_player_audio_get_mute (player_t *player)
 {
   xine_player_t *x = NULL;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_mute");
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_mute");
 
   if (!player)
     return PLAYER_MUTE_UNKNOWN;
@@ -853,11 +853,11 @@ xine_player_get_time_pos (player_t *player)
 }
 
 static void
-xine_player_set_volume (player_t *player, int value)
+xine_player_audio_set_volume (player_t *player, int value)
 {
   xine_player_t *x = NULL;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_volume: %d", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
 
   if (!player)
     return;
@@ -871,7 +871,7 @@ xine_player_set_volume (player_t *player, int value)
 }
 
 static void
-xine_player_set_mute (player_t *player, player_mute_t value)
+xine_player_audio_set_mute (player_t *player, player_mute_t value)
 {
   xine_player_t *x = NULL;
   int mute = 0;
@@ -883,7 +883,7 @@ xine_player_set_mute (player_t *player, player_mute_t value)
     mute = 1;
 
   plog (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "set_mute: %s", mute ? "on" : "off");
+        MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
 
   if (!player)
     return;
@@ -944,10 +944,10 @@ register_functions_xine (void)
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = NULL;
 
-  funcs->get_volume         = xine_player_get_volume;
-  funcs->set_volume         = xine_player_set_volume;
-  funcs->get_mute           = xine_player_get_mute;
-  funcs->set_mute           = xine_player_set_mute;
+  funcs->audio_get_volume   = xine_player_audio_get_volume;
+  funcs->audio_set_volume   = xine_player_audio_set_volume;
+  funcs->audio_get_mute     = xine_player_audio_get_mute;
+  funcs->audio_set_mute     = xine_player_audio_set_mute;
   funcs->audio_set_delay    = NULL;
   funcs->audio_select       = NULL;
   funcs->audio_prev         = NULL;

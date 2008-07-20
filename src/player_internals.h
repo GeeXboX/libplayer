@@ -136,10 +136,10 @@ typedef struct player_funcs_s {
   void (* pb_set_speed) (player_t *player, float value);
 
   /* Audio */
-  int (* get_volume) (player_t *player);
-  void (* set_volume) (player_t *player, int value);
-  player_mute_t (* get_mute) (player_t *player);
-  void (* set_mute) (player_t *player, player_mute_t value);
+  int (* audio_get_volume) (player_t *player);
+  void (* audio_set_volume) (player_t *player, int value);
+  player_mute_t (* audio_get_mute) (player_t *player);
+  void (* audio_set_mute) (player_t *player, player_mute_t value);
   void (* audio_set_delay) (player_t *player, int value, int absolute);
   void (* audio_select) (player_t *player, int audio_id);
   void (* audio_prev) (player_t *player);
