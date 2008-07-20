@@ -1591,8 +1591,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_CDDB_DISCID=");
   if (it == buffer)
   {
-    cd->discid =
-      (uint32_t) strtol (parse_field (it), NULL, 16);
+    cd->discid = (uint32_t) strtol (parse_field (it), NULL, 16);
     return 1;
   }
 
