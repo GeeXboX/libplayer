@@ -464,14 +464,16 @@ parse_msf (const char *str)
 }
 
 static char *
-parse_field (char *line, char *field)
+parse_field (char *line)
 {
   char *its, *ite;
 
-  its = line;
-
   /* value start */
-  its += strlen (field);
+  its = strchr (line, '=');
+  if (!its)
+    return line;
+  its++;
+
   ite = its;
   while (*ite != '\0' && *ite != '\n')
     ite++;
@@ -558,7 +560,7 @@ thread_fifo (void *arg)
     if (mplayer->search && mplayer->search->property &&
         (it = strstr (buffer, mplayer->search->property)) == buffer)
     {
-      it = parse_field (it, mplayer->search->property);
+      it = parse_field (it);
 
       if ((mplayer->search->value = malloc (strlen (it) + 1)))
       {
@@ -1419,21 +1421,21 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, str);
   if (it == buffer)
   {
-    if (!strcasecmp (parse_field (it, str), "title"))
+    if (!strcasecmp (parse_field (it), "title"))
       property = PROPERTY_METADATA_TITLE;
-    else if (!strcasecmp (parse_field (it, str), "name"))
+    else if (!strcasecmp (parse_field (it), "name"))
       property = PROPERTY_METADATA_NAME;
-    else if (!strcasecmp (parse_field (it, str), "artist"))
+    else if (!strcasecmp (parse_field (it), "artist"))
       property = PROPERTY_METADATA_ARTIST;
-    else if (!strcasecmp (parse_field (it, str), "genre"))
+    else if (!strcasecmp (parse_field (it), "genre"))
       property = PROPERTY_METADATA_GENRE;
-    else if (!strcasecmp (parse_field (it, str), "album"))
+    else if (!strcasecmp (parse_field (it), "album"))
       property = PROPERTY_METADATA_ALBUM;
-    else if (!strcasecmp (parse_field (it, str), "year"))
+    else if (!strcasecmp (parse_field (it), "year"))
       property = PROPERTY_METADATA_YEAR;
-    else if (!strcasecmp (parse_field (it, str), "track"))
+    else if (!strcasecmp (parse_field (it), "track"))
       property = PROPERTY_METADATA_TRACK;
-    else if (!strcasecmp (parse_field (it, str), "comment"))
+    else if (!strcasecmp (parse_field (it), "comment"))
       property = PROPERTY_METADATA_COMMENT;
     else
       property = PROPERTY_UNKNOWN;
@@ -1452,43 +1454,43 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
   case PROPERTY_METADATA_TITLE:
     if (meta->title)
       free (meta->title);
-    meta->title = strdup (parse_field (it, str));
+    meta->title = strdup (parse_field (it));
     break;
 
   case PROPERTY_METADATA_ARTIST:
     if (meta->artist)
       free (meta->artist);
-    meta->artist = strdup (parse_field (it, str));
+    meta->artist = strdup (parse_field (it));
     break;
 
   case PROPERTY_METADATA_GENRE:
     if (meta->genre)
       free (meta->genre);
-    meta->genre = strdup (parse_field (it, str));
+    meta->genre = strdup (parse_field (it));
     break;
 
   case PROPERTY_METADATA_ALBUM:
     if (meta->album)
       free (meta->album);
-    meta->album = strdup (parse_field (it, str));
+    meta->album = strdup (parse_field (it));
     break;
 
   case PROPERTY_METADATA_YEAR:
     if (meta->year)
       free (meta->year);
-    meta->year = strdup (parse_field (it, str));
+    meta->year = strdup (parse_field (it));
     break;
 
   case PROPERTY_METADATA_TRACK:
     if (meta->track)
       free (meta->track);
-    meta->track = strdup (parse_field (it, str));
+    meta->track = strdup (parse_field (it));
     break;
 
   case PROPERTY_METADATA_COMMENT:
     if (meta->comment)
       free (meta->comment);
-    meta->comment = strdup (parse_field (it, str));
+    meta->comment = strdup (parse_field (it));
     break;
 
   default:
@@ -1524,7 +1526,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   if (it == buffer)
   {
     cnt = 1;
-    cd->tracks = atoi (parse_field (it, "ID_CDDA_TRACKS="));
+    cd->tracks = atoi (parse_field (it));
     return 1;
   }
 
@@ -1539,7 +1541,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
       return 1;
     }
 
-    track->length = parse_msf (parse_field (it, str));
+    track->length = parse_msf (parse_field (it));
     mrl_metadata_cd_track_append (cd, track);
     cnt++;
     return 1;
@@ -1579,7 +1581,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
 
     if (track->name)
       free (track->name);
-    track->name = strdup (parse_field (it, str));
+    track->name = strdup (parse_field (it));
     cnt++;
     return 1;
   }
@@ -1590,7 +1592,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   if (it == buffer)
   {
     cd->discid =
-      (uint32_t) strtol (parse_field (it, "ID_CDDB_DISCID="), NULL, 16);
+      (uint32_t) strtol (parse_field (it), NULL, 16);
     return 1;
   }
 
@@ -1599,7 +1601,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   {
     if (meta->artist)
       free (meta->artist);
-    meta->artist = strdup (parse_field (it, "ID_CDDB_INFO_ARTIST="));
+    meta->artist = strdup (parse_field (it));
     return 1;
   }
 
@@ -1608,7 +1610,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   {
     if (meta->album)
       free (meta->album);
-    meta->album = strdup (parse_field (it, "ID_CDDB_INFO_ALBUM="));
+    meta->album = strdup (parse_field (it));
     return 1;
   }
 
@@ -1617,7 +1619,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   {
     if (meta->genre)
       free (meta->genre);
-    meta->genre = strdup (parse_field (it, "ID_CDDB_INFO_GENRE="));
+    meta->genre = strdup (parse_field (it));
     return 1;
   }
 
@@ -1660,28 +1662,28 @@ mp_identify_audio (mrl_t *mrl, const char *buffer)
   {
     if (audio->codec)
       free (audio->codec);
-    audio->codec = strdup (parse_field (it, "ID_AUDIO_CODEC="));
+    audio->codec = strdup (parse_field (it));
     return 1;
   }
 
   it = strstr (buffer, "ID_AUDIO_BITRATE=");
   if (it == buffer)
   {
-    audio->bitrate = atoi (parse_field (it, "ID_AUDIO_BITRATE="));
+    audio->bitrate = atoi (parse_field (it));
     return 1;
   }
 
   it = strstr (buffer, "ID_AUDIO_NCH=");
   if (it == buffer)
   {
-    audio->channels = atoi (parse_field (it, "ID_AUDIO_NCH="));
+    audio->channels = atoi (parse_field (it));
     return 1;
   }
 
   it = strstr (buffer, "ID_AUDIO_RATE=");
   if (it == buffer)
   {
-    audio->samplerate = atoi (parse_field (it, "ID_AUDIO_RATE="));
+    audio->samplerate = atoi (parse_field (it));
     return 1;
   }
 
@@ -1708,35 +1710,35 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   {
     if (video->codec)
       free (video->codec);
-    video->codec = strdup (parse_field (it, "ID_VIDEO_CODEC="));
+    video->codec = strdup (parse_field (it));
     return 1;
   }
 
   it = strstr (buffer, "ID_VIDEO_BITRATE=");
   if (it == buffer)
   {
-    video->bitrate = atoi (parse_field (it, "ID_VIDEO_BITRATE="));
+    video->bitrate = atoi (parse_field (it));
     return 1;
   }
 
   it = strstr (buffer, "ID_VIDEO_WIDTH=");
   if (it == buffer)
   {
-    video->width = atoi (parse_field (it, "ID_VIDEO_WIDTH="));
+    video->width = atoi (parse_field (it));
     return 1;
   }
 
   it = strstr (buffer, "ID_VIDEO_HEIGHT=");
   if (it == buffer)
   {
-    video->height = atoi (parse_field (it, "ID_VIDEO_HEIGHT="));
+    video->height = atoi (parse_field (it));
     return 1;
   }
 
   it = strstr (buffer, "ID_VIDEO_ASPECT=");
   if (it == buffer)
   {
-    video->aspect = (uint32_t) (atof (parse_field (it, "ID_VIDEO_ASPECT="))
+    video->aspect = (uint32_t) (atof (parse_field (it))
                                 * PLAYER_VIDEO_ASPECT_RATIO_MULT);
     return 1;
   }
@@ -1744,7 +1746,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_VIDEO_FPS=");
   if (it == buffer)
   {
-    val = atof (parse_field (it, "ID_VIDEO_FPS="));
+    val = atof (parse_field (it));
     video->frameduration =
       (uint32_t) (val ? PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV / val : 0);
     return 1;
@@ -1765,14 +1767,14 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
   if (it == buffer)
   {
     mrl->prop->length =
-      (uint32_t) (atof (parse_field (it, "ID_LENGTH=")) * 1000.0);
+      (uint32_t) (atof (parse_field (it)) * 1000.0);
     return 1;
   }
 
   it = strstr (buffer, "ID_SEEKABLE=");
   if (it == buffer)
   {
-    mrl->prop->seekable = atoi (parse_field (it, "ID_SEEKABLE="));
+    mrl->prop->seekable = atoi (parse_field (it));
     return 1;
   }
 
