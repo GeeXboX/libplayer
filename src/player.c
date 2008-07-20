@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
+#include <pthread.h>
 
 #include "player.h"
 #include "player_internals.h"
@@ -44,6 +45,23 @@
 #endif /* HAVE_GSTREAMER */
 
 #define MODULE_NAME "player"
+
+int
+player_event_cb (player_t *player, player_event_t e, void *data)
+{
+  if (!player)
+    return -1;
+
+  pthread_mutex_lock (&player->mutex_cb);
+
+  /* send to the frontend event callback */
+  if (player->event_cb)
+    player->event_cb (e, data);
+
+  pthread_mutex_unlock (&player->mutex_cb);
+
+  return 0;
+}
 
 /***************************************************************************/
 /*                                                                         */
@@ -103,6 +121,8 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
+  pthread_mutex_init (&player->mutex_cb, NULL);
+
   if (!player->funcs || !player->priv)
   {
     player_uninit (player);
@@ -138,6 +158,8 @@ player_uninit (player_t *player)
   /* free player specific private properties */
   if (player->funcs->uninit)
     player->funcs->uninit (player);
+
+  pthread_mutex_destroy (&player->mutex_cb);
 
   free (player->funcs);
   free (player);
@@ -427,8 +449,7 @@ player_playback_start (player_t *player)
 #endif
 
   /* notify front-end */
-  if (player->event_cb)
-    player->event_cb (PLAYER_EVENT_PLAYBACK_START, NULL);
+  player_event_cb (player, PLAYER_EVENT_PLAYBACK_START, NULL);
 }
 
 void
@@ -446,8 +467,7 @@ player_playback_stop (player_t *player)
   player->state = PLAYER_STATE_IDLE;
 
   /* notify front-end */
-  if (player->event_cb)
-    player->event_cb (PLAYER_EVENT_PLAYBACK_STOP, NULL);
+  player_event_cb (player, PLAYER_EVENT_PLAYBACK_STOP, NULL);
 }
 
 void

@@ -198,9 +198,12 @@ struct player_s {
   float aspect;         /* video aspect */
   struct x11_s *x11;    /* for X11 video out */
   int (*event_cb) (player_event_t e, void *data); /* frontend event callback */
+  pthread_mutex_t mutex_cb;
   struct player_funcs_s *funcs; /* bindings to player specific functions */ 
   void *priv;           /* specific configuration related to the player type */
 };
+
+int player_event_cb (player_t *player, player_event_t e, void *data);
 
 mrl_properties_audio_t *mrl_properties_audio_new (void);
 void mrl_properties_audio_free (mrl_properties_audio_t *audio);
