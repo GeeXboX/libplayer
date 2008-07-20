@@ -897,15 +897,15 @@ xine_player_set_mute (player_t *player, player_mute_t value)
 }
 
 static void
-xine_player_set_sub_delay (player_t *player, float value)
+xine_player_set_sub_delay (player_t *player, int value)
 {
   int delay;
   xine_player_t *x = NULL;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %.2f", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %i", value);
 
   /* unit is 1/90000 sec */
-  delay = (int) rintf (value * PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV);
+  delay = (int) rintf (value / 1000.0 * PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV);
 
   if (!player)
     return;

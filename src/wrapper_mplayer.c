@@ -2919,14 +2919,18 @@ mplayer_audio_set_delay (player_t *player, int value, int absolute)
 }
 
 static void
-mplayer_set_sub_delay (player_t *player, float value)
+mplayer_set_sub_delay (player_t *player, int value)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %.2f", value);
+  float delay;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %i", value);
 
   if (!player)
     return;
 
-  slave_set_property_float (player, PROPERTY_SUB_DELAY, value);
+  delay = (float) value / 1000.0;
+
+  slave_set_property_float (player, PROPERTY_SUB_DELAY, delay);
 }
 
 static void

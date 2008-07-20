@@ -174,9 +174,9 @@ dummy_set_mute (player_t *player, player_mute_t value)
 }
 
 static void
-dummy_set_sub_delay (player_t *player, float value)
+dummy_set_sub_delay (player_t *player, int value)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %.2f", value);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %i", value);
 }
 
 /* public API */
