@@ -644,6 +644,9 @@ check_cflags -D_LARGEFILE_SOURCE
 check_cflags -D_FILE_OFFSET_BITS=64
 check_cflags -D_REENTRANT
 
+# default extralibs
+add_extralibs -lpthread
+
 #################################################
 #   check for debug symbols
 #################################################
@@ -683,7 +686,6 @@ if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
   check_lib xine.h xine_init -lxine
   if [ "$?" = 0 ]; then
     add_cflags -DHAVE_XINE
-    add_extralibs -lpthread
     add_pkgconfig_requires libxine
     wrapper_xine="yes"
   fi
@@ -697,7 +699,7 @@ if test "$wrapper_mplayer" = "auto"; then
   which mplayer 2>&1 > /dev/null
   if [ "$?" = 0 ]; then
     add_cflags -DHAVE_MPLAYER
-    add_extralibs -lpthread -lm
+    add_extralibs -lm
     wrapper_mplayer="yes"
   fi
 fi
@@ -715,7 +717,6 @@ if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
   check_lib vlc/libvlc.h libvlc_new -lvlc
   if [ "$?" = 0 ]; then
     add_cflags -DHAVE_VLC
-    add_extralibs -lpthread
     wrapper_vlc="yes"
   fi
 fi
@@ -735,7 +736,6 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
   check_lib gst/gst.h gst_init -lgstreamer-0.10
   if [ "$?" = 0 ]; then
     add_cflags -DHAVE_GSTREAMER
-    add_extralibs -lpthread
     add_pkgconfig_requires gstreamer-0.10
     wrapper_gstreamer="yes"
   fi
@@ -752,7 +752,7 @@ if test "$wrapper_xine" = "yes" -o "$wrapper_mplayer" = "yes"; then
     check_ldflags -L$libX11dir
   fi
   check_lib X11/X.h XInitThreads -lX11 || die "Error, can't find libX11 !"
-  add_extralibs -lX11 -lpthread
+  add_extralibs -lX11
   add_pkgconfig_requires x11
   x11="yes"
 fi
