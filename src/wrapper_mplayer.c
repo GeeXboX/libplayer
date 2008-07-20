@@ -632,8 +632,7 @@ thread_fifo (void *arg)
         plog (player, PLAYER_MSG_INFO,
               MODULE_NAME, "Playback of stream has ended");
 
-        if (player->event_cb)
-          player->event_cb (PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+        player_event_cb (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
         if (player->x11)
           x11_unmap (player);
