@@ -153,7 +153,7 @@ typedef struct player_funcs_s {
   void (* video_set_ar) (player_t *player, float value);
 
   /* Subtitles */
-  void (* set_sub_delay) (player_t *player, float value);
+  void (* set_sub_delay) (player_t *player, int value);
   void (* set_sub_alignment) (player_t *player, player_sub_alignment_t a);
   void (* set_sub_pos) (player_t *player, int value);
   void (* set_sub_visibility) (player_t *player, int value);

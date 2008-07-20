@@ -359,7 +359,7 @@ typedef enum player_sub_alignment {
   PLAYER_SUB_ALIGNMENT_BOTTOM,
 } player_sub_alignment_t;
 
-void player_subtitle_set_delay (player_t *player, float value);
+void player_subtitle_set_delay (player_t *player, int value);
 void player_subtitle_set_alignment (player_t *player,
                                     player_sub_alignment_t a);
 void player_subtitle_set_position (player_t *player, int value);

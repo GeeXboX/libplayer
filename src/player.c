@@ -700,7 +700,7 @@ player_video_set_aspect_ratio (player_t *player, float value)
 /***************************************************************************/
 
 void
-player_subtitle_set_delay (player_t *player, float value)
+player_subtitle_set_delay (player_t *player, int value)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
