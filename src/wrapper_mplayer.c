@@ -1790,8 +1790,7 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
     it = strstr (buffer, "ID_LENGTH=");
     if (it == buffer)
     {
-      mrl->prop->length =
-        (uint32_t) (atof (parse_field (it)) * 1000.0);
+      mrl->prop->length = (uint32_t) (atof (parse_field (it)) * 1000.0);
       return 1;
     }
     break;
