@@ -197,6 +197,7 @@ typedef enum slave_property {
   PROPERTY_ANGLE,
   PROPERTY_AUDIO_BITRATE,
   PROPERTY_AUDIO_CODEC,
+  PROPERTY_AUDIO_DELAY,
   PROPERTY_CHANNELS,
   PROPERTY_FRAMEDROPPING,
   PROPERTY_HEIGHT,
@@ -228,6 +229,7 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_ANGLE]            = {"angle",            ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_AUDIO_DELAY]      = {"audio_delay",      ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_CHANNELS]         = {"channels",         ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_FRAMEDROPPING]    = {"framedropping",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_HEIGHT]           = {"height",           ITEM_ON,  ITEM_OFF, NULL},
@@ -948,6 +950,7 @@ slave_set_property (player_t *player, slave_property_t property,
     send_to_slave (player, "%s %i", cmd, value.i_val);
     break;
 
+  case PROPERTY_AUDIO_DELAY:
   case PROPERTY_SPEED:
   case PROPERTY_SUB_DELAY:
     send_to_slave (player, "%s %.2f", cmd, value.f_val);
@@ -2893,6 +2896,29 @@ mplayer_set_mute (player_t *player, player_mute_t value)
 }
 
 static void
+mplayer_audio_set_delay (player_t *player, int value, int absolute)
+{
+  float delay = 0.0;
+  int val;
+
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "audio_set_delay: %i %i", value, absolute);
+
+  if (!player)
+    return;
+
+  if (!absolute)
+    delay = slave_get_property_float (player, PROPERTY_AUDIO_DELAY);
+
+  delay += (float) value / 1000.0;
+  val = (int) rintf (delay);
+  if (!check_range (player, PROPERTY_AUDIO_DELAY, &val, 0))
+    return;
+
+  slave_set_property_float (player, PROPERTY_AUDIO_DELAY, delay);
+}
+
+static void
 mplayer_set_sub_delay (player_t *player, float value)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_sub_delay: %.2f", value);
@@ -3083,7 +3109,7 @@ register_functions_mplayer (void)
   funcs->set_volume         = mplayer_set_volume;
   funcs->get_mute           = mplayer_get_mute;
   funcs->set_mute           = mplayer_set_mute;
-  funcs->audio_set_delay    = NULL;
+  funcs->audio_set_delay    = mplayer_audio_set_delay;
   funcs->audio_select       = NULL;
   funcs->audio_prev         = NULL;
   funcs->audio_next         = NULL;
