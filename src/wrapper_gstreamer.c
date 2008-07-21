@@ -219,7 +219,7 @@ gstreamer_player_playback_start (player_t *player)
   g = (gstreamer_player_t *) player->priv;
   memset (mrl, '\0', PATH_MAX + 16);
 
-  switch (player->mrl->resource)
+  switch (mrl_get_resource (player, NULL))
   {
   case MRL_RESOURCE_FILE:
   {

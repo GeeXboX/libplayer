@@ -34,6 +34,7 @@
 #include "player.h"
 #include "player_internals.h"
 #include "logs.h"
+#include "playlist.h"
 #include "wrapper_xine.h"
 #include "x11_common.h"
 
@@ -63,11 +64,14 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
   {
   case XINE_EVENT_UI_PLAYBACK_FINISHED:
   {
+    mrl_t *mrl;
+
     plog (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Playback of stream has ended"); 
     player_event_cb (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
     /* X11 */
-    if (player->x11 && !mrl_uses_vo (player->mrl))
+    mrl = playlist_get_mrl (player->playlist);
+    if (player->x11 && !mrl_uses_vo (mrl))
       x11_unmap (player);
     break;
   }
@@ -614,6 +618,7 @@ xine_player_playback_start (player_t *player)
   char *mrl = NULL;
   xine_player_t *x = NULL;
   char *uri = NULL;
+  mrl_t *mrl_c;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
@@ -622,20 +627,21 @@ xine_player_playback_start (player_t *player)
 
   x = (xine_player_t *) player->priv;
 
-  if (!x->stream || !player->mrl)
+  mrl_c = playlist_get_mrl (player->playlist);
+  if (!x->stream || !mrl_c)
     return PLAYER_PB_ERROR;
 
-  uri = xine_resource_get_uri (player->mrl);
+  uri = xine_resource_get_uri (mrl_c);
   if (!uri)
     return PLAYER_PB_ERROR;
 
   /* add subtitle to the MRL */
-  if (player->mrl->subs) {
+  if (mrl_c->subs) {
     mrl = malloc (strlen (uri) +
-                  strlen (player->mrl->subs[0]) + 11);
+                  strlen (mrl_c->subs[0]) + 11);
 
     if (mrl)
-      sprintf (mrl, "%s#subtitle:%s", uri, player->mrl->subs[0]);
+      sprintf (mrl, "%s#subtitle:%s", uri, mrl_c->subs[0]);
   }
   /* or take only the name */
   else
@@ -647,7 +653,7 @@ xine_player_playback_start (player_t *player)
     return PLAYER_PB_ERROR;
 
   /* X11 */
-  if (player->x11 && !mrl_uses_vo (player->mrl))
+  if (player->x11 && !mrl_uses_vo (mrl_c))
     x11_map (player);
 
   xine_open (x->stream, mrl);
@@ -661,6 +667,7 @@ xine_player_playback_start (player_t *player)
 static void
 xine_player_playback_stop (player_t *player)
 {
+  mrl_t *mrl;
   xine_player_t *x = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
@@ -674,7 +681,8 @@ xine_player_playback_stop (player_t *player)
     return;
 
   /* X11 */
-  if (player->x11 && !mrl_uses_vo (player->mrl))
+  mrl = playlist_get_mrl (player->playlist);
+  if (player->x11 && !mrl_uses_vo (mrl))
     x11_unmap (player);
 
   xine_stop (x->stream);

@@ -28,6 +28,7 @@
 #include "player.h"
 #include "player_internals.h"
 #include "logs.h"
+#include "playlist.h"
 
 /* players wrappers */
 #include "wrapper_dummy.h"
@@ -84,6 +85,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   player->ao = ao;
   player->vo = vo;
   player->event_cb = event_cb;
+  player->playlist = playlist_new (0, 0, PLAYER_LOOP_DISABLE);
 
   switch (player->type)
   {
@@ -152,15 +154,13 @@ player_uninit (player_t *player)
   if (!player)
     return;
 
-  if (player->mrl)
-    mrl_list_free (player->mrl);
-
   /* free player specific private properties */
   if (player->funcs->uninit)
     player->funcs->uninit (player);
 
   pthread_mutex_destroy (&player->mutex_cb);
 
+  playlist_free (player->playlist);
   free (player->funcs);
   free (player);
 }
@@ -194,7 +194,7 @@ player_mrl_get_current (player_t *player)
   if (!player)
     return NULL;
 
-  return player->mrl;
+  return playlist_get_mrl (player->playlist);
 }
 
 void
@@ -205,14 +205,7 @@ player_mrl_set (player_t *player, mrl_t *mrl)
   if (!player || !mrl)
     return;
 
-  if (player->mrl) {
-    player_playback_stop (player);
-    mrl->prev = player->mrl->prev;
-    mrl->next = player->mrl->next;
-    mrl_free (player->mrl, 0);
-  }
-
-  player->mrl = mrl;
+  playlist_set_mrl (player->playlist, mrl);
 }
 
 void
@@ -223,25 +216,13 @@ player_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when)
   if (!player || !mrl)
     return;
 
-  /* create/expand the playlist */
-  if (!player->mrl) /* empty list */
-    player->mrl = mrl;
-  else /* create double-linked playlist, appending new MRL to the bottom */
-  {
-    mrl_t *list;
-
-    list = player->mrl;
-    while (list->next)
-      list = list->next;
-    list->next = mrl;
-    mrl->prev = list;
-  }
+  playlist_append_mrl (player->playlist, mrl);
 
   /* play it now ? */
   if (when == PLAYER_MRL_ADD_NOW)
   {
     player_playback_stop (player);
-    player->mrl = mrl;
+    playlist_last_mrl (player->playlist);
     player_playback_start (player);
   }
 }
@@ -249,98 +230,56 @@ player_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when)
 void
 player_mrl_remove (player_t *player)
 {
-  mrl_t *mrl, *mrl_p = NULL, *mrl_n = NULL;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  mrl = player->mrl;
-  if (!mrl)
-    return;
-
-  mrl_p = mrl->prev;
-  mrl_n = mrl->next;
-
-  player_playback_stop (player);
-  mrl_free (mrl, 0);
-
-  /* link previous with the next and use the next as the current MRL */
-  if (mrl_p && mrl_n) {
-    mrl_p->next = mrl_n;
-    mrl_n->prev = mrl_p;
-    player->mrl = mrl_n;
-  }
-  /* use the previous as the current MRL */
-  else if (mrl_p) {
-    mrl_p->next = NULL;
-    player->mrl = mrl_p;
-  }
-  /* use the next as the current MRL */
-  else if (mrl_n) {
-    mrl_n->prev = NULL;
-    player->mrl = mrl_n;
-  }
-  else
-    player->mrl = NULL;
+  playlist_remove_mrl (player->playlist);
 }
 
 void
 player_mrl_remove_all (player_t *player)
 {
-  mrl_t *mrl;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  mrl = player->mrl;
-  if (!mrl)
-    return;
-
   player_playback_stop (player);
 
-  mrl_list_free (mrl);
-  player->mrl = NULL;
+  playlist_empty (player->playlist);
 }
 
 void
 player_mrl_previous (player_t *player)
 {
-  mrl_t *mrl;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  mrl = player->mrl;
-  if (!mrl || !mrl->prev)
+  if (!playlist_previous_mrl_available (player->playlist))
     return;
 
   player_playback_stop (player);
-  player->mrl = mrl->prev;
+  playlist_previous_mrl (player->playlist);
   player_playback_start (player);
 }
 
 void
 player_mrl_next (player_t *player)
 {
-  mrl_t *mrl;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  mrl = player->mrl;
-  if (!mrl || !mrl->next)
+  if (!playlist_next_mrl_available (player->playlist))
     return;
 
   player_playback_stop (player);
-  player->mrl = mrl->next;
+  playlist_next_mrl (player->playlist);
   player_playback_start (player);
 }
 
@@ -375,8 +314,7 @@ player_set_loop (player_t *player, player_loop_t loop, int value)
   if (!player)
     return;
 
-  player->loop_mode = loop;
-  player->loop = value;
+  playlist_set_loop (player->playlist, value, loop);
 }
 
 void
@@ -387,7 +325,7 @@ player_set_shuffle (player_t *player, int value)
   if (!player)
     return;
 
-  player->shuffle = value;
+  playlist_set_shuffle (player->playlist, value);
 }
 
 void
@@ -424,10 +362,10 @@ player_playback_start (player_t *player)
   if (player->state != PLAYER_STATE_IDLE) /* already running : stop it */
     player_playback_stop (player);
 
-  if (!player->mrl) /* nothing to playback */
+  mrl = playlist_get_mrl (player->playlist);
+  if (!mrl) /* nothing to playback */
     return;
 
-  mrl = player->mrl;
   if (mrl->prop && mrl->prop->video) {
     video = mrl->prop->video;
     player->w = video->width;

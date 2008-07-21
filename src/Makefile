@@ -18,6 +18,7 @@ SHARED_LIBNAME_MAJOR = $(SHARED_LIBNAME).$(shell echo $(LIBPLAYER_VERSION) | cut
 
 SRCS =  player.c \
 	mrl.c \
+	playlist.c \
 	logs.c \
 	wrapper_dummy.c
 

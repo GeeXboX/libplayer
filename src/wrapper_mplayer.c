@@ -36,6 +36,7 @@
 #include "player.h"
 #include "player_internals.h"
 #include "logs.h"
+#include "playlist.h"
 #include "wrapper_mplayer.h"
 #include "x11_common.h"
 
@@ -2642,6 +2643,7 @@ mplayer_playback_start (player_t *player)
 {
   mplayer_t *mplayer = NULL;
   char *uri = NULL;
+  mrl_t *mrl;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
@@ -2653,10 +2655,11 @@ mplayer_playback_start (player_t *player)
   if (!mplayer)
     return PLAYER_PB_FATAL;
 
-  if (!player->mrl)
+  mrl = playlist_get_mrl (player->playlist);
+  if (!mrl)
     return PLAYER_PB_ERROR;
 
-  uri = mp_resource_get_uri (player->mrl);
+  uri = mp_resource_get_uri (mrl);
   if (!uri)
     return PLAYER_PB_ERROR;
 
@@ -2676,12 +2679,12 @@ mplayer_playback_start (player_t *player)
   pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* set parameters */
-  mp_resource_load_args (player, player->mrl);
+  mp_resource_load_args (player, mrl);
 
   /* load subtitle if exists */
-  if (player->mrl->subs)
+  if (mrl->subs)
   {
-    char **sub = player->mrl->subs;
+    char **sub = mrl->subs;
     slave_set_property_flag (player, PROPERTY_SUB_VISIBILITY, 1);
     while (*sub)
     {
@@ -2691,7 +2694,7 @@ mplayer_playback_start (player_t *player)
     slave_set_property_int (player, PROPERTY_SUB, 0);
   }
 
-  if (player->x11 && !mrl_uses_vo (player->mrl))
+  if (player->x11 && !mrl_uses_vo (mrl))
     x11_map (player);
 
   return PLAYER_PB_OK;
@@ -2701,6 +2704,7 @@ static void
 mplayer_playback_stop (player_t *player)
 {
   mplayer_t *mplayer = NULL;
+  mrl_t *mrl;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
 
@@ -2722,7 +2726,8 @@ mplayer_playback_stop (player_t *player)
   mplayer->status = MPLAYER_IS_IDLE;
   pthread_mutex_unlock (&mplayer->mutex_status);
 
-  if (player->x11 && !mrl_uses_vo (player->mrl))
+  mrl = playlist_get_mrl (player->playlist);
+  if (player->x11 && !mrl_uses_vo (mrl))
     x11_unmap (player);
 
   slave_cmd (player, SLAVE_STOP);
