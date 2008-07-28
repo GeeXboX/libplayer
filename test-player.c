@@ -81,6 +81,8 @@
 static int
 event_cb (player_event_t e, void *data)
 {
+  printf ("Received event (%i)\n", e);
+
   if (e == PLAYER_EVENT_PLAYBACK_FINISHED)
     printf ("PLAYBACK FINISHED\n");
 
