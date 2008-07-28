@@ -1,0 +1,76 @@
+
+ Event Handler
+ ~~~~~~~~~~~~~
+
+ concern: event.[ch] event_handler.[ch] supervisor.h
+
+   The event handler manages all events sent with event_send() "event.c". This
+ handler is not dependant of a supervisor. At the initialization, some
+ variables needed for a synchronization can be ignored. And in this case, the
+ handler is concurrent accordingly to the internal library _and_ the public API.
+
+   To have asynchroneous public events but _not concurrent_, it is necessary
+ to use a supervisor. The function event_send() can call a special function
+ provided by the supervisor. This function is recatch() and releases the
+ supervisor in favor of the event handler. So, when the event handler calls
+ it own release() function, the supervisor can catch() the synchronization to
+ continue the job previously interrupted by the event.
+  This functionality can be compared as a preemption (1) by the event handler
+ on the supervisor. You can only use this, if the variables for synchronization
+ are used at the init (player_init() "player.c").
+
+   With MPlayer wrapper, the event handler is really interresting because it
+ will not block the parser. Before, when an event was sent, the MPlayer parser
+ was blocked in the public callback, then it was impossible to the
+ parser to finish correctly the job at the right time.
+
+
+ Supervisor
+ ~~~~~~~~~~
+
+ concern: supervisor.[ch] player_internal.c mrl_internal.c
+
+   The main goal of the supervisor is the serialization of all actions sent
+ from the public API. The supervisor executes only a job even if the public
+ API is used in concurrency. When a job is finished, the next is pop'ed from
+ a queue. But if the synchronization variables are used, then the supervisor
+ will released in favor of the event handler. Then each turn, the supervisor
+ and the event handler is working (this is right only if the supervisor is not
+ preempted (1) by the event_send() function, for example when an event is sent
+ with the MPlayer parser or from Xine, VLC or GStreamer callbacks).
+
+   Two modes exists to send a control to the supervisor. First is WAIT_FOR_END,
+ then the function will return only when the internal function is finished.
+ This mode is mandatory with all functions that use an input and (or) an
+ output variable(s).
+   The second mode is NO_WAIT, then the function will return when this job
+ is pop'ed from the queue. This is really useful when a control is sent from
+ the internal callback, because the event handler is not blocked in the
+ internal callback when the supervisor is executing the job.
+
+   Warning: it is prohibited to use public API from the internal stuff because
+ that will create deadlocks on the supervisor, always use player_internal
+ and mrl_internal functions.
+
+   Never send events from the public API, that will break the M-T Safe (2)
+ state of the function. Only _one_ supervisor_send() must exist in every
+ public function!
+
+
+ Comments
+ ~~~~~~~~
+
+   An other way (simpler) exists to send events without to use the recatch()
+ functionality. The first idea was used the SCHED_RR with the supervisor and
+ event_handler threads. In this case, priorities can be set and the events
+ can be sent to the supervisor instead of sent directly to the public callback.
+ But that is possible only with root privileges!
+
+
+
+  (1) preemption (preempted) is not used here as a reference to the Real-Time,
+      but only like a naive comparison.
+
+  (2) not all public functions are M-T Safe; player_init() and player_uninit()
+      must be used only as the first and as the last function called for a
+      specific player_t object. And some MRL functions are only reentrants.
