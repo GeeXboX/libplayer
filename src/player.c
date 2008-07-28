@@ -64,6 +64,9 @@ player_event_cb (void *data, int e, void *data_cb)
   if (player->event_cb)
     res = player->event_cb (e, data_cb);
 
+  if (e == PLAYER_EVENT_PLAYBACK_FINISHED)
+    player->state = PLAYER_STATE_IDLE;
+
   /* release for supervisor */
   event_handler_sync_release (player->event);
 
