@@ -26,6 +26,7 @@
 struct x11_s;
 struct playlist_s;
 struct event_handler_s;
+struct supervisor_s;
 
 typedef enum init_status {
   PLAYER_INIT_OK,
@@ -200,6 +201,7 @@ struct player_s {
   struct event_handler_s *event; /* event handler */
   int (*event_cb) (player_event_t e, void *data); /* frontend event callback */
   struct player_funcs_s *funcs; /* bindings to player specific functions */ 
+  struct supervisor_s *supervisor; /* manage all public operations */
   void *priv;           /* specific configuration related to the player type */
 };
 
