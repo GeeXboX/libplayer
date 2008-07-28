@@ -431,6 +431,103 @@ mrl_retrieve_properties (player_t *player, mrl_t *mrl)
   mrl_properties_plog (player, mrl);
 }
 
+static void
+mrl_metadata_plog (player_t *player, mrl_t *mrl)
+{
+  mrl_metadata_t *meta;
+
+  if (!player || !mrl)
+    return;
+
+  meta = mrl->meta;
+  if (!meta)
+    return;
+
+  if (meta->title)
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Title: %s", meta->title);
+
+  if (meta->artist)
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Artist: %s", meta->artist);
+
+  if (meta->genre)
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Genre: %s", meta->genre);
+
+  if (meta->album)
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Album: %s", meta->album);
+
+  if (meta->year)
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Year: %s", meta->year);
+
+  if (meta->track)
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Track: %s", meta->track);
+
+  if (meta->comment)
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta Comment: %s", meta->comment);
+
+  if (!meta->priv)
+    return;
+
+  switch (mrl->resource)
+  {
+  case MRL_RESOURCE_CDDA:
+  case MRL_RESOURCE_CDDB:
+  {
+    int cnt = 1;
+    mrl_metadata_cd_t *cd = meta->priv;
+    mrl_metadata_cd_track_t *track = cd->track;
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta CD DiscID: %08lx", cd->discid);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta CD Tracks: %i", cd->tracks);
+
+    while (track)
+    {
+      if (track->name)
+        plog (player, PLAYER_MSG_INFO,
+              MODULE_NAME, "Meta CD Track %i Name: %s", cnt, track->name);
+
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Meta CD Track %i Length: %i ms", cnt, track->length);
+
+      cnt++;
+      track = track->next;
+    }
+  }
+
+  default:
+    break;
+  }
+}
+
+void
+mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player || !mrl)
+    return;
+
+  if (mrl->meta) /* already retrieved */
+    return;
+
+  mrl->meta = mrl_metadata_new (mrl->resource);
+
+  /* player specific init */
+  if (player->funcs->mrl_retrieve_meta)
+    player->funcs->mrl_retrieve_meta (player, mrl);
+
+  mrl_metadata_plog (player, mrl);
+}
+
 /*****************************************************************************/
 /*                   MRL Internal (Supervisor) functions                     */
 /*****************************************************************************/
@@ -579,103 +676,6 @@ mrl_sv_get_size (player_t *player, mrl_t *mrl)
   return prop->size;
 }
 
-static void
-mrl_metadata_plog (player_t *player, mrl_t *mrl)
-{
-  mrl_metadata_t *meta;
-
-  if (!player || !mrl)
-    return;
-
-  meta = mrl->meta;
-  if (!meta)
-    return;
-
-  if (meta->title)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Title: %s", meta->title);
-
-  if (meta->artist)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Artist: %s", meta->artist);
-
-  if (meta->genre)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Genre: %s", meta->genre);
-
-  if (meta->album)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Album: %s", meta->album);
-
-  if (meta->year)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Year: %s", meta->year);
-
-  if (meta->track)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Track: %s", meta->track);
-
-  if (meta->comment)
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta Comment: %s", meta->comment);
-
-  if (!meta->priv)
-    return;
-
-  switch (mrl->resource)
-  {
-  case MRL_RESOURCE_CDDA:
-  case MRL_RESOURCE_CDDB:
-  {
-    int cnt = 1;
-    mrl_metadata_cd_t *cd = meta->priv;
-    mrl_metadata_cd_track_t *track = cd->track;
-
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta CD DiscID: %08lx", cd->discid);
-
-    plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Meta CD Tracks: %i", cd->tracks);
-
-    while (track)
-    {
-      if (track->name)
-        plog (player, PLAYER_MSG_INFO,
-              MODULE_NAME, "Meta CD Track %i Name: %s", cnt, track->name);
-
-      plog (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Meta CD Track %i Length: %i ms", cnt, track->length);
-
-      cnt++;
-      track = track->next;
-    }
-  }
-
-  default:
-    break;
-  }
-}
-
-void
-mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
-
-  if (!player || !mrl)
-    return;
-
-  if (mrl->meta) /* already retrieved */
-    return;
-
-  mrl->meta = mrl_metadata_new (mrl->resource);
-
-  /* player specific init */
-  if (player->funcs->mrl_retrieve_meta)
-    player->funcs->mrl_retrieve_meta (player, mrl);
-
-  mrl_metadata_plog (player, mrl);
-}
-
 char *
 mrl_sv_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m)
 {
@@ -811,6 +811,38 @@ mrl_sv_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
   }
 }
 
+mrl_type_t
+mrl_sv_get_type (player_t *player, mrl_t *mrl)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return MRL_TYPE_UNKNOWN;
+
+  /* try to use internal mrl? */
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
+    return MRL_TYPE_UNKNOWN;
+
+  return mrl->type;
+}
+
+mrl_resource_t
+mrl_sv_get_resource (player_t *player, mrl_t *mrl)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return MRL_RESOURCE_UNKNOWN;
+
+  /* try to use internal mrl? */
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
+    return MRL_RESOURCE_UNKNOWN;
+
+  return mrl->resource;
+}
+
 mrl_t *
 mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
 {
@@ -849,36 +881,4 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
   mrl->type = mrl_guess_type (mrl);   /* can guess only if properties exist */
 
   return mrl;
-}
-
-mrl_type_t
-mrl_sv_get_type (player_t *player, mrl_t *mrl)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
-
-  if (!player)
-    return MRL_TYPE_UNKNOWN;
-
-  /* try to use internal mrl? */
-  mrl_use_internal (player, &mrl);
-  if (!mrl)
-    return MRL_TYPE_UNKNOWN;
-
-  return mrl->type;
-}
-
-mrl_resource_t
-mrl_sv_get_resource (player_t *player, mrl_t *mrl)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
-
-  if (!player)
-    return MRL_RESOURCE_UNKNOWN;
-
-  /* try to use internal mrl? */
-  mrl_use_internal (player, &mrl);
-  if (!mrl)
-    return MRL_RESOURCE_UNKNOWN;
-
-  return mrl->resource;
 }
