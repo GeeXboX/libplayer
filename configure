@@ -662,8 +662,9 @@ add_extralibs -lpthread
 #   check for debug symbols
 #################################################
 if enabled debug; then
-  add_cflags -g3
+  add_cflags -g3 -O0
   add_cflags -DHAVE_DEBUG
+  optimize="no"
 fi
 
 if enabled optimize; then
