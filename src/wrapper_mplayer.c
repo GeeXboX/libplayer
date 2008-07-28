@@ -500,12 +500,12 @@ thread_fifo (void *arg)
   player = (player_t *) arg;
 
   if (!player)
-    pthread_exit (0);
+    pthread_exit (NULL);
 
   mplayer = (mplayer_t *) player->priv;
 
   if (!mplayer || !mplayer->fifo_out)
-    pthread_exit (0);
+    pthread_exit (NULL);
 
   /* MPlayer's stdout parser */
   while (fgets (buffer, FIFO_BUFFER, mplayer->fifo_out))
@@ -762,7 +762,7 @@ thread_fifo (void *arg)
   mplayer->status = MPLAYER_IS_DEAD;
   pthread_mutex_unlock (&mplayer->mutex_status);
 
-  pthread_exit (0);
+  pthread_exit (NULL);
 }
 
 /*****************************************************************************/
