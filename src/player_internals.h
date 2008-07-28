@@ -214,7 +214,11 @@ void mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res);
 mrl_metadata_cd_track_t *mrl_metadata_cd_track_new (void);
 void mrl_metadata_cd_track_append (mrl_metadata_cd_t *cd,
                                    mrl_metadata_cd_track_t *track);
-
+void mrl_resource_local_free (mrl_resource_local_args_t *args);
+void mrl_resource_cd_free (mrl_resource_cd_args_t *args);
+void mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args);
+void mrl_resource_tv_free (mrl_resource_tv_args_t *args);
+void mrl_resource_network_free (mrl_resource_network_args_t *args);
 int mrl_uses_vo (mrl_t *mrl);
 int mrl_uses_ao (mrl_t *mrl);
 
