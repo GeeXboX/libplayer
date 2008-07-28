@@ -28,6 +28,7 @@
 #include "player.h"
 #include "player_internals.h"
 #include "logs.h"
+#include "event.h"
 #include "playlist.h"
 #include "event_handler.h"
 
@@ -48,9 +49,11 @@
 
 #define MODULE_NAME "player"
 
-int
-player_event_cb (player_t *player, player_event_t e, void *data)
+static int
+player_event_cb (void *data, int e, void *data_cb)
 {
+  player_t *player = data;
+
   if (!player)
     return -1;
 
@@ -58,7 +61,7 @@ player_event_cb (player_t *player, player_event_t e, void *data)
 
   /* send to the frontend event callback */
   if (player->event_cb)
-    player->event_cb (e, data);
+    player->event_cb (e, data_cb);
 
   pthread_mutex_unlock (&player->mutex_cb);
 
@@ -133,7 +136,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
     return NULL;
   }
 
-  player->event = event_handler_register (player, NULL);
+  player->event = event_handler_register (player, player_event_cb);
   if (!player->event)
   {
     player_uninit (player);
@@ -412,7 +415,7 @@ player_playback_start (player_t *player)
 #endif
 
   /* notify front-end */
-  player_event_cb (player, PLAYER_EVENT_PLAYBACK_START, NULL);
+  event_send (player, PLAYER_EVENT_PLAYBACK_START, NULL);
 }
 
 void
@@ -430,7 +433,7 @@ player_playback_stop (player_t *player)
   player->state = PLAYER_STATE_IDLE;
 
   /* notify front-end */
-  player_event_cb (player, PLAYER_EVENT_PLAYBACK_STOP, NULL);
+  event_send (player, PLAYER_EVENT_PLAYBACK_STOP, NULL);
 }
 
 void

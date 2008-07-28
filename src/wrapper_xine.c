@@ -35,6 +35,7 @@
 #include "player_internals.h"
 #include "logs.h"
 #include "playlist.h"
+#include "event.h"
 #include "wrapper_xine.h"
 #include "x11_common.h"
 
@@ -66,7 +67,7 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
   {
     plog (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Playback of stream has ended"); 
-    player_event_cb (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+    event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
     /* X11 */
     if (player->x11)
       x11_unmap (player);

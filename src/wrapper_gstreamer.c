@@ -36,6 +36,7 @@
 #include "player.h"
 #include "player_internals.h"
 #include "logs.h"
+#include "event.h"
 #include "wrapper_gstreamer.h"
 #include "x11_common.h"
 
@@ -69,7 +70,7 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
     gst_element_set_state (g->bin, GST_STATE_NULL);
 
     /* tell player */
-    player_event_cb (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+    event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
     break;
   }

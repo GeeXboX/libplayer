@@ -203,8 +203,6 @@ struct player_s {
   void *priv;           /* specific configuration related to the player type */
 };
 
-int player_event_cb (player_t *player, player_event_t e, void *data);
-
 mrl_properties_audio_t *mrl_properties_audio_new (void);
 void mrl_properties_audio_free (mrl_properties_audio_t *audio);
 mrl_properties_video_t *mrl_properties_video_new (void);
