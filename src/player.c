@@ -29,6 +29,7 @@
 #include "player_internals.h"
 #include "logs.h"
 #include "playlist.h"
+#include "event_handler.h"
 
 /* players wrappers */
 #include "wrapper_dummy.h"
@@ -77,6 +78,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
 {
   player_t *player = NULL;
   init_status_t res = PLAYER_INIT_ERROR;
+  int ret;
 
   player = calloc (1, sizeof (player_t));
   player->type = type;
@@ -131,6 +133,25 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
     return NULL;
   }
 
+  player->event = event_handler_register (player, NULL);
+  if (!player->event)
+  {
+    player_uninit (player);
+    return NULL;
+  }
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "event_handler_init");
+  ret = event_handler_init (player->event, NULL, NULL, NULL);
+  if (ret)
+  {
+    plog (player, PLAYER_MSG_ERROR,
+          MODULE_NAME, "failed to init event handler");
+    player_uninit (player);
+    return NULL;
+  }
+
+  event_handler_enable (player->event);
+
   player_set_verbosity (player, verbosity);
 
   /* player specific init */
@@ -159,6 +180,10 @@ player_uninit (player_t *player)
     player->funcs->uninit (player);
 
   pthread_mutex_destroy (&player->mutex_cb);
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "event_handler_uninit");
+  event_handler_disable (player->event);
+  event_handler_uninit (player->event);
 
   playlist_free (player->playlist);
   free (player->funcs);

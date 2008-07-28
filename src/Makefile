@@ -21,6 +21,8 @@ SRCS =  player.c \
 	playlist.c \
 	logs.c \
 	fifo_queue.c \
+	event.c \
+	event_handler.c \
 	wrapper_dummy.c
 
 ifeq ($(WRAPPER_MPLAYER),yes)

@@ -25,6 +25,7 @@
 
 struct x11_s;
 struct playlist_s;
+struct event_handler_s;
 
 typedef enum init_status {
   PLAYER_INIT_OK,
@@ -195,6 +196,7 @@ struct player_s {
   int w, h;             /* video size */
   float aspect;         /* video aspect */
   struct x11_s *x11;    /* for X11 video out */
+  struct event_handler_s *event; /* event handler */
   int (*event_cb) (player_event_t e, void *data); /* frontend event callback */
   pthread_mutex_t mutex_cb;
   struct player_funcs_s *funcs; /* bindings to player specific functions */ 
