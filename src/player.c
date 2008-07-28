@@ -28,7 +28,7 @@
 #include "player.h"
 #include "player_internals.h"
 #include "logs.h"
-#include "playlist.h"
+#include "playlist.h" /* playlist_new playlist_free */
 #include "supervisor.h"
 #include "event_handler.h"
 
