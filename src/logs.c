@@ -19,6 +19,7 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -55,15 +56,20 @@ plog (player_t *player, player_verbosity_level_t level,
     [PLAYER_MSG_CRITICAL] = "Crit",
   };
   va_list va;
+  int verbosity;
 
   if (!player || !format)
     return;
 
+  pthread_mutex_lock (&player->mutex_verb);
+  verbosity = player->verbosity;
+  pthread_mutex_unlock (&player->mutex_verb);
+
   /* do we really want loging ? */
-  if (player->verbosity == PLAYER_MSG_NONE)
+  if (verbosity == PLAYER_MSG_NONE)
     return;
 
-  if (level < player->verbosity)
+  if (level < verbosity)
     return;
 
   va_start (va, format);

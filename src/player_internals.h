@@ -188,6 +188,7 @@ typedef struct player_funcs_s {
 struct player_s {
   player_type_t type;   /* the type of player we'll use */
   player_verbosity_level_t verbosity;
+  pthread_mutex_t mutex_verb;
   struct playlist_s *playlist; /* playlist */
   player_state_t state; /* state of the playback */
   player_ao_t ao;       /* audio output driver name */

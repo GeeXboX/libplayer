@@ -92,6 +92,8 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   player->event_cb = event_cb;
   player->playlist = playlist_new (0, 0, PLAYER_LOOP_DISABLE);
 
+  pthread_mutex_init (&player->mutex_verb, NULL);
+
   switch (player->type)
   {
 #ifdef HAVE_XINE
@@ -189,6 +191,7 @@ player_uninit (player_t *player)
   event_handler_uninit (player->event);
 
   playlist_free (player->playlist);
+  pthread_mutex_destroy (&player->mutex_verb);
   free (player->funcs);
   free (player);
 }
@@ -201,7 +204,9 @@ player_set_verbosity (player_t *player, player_verbosity_level_t level)
   if (!player)
     return;
 
+  pthread_mutex_lock (&player->mutex_verb);
   player->verbosity = level;
+  pthread_mutex_unlock (&player->mutex_verb);
 
   /* player specific verbosity level */
   if (player->funcs->set_verbosity)
