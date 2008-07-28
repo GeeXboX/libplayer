@@ -2445,7 +2445,7 @@ mplayer_init (player_t *player)
 
     pthread_mutex_lock (&mplayer->mutex_start);
     if (!pthread_create (&mplayer->th_fifo, &attr,
-                         thread_fifo, (void *) player))
+                         thread_fifo, player))
     {
       int start_ok;
 
