@@ -411,6 +411,15 @@ mrl_uses_ao (mrl_t *mrl)
   return 1;
 }
 
+static inline void
+mrl_use_internal (player_t *player, mrl_t **mrl)
+{
+  if (!mrl || *mrl)
+    return;
+
+  *mrl = playlist_get_mrl (player->playlist);
+}
+
 static void
 mrl_properties_plog (player_t *player, mrl_t *mrl)
 {
@@ -514,9 +523,8 @@ mrl_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
     return 0;
 
   /* try to use internal mrl? */
-  if (!mrl && playlist_count_mrl (player->playlist))
-    mrl = playlist_get_mrl (player->playlist);
-  else if (!mrl)
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
     return 0;
 
   if (!mrl->prop)
@@ -583,9 +591,8 @@ mrl_get_audio_codec (player_t *player, mrl_t *mrl)
     return NULL;
 
   /* try to use internal mrl? */
-  if (!mrl && playlist_count_mrl (player->playlist))
-    mrl = playlist_get_mrl (player->playlist);
-  else if (!mrl)
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
     return NULL;
 
   if (!mrl->prop)
@@ -611,9 +618,8 @@ mrl_get_video_codec (player_t *player, mrl_t *mrl)
     return NULL;
 
   /* try to use internal mrl? */
-  if (!mrl && playlist_count_mrl (player->playlist))
-    mrl = playlist_get_mrl (player->playlist);
-  else if (!mrl)
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
     return NULL;
 
   if (!mrl->prop)
@@ -638,9 +644,8 @@ mrl_get_size (player_t *player, mrl_t *mrl)
     return 0;
 
   /* try to use internal mrl? */
-  if (!mrl && playlist_count_mrl (player->playlist))
-    mrl = playlist_get_mrl (player->playlist);
-  else if (!mrl)
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
     return 0;
 
   if (!mrl->prop)
@@ -759,9 +764,8 @@ mrl_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m)
     return NULL;
 
   /* try to use internal mrl? */
-  if (!mrl && playlist_count_mrl (player->playlist))
-    mrl = playlist_get_mrl (player->playlist);
-  else if (!mrl)
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
     return NULL;
 
   if (!mrl->meta)
@@ -811,9 +815,8 @@ mrl_get_metadata_cd_track (player_t *player,
     return NULL;
 
   /* try to use internal mrl? */
-  if (!mrl && playlist_count_mrl (player->playlist))
-    mrl = playlist_get_mrl (player->playlist);
-  else if (!mrl)
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
     return NULL;
 
   if (mrl->resource != MRL_RESOURCE_CDDA && mrl->resource != MRL_RESOURCE_CDDB)
@@ -854,9 +857,8 @@ mrl_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
     return 0;
 
   /* try to use internal mrl? */
-  if (!mrl && playlist_count_mrl (player->playlist))
-    mrl = playlist_get_mrl (player->playlist);
-  else if (!mrl)
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
     return 0;
 
   if (mrl->resource != MRL_RESOURCE_CDDA && mrl->resource != MRL_RESOURCE_CDDB)
@@ -961,9 +963,8 @@ mrl_get_type (player_t *player, mrl_t *mrl)
     return MRL_TYPE_UNKNOWN;
 
   /* try to use internal mrl? */
-  if (!mrl && playlist_count_mrl (player->playlist))
-    mrl = playlist_get_mrl (player->playlist);
-  else if (!mrl)
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
     return MRL_TYPE_UNKNOWN;
 
   return mrl->type;
@@ -978,9 +979,8 @@ mrl_get_resource (player_t *player, mrl_t *mrl)
     return MRL_RESOURCE_UNKNOWN;
 
   /* try to use internal mrl? */
-  if (!mrl && playlist_count_mrl (player->playlist))
-    mrl = playlist_get_mrl (player->playlist);
-  else if (!mrl)
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
     return MRL_RESOURCE_UNKNOWN;
 
   return mrl->resource;
