@@ -218,4 +218,85 @@ void mrl_metadata_cd_track_append (mrl_metadata_cd_t *cd,
 int mrl_uses_vo (mrl_t *mrl);
 int mrl_uses_ao (mrl_t *mrl);
 
+/*****************************************************************************/
+/*                 Player Internal (Supervisor) functions                    */
+/*****************************************************************************/
+
+/* Player (Un)Initialization */
+init_status_t player_sv_init (player_t *player);
+void player_sv_uninit (player_t *player);
+void player_sv_set_verbosity (player_t *player, player_verbosity_level_t level);
+
+/* Player to MRL connection */
+mrl_t *player_sv_mrl_get_current (player_t *player);
+void player_sv_mrl_set (player_t *player, mrl_t *mrl);
+void player_sv_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when);
+void player_sv_mrl_remove (player_t *player);
+void player_sv_mrl_remove_all (player_t *player);
+void player_sv_mrl_previous (player_t *player);
+void player_sv_mrl_next (player_t *player);
+
+/* Player tuning & properties */
+int player_sv_get_time_pos (player_t *player);
+void player_sv_set_loop (player_t *player, player_loop_t loop, int value);
+void player_sv_set_shuffle (player_t *player, int value);
+void player_sv_set_framedrop (player_t *player, player_framedrop_t fd);
+
+/* Playback related controls */
+void player_sv_playback_start (player_t *player);
+void player_sv_playback_stop (player_t *player);
+void player_sv_playback_pause (player_t *player);
+void player_sv_playback_seek (player_t *player,
+                              int value, player_pb_seek_t seek);
+void player_sv_playback_seek_chapter (player_t *player,
+                                      int value, int absolute);
+void player_sv_playback_speed (player_t *player, float value);
+
+/* Audio related controls */
+int player_sv_audio_volume_get (player_t *player);
+void player_sv_audio_volume_set (player_t *player, int value);
+player_mute_t player_sv_audio_mute_get (player_t *player);
+void player_sv_audio_mute_set (player_t *player, player_mute_t value);
+void player_sv_audio_set_delay (player_t *player, int value, int absolute);
+void player_sv_audio_select (player_t *player, int audio_id);
+void player_sv_audio_prev (player_t *player);
+void player_sv_audio_next (player_t *player);
+
+/* Video related controls */
+void player_sv_video_set_fullscreen (player_t *player, int value);
+void player_sv_video_set_aspect (player_t *player, player_video_aspect_t aspect,
+                                 int8_t value, int absolute);
+void player_sv_video_set_panscan (player_t *player, int8_t value, int absolute);
+void player_sv_video_set_aspect_ratio (player_t *player, float value);
+
+/* Subtitles related controls */
+void player_sv_subtitle_set_delay (player_t *player, int value);
+void player_sv_subtitle_set_alignment (player_t *player,
+                                       player_sub_alignment_t a);
+void player_sv_subtitle_set_position (player_t *player, int value);
+void player_sv_subtitle_set_visibility (player_t *player, int value);
+void player_sv_subtitle_scale (player_t *player, int value, int absolute);
+void player_sv_subtitle_select (player_t *player, int sub_id);
+void player_sv_subtitle_prev (player_t *player);
+void player_sv_subtitle_next (player_t *player);
+
+/* DVD specific controls */
+void player_sv_dvd_nav (player_t *player, player_dvdnav_t value);
+void player_sv_dvd_angle_select (player_t *player, int angle);
+void player_sv_dvd_angle_prev (player_t *player);
+void player_sv_dvd_angle_next (player_t *player);
+void player_sv_dvd_title_select (player_t *player, int title);
+void player_sv_dvd_title_prev (player_t *player);
+void player_sv_dvd_title_next (player_t *player);
+
+/* TV/DVB specific controls */
+void player_sv_tv_channel_select (player_t *player, int channel);
+void player_sv_tv_channel_prev (player_t *player);
+void player_sv_tv_channel_next (player_t *player);
+
+/* Radio specific controls */
+void player_sv_radio_channel_select (player_t *player, int channel);
+void player_sv_radio_channel_prev (player_t *player);
+void player_sv_radio_channel_next (player_t *player);
+
 #endif /* PLAYER_INTERNALS_H */
