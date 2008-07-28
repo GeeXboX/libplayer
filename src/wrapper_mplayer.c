@@ -2444,8 +2444,8 @@ mplayer_init (player_t *player)
     pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
     pthread_mutex_lock (&mplayer->mutex_start);
-    if (pthread_create (&mplayer->th_fifo, &attr,
-                        thread_fifo, (void *) player) >= 0)
+    if (!pthread_create (&mplayer->th_fifo, &attr,
+                         thread_fifo, (void *) player))
     {
       int start_ok;
 
