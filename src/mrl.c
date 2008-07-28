@@ -284,26 +284,6 @@ mrl_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
   return out;
 }
 
-mrl_t *
-mrl_new (player_t *player, mrl_resource_t res, void *args)
-{
-  supervisor_data_args_t in;
-  mrl_t *out;
-
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
-
-  if (!player || !args)
-    return NULL;
-
-  in.res = res;
-  in.args = args;
-
-  supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_NEW, &in, &out);
-
-  return out;
-}
-
 mrl_type_t
 mrl_get_type (player_t *player, mrl_t *mrl)
 {
@@ -332,6 +312,26 @@ mrl_get_resource (player_t *player, mrl_t *mrl)
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_MRL_GET_RESOURCE, mrl, &out);
+
+  return out;
+}
+
+mrl_t *
+mrl_new (player_t *player, mrl_resource_t res, void *args)
+{
+  supervisor_data_args_t in;
+  mrl_t *out;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player || !args)
+    return NULL;
+
+  in.res = res;
+  in.args = args;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_MRL_NEW, &in, &out);
 
   return out;
 }
