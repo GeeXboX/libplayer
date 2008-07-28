@@ -23,6 +23,7 @@
 
 #include "player.h"
 #include "player_internals.h"
+#include "supervisor.h"
 #include "event_handler.h"
 
 int
@@ -30,12 +31,20 @@ event_send (player_t *player, int e, void *data)
 {
   int res;
 
-  if (!player || !player->event)
+  if (!player || !player->supervisor || !player->event)
     return -1;
 
   res = event_handler_send (player->event, e, data);
   if (res)
     return res;
+
+  /*
+   * Release for event_handler; wait to recatch the supervisor to
+   * finish the job.
+   *
+   * NOTE: recatch is ignored if the supervisor is not in a job.
+   */
+  supervisor_sync_recatch (player, SYNC_JOB_EVENT_HANDLER);
 
   return 0;
 }
