@@ -219,6 +219,24 @@ int mrl_uses_vo (mrl_t *mrl);
 int mrl_uses_ao (mrl_t *mrl);
 
 /*****************************************************************************/
+/*                   MRL Internal (Supervisor) functions                     */
+/*****************************************************************************/
+
+uint32_t mrl_sv_get_property (player_t *player,
+                              mrl_t *mrl, mrl_properties_type_t p);
+char *mrl_sv_get_audio_codec (player_t *player, mrl_t *mrl);
+char *mrl_sv_get_video_codec (player_t *player, mrl_t *mrl);
+off_t mrl_sv_get_size (player_t *player, mrl_t *mrl);
+char *mrl_sv_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m);
+char *mrl_sv_get_metadata_cd_track (player_t *player,
+                                    mrl_t *mrl, int trackid, uint32_t *length);
+uint32_t mrl_sv_get_metadata_cd (player_t *player,
+                                 mrl_t *mrl, mrl_metadata_cd_type_t m);
+mrl_type_t mrl_sv_get_type (player_t *player, mrl_t *mrl);
+mrl_resource_t mrl_sv_get_resource (player_t *player, mrl_t *mrl);
+mrl_t *mrl_sv_new (player_t *player, mrl_resource_t res, void *args);
+
+/*****************************************************************************/
 /*                 Player Internal (Supervisor) functions                    */
 /*****************************************************************************/
 
