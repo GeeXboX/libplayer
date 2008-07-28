@@ -55,7 +55,7 @@ OBJS = $(SRCS:.c=.o)
 all: depend $(BUILD_RULES)
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(EXTRACFLAGS) $(OPTFLAGS) -o $@ $<
 
 lib_static: $(OBJS)
 	$(AR) r $(STATIC_LIBNAME) $(OBJS)
@@ -86,7 +86,7 @@ uninstall:
 	rm -f $(includedir)/player.h
 
 depend:
-	$(CC) -MM $(CFLAGS) $(SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(SRCS) 1>.depend
 
 .PHONY: clean depend
 .PHONY: uninstall

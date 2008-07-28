@@ -106,21 +106,28 @@ flags_saved(){
 save_flags(){
     flags_saved && return
     SAVE_CFLAGS="$CFLAGS"
+    SAVE_extracflags="$extracflags"
     SAVE_LDFLAGS="$LDFLAGS"
     SAVE_extralibs="$extralibs"
 }
 
 restore_flags(){
     CFLAGS="$SAVE_CFLAGS"
+    extracflags="$SAVE_extracflags"
     LDFLAGS="$SAVE_LDFLAGS"
     extralibs="$SAVE_extralibs"
     unset SAVE_CFLAGS
+    unset SAVE_extracflags
     unset SAVE_LDFLAGS
     unset SAVE_extralibs
 }
 
 temp_cflags(){
     temp_append CFLAGS "$@"
+}
+
+temp_extracflags(){
+    temp_append extracflags "$@"
 }
 
 temp_ldflags(){
@@ -160,6 +167,10 @@ append(){
 
 add_cflags(){
     append CFLAGS "$@"
+}
+
+add_extracflags(){
+    append extracflags "$@"
 }
 
 add_ldflags(){
@@ -685,7 +696,7 @@ if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
   fi
   check_lib xine.h xine_init -lxine
   if [ "$?" = 0 ]; then
-    add_cflags -DHAVE_XINE
+    add_extracflags -DHAVE_XINE
     add_pkgconfig_requires libxine
     wrapper_xine="yes"
   fi
@@ -698,7 +709,7 @@ if test "$wrapper_mplayer" = "auto"; then
   wrapper_mplayer="no"
   which mplayer 2>&1 > /dev/null
   if [ "$?" = 0 ]; then
-    add_cflags -DHAVE_MPLAYER
+    add_extracflags -DHAVE_MPLAYER
     add_extralibs -lm
     wrapper_mplayer="yes"
   fi
@@ -716,7 +727,7 @@ if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
   fi
   check_lib vlc/libvlc.h libvlc_new -lvlc
   if [ "$?" = 0 ]; then
-    add_cflags -DHAVE_VLC
+    add_extracflags -DHAVE_VLC
     wrapper_vlc="yes"
   fi
 fi
@@ -735,7 +746,7 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
   fi
   check_lib gst/gst.h gst_init -lgstreamer-0.10
   if [ "$?" = 0 ]; then
-    add_cflags -DHAVE_GSTREAMER
+    add_extracflags -DHAVE_GSTREAMER
     add_pkgconfig_requires gstreamer-0.10
     wrapper_gstreamer="yes"
   fi
@@ -784,7 +795,7 @@ echolog "  optimize           $optimize"
 echolog "  static             ${static}"
 echolog "  shared             ${shared}"
 echolog ""
-echolog "  CFLAGS             $CFLAGS"
+echolog "  CFLAGS             $CFLAGS $extracflags"
 echolog "  LDFLAGS            $LDFLAGS"
 echolog "  extralibs          $extralibs"
 echolog ""
@@ -828,6 +839,7 @@ else
 fi
 append_config "EXTRALIBS=$extralibs"
 
+append_config "EXTRACFLAGS=$extracflags"
 append_config "OPTFLAGS=$CFLAGS"
 append_config "LDFLAGS=$LDFLAGS"
 append_config "INSTALL=$INSTALL"
