@@ -55,6 +55,8 @@ player_event_cb (void *data, int e, void *data_cb)
   int res = 0;
   player_t *player = data;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "internal event: %i", e);
+
   if (!player)
     return -1;
 
