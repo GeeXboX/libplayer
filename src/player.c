@@ -58,7 +58,10 @@ player_event_cb (void *data, int e, void *data_cb)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "internal event: %i", e);
 
   if (!player)
+  {
+    event_handler_sync_release (player->event);
     return -1;
+  }
 
   /* send to the frontend event callback */
   if (player->event_cb)
