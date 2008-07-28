@@ -52,6 +52,7 @@
 static int
 player_event_cb (void *data, int e, void *data_cb)
 {
+  int res = 0;
   player_t *player = data;
 
   if (!player)
@@ -59,9 +60,9 @@ player_event_cb (void *data, int e, void *data_cb)
 
   /* send to the frontend event callback */
   if (player->event_cb)
-    player->event_cb (e, data_cb);
+    res = player->event_cb (e, data_cb);
 
-  return 0;
+  return res;
 }
 
 /***************************************************************************/
