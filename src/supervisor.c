@@ -27,7 +27,6 @@
 #include "player.h"
 #include "player_internals.h"
 #include "logs.h"
-#include "playlist.h"
 #include "fifo_queue.h"
 #include "supervisor.h"
 
