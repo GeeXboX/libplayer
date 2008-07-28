@@ -224,7 +224,6 @@ void
 player_sv_playback_start (player_t *player)
 {
   mrl_t *mrl;
-  mrl_properties_video_t *video;
   int res = PLAYER_PB_ERROR;
 
   if (!player)
@@ -239,7 +238,7 @@ player_sv_playback_start (player_t *player)
 
   if (mrl->prop && mrl->prop->video)
   {
-    video = mrl->prop->video;
+    mrl_properties_video_t *video = mrl->prop->video;
     player->w = video->width;
     player->h = video->height;
     player->aspect = video->aspect / PLAYER_VIDEO_ASPECT_RATIO_MULT;
