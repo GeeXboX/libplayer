@@ -263,6 +263,9 @@ player_sv_playback_stop (player_t *player)
   if (!player)
     return;
 
+  if (player->state == PLAYER_STATE_IDLE)
+    return; /* not running */
+
   /* player specific playback_stop() */
   if (player->funcs->pb_stop)
     player->funcs->pb_stop (player);
