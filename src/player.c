@@ -57,13 +57,9 @@ player_event_cb (void *data, int e, void *data_cb)
   if (!player)
     return -1;
 
-  pthread_mutex_lock (&player->mutex_cb);
-
   /* send to the frontend event callback */
   if (player->event_cb)
     player->event_cb (e, data_cb);
-
-  pthread_mutex_unlock (&player->mutex_cb);
 
   return 0;
 }
@@ -130,8 +126,6 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  pthread_mutex_init (&player->mutex_cb, NULL);
-
   if (!player->funcs || !player->priv)
   {
     player_uninit (player);
@@ -183,8 +177,6 @@ player_uninit (player_t *player)
   /* free player specific private properties */
   if (player->funcs->uninit)
     player->funcs->uninit (player);
-
-  pthread_mutex_destroy (&player->mutex_cb);
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "event_handler_uninit");
   event_handler_disable (player->event);
