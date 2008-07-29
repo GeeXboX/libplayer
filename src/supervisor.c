@@ -960,18 +960,15 @@ thread_supervisor (void *arg)
       continue; /* retry */
     }
 
-    /* copy values because data pointer will be lost after sem_post() */
     in = data->in;
     out = data->out;
     mode = data->mode;
+    free (data);
 
     supervisor_sync_catch (supervisor);
 
     plog (player, PLAYER_MSG_INFO, MODULE_NAME, "run job: %i (%s)",
           ctl, mode == SV_MODE_WAIT_FOR_END ? "wait for end" : "no wait");
-
-    if (mode == SV_MODE_NO_WAIT)
-      sem_post (&supervisor->sem_ctl);
 
     switch (ctl)
     {
@@ -1005,7 +1002,7 @@ void
 supervisor_send (player_t *player, supervisor_mode_t mode,
                  supervisor_ctl_t ctl, void *in, void *out)
 {
-  supervisor_send_t data;
+  supervisor_send_t *data;
   int res;
   supervisor_t *supervisor;
 
@@ -1024,9 +1021,13 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
     return;
   }
 
-  data.in = in;
-  data.out = out;
-  data.mode = mode;
+  data = malloc (sizeof (supervisor_send_t));
+  if (!data)
+    return;
+
+  data->in = in;
+  data->out = out;
+  data->mode = mode;
 
   /*
    * If more that one can push in the queue, there is no guarantee that the
@@ -1035,11 +1036,14 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
    */
   pthread_mutex_lock (&supervisor->mutex_sv);
 
-  res = fifo_queue_push (supervisor->queue, ctl, &data);
-  if (!res)
+  res = fifo_queue_push (supervisor->queue, ctl, data);
+  if (!res && mode == SV_MODE_WAIT_FOR_END)
     sem_wait (&supervisor->sem_ctl);
-  else
+  else if (res)
+  {
+    free (data);
     plog (player, PLAYER_MSG_ERROR, MODULE_NAME, "error on queue? no sense :(");
+  }
 
   pthread_mutex_unlock (&supervisor->mutex_sv);
 }
