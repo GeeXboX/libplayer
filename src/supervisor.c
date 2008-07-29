@@ -1083,6 +1083,7 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
    * order of push() is the same as the order of sem_wait().
    * This mutex will ""fix"" the problem with only one item in the queue.
    */
+  if (mode == SV_MODE_WAIT_FOR_END)
   pthread_mutex_lock (&supervisor->mutex_sv);
 
   res = fifo_queue_push (supervisor->queue, ctl, data);
@@ -1094,6 +1095,7 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
     plog (player, PLAYER_MSG_ERROR, MODULE_NAME, "error on queue? no sense :(");
   }
 
+  if (mode == SV_MODE_WAIT_FOR_END)
   pthread_mutex_unlock (&supervisor->mutex_sv);
 }
 
