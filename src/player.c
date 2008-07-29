@@ -354,6 +354,16 @@ player_get_time_pos (player_t *player)
 }
 
 void
+player_set_playback (player_t *player, player_pb_t pb)
+{
+  if (!player)
+    return;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_PLAYER_SET_PLAYBACK, &pb, NULL);
+}
+
+void
 player_set_loop (player_t *player, player_loop_t loop, int value)
 {
   supervisor_data_mode_t data;

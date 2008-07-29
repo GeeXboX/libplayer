@@ -186,6 +186,15 @@ player_sv_get_time_pos (player_t *player)
 }
 
 void
+player_sv_set_playback (player_t *player, player_pb_t pb)
+{
+  if (!player)
+    return;
+
+  player->pb_mode = pb;
+}
+
+void
 player_sv_set_loop (player_t *player, player_loop_t loop, int value)
 {
   if (!player)

@@ -304,6 +304,17 @@ supervisor_player_get_time_pos (player_t *player, void *in, void *out)
 }
 
 static void
+supervisor_player_set_playback (player_t *player, void *in, void *out)
+{
+  player_pb_t *input = in;
+
+  if (!player || !in)
+    return;
+
+  player_sv_set_playback (player, *input);
+}
+
+static void
 supervisor_player_set_loop (player_t *player, void *in, void *out)
 {
   supervisor_data_mode_t *input = in;
@@ -779,6 +790,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
 
   /* Player tuning & properties */
   [SV_FUNC_PLAYER_GET_TIME_POS]       = supervisor_player_get_time_pos,
+  [SV_FUNC_PLAYER_SET_PLAYBACK]       = supervisor_player_set_playback,
   [SV_FUNC_PLAYER_SET_LOOP]           = supervisor_player_set_loop,
   [SV_FUNC_PLAYER_SET_SHUFFLE]        = supervisor_player_set_shuffle,
   [SV_FUNC_PLAYER_SET_FRAMEDROP]      = supervisor_player_set_framedrop,

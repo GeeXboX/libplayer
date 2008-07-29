@@ -192,6 +192,7 @@ struct player_s {
   pthread_mutex_t mutex_verb;
   struct playlist_s *playlist; /* playlist */
   player_state_t state; /* state of the playback */
+  player_pb_t pb_mode;  /* mode of the playback */
   player_ao_t ao;       /* audio output driver name */
   player_vo_t vo;       /* video output driver name */
   int x, y;             /* video position */
@@ -266,6 +267,7 @@ void player_sv_mrl_next (player_t *player);
 
 /* Player tuning & properties */
 int player_sv_get_time_pos (player_t *player);
+void player_sv_set_playback (player_t *player, player_pb_t pb);
 void player_sv_set_loop (player_t *player, player_loop_t loop, int value);
 void player_sv_set_shuffle (player_t *player, int value);
 void player_sv_set_framedrop (player_t *player, player_framedrop_t fd);
