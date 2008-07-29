@@ -356,6 +356,8 @@ player_get_time_pos (player_t *player)
 void
 player_set_playback (player_t *player, player_pb_t pb)
 {
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return;
 
