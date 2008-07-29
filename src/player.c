@@ -54,6 +54,7 @@ player_event_cb (void *data, int e, void *data_cb)
 {
   int res = 0;
   player_t *player = data;
+  player_pb_t pb_mode = PLAYER_PB_SINGLE;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "internal event: %i", e);
 
@@ -68,10 +69,18 @@ player_event_cb (void *data, int e, void *data_cb)
     res = player->event_cb (e, data_cb);
 
   if (e == PLAYER_EVENT_PLAYBACK_FINISHED)
+  {
     player->state = PLAYER_STATE_IDLE;
+    pb_mode = player->pb_mode;
+  }
 
   /* release for supervisor */
   event_handler_sync_release (player->event);
+
+  /* go to the next MRL */
+  if (pb_mode == PLAYER_PB_AUTO)
+    supervisor_send (player, SV_MODE_NO_WAIT,
+                     SV_FUNC_PLAYER_MRL_NEXT, NULL, NULL);
 
   return res;
 }
