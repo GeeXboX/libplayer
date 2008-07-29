@@ -48,6 +48,9 @@ struct supervisor_s {
   pthread_mutex_t mutex_sv;
   sem_t sem_ctl;
 
+  int cb;
+  pthread_mutex_t mutex_cb;
+
   /* to synchronize with an event handler (for example) */
   int use_sync;
   int sync_job;
@@ -999,11 +1002,8 @@ thread_supervisor (void *arg)
 /*****************************************************************************/
 
 void
-supervisor_send (player_t *player, supervisor_mode_t mode,
-                 supervisor_ctl_t ctl, void *in, void *out)
+supervisor_callback_in (player_t *player)
 {
-  supervisor_send_t *data;
-  int res;
   supervisor_t *supervisor;
 
   if (!player)
@@ -1012,6 +1012,55 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
   supervisor = player->supervisor;
   if (!supervisor)
     return;
+
+  pthread_mutex_lock (&supervisor->mutex_cb);
+  supervisor->cb = 1;
+  pthread_mutex_unlock (&supervisor->mutex_cb);
+}
+
+void
+supervisor_callback_out (player_t *player)
+{
+  supervisor_t *supervisor;
+
+  if (!player)
+    return;
+
+  supervisor = player->supervisor;
+  if (!supervisor)
+    return;
+
+  pthread_mutex_lock (&supervisor->mutex_cb);
+  supervisor->cb = 0;
+  pthread_mutex_unlock (&supervisor->mutex_cb);
+}
+
+void
+supervisor_send (player_t *player, supervisor_mode_t mode,
+                 supervisor_ctl_t ctl, void *in, void *out)
+{
+  supervisor_send_t *data;
+  int res, cb;
+  supervisor_t *supervisor;
+
+  if (!player)
+    return;
+
+  supervisor = player->supervisor;
+  if (!supervisor)
+    return;
+
+  pthread_mutex_lock (&supervisor->mutex_cb);
+  cb = supervisor->cb;
+  pthread_mutex_unlock (&supervisor->mutex_cb);
+
+  if (cb && supervisor->use_sync && mode == SV_MODE_WAIT_FOR_END)
+  {
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
+          "change mode to (no wait) because this control (%i) comes "
+          "from the public callback", ctl);
+    mode = SV_MODE_NO_WAIT;
+  }
 
   if (mode == SV_MODE_NO_WAIT && (in || out))
   {
@@ -1069,6 +1118,8 @@ supervisor_new (void)
 
   pthread_cond_init (&supervisor->sync_cond, NULL);
   pthread_mutex_init (&supervisor->sync_mutex, NULL);
+
+  pthread_mutex_init (&supervisor->mutex_cb, NULL);
 
   return supervisor;
 }
@@ -1140,6 +1191,8 @@ supervisor_uninit (player_t *player)
 
   pthread_cond_destroy (&supervisor->sync_cond);
   pthread_mutex_destroy (&supervisor->sync_mutex);
+
+  pthread_mutex_destroy (&supervisor->mutex_cb);
 
   free (supervisor);
   player->supervisor = NULL;
