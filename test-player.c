@@ -47,29 +47,25 @@
   "Default values are dummy player, auto video and auto audio output.\n" \
   "\n"
 #define TESTPLAYER_COMMANDS \
-  "Commands for use test-player:\n" \
+  "Commands to use test-player:\n" \
   "\n" \
-  " # : change playback mode (auto or single)\n" \
-  " + : increase speed\n" \
-  " - : decrease speed\n" \
-  " ] : audio delay +100 ms\n" \
-  " [ : audio delay -100 ms\n" \
-  " 0 : increase volume\n" \
-  " 9 : decrease volume\n" \
-  " m : set/unset mute\n" \
-  " 1 : 5s backward\n" \
-  " 2 : 5s forward\n" \
-  " l : load a stream in the playlist\n" \
-  " v : print properties and metadata of the current stream\n" \
-  " i : print current time position\n" \
-  " p : start a new playback\n" \
-  " o : pause the current playback\n" \
-  " s : stop the current playback\n" \
-  " b : start the previous stream in the playlist\n" \
-  " n : start the next stream in the playlist\n" \
-  " r : remove the current stream of the playlist\n" \
-  " t : remove all streams of the playlist\n" \
-  " q : quit test-player\n" \
+  " #   : change playback mode (auto or single)\n" \
+  " +/- : increase/decrease speed\n" \
+  " ]/[ : audio delay +/- 100 ms\n" \
+  " 0/9 : increase/decrease volume\n" \
+  " m   : set/unset mute\n" \
+  " 2/1 : 5s forward/backward\n" \
+  " l   : load a stream in the playlist\n" \
+  " v   : print properties and metadata of the current stream\n" \
+  " i   : print current time position\n" \
+  " p   : start a new playback\n" \
+  " o   : pause/unpause the current playback\n" \
+  " s   : stop the current playback\n" \
+  " b   : start the previous stream in the playlist\n" \
+  " n   : start the next stream in the playlist\n" \
+  " r   : remove the current stream of the playlist\n" \
+  " t   : remove all streams of the playlist\n" \
+  " q   : quit test-player\n" \
   "\n" \
   "Commands for dvdnav:\n" \
   "\n" \
