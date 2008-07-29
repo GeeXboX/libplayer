@@ -49,6 +49,7 @@
 #define TESTPLAYER_COMMANDS \
   "Commands for use test-player:\n" \
   "\n" \
+  " # : change playback mode (auto or single)\n" \
   " + : increase speed\n" \
   " - : decrease speed\n" \
   " ] : audio delay +100 ms\n" \
@@ -546,6 +547,7 @@ main (int argc, char **argv)
   int time_pos;
   float speed = 1.0;
   player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
+  player_pb_t pb_mode = PLAYER_PB_SINGLE;
 
   int c, index;
   const char *const short_options = "hvp:a:g:";
@@ -671,6 +673,11 @@ main (int argc, char **argv)
     input = getch ();
 
     switch (input) {
+    case '#':
+      pb_mode = pb_mode == PLAYER_PB_SINGLE ? PLAYER_PB_AUTO : PLAYER_PB_SINGLE;
+      player_set_playback (player, pb_mode);
+      printf ("PLAYBACK %s\n", pb_mode == PLAYER_PB_AUTO ? "AUTO" : "SINGLE");
+      break;
     case '+':
       speed += 0.1;
       if (speed > 100.0)
