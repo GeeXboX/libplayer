@@ -1084,7 +1084,7 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
    * This mutex will ""fix"" the problem with only one item in the queue.
    */
   if (mode == SV_MODE_WAIT_FOR_END)
-  pthread_mutex_lock (&supervisor->mutex_sv);
+    pthread_mutex_lock (&supervisor->mutex_sv);
 
   res = fifo_queue_push (supervisor->queue, ctl, data);
   if (!res && mode == SV_MODE_WAIT_FOR_END)
@@ -1096,7 +1096,7 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
   }
 
   if (mode == SV_MODE_WAIT_FOR_END)
-  pthread_mutex_unlock (&supervisor->mutex_sv);
+    pthread_mutex_unlock (&supervisor->mutex_sv);
 }
 
 supervisor_t *
