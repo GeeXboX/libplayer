@@ -1006,6 +1006,8 @@ supervisor_callback_in (player_t *player)
 {
   supervisor_t *supervisor;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return;
 
@@ -1022,6 +1024,8 @@ void
 supervisor_callback_out (player_t *player)
 {
   supervisor_t *supervisor;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
