@@ -3120,6 +3120,8 @@ register_functions_mplayer (void)
   player_funcs_t *funcs = NULL;
 
   funcs = calloc (1, sizeof (player_funcs_t));
+  if (!funcs)
+    return NULL;
 
   funcs->init               = mplayer_init;
   funcs->uninit             = mplayer_uninit;
@@ -3187,6 +3189,8 @@ register_private_mplayer (void)
   mplayer_t *mplayer = NULL;
 
   mplayer = calloc (1, sizeof (mplayer_t));
+  if (!mplayer)
+    return NULL;
 
   mplayer->status = MPLAYER_IS_DEAD;
   mplayer->fifo_in = NULL;

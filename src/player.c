@@ -110,6 +110,9 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   pthread_mutex_t *sv_mutex;
 
   player = calloc (1, sizeof (player_t));
+  if (!player)
+    return NULL;
+
   player->type = type;
   player->verbosity = verbosity;
   player->state = PLAYER_STATE_IDLE;

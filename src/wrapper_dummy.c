@@ -186,6 +186,8 @@ register_functions_dummy (void)
   player_funcs_t *funcs = NULL;
 
   funcs = calloc (1, sizeof (player_funcs_t));
+  if (!funcs)
+    return NULL;
 
   funcs->init               = dummy_init;
   funcs->uninit             = dummy_uninit;
@@ -253,6 +255,9 @@ register_private_dummy (void)
   dummy_t *dummy = NULL;
 
   dummy = malloc (sizeof (dummy_t));
+  if (!dummy)
+    return NULL;
+
   dummy->dummy_var = 0;
 
   return dummy;

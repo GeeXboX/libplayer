@@ -856,6 +856,8 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
   }
 
   mrl = calloc (1, sizeof (mrl_t));
+  if (!mrl)
+    return NULL;
 
   mrl->subs = NULL;
 

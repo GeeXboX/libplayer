@@ -279,6 +279,8 @@ register_functions_gstreamer (void)
   player_funcs_t *funcs = NULL;
 
   funcs = calloc (1, sizeof (player_funcs_t));
+  if (!funcs)
+    return NULL;
 
   funcs->init               = gstreamer_player_init;
   funcs->uninit             = gstreamer_player_uninit;

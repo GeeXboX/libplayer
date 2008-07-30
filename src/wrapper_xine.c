@@ -930,6 +930,8 @@ register_functions_xine (void)
   player_funcs_t *funcs = NULL;
 
   funcs = calloc (1, sizeof (player_funcs_t));
+  if (!funcs)
+    return NULL;
 
   funcs->init               = xine_player_init;
   funcs->uninit             = xine_player_uninit;
@@ -997,6 +999,9 @@ register_private_xine (void)
   xine_player_t *x = NULL;
 
   x = calloc (1, sizeof (xine_player_t));
+  if (!x)
+    return NULL;
+
   x->xine = NULL;
   x->stream = NULL;
   x->event_queue = NULL;

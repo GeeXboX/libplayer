@@ -126,6 +126,8 @@ register_functions_vlc (void)
   player_funcs_t *funcs = NULL;
 
   funcs = calloc (1, sizeof (player_funcs_t));
+  if (!funcs)
+    return NULL;
 
   funcs->init               = vlc_init;
   funcs->uninit             = vlc_uninit;
@@ -193,6 +195,9 @@ register_private_vlc (void)
   vlc_t *vlc = NULL;
 
   vlc = calloc (1, sizeof (vlc_t));
+  if (!vlc)
+    return NULL;
+
   vlc->core = NULL;
 
   return vlc;
