@@ -67,6 +67,7 @@ do_regression_tests (player_t *player, char *name)
     return;
 
   player_set_verbosity (player, PLAYER_MSG_INFO);
+  player_mrl_set (player, mrl);
   mrl_get_type (player, NULL);
   mrl_get_resource (player, NULL);
   res = mrl_get_metadata (player, NULL, MRL_METADATA_TITLE);
@@ -85,8 +86,6 @@ do_regression_tests (player_t *player, char *name)
     free (res);
   mrl_get_size (player, NULL);
   mrl = player_mrl_get_current (player);
-  player_mrl_set (player, mrl);
-  player_mrl_append (player, mrl, PLAYER_MRL_ADD_NOW);
   player_mrl_previous (player);
   player_mrl_next (player);
   player_get_time_pos (player);
