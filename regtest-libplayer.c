@@ -99,7 +99,7 @@ do_regression_tests (player_t *player, char *name)
   player_playback_speed (player, 0.5);
   player_audio_volume_get (player);
   player_audio_volume_set (player, 85);
-  player_mute_t mute = player_audio_mute_get (player);
+  player_audio_mute_get (player);
   player_audio_mute_set (player, PLAYER_MUTE_ON);
   player_audio_set_delay (player, 0, 0);
   player_audio_select (player, 1);
