@@ -40,7 +40,6 @@ typedef enum player_id {
   PLAYER_ID_DUMMY
 } player_id_t;
 
-static pthread_t tid;
 static player_id_t player_id = PLAYER_ID_ALL;
 
 static int
@@ -150,6 +149,7 @@ main (int argc, char **argv)
 {
   void *ret;
   pthread_attr_t attr;
+  pthread_t tid;
 
   printf ("*** libplayer %s regression tool ***\n", LIBPLAYER_VERSION);
 
