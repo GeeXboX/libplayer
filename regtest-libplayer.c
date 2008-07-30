@@ -43,12 +43,6 @@ typedef enum player_id {
 static pthread_t tid;
 static player_id_t player_id = PLAYER_ID_ALL;
 
-static void
-break_down (int s)
-{
-  exit (0);
-}
-
 static int
 frontend_event_cb (player_event_t e, void *data)
 {
@@ -148,13 +142,15 @@ player_test_thread (void *cookie)
   }
 #endif /* HAVE_GSTREAMER */
 
-  break_down (-1);
-  return NULL;
+  pthread_exit (NULL);
 }
 
 int
 main (int argc, char **argv)
 {
+  void *ret;
+  pthread_attr_t attr;
+
   printf ("*** libplayer %s regression tool ***\n", LIBPLAYER_VERSION);
 
   if (argc > 1)
@@ -186,11 +182,13 @@ main (int argc, char **argv)
     }
   }
 
-  signal (SIGINT, break_down);
-  pthread_create (&tid, NULL, player_test_thread, NULL);
+  pthread_attr_init (&attr);
+  pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
 
-  while (1)
-    sleep (1000000);
+  pthread_create (&tid, &attr, player_test_thread, NULL);
+  pthread_attr_destroy (&attr);
+
+  pthread_join (tid, &ret);
 
   /* we should never goes there */
   return 0;
