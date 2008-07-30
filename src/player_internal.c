@@ -26,8 +26,11 @@
 
 #include "player.h"
 #include "player_internals.h"
+#include "logs.h"
 #include "playlist.h"
 #include "event.h"
+
+#define MODULE_NAME "player"
 
 /***************************************************************************/
 /*                                                                         */
@@ -213,6 +216,10 @@ player_sv_set_loop (player_t *player, player_loop_t loop, int value)
 {
   if (!player)
     return;
+
+  if (player->pb_mode != PLAYER_PB_AUTO && loop != PLAYER_LOOP_DISABLE)
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "loop is only activated with PLAYBACK_AUTO mode");
 
   playlist_set_loop (player->playlist, value, loop);
 }
