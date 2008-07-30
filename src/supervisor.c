@@ -293,6 +293,15 @@ supervisor_player_mrl_next (player_t *player, void *in, void *out)
   player_sv_mrl_next (player);
 }
 
+static void
+supervisor_player_mrl_next_play (player_t *player, void *in, void *out)
+{
+  if (!player)
+    return;
+
+  player_sv_mrl_next_play (player);
+}
+
 /************************ Player tuning & properties *************************/
 
 static void
@@ -790,6 +799,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_PLAYER_MRL_REMOVE_ALL]     = supervisor_player_mrl_remove_all,
   [SV_FUNC_PLAYER_MRL_PREVIOUS]       = supervisor_player_mrl_previous,
   [SV_FUNC_PLAYER_MRL_NEXT]           = supervisor_player_mrl_next,
+  [SV_FUNC_PLAYER_MRL_NEXT_PLAY]      = supervisor_player_mrl_next_play,
 
   /* Player tuning & properties */
   [SV_FUNC_PLAYER_GET_TIME_POS]       = supervisor_player_get_time_pos,

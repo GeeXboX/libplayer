@@ -28,6 +28,7 @@ playlist_t *playlist_new (int shuffle, int loop, player_loop_t loop_mode);
 void playlist_free (playlist_t *playlist);
 void playlist_set_loop (playlist_t *playlist, int loop, player_loop_t mode);
 void playlist_set_shuffle (playlist_t *playlist, int shuffle);
+int playlist_next_play (playlist_t *playlist);
 int playlist_count_mrl (playlist_t *playlist);
 mrl_t *playlist_get_mrl (playlist_t *playlist);
 void playlist_set_mrl (playlist_t *playlist, mrl_t *mrl);

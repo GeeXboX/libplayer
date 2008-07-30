@@ -63,6 +63,7 @@ typedef enum supervisor_ctl {
   SV_FUNC_PLAYER_MRL_REMOVE_ALL,
   SV_FUNC_PLAYER_MRL_PREVIOUS,
   SV_FUNC_PLAYER_MRL_NEXT,
+  SV_FUNC_PLAYER_MRL_NEXT_PLAY,
 
   /* Player tuning & properties */
   SV_FUNC_PLAYER_GET_TIME_POS,

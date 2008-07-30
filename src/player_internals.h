@@ -264,6 +264,7 @@ void player_sv_mrl_remove (player_t *player);
 void player_sv_mrl_remove_all (player_t *player);
 void player_sv_mrl_previous (player_t *player);
 void player_sv_mrl_next (player_t *player);
+void player_sv_mrl_next_play (player_t *player);
 
 /* Player tuning & properties */
 int player_sv_get_time_pos (player_t *player);

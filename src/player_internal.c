@@ -164,6 +164,20 @@ player_sv_mrl_next (player_t *player)
   player_sv_playback_start (player);
 }
 
+void
+player_sv_mrl_next_play (player_t *player)
+{
+  if (!player)
+    return;
+
+  player_sv_playback_stop (player);
+
+  if (!playlist_next_play (player->playlist))
+    return;
+
+  player_sv_playback_start (player);
+}
+
 /***************************************************************************/
 /*                                                                         */
 /* Player tuning & properties                                              */

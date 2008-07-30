@@ -84,7 +84,7 @@ player_event_cb (void *data, int e, void *data_cb)
   /* go to the next MRL */
   if (pb_mode == PLAYER_PB_AUTO)
     supervisor_send (player, SV_MODE_NO_WAIT,
-                     SV_FUNC_PLAYER_MRL_NEXT, NULL, NULL);
+                     SV_FUNC_PLAYER_MRL_NEXT_PLAY, NULL, NULL);
 
   return res;
 }
