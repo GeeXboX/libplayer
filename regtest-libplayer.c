@@ -190,6 +190,5 @@ main (int argc, char **argv)
 
   pthread_join (tid, &ret);
 
-  /* we should never goes there */
   return 0;
 }
