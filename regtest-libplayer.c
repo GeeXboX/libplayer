@@ -54,6 +54,7 @@ do_regression_tests (player_t *player, char *name)
 {
   mrl_t *mrl;
   mrl_resource_local_args_t *args;
+  char *res;
 
   if (!player || !name)
     return;
@@ -65,21 +66,71 @@ do_regression_tests (player_t *player, char *name)
   if (!mrl)
     return;
 
+  player_set_verbosity (player, PLAYER_MSG_INFO);
+  mrl_get_type (player, NULL);
+  mrl_get_resource (player, NULL);
   player_mrl_append (player, mrl, PLAYER_MRL_ADD_NOW);
   mrl_get_property (player, NULL, MRL_PROPERTY_SEEKABLE);
   mrl_get_metadata (player, NULL, MRL_METADATA_TITLE);
+  res = mrl_get_metadata_cd_track (player, NULL, 1, NULL);
+  if (res)
+    free (res);
+  mrl_get_metadata_cd (player, NULL, MRL_METADATA_CD_DISCID);
+  res = mrl_get_audio_codec (player, NULL);
+  if (res)
+    free (res);
+  res = mrl_get_video_codec (player, NULL);
+  if (res)
+    free (res);
+  mrl_get_size (player, NULL);
+  mrl = player_mrl_get_current (player);
+  player_mrl_set (player, mrl);
+  player_set_playback (player, PLAYER_PB_SINGLE);
+  player_set_loop (player, PLAYER_LOOP_DISABLE, 0);
+  player_set_shuffle (player, 0);
+  player_set_framedrop (player, PLAYER_FRAMEDROP_DISABLE);
   printf ("Current volume: %d\n", player_audio_volume_get (player));
   player_audio_volume_set (player, 85);
   player_playback_start (player);
   player_playback_seek (player, 2, PLAYER_PB_SEEK_RELATIVE);  /* 2s forward */
   player_playback_seek (player, -1, PLAYER_PB_SEEK_RELATIVE); /* 1s backward */
+  player_playback_seek_chapter (player, 0, 0);
+  player_playback_speed (player, 0.5);
   player_mute_t mute = player_audio_mute_get (player);
   printf ("Current mute: %s\n", mute == PLAYER_MUTE_ON
                                 ? "on" : (mute == PLAYER_MUTE_OFF
                                           ? "off" : "unknown"));
   printf ("Current time position: %d [ms]\n", player_get_time_pos (player));
   player_audio_mute_set (player, PLAYER_MUTE_ON);
+  player_audio_set_delay (player, 0, 0);
+  player_audio_select (player, 1);
+  player_audio_prev (player);
+  player_audio_next (player);
+  player_video_set_fullscreen (player, 1);
+  player_video_set_aspect (player, PLAYER_VIDEO_ASPECT_BRIGHTNESS, 0, 0);
+  player_video_set_panscan (player, 0, 0);
+  player_video_set_aspect_ratio (player, 1.3333);
   player_subtitle_set_delay (player, 1.5);
+  player_subtitle_set_alignment (player, PLAYER_SUB_ALIGNMENT_TOP);
+  player_subtitle_set_position (player, 1);
+  player_subtitle_set_visibility (player, 1);
+  player_subtitle_scale (player, 1, 0);
+  player_subtitle_select (player, 1);
+  player_subtitle_prev (player);
+  player_subtitle_next (player);
+  player_dvd_nav (player, PLAYER_DVDNAV_MENU);
+  player_dvd_angle_select (player, 1);
+  player_dvd_angle_prev (player);
+  player_dvd_angle_next (player);
+  player_dvd_title_select (player, 1);
+  player_dvd_title_prev (player);
+  player_dvd_title_next (player);
+  player_tv_channel_select (player, 1);
+  player_tv_channel_prev (player);
+  player_tv_channel_next (player);
+  player_radio_channel_select (player, 1);
+  player_radio_channel_prev (player);
+  player_radio_channel_next (player);
   player_playback_pause (player);
   player_playback_stop (player);
   player_mrl_previous (player);
