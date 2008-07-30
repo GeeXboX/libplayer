@@ -69,7 +69,9 @@ do_regression_tests (player_t *player, char *name)
   player_set_verbosity (player, PLAYER_MSG_INFO);
   mrl_get_type (player, NULL);
   mrl_get_resource (player, NULL);
-  mrl_get_metadata (player, NULL, MRL_METADATA_TITLE);
+  res = mrl_get_metadata (player, NULL, MRL_METADATA_TITLE);
+  if (res)
+    free (res);
   res = mrl_get_metadata_cd_track (player, NULL, 1, NULL);
   if (res)
     free (res);
