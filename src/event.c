@@ -44,7 +44,7 @@ event_send (player_t *player, int e, void *data)
    *
    * NOTE: recatch is ignored if the supervisor is not in a job.
    */
-  supervisor_sync_recatch (player, SYNC_JOB_EVENT_HANDLER);
+  supervisor_sync_recatch (player, event_handler_tid (player->event));
 
   return 0;
 }

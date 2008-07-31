@@ -105,7 +105,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   supervisor_status_t sv_res;
   int ret;
 
-  int *sv_job;
+  pthread_t *sv_job;
   pthread_cond_t *sv_cond;
   pthread_mutex_t *sv_mutex;
 

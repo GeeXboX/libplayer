@@ -35,7 +35,7 @@ struct event_handler_s {
   pthread_mutex_t mutex_enable;
 
   /* to synchronize with a supervisor (for example) */
-  int *sync_job;
+  pthread_t *sync_job;
   pthread_cond_t *sync_cond;
   pthread_mutex_t *sync_mutex;
 
@@ -55,9 +55,9 @@ event_handler_sync_catch (event_handler_t *handler)
 
   pthread_mutex_lock (handler->sync_mutex);
   /* someone already running? */
-  if (*handler->sync_job && *handler->sync_job != SYNC_JOB_EVENT_HANDLER)
+  if (*handler->sync_job && *handler->sync_job != handler->th_handler)
     pthread_cond_wait (handler->sync_cond, handler->sync_mutex);
-  *handler->sync_job = SYNC_JOB_EVENT_HANDLER;
+  *handler->sync_job = handler->th_handler;
   pthread_mutex_unlock (handler->sync_mutex);
 }
 
@@ -142,7 +142,7 @@ event_handler_register (void *data,
 
 int
 event_handler_init (event_handler_t *handler,
-                    int *job, pthread_cond_t *cond, pthread_mutex_t *mutex)
+                    pthread_t *job, pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
   int res;
   pthread_attr_t attr;
@@ -248,4 +248,13 @@ event_handler_send (event_handler_t *handler, int e, void *data)
     return EVENT_HANDLER_ERROR_SEND;
 
   return EVENT_HANDLER_SUCCESS;
+}
+
+pthread_t
+event_handler_tid (event_handler_t *handler)
+{
+  if (!handler)
+    return 0;
+
+  return handler->th_handler;
 }

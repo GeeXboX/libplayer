@@ -32,19 +32,18 @@ enum event_handler_errno {
   EVENT_HANDLER_SUCCESS       =  0,
 };
 
-#define SYNC_JOB_EVENT_HANDLER   2
-
 
 event_handler_t *event_handler_register (void *data,
                                          int (*event_cb) (void *data, int e,
                                                           void *data_cb));
 int event_handler_init (event_handler_t *handler,
-                        int *job, pthread_cond_t *cond, pthread_mutex_t *mutex);
+                        pthread_t *job, pthread_cond_t *cond, pthread_mutex_t *mutex);
 void event_handler_uninit (event_handler_t *handler);
 
 int event_handler_send (event_handler_t *handler, int e, void *data);
 int event_handler_enable (event_handler_t *handler);
 int event_handler_disable (event_handler_t *handler);
 void event_handler_sync_release (event_handler_t *handler);
+pthread_t event_handler_tid (event_handler_t *handler);
 
 #endif /* EVENT_HANDLER_H */

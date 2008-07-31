@@ -53,7 +53,7 @@ struct supervisor_s {
 
   /* to synchronize with an event handler (for example) */
   int use_sync;
-  int sync_job;
+  pthread_t sync_job;
   pthread_cond_t sync_cond;
   pthread_mutex_t sync_mutex;
 };
@@ -882,9 +882,9 @@ supervisor_sync_catch (supervisor_t *supervisor)
 
   pthread_mutex_lock (&supervisor->sync_mutex);
   /* someone already running? */
-  if (supervisor->sync_job && supervisor->sync_job != SYNC_JOB_SUPERVISOR)
+  if (supervisor->sync_job && supervisor->sync_job != supervisor->th_supervisor)
     pthread_cond_wait (&supervisor->sync_cond, &supervisor->sync_mutex);
-  supervisor->sync_job = SYNC_JOB_SUPERVISOR;
+  supervisor->sync_job = supervisor->th_supervisor;
   pthread_mutex_unlock (&supervisor->sync_mutex);
 }
 
@@ -904,7 +904,7 @@ supervisor_sync_release (supervisor_t *supervisor)
 }
 
 void
-supervisor_sync_recatch (player_t *player, int which)
+supervisor_sync_recatch (player_t *player, pthread_t which)
 {
   supervisor_t *supervisor;
   int useless = 0;
@@ -916,14 +916,14 @@ supervisor_sync_recatch (player_t *player, int which)
   if (!supervisor)
     return;
 
-  if (SYNC_JOB_SUPERVISOR == which)
+  if (supervisor->th_supervisor == which)
   {
     plog (player, PLAYER_MSG_ERROR, MODULE_NAME, "recatch for own identity?");
     return;
   }
 
   pthread_mutex_lock (&supervisor->sync_mutex);
-  if (supervisor->sync_job == SYNC_JOB_SUPERVISOR)
+  if (supervisor->sync_job == supervisor->th_supervisor)
   {
     supervisor->sync_job = which;
     pthread_cond_signal (&supervisor->sync_cond); /* release for "which" */
@@ -1142,7 +1142,7 @@ supervisor_new (void)
 
 supervisor_status_t
 supervisor_init (player_t *player,
-                 int **job, pthread_cond_t **cond, pthread_mutex_t **mutex)
+                 pthread_t **job, pthread_cond_t **cond, pthread_mutex_t **mutex)
 {
   supervisor_t *supervisor;
   pthread_attr_t attr;
