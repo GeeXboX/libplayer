@@ -923,7 +923,8 @@ supervisor_sync_recatch (player_t *player, pthread_t which)
   }
 
   pthread_mutex_lock (&supervisor->sync_mutex);
-  if (supervisor->sync_job == supervisor->th_supervisor)
+  if (supervisor->sync_job == supervisor->th_supervisor &&
+      supervisor->sync_job == pthread_self ())
   {
     supervisor->sync_job = which;
     pthread_cond_signal (&supervisor->sync_cond); /* release for "which" */
