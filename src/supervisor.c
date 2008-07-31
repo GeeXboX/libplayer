@@ -1142,8 +1142,8 @@ supervisor_new (void)
 }
 
 supervisor_status_t
-supervisor_init (player_t *player,
-                 pthread_t **job, pthread_cond_t **cond, pthread_mutex_t **mutex)
+supervisor_init (player_t *player, pthread_t **job,
+                 pthread_cond_t **cond, pthread_mutex_t **mutex)
 {
   supervisor_t *supervisor;
   pthread_attr_t attr;

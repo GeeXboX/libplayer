@@ -155,8 +155,8 @@ typedef struct supervisor_data_out_metadata_cd_s {
 
 
 supervisor_t *supervisor_new (void);
-supervisor_status_t supervisor_init (player_t *player,
-                                     pthread_t **job, pthread_cond_t **cond,
+supervisor_status_t supervisor_init (player_t *player, pthread_t **job,
+                                     pthread_cond_t **cond,
                                      pthread_mutex_t **mutex);
 void supervisor_uninit (player_t *player);
 

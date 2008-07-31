@@ -141,8 +141,8 @@ event_handler_register (void *data,
 }
 
 int
-event_handler_init (event_handler_t *handler,
-                    pthread_t *job, pthread_cond_t *cond, pthread_mutex_t *mutex)
+event_handler_init (event_handler_t *handler, pthread_t *job,
+                    pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
   int res;
   pthread_attr_t attr;

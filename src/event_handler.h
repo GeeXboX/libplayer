@@ -37,7 +37,8 @@ event_handler_t *event_handler_register (void *data,
                                          int (*event_cb) (void *data, int e,
                                                           void *data_cb));
 int event_handler_init (event_handler_t *handler,
-                        pthread_t *job, pthread_cond_t *cond, pthread_mutex_t *mutex);
+                        pthread_t *job, pthread_cond_t *cond,
+                        pthread_mutex_t *mutex);
 void event_handler_uninit (event_handler_t *handler);
 
 int event_handler_send (event_handler_t *handler, int e, void *data);
