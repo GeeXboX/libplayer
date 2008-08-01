@@ -35,7 +35,7 @@
 #define TESTPLAYER_OPTIONS \
   "test-player for libplayer\n" \
   "\n" \
-  "Usage: test-player [options ...] [MRLs|files ...]\n" \
+  "Usage: test-player [options ...] [files ...]\n" \
   "\n" \
   "Options:\n" \
   " -h --help               this help\n" \
@@ -645,7 +645,7 @@ main (int argc, char **argv)
   if (!player)
     return -1;
 
-  /* these arguments are MRLs|files */
+  /* these arguments are files */
   if (optind < argc) {
     do {
       mrl_t *mrl;
