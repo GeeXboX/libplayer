@@ -494,6 +494,24 @@ vlc_audio_set_volume (player_t *player, int value)
   libvlc_audio_set_volume (vlc->core, value, &vlc->ex);
 }
 
+static player_mute_t
+vlc_audio_get_mute (player_t *player)
+{
+  player_mute_t mute = PLAYER_MUTE_UNKNOWN;
+  vlc_t *vlc;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_mute");
+
+  if (!player)
+    return mute;
+
+  vlc = (vlc_t *) player->priv;
+  mute = libvlc_audio_get_mute (vlc->core, &vlc->ex) ?
+    PLAYER_MUTE_ON : PLAYER_MUTE_OFF;
+
+  return mute;
+}
+
 /* public API */
 player_funcs_t *
 register_functions_vlc (void)
@@ -524,7 +542,7 @@ register_functions_vlc (void)
 
   funcs->audio_get_volume   = vlc_audio_get_volume;
   funcs->audio_set_volume   = vlc_audio_set_volume;
-  funcs->audio_get_mute     = NULL;
+  funcs->audio_get_mute     = vlc_audio_get_mute;
   funcs->audio_set_mute     = NULL;
   funcs->audio_set_delay    = NULL;
   funcs->audio_select       = NULL;
