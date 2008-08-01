@@ -195,6 +195,24 @@ gstreamer_player_uninit (player_t *player)
   free (g);
 }
 
+static int
+gstreamer_mrl_supported_res (player_t *player, mrl_resource_t res)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_supported_res");
+
+  if (!player)
+    return 0;
+
+  switch (res)
+  {
+  case MRL_RESOURCE_FILE:
+    return 1;
+
+  default:
+    return 0;
+  }
+}
+
 static void *
 gstreamer_playback_thread (void *arg)
 {
@@ -286,7 +304,7 @@ register_functions_gstreamer (void)
   funcs->uninit             = gstreamer_player_uninit;
   funcs->set_verbosity      = NULL;
 
-  funcs->mrl_supported_res  = NULL;
+  funcs->mrl_supported_res  = gstreamer_mrl_supported_res;
   funcs->mrl_retrieve_props = NULL;
   funcs->mrl_retrieve_meta  = NULL;
 
