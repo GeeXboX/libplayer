@@ -185,7 +185,7 @@ supervisor_mrl_new (player_t *player, void *in, void *out)
   supervisor_data_args_t *input = in;
   mrl_t **output = out;
 
-  if (!player || !out)
+  if (!player || !in || !out)
     return;
 
   *output = mrl_sv_new (player, input->res, input->args);

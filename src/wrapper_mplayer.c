@@ -46,7 +46,7 @@
 #define FIFO_BUFFER      256
 #define MPLAYER_NAME     "mplayer"
 
-typedef enum {
+typedef enum mplayer_dvdnav {
   MPLAYER_DVDNAV_UP     = 1,
   MPLAYER_DVDNAV_DOWN   = 2,
   MPLAYER_DVDNAV_LEFT   = 3,
@@ -66,6 +66,12 @@ typedef enum mplayer_framedropping {
   MPLAYER_FRAMEDROPPING_SOFT    = 1,
   MPLAYER_FRAMEDROPPING_HARD    = 2,
 } mplayer_framedropping_t;
+
+typedef enum mplayer_seek {
+  MPLAYER_SEEK_RELATIVE = 0,
+  MPLAYER_SEEK_PERCENT  = 1,
+  MPLAYER_SEEK_ABSOLUTE = 2,
+} mplayer_seek_t;
 
 /* Status of MPlayer child */
 typedef enum mplayer_status {
@@ -2303,7 +2309,8 @@ mplayer_init (player_t *player)
             MODULE_NAME, "initialization for X has failed");
       return PLAYER_INIT_ERROR;
     }
-    snprintf (winid, sizeof (winid), "%lu", (unsigned long) x11_get_window (player->x11));
+    snprintf (winid, sizeof (winid),
+              "%lu", (unsigned long) x11_get_window (player->x11));
   default:
     break;
   }
@@ -2749,7 +2756,7 @@ mplayer_playback_pause (player_t *player)
 static void
 mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
-  int opt;
+  mplayer_seek_t opt;
 
   plog (player, PLAYER_MSG_INFO,
         MODULE_NAME, "playback_seek: %d %d", value, seek);
@@ -2759,16 +2766,20 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 
   switch (seek)
   {
-  default:
   case PLAYER_PB_SEEK_RELATIVE:
-    opt = 0;
+    opt = MPLAYER_SEEK_RELATIVE;
     break;
+
   case PLAYER_PB_SEEK_PERCENT:
-    opt = 1;
+    opt = MPLAYER_SEEK_PERCENT;
     break;
+
   case PLAYER_PB_SEEK_ABSOLUTE:
-    opt = 2;
+    opt = MPLAYER_SEEK_ABSOLUTE;
     break;
+
+  default:
+    return;
   }
 
   slave_cmd_int_opt (player, SLAVE_SEEK, value, opt);
