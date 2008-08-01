@@ -366,6 +366,9 @@ register_private_gstreamer (void)
   gstreamer_player_t *g = NULL;
 
   g = calloc (1, sizeof (gstreamer_player_t));
+  if (!g)
+    return NULL;
+
   g->loop = NULL;
   g->bin = NULL;
   g->bus = NULL;
