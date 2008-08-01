@@ -726,7 +726,7 @@ if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
     check_cflags -I$libvlcdir
     check_ldflags -L$libvlcdir
   fi
-  check_lib vlc/libvlc.h libvlc_new -lvlc
+  check_lib vlc/vlc.h libvlc_media_new -lvlc
   if [ "$?" = 0 ]; then
     add_extracflags -DHAVE_VLC
     wrapper_vlc="yes"
