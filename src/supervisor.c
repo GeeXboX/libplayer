@@ -938,7 +938,7 @@ supervisor_sync_recatch (player_t *player, pthread_t which)
 
   supervisor_sync_catch (supervisor);
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "recatch (%i)", which);
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "recatch");
 }
 
 static void *
