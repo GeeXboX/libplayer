@@ -548,7 +548,7 @@ main (int argc, char **argv)
   player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
   player_pb_t pb_mode = PLAYER_PB_SINGLE;
 
-  int c, index;
+  int c, index, optind_bak;
   const char *const short_options = "hvp:a:g:";
   const struct option long_options [] = {
     {"help",    no_argument,       0, 'h' },
@@ -639,6 +639,7 @@ main (int argc, char **argv)
       return -1;
     }
   }
+  optind_bak = optind;
 
   player = player_init (type, ao, vo, verbosity, event_cb);
 
@@ -646,6 +647,7 @@ main (int argc, char **argv)
     return -1;
 
   /* these arguments are files */
+  optind = optind_bak;
   if (optind < argc) {
     do {
       mrl_t *mrl;
