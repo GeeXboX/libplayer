@@ -44,9 +44,9 @@
  This mode is mandatory with all functions that use an input and (or) an
  output variable(s).
    The second mode is NO_WAIT, then the function will return when this job
- is pop'ed from the queue. This is really useful when a control is sent from
- the internal callback, because the event handler is not blocked in the
- internal callback when the supervisor is executing the job.
+ is pushed in the queue. This is really useful when a control is sent from
+ the internal callback, because the event handler is not blocked when the
+ supervisor is executing the job.
 
    Warning: it is prohibited to use public API from the internal stuff because
  that will create deadlocks on the supervisor, always use player_internal
