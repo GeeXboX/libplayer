@@ -2309,7 +2309,8 @@ mplayer_init (player_t *player)
             MODULE_NAME, "initialization for X has failed");
       return PLAYER_INIT_ERROR;
     }
-    snprintf (winid, sizeof (winid), "%lu", (unsigned long) x11_get_window (player->x11));
+    snprintf (winid, sizeof (winid),
+              "%lu", (unsigned long) x11_get_window (player->x11));
   default:
     break;
   }
