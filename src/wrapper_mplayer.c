@@ -46,7 +46,7 @@
 #define FIFO_BUFFER      256
 #define MPLAYER_NAME     "mplayer"
 
-typedef enum {
+typedef enum mplayer_dvdnav {
   MPLAYER_DVDNAV_UP     = 1,
   MPLAYER_DVDNAV_DOWN   = 2,
   MPLAYER_DVDNAV_LEFT   = 3,
