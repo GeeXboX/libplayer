@@ -2765,7 +2765,6 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 
   switch (seek)
   {
-  default:
   case PLAYER_PB_SEEK_RELATIVE:
     opt = MPLAYER_SEEK_RELATIVE;
     break;
@@ -2777,6 +2776,9 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   case PLAYER_PB_SEEK_ABSOLUTE:
     opt = MPLAYER_SEEK_ABSOLUTE;
     break;
+
+  default:
+    return;
   }
 
   slave_cmd_int_opt (player, SLAVE_SEEK, value, opt);
