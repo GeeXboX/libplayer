@@ -48,7 +48,6 @@ struct supervisor_s {
   pthread_mutex_t mutex_sv;
   sem_t sem_ctl;
 
-  int cb;
   pthread_t cb_tid;
   pthread_mutex_t mutex_cb;
 
@@ -1028,7 +1027,6 @@ supervisor_callback_in (player_t *player, pthread_t which)
     return;
 
   pthread_mutex_lock (&supervisor->mutex_cb);
-  supervisor->cb = 1;
   supervisor->cb_tid = which;
   pthread_mutex_unlock (&supervisor->mutex_cb);
 }
@@ -1048,7 +1046,6 @@ supervisor_callback_out (player_t *player)
     return;
 
   pthread_mutex_lock (&supervisor->mutex_cb);
-  supervisor->cb = 0;
   supervisor->cb_tid = 0;
   pthread_mutex_unlock (&supervisor->mutex_cb);
 }
@@ -1058,7 +1055,7 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
                  supervisor_ctl_t ctl, void *in, void *out)
 {
   supervisor_send_t *data;
-  int res, cb;
+  int res;
   pthread_t cb_tid;
   supervisor_t *supervisor;
 
@@ -1070,11 +1067,10 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
     return;
 
   pthread_mutex_lock (&supervisor->mutex_cb);
-  cb = supervisor->cb;
   cb_tid = supervisor->cb_tid;
   pthread_mutex_unlock (&supervisor->mutex_cb);
 
-  if (cb && cb_tid == pthread_self () && supervisor->use_sync && mode == SV_MODE_WAIT_FOR_END)
+  if (cb_tid == pthread_self () && supervisor->use_sync && mode == SV_MODE_WAIT_FOR_END)
   {
     plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
           "change mode to (no wait) because this control (%i) comes "
