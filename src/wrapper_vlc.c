@@ -407,6 +407,23 @@ vlc_playback_stop (player_t *player)
   vlc->mp = NULL;
 }
 
+static playback_status_t
+vlc_playback_pause (player_t *player)
+{
+  vlc_t *vlc;
+  
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
+
+  if (!player)
+    return PLAYER_PB_FATAL;
+
+  vlc = (vlc_t *) player->priv;
+  
+  libvlc_media_player_pause (vlc->mp, &vlc->ex);
+
+  return PLAYER_PB_OK;
+}
+
 /* public API */
 player_funcs_t *
 register_functions_vlc (void)
@@ -430,7 +447,7 @@ register_functions_vlc (void)
 
   funcs->pb_start           = vlc_playback_start;
   funcs->pb_stop            = vlc_playback_stop;
-  funcs->pb_pause           = NULL;
+  funcs->pb_pause           = vlc_playback_pause;
   funcs->pb_seek            = NULL;
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = NULL;
