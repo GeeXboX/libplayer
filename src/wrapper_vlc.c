@@ -153,6 +153,42 @@ vlc_uninit (player_t *player)
   free (vlc);
 }
 
+static void
+vlc_set_verbosity (player_t *player, player_verbosity_level_t level)
+{
+  vlc_t *vlc;
+  int verbosity = -1;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_verbosity");
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc)
+    return;
+
+  switch (level)
+  {
+  case PLAYER_MSG_INFO:
+  case PLAYER_MSG_WARNING:
+  case PLAYER_MSG_ERROR:
+  case PLAYER_MSG_CRITICAL:
+    verbosity = 1;
+    break;
+
+  case PLAYER_MSG_NONE:
+    verbosity = 0;
+    break;
+
+  default:
+    break;
+  }
+
+  if (verbosity != -1)
+    libvlc_set_log_verbosity (vlc->core, verbosity, &vlc->ex);
+}
+
 static int
 vlc_mrl_supported_res (player_t *player, mrl_resource_t res)
 {
@@ -436,7 +472,7 @@ register_functions_vlc (void)
 
   funcs->init               = vlc_init;
   funcs->uninit             = vlc_uninit;
-  funcs->set_verbosity      = NULL;
+  funcs->set_verbosity      = vlc_set_verbosity;
 
   funcs->mrl_supported_res  = vlc_mrl_supported_res;
   funcs->mrl_retrieve_props = vlc_mrl_retrieve_properties;
