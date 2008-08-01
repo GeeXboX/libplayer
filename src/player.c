@@ -64,7 +64,7 @@ player_event_cb (void *data, int e, void *data_cb)
     return -1;
   }
 
-  supervisor_callback_in (player);
+  supervisor_callback_in (player, pthread_self ());
 
   /* send to the frontend event callback */
   if (player->event_cb)

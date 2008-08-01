@@ -163,7 +163,7 @@ void supervisor_uninit (player_t *player);
 void supervisor_send (player_t *player, supervisor_mode_t mode,
                       supervisor_ctl_t ctl, void *in, void *out);
 void supervisor_sync_recatch (player_t *player, pthread_t which);
-void supervisor_callback_in (player_t *player);
+void supervisor_callback_in (player_t *player, pthread_t which);
 void supervisor_callback_out (player_t *player);
 
 #endif /* SUPERVISOR_H */
