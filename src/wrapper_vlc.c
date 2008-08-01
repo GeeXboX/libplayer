@@ -460,6 +460,26 @@ vlc_playback_pause (player_t *player)
   return PLAYER_PB_OK;
 }
 
+static int
+vlc_audio_get_volume (player_t *player)
+{
+  vlc_t *vlc;
+  int volume = -1;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_volume");
+
+  if (!player)
+    return volume;
+
+  vlc = (vlc_t *) player->priv;
+  volume = libvlc_audio_get_volume (vlc->core, &vlc->ex);
+
+  if (volume < 0)
+    return -1;
+
+  return volume;
+}
+
 /* public API */
 player_funcs_t *
 register_functions_vlc (void)
@@ -488,7 +508,7 @@ register_functions_vlc (void)
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = NULL;
 
-  funcs->audio_get_volume   = NULL;
+  funcs->audio_get_volume   = vlc_audio_get_volume;
   funcs->audio_set_volume   = NULL;
   funcs->audio_get_mute     = NULL;
   funcs->audio_set_mute     = NULL;
