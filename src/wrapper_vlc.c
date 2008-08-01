@@ -512,6 +512,28 @@ vlc_audio_get_mute (player_t *player)
   return mute;
 }
 
+static void
+vlc_audio_set_mute (player_t *player, player_mute_t value)
+{
+  vlc_t *vlc;
+  int mute = 0;
+
+  if (value == PLAYER_MUTE_UNKNOWN)
+    return;
+
+  if (value == PLAYER_MUTE_ON)
+    mute = 1;
+
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  libvlc_audio_set_mute (vlc->core, mute , &vlc->ex);
+}
+
 /* public API */
 player_funcs_t *
 register_functions_vlc (void)
@@ -543,7 +565,7 @@ register_functions_vlc (void)
   funcs->audio_get_volume   = vlc_audio_get_volume;
   funcs->audio_set_volume   = vlc_audio_set_volume;
   funcs->audio_get_mute     = vlc_audio_get_mute;
-  funcs->audio_set_mute     = NULL;
+  funcs->audio_set_mute     = vlc_audio_set_mute;
   funcs->audio_set_delay    = NULL;
   funcs->audio_select       = NULL;
   funcs->audio_prev         = NULL;
