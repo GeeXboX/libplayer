@@ -386,6 +386,26 @@ vlc_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   vlc_identify (mrl);
 }
 
+static int
+vlc_get_time_pos (player_t *player)
+{
+  float time_pos = 0.0;
+  vlc_t *vlc;
+  
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
+
+  if (!player)
+    return -1;
+
+  vlc = (vlc_t *) player->priv;
+  time_pos = libvlc_media_player_get_position (vlc->mp, &vlc->ex);
+
+  if (time_pos < 0.0)
+    return -1;
+
+  return (int) (time_pos * 1000.0);
+}
+
 static playback_status_t
 vlc_playback_start (player_t *player)
 {
@@ -552,7 +572,7 @@ register_functions_vlc (void)
   funcs->mrl_retrieve_props = vlc_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = vlc_mrl_retrieve_metadata;
 
-  funcs->get_time_pos       = NULL;
+  funcs->get_time_pos       = vlc_get_time_pos;
   funcs->set_framedrop      = NULL;
 
   funcs->pb_start           = vlc_playback_start;
