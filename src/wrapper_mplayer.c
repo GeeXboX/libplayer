@@ -2769,9 +2769,11 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   case PLAYER_PB_SEEK_RELATIVE:
     opt = MPLAYER_SEEK_RELATIVE;
     break;
+
   case PLAYER_PB_SEEK_PERCENT:
     opt = MPLAYER_SEEK_PERCENT;
     break;
+
   case PLAYER_PB_SEEK_ABSOLUTE:
     opt = MPLAYER_SEEK_ABSOLUTE;
     break;
