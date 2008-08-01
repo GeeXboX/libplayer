@@ -692,8 +692,8 @@ if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
   wrapper_xine="no"
   echolog "Checking for libxine ..."
   if [ -n "$libxinedir" ]; then
-    check_cflags -I$libxinedir
-    check_ldflags -L$libxinedir
+    check_cflags -I$libxinedir/include
+    check_ldflags -L$libxinedir/lib
   fi
   check_lib xine.h xine_init -lxine
   if [ "$?" = 0 ]; then
@@ -723,10 +723,10 @@ if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
   wrapper_vlc="no"
   echolog "Checking for libvlc ..."
   if [ -n "$libvlcdir" ]; then
-    check_cflags -I$libvlcdir
-    check_ldflags -L$libvlcdir
+    check_cflags -I$libvlcdir/include
+    check_ldflags -L$libvlcdir/lib
   fi
-  check_lib vlc/libvlc.h libvlc_new -lvlc
+  check_lib vlc/vlc.h libvlc_media_new -lvlc
   if [ "$?" = 0 ]; then
     add_extracflags -DHAVE_VLC
     wrapper_vlc="yes"
@@ -742,8 +742,8 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
   check_cflags `pkg-config gstreamer-0.10 --cflags`
   check_ldflags `pkg-config gstreamer-0.10 --libs`
   if [ -n "$libgstreamerdir" ]; then
-    check_cflags -I$libgstreamerdir
-    check_ldflags -L$libgstreamerdir
+    check_cflags -I$libgstreamerdir/include
+    check_ldflags -L$libgstreamerdir/lib
   fi
   check_lib gst/gst.h gst_init -lgstreamer-0.10
   if [ "$?" = 0 ]; then
@@ -760,8 +760,8 @@ if test "$wrapper_xine" = "yes" -o "$wrapper_mplayer" = "yes"; then
   x11="no"
   echolog "Checking for libX11 ..."
   if [ -n "$libX11dir" ]; then
-    check_cflags -I$libX11dir
-    check_ldflags -L$libX11dir
+    check_cflags -I$libX11dir/include
+    check_ldflags -L$libX11dir/lib
   fi
   check_lib X11/X.h XInitThreads -lX11 || die "Error, can't find libX11 !"
   add_extralibs -lX11

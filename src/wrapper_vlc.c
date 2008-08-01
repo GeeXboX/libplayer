@@ -19,21 +19,26 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <string.h>
-#include <vlc/libvlc.h>
+#include <unistd.h>
+#include <vlc/vlc.h>
 
 #include "player.h"
 #include "player_internals.h"
 #include "logs.h"
+#include "playlist.h"
 #include "wrapper_vlc.h"
+#include "x11_common.h"
 
 #define MODULE_NAME "vlc"
 
 /* player specific structure */
 typedef struct vlc_s {
   libvlc_instance_t *core;
+  libvlc_media_player_t *mp;
   libvlc_exception_t ex;
 } vlc_t;
 
@@ -42,7 +47,7 @@ static init_status_t
 vlc_init (player_t *player)
 {
   vlc_t *vlc = NULL;
-  char *vlc_argv[32] = { "vlc" };
+  const char *vlc_argv[32] = { "vlc" };
   int vlc_argc = 1;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
@@ -50,11 +55,66 @@ vlc_init (player_t *player)
   if (!player)
     return PLAYER_INIT_ERROR;
 
+  /* only X11 video out is supported right now */
+  if (player->vo != PLAYER_VO_NULL &&
+      player->vo != PLAYER_VO_X11 &&
+      player->vo != PLAYER_VO_XV &&
+      player->vo != PLAYER_VO_GL)
+    return PLAYER_INIT_ERROR;
+
   //vlc_argv[vlc_argc++] = "-vv";
   vlc_argv[vlc_argc++] = "--no-stats";
   vlc_argv[vlc_argc++] = "--intf";
   vlc_argv[vlc_argc++] = "dummy";
+  
+  /* select the video output */
+  switch (player->vo)
+  {
+  case PLAYER_VO_NULL:
+    vlc_argv[vlc_argc++] = "--vout";
+    vlc_argv[vlc_argc++] = "dummy";
+    break;
+    
+  case PLAYER_VO_X11:
+    vlc_argv[vlc_argc++] = "--vout";
+    vlc_argv[vlc_argc++] = "x11,dummy";
+    break;
+    
+  case PLAYER_VO_XV:
+    vlc_argv[vlc_argc++] = "--vout";
+    vlc_argv[vlc_argc++] = "xvideo,dummy";
+    break;
+    
+  case PLAYER_VO_GL:
+    vlc_argv[vlc_argc++] = "--vout";
+    vlc_argv[vlc_argc++] = "glx,dummy";
+    break;
+    
+  default:
+    break;
+  }
 
+  /* select the audio output */
+  switch (player->ao)
+  {
+  case PLAYER_AO_NULL:
+    vlc_argv[vlc_argc++] = "--no-audio";
+    break;
+    
+  case PLAYER_AO_ALSA:
+    vlc_argv[vlc_argc++] = "--aout";
+    vlc_argv[vlc_argc++] = "alsa,dummy";
+    break;
+    
+  case PLAYER_AO_OSS:
+    vlc_argv[vlc_argc++] = "--aout";
+    vlc_argv[vlc_argc++] = "oss,dummy";
+    break;
+
+  default:
+    break;
+  }
+  
   vlc = (vlc_t *) player->priv;
   libvlc_exception_init (&vlc->ex);
   vlc->core = libvlc_new (vlc_argc, vlc_argv, &vlc->ex);
@@ -86,20 +146,62 @@ vlc_uninit (player_t *player)
   if (!vlc)
     return;
 
-  if (&vlc->ex)
-    libvlc_exception_clear (&vlc->ex);
+  libvlc_exception_clear (&vlc->ex);
   if (vlc->core)
-    libvlc_destroy (vlc->core);
+    libvlc_release (vlc->core);
   free (vlc);
+}
+
+static int
+vlc_mrl_supported_res (player_t *player, mrl_resource_t res)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_supported_res");
+
+  if (!player)
+    return 0;
+
+  switch (res)
+  {
+  case MRL_RESOURCE_FILE:
+    return 1;
+
+  default:
+    return 0;
+  }
+}
+
+static char *
+vlc_resource_get_uri (mrl_t *mrl)
+{
+  if (!mrl)
+    return NULL;
+
+  switch (mrl->resource)
+  {
+  case MRL_RESOURCE_FILE:
+  {
+    mrl_resource_local_args_t *args = mrl->priv;
+
+    if (!args || !args->location)
+      return NULL;
+
+    return strdup (args->location);
+  }
+
+  default:
+    break;
+  }
+
+  return NULL;
 }
 
 static playback_status_t
 vlc_playback_start (player_t *player)
 {
   vlc_t *vlc;
-#if 0
-  int id;
-#endif
+  mrl_t *mrl;
+  char *uri = NULL;
+  libvlc_media_t *media = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
@@ -111,12 +213,43 @@ vlc_playback_start (player_t *player)
   if (!vlc->core)
     return PLAYER_PB_ERROR;
 
-#if 0
-  id = libvlc_playlist_add (vlc->core, player->mrl->name, NULL, NULL);
-  libvlc_playlist_play (vlc->core, id, 0, NULL, NULL);
-#endif
+  mrl = playlist_get_mrl (player->playlist);
+  if (!mrl)
+    return PLAYER_PB_ERROR;
 
+  uri = vlc_resource_get_uri (mrl);
+  if (!uri)
+    return PLAYER_PB_ERROR;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "uri: %s", uri);
+  media = libvlc_media_new (vlc->core, uri, &vlc->ex);
+  free (uri);
+
+  if (!media)
+    return PLAYER_PB_ERROR;
+  
+  vlc->mp = libvlc_media_player_new_from_media (media, &vlc->ex);
+  libvlc_media_release (media);
+  libvlc_media_player_play (vlc->mp, &vlc->ex);
+  
   return PLAYER_PB_OK;
+}
+
+static void
+vlc_playback_stop (player_t *player)
+{
+  vlc_t *vlc;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+
+  libvlc_media_player_stop (vlc->mp, &vlc->ex);
+  libvlc_media_player_release (vlc->mp);
+  vlc->mp = NULL;
 }
 
 /* public API */
@@ -133,7 +266,7 @@ register_functions_vlc (void)
   funcs->uninit             = vlc_uninit;
   funcs->set_verbosity      = NULL;
 
-  funcs->mrl_supported_res  = NULL;
+  funcs->mrl_supported_res  = vlc_mrl_supported_res;
   funcs->mrl_retrieve_props = NULL;
   funcs->mrl_retrieve_meta  = NULL;
 
@@ -141,7 +274,7 @@ register_functions_vlc (void)
   funcs->set_framedrop      = NULL;
 
   funcs->pb_start           = vlc_playback_start;
-  funcs->pb_stop            = NULL;
+  funcs->pb_stop            = vlc_playback_stop;
   funcs->pb_pause           = NULL;
   funcs->pb_seek            = NULL;
   funcs->pb_seek_chapter    = NULL;
@@ -199,6 +332,7 @@ register_private_vlc (void)
     return NULL;
 
   vlc->core = NULL;
+  vlc->mp   = NULL;
 
   return vlc;
 }
