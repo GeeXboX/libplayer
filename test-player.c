@@ -548,7 +548,8 @@ main (int argc, char **argv)
   player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
   player_pb_t pb_mode = PLAYER_PB_SINGLE;
 
-  int c, index, optind_bak;
+  int c, index, optind_bak, argc_bak, i;
+  char **argv_bak;
   const char *const short_options = "hvp:a:g:";
   const struct option long_options [] = {
     {"help",    no_argument,       0, 'h' },
@@ -640,6 +641,10 @@ main (int argc, char **argv)
     }
   }
   optind_bak = optind;
+  argc_bak = argc;
+  argv_bak = malloc (argc * sizeof (char *));
+  for (i = 0; i < argc; i++)
+    *(argv_bak + i) = strdup (argv[i]);
 
   player = player_init (type, ao, vo, verbosity, event_cb);
 
@@ -647,23 +652,25 @@ main (int argc, char **argv)
     return -1;
 
   /* these arguments are files */
-  optind = optind_bak;
-  if (optind < argc) {
+  if (optind_bak < argc_bak) {
     do {
       mrl_t *mrl;
       mrl_resource_local_args_t *args;
 
       args = calloc (1, sizeof (mrl_resource_local_args_t));
-      args->location = strdup (argv[optind]);
+      args->location = strdup (argv_bak[optind_bak]);
 
       mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
       if (!mrl)
         continue;
-      printf (" > %s added to the playlist!\n", argv[optind]);
+      printf (" > %s added to the playlist!\n", argv_bak[optind_bak]);
       player_mrl_append (player, mrl, PLAYER_MRL_ADD_QUEUE);
-    } while (++optind < argc);
+    } while (++optind_bak < argc_bak);
     putchar ('\n');
   }
+  for (i = 0; i < argc; i++)
+    free (*(argv_bak + i));
+  free (argv_bak);
 
   printf (TESTPLAYER_COMMANDS);
 
