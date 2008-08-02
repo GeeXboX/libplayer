@@ -149,7 +149,7 @@ xine_resource_get_uri (mrl_t *mrl)
       return NULL;
     }
 
-      return strdup (args->location);
+    return strdup (args->location);
   }
 
   case MRL_RESOURCE_DVD:    /* dvd:device/title_start */
