@@ -391,10 +391,10 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   if (stream) {
     xine_open (stream, uri);
 
-    if ((flags & IDENTIFY_VIDEO))
+    if (flags & IDENTIFY_VIDEO)
       xine_identify_video (mrl, stream);
 
-    if ((flags & IDENTIFY_AUDIO))
+    if (flags & IDENTIFY_AUDIO)
       xine_identify_audio (mrl, stream);
 
     if (flags & IDENTIFY_METADATA)
