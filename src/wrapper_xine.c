@@ -704,6 +704,8 @@ xine_player_playback_start (player_t *player)
   if (!uri)
     return PLAYER_PB_ERROR;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "uri: %s", uri);
+
   /* add subtitle to the MRL */
   if (mrl_c->subs) {
     mrl = malloc (strlen (uri) +
