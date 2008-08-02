@@ -105,9 +105,31 @@ send_event (player_t *player, int event)
   xine_event_send (x->stream, &xine_event);
 }
 
+static int
+count_nb_dec (int dec)
+{
+  int size = 1;
+
+  while (dec /= 10)
+    size++;
+
+  return size;
+}
+
 static char *
 xine_resource_get_uri (mrl_t *mrl)
 {
+  static const char const *protocols[] = {
+    /* Local Streams */
+    [MRL_RESOURCE_FILE]     = "file:",
+
+    /* Video discs */
+    [MRL_RESOURCE_DVD]      = "dvd:",
+    [MRL_RESOURCE_DVDNAV]   = "dvd:",
+
+    [MRL_RESOURCE_UNKNOWN]  = NULL
+  };
+
   if (!mrl)
     return NULL;
 
@@ -119,6 +141,39 @@ xine_resource_get_uri (mrl_t *mrl)
     if (args && args->location)
       return strdup (args->location);
     break;
+  }
+
+  case MRL_RESOURCE_DVD:    /* dvd:device/title_start */
+  case MRL_RESOURCE_DVDNAV: /* dvd:device/title_start */
+  {
+    char *uri;
+    const char *protocol = protocols[mrl->resource];
+    char title_start[8] = "";
+    size_t size = strlen (protocol);
+    mrl_resource_videodisc_args_t *args;
+
+    args = mrl->priv;
+    if (!args)
+      break;
+
+    if (args->device)
+      size += strlen (args->device);
+
+    if (args->title_start)
+    {
+      size += 1 + count_nb_dec (args->title_start);
+      snprintf (title_start, sizeof (title_start), "/%i", args->title_start);
+    }
+
+    size++;
+    uri = malloc (size);
+    if (!uri)
+      break;
+
+    snprintf (uri, size, "%s%s%s",
+              protocol, args->device ? args->device : "", title_start);
+
+    return uri;
   }
 
   default:
@@ -567,6 +622,8 @@ xine_player_mrl_supported_res (player_t *player, mrl_resource_t res)
   switch (res)
   {
   case MRL_RESOURCE_FILE:
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
     return 1;
 
   default:
