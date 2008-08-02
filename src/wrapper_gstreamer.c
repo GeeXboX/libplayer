@@ -70,7 +70,7 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
     gst_element_set_state (g->bin, GST_STATE_NULL);
 
     /* tell player */
-    event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
     break;
   }

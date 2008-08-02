@@ -22,6 +22,6 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-int event_send (player_t *player, int e, void *data);
+int player_event_send (player_t *player, int e, void *data);
 
 #endif /* EVENT_H */

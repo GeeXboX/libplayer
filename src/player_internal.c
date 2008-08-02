@@ -284,7 +284,7 @@ player_sv_playback_start (player_t *player)
   player->state = PLAYER_STATE_RUNNING;
 
   /* notify front-end */
-  event_send (player, PLAYER_EVENT_PLAYBACK_START, NULL);
+  player_event_send (player, PLAYER_EVENT_PLAYBACK_START, NULL);
 }
 
 void
@@ -303,7 +303,7 @@ player_sv_playback_stop (player_t *player)
   player->state = PLAYER_STATE_IDLE;
 
   /* notify front-end */
-  event_send (player, PLAYER_EVENT_PLAYBACK_STOP, NULL);
+  player_event_send (player, PLAYER_EVENT_PLAYBACK_STOP, NULL);
 }
 
 void

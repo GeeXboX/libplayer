@@ -27,7 +27,7 @@
 #include "event_handler.h"
 
 int
-event_send (player_t *player, int e, void *data)
+player_event_send (player_t *player, int e, void *data)
 {
   int res;
 
