@@ -656,7 +656,12 @@ xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
     mrl_resource_local_args_t *args = mrl->priv;
     if (args && args->location)
     {
-      stat (args->location, &st);
+      const char *location = args->location;
+
+      if (strstr (location, "file:") == location)
+        location += 5;
+
+      stat (location, &st);
       mrl->prop->size = st.st_size;
     }
   }
