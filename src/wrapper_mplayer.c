@@ -2685,7 +2685,10 @@ mplayer_playback_start (player_t *player)
   }
   pthread_mutex_unlock (&mplayer->mutex_status);
 
-  /* set parameters */
+  /*
+   * Not all parameters can be set by the MRL, this function try to set/load
+   * the others attributes of the 'args' structure.
+   */
   mp_resource_load_args (player, mrl);
 
   /* load subtitle if exists */
