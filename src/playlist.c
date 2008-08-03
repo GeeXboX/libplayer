@@ -82,30 +82,31 @@ playlist_set_shuffle (playlist_t *playlist, int shuffle)
 }
 
 static void
-playlist_reset_counter (playlist_t *playlist)
+playlist_reset_counter (playlist_t *playlist, player_loop_t mode)
 {
-  if (playlist->loop_mode == PLAYER_LOOP_ELEMENT)
+  if (mode != playlist->loop_mode)
+    return;
+
     playlist->loop_cnt = playlist->loop; /* reset the loop counter */
 }
 
 int
 playlist_next_play (playlist_t *playlist)
 {
+  static int reset;
+
   if (!playlist)
     return 0;
+
+  if (reset) /* manual start? ok, then reset */
+  {
+    playlist_reset_counter (playlist, playlist->loop_mode);
+    reset = 0;
+  }
 
   switch (playlist->loop_mode)
   {
   case PLAYER_LOOP_ELEMENT:
-  {
-    static int reset;
-
-    if (reset) /* manual start? ok, then reset */
-    {
-      playlist_reset_counter (playlist);
-      reset = 0;
-    }
-
     if (!playlist->loop_cnt)
     {
       reset = 1;
@@ -117,10 +118,22 @@ playlist_next_play (playlist_t *playlist)
 
     playlist->loop_cnt--;
     return 1; /* same mrl */
-  }
 
-  case PLAYER_LOOP_PLAYLIST: /* FIXME */
+  case PLAYER_LOOP_PLAYLIST:
+    if (playlist_next_mrl_available (playlist))
     break; /* next mrl */
+
+    if (!playlist->loop_cnt)
+    {
+      reset = 1;
+      return 0; /* end loop */
+    }
+
+    if (playlist->loop_cnt > 0) /* else: infinite */
+      playlist->loop_cnt--;
+
+    playlist_first_mrl (playlist);
+    return 1; /* first mrl */
 
   case PLAYER_LOOP_DISABLE:
   default:
@@ -185,7 +198,7 @@ playlist_set_mrl (playlist_t *playlist, mrl_t *mrl)
   else
     playlist->mrl_list = mrl;
 
-  playlist_reset_counter (playlist);
+  playlist_reset_counter (playlist, PLAYER_LOOP_ELEMENT);
 }
 
 void
@@ -208,7 +221,7 @@ playlist_append_mrl (playlist_t *playlist, mrl_t *mrl)
   else
   {
     playlist->mrl_list = mrl;
-    playlist_reset_counter (playlist);
+    playlist_reset_counter (playlist, PLAYER_LOOP_ELEMENT);
   }
 }
 
@@ -235,7 +248,7 @@ playlist_next_mrl (playlist_t *playlist)
   if (playlist->mrl_list && playlist->mrl_list->next)
   {
     playlist->mrl_list = playlist->mrl_list->next;
-    playlist_reset_counter (playlist);
+    playlist_reset_counter (playlist, PLAYER_LOOP_ELEMENT);
   }
 }
 
@@ -262,8 +275,24 @@ playlist_previous_mrl (playlist_t *playlist)
   if (playlist->mrl_list && playlist->mrl_list->prev)
   {
     playlist->mrl_list = playlist->mrl_list->prev;
-    playlist_reset_counter (playlist);
+    playlist_reset_counter (playlist, PLAYER_LOOP_ELEMENT);
   }
+}
+
+void
+playlist_first_mrl (playlist_t *playlist)
+{
+  mrl_t *mrl;
+
+  if (!playlist)
+    return;
+
+  mrl = playlist->mrl_list;
+  while (mrl->prev)
+    mrl = mrl->prev;
+  playlist->mrl_list = mrl;
+
+  playlist_reset_counter (playlist, PLAYER_LOOP_ELEMENT);
 }
 
 void
@@ -279,7 +308,7 @@ playlist_last_mrl (playlist_t *playlist)
     mrl = mrl->next;
   playlist->mrl_list = mrl;
 
-  playlist_reset_counter (playlist);
+  playlist_reset_counter (playlist, PLAYER_LOOP_ELEMENT);
 }
 
 void
@@ -315,7 +344,7 @@ playlist_remove_mrl (playlist_t *playlist)
   else
     playlist->mrl_list = NULL;
 
-  playlist_reset_counter (playlist);
+  playlist_reset_counter (playlist, PLAYER_LOOP_ELEMENT);
 }
 
 void
@@ -330,5 +359,5 @@ playlist_empty (playlist_t *playlist)
     playlist->mrl_list = NULL;
   }
 
-  playlist_reset_counter (playlist);
+  playlist_reset_counter (playlist, PLAYER_LOOP_ELEMENT);
 }

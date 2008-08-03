@@ -37,6 +37,7 @@ int playlist_next_mrl_available (playlist_t *playlist);
 void playlist_next_mrl (playlist_t *playlist);
 int playlist_previous_mrl_available (playlist_t *playlist);
 void playlist_previous_mrl (playlist_t *playlist);
+void playlist_first_mrl (playlist_t *playlist);
 void playlist_last_mrl (playlist_t *playlist);
 void playlist_remove_mrl (playlist_t *playlist);
 void playlist_empty (playlist_t *playlist);
