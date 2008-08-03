@@ -440,35 +440,35 @@ xine_player_init (player_t *player)
 
   switch (player->vo) {
   case PLAYER_VO_NULL:
-    id_vo = strdup ("none");
+    id_vo = "none";
     break;
 
   case PLAYER_VO_X11:
     use_x11 = 1;
-    id_vo = strdup ("xshm");
+    id_vo = "xshm";
     visual = XINE_VISUAL_TYPE_X11;
     break;
 
   case PLAYER_VO_X11_SDL:
     use_x11 = 1;
-    id_vo = strdup ("sdl");
+    id_vo = "sdl";
     visual = XINE_VISUAL_TYPE_X11;
     break;
 
   case PLAYER_VO_XV:
     use_x11 = 1;
-    id_vo = strdup ("xv");
+    id_vo = "xv";
     visual = XINE_VISUAL_TYPE_X11;
     break;
 
   case PLAYER_VO_GL:
     use_x11 = 1;
-    id_vo = strdup ("opengl");
+    id_vo = "opengl";
     visual = XINE_VISUAL_TYPE_X11;
     break;
 
   case PLAYER_VO_FB:
-    id_vo = strdup ("fb");
+    id_vo = "fb";
     visual = XINE_VISUAL_TYPE_FB;
     break;
 
@@ -479,9 +479,6 @@ xine_player_init (player_t *player)
   }
 
   if (use_x11 && (!x11_init (player) || !x11_get_data (player->x11))) {
-    if (id_vo)
-      free (id_vo);
-
     return PLAYER_INIT_ERROR;
   }
   else if (use_x11)
@@ -493,26 +490,20 @@ xine_player_init (player_t *player)
           MODULE_NAME, "Xine can't init '%s' video driver",
           id_vo ? id_vo : "null");
 
-    if (id_vo)
-      free (id_vo);
-
     return PLAYER_INIT_ERROR;
   }
 
-  if (id_vo)
-    free (id_vo);
-
   switch (player->ao) {
   case PLAYER_AO_NULL:
-    id_ao = strdup ("none");
+    id_ao = "none";
     break;
 
   case PLAYER_AO_ALSA:
-    id_ao = strdup ("alsa");
+    id_ao = "alsa";
     break;
 
   case PLAYER_AO_OSS:
-    id_ao = strdup ("oss");
+    id_ao = "oss";
     break;
 
   default:
@@ -527,14 +518,8 @@ xine_player_init (player_t *player)
           MODULE_NAME, "Xine can't init '%s' audio driver",
           id_ao ? id_ao : "null");
 
-    if (id_ao);
-      free (id_ao);
-
     return PLAYER_INIT_ERROR;
   }
-
-  if (id_ao);
-    free (id_ao);
 
   x->stream = xine_stream_new (x->xine, x->ao_port, x->vo_port);
 
