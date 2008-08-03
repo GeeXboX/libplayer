@@ -3089,6 +3089,13 @@ mplayer_dvd_angle_prev (player_t *player)
   angle = slave_get_property_int (player, PROPERTY_ANGLE);
   angle--;
 
+  /*
+   * min value for 'angle' must be 1 but `mplayer -list-properties`
+   * returns -2.
+   */
+  if (angle < 1)
+    return;
+
   check_range (player, PROPERTY_ANGLE, &angle, 1);
   slave_set_property_int (player, PROPERTY_ANGLE, angle);
 }
