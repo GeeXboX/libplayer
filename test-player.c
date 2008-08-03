@@ -688,7 +688,7 @@ main (int argc, char **argv)
       break;
     case '.':
     {
-      int mode;
+      static int mode;
 
       loop = !loop ? 2 : (loop > 0 ? -1 : 0);
       if (!loop)
