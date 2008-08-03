@@ -87,7 +87,7 @@ playlist_reset_counter (playlist_t *playlist, player_loop_t mode)
   if (mode != playlist->loop_mode)
     return;
 
-    playlist->loop_cnt = playlist->loop; /* reset the loop counter */
+  playlist->loop_cnt = playlist->loop; /* reset the loop counter */
 }
 
 int
@@ -121,7 +121,7 @@ playlist_next_play (playlist_t *playlist)
 
   case PLAYER_LOOP_PLAYLIST:
     if (playlist_next_mrl_available (playlist))
-    break; /* next mrl */
+      break; /* next mrl */
 
     if (!playlist->loop_cnt)
     {
