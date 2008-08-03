@@ -687,12 +687,28 @@ main (int argc, char **argv)
       printf ("PLAYBACK %s\n", pb_mode == PLAYER_PB_AUTO ? "AUTO" : "SINGLE");
       break;
     case '.':
+    {
+      int mode;
+
       loop = !loop ? 2 : (loop > 0 ? -1 : 0);
-      loop_mode = loop ? PLAYER_LOOP_ELEMENT : PLAYER_LOOP_DISABLE;
+      if (!loop)
+      {
+        loop_mode = PLAYER_LOOP_DISABLE;
+        mode = mode ? 0 : 1;
+      }
+
+      if (mode && loop)
+        loop_mode = PLAYER_LOOP_ELEMENT;
+      else if (loop)
+        loop_mode = PLAYER_LOOP_PLAYLIST;
+
       player_set_loop (player, loop_mode, loop);
       printf ("LOOP %s %i (playback auto must be enabled: key '#')\n",
-              loop_mode == PLAYER_LOOP_ELEMENT ? "ELEMENT" : "DISABLE", loop);
+              loop_mode == PLAYER_LOOP_ELEMENT ? "ELEMENT" :
+              (loop_mode == PLAYER_LOOP_PLAYLIST ? "PLAYLIST" : "DISABLE"),
+              loop);
       break;
+    }
     case '+':
       speed += 0.1;
       if (speed > 100.0)
