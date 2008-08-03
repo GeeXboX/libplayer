@@ -445,7 +445,7 @@ xine_player_init (player_t *player)
 
   case PLAYER_VO_X11:
     use_x11 = 1;
-    id_vo = strdup ("x11");
+    id_vo = strdup ("xshm");
     visual = XINE_VISUAL_TYPE_X11;
     break;
 
