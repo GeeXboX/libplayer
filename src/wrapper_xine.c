@@ -461,6 +461,12 @@ xine_player_init (player_t *player)
     visual = XINE_VISUAL_TYPE_X11;
     break;
 
+  case PLAYER_VO_GL:
+    use_x11 = 1;
+    id_vo = strdup ("opengl");
+    visual = XINE_VISUAL_TYPE_X11;
+    break;
+
   case PLAYER_VO_FB:
     id_vo = strdup ("fb");
     visual = XINE_VISUAL_TYPE_FB;
