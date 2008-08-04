@@ -815,7 +815,11 @@ slave_get_property (player_t *player, slave_property_t property)
 
   prop = get_prop (player, property, &state);
   if (!prop || state != ITEM_ON)
+  {
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "property (%i) unsupported by MPlayer", property);
     return;
+  }
 
   command = get_cmd (player, SLAVE_GET_PROPERTY, &state);
   if (!command || state != ITEM_ON)
@@ -938,7 +942,11 @@ slave_set_property (player_t *player, slave_property_t property,
 
   prop = get_prop (player, property, &state);
   if (!prop || state != ITEM_ON)
+  {
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "property (%i) unsupported by MPlayer", property);
     return;
+  }
 
   command = get_cmd (player, SLAVE_SET_PROPERTY, &state);
   if (!command || state != ITEM_ON)
@@ -1018,7 +1026,11 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   command = get_cmd (player, cmd, &state_cmd);
   if (!command || state_cmd == ITEM_OFF)
+  {
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "command (%i) unsupported by MPlayer", cmd);
     return;
+  }
 
   if (state_cmd == ITEM_HACK)
     plog (player, PLAYER_MSG_WARNING,
@@ -1997,7 +2009,7 @@ static int
 mp_check_compatibility (player_t *player, checklist_t check)
 {
   mplayer_t *mplayer;
-  int i, nb = 0, res = 1;
+  int i, nb = 0;
   int mp_pipe[2];
   pid_t pid;
   item_list_t *list = NULL;
@@ -2152,10 +2164,9 @@ mp_check_compatibility (player_t *player, checklist_t check)
 
     if (state_libplayer == ITEM_ON && *state_mp == ITEM_OFF)
     {
-      plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
-            "%s '%s' is needed and not supported by your version of MPlayer",
-            what, str);
-      res = 0;
+      plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
+            "%s '%s' is needed and not supported by your version of MPlayer, "
+            "all actions with this item will be ignored", what, str);
     }
     else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_OFF)
     {
@@ -2187,7 +2198,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
     }
   }
 
-  return res;
+  return 1;
 }
 
 static int
