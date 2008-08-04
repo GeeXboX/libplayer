@@ -56,6 +56,7 @@
   " 0/9 : increase/decrease volume\n" \
   " m   : set/unset mute\n" \
   " 2/1 : 5s forward/backward\n" \
+  " 3/4 : previous/next audio track" \
   " l   : load a stream in the playlist\n" \
   " v   : print properties and metadata of the current stream\n" \
   " i   : print current time position\n" \
@@ -744,6 +745,14 @@ main (int argc, char **argv)
     case '2':   /* 5s forward */
       player_playback_seek (player, 5, PLAYER_PB_SEEK_RELATIVE);
       printf ("SEEK +5 sec.\n");
+      break;
+    case '3':
+      player_audio_prev (player);
+      printf ("AUDIO PREV\n");
+      break;
+    case '4':
+      player_audio_next (player);
+      printf ("AUDIO NEXT\n");
       break;
     case '9':   /* decrease volume */
       if (--volume < 0)
