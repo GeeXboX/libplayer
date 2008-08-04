@@ -226,6 +226,7 @@ typedef enum slave_property {
   PROPERTY_SUB_ALIGNMENT,
   PROPERTY_SUB_DELAY,
   PROPERTY_SUB_VISIBILITY,
+  PROPERTY_SWITCH_AUDIO,
   PROPERTY_TIME_POS,
   PROPERTY_VIDEO_BITRATE,
   PROPERTY_VIDEO_CODEC,
@@ -258,6 +259,7 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_VISIBILITY]   = {"sub_visibility",   ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_SWITCH_AUDIO]     = {"switch_audio",     ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_TIME_POS]         = {"time_pos",         ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_VIDEO_BITRATE]    = {"video_bitrate",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_VIDEO_CODEC]      = {"video_codec",      ITEM_ON,  ITEM_OFF, NULL},
@@ -963,6 +965,7 @@ slave_set_property (player_t *player, slave_property_t property,
   case PROPERTY_SUB:
   case PROPERTY_SUB_ALIGNMENT:
   case PROPERTY_SUB_VISIBILITY:
+  case PROPERTY_SWITCH_AUDIO:
   case PROPERTY_VOLUME:
     send_to_slave (player, "%s %i", cmd, value.i_val);
     break;
@@ -2974,6 +2977,61 @@ mplayer_audio_set_delay (player_t *player, int value, int absolute)
 }
 
 static void
+mplayer_audio_select (player_t *player, int value)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_select: %i", value);
+
+  if (!player)
+    return;
+
+  if (!check_range (player, PROPERTY_SWITCH_AUDIO, &value, 0))
+    return;
+
+  slave_set_property_int (player, PROPERTY_SWITCH_AUDIO, value);
+}
+
+static void
+mplayer_audio_prev (player_t *player)
+{
+  int audio;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_prev");
+
+  if (!player)
+    return;
+
+  audio = slave_get_property_int (player, PROPERTY_SWITCH_AUDIO);
+  audio--;
+
+  /*
+   * min value for 'switch_audio' must be 0 but `mplayer -list-properties`
+   * returns -2.
+   */
+  if (audio < 0)
+    return;
+
+  check_range (player, PROPERTY_SWITCH_AUDIO, &audio, 1);
+  slave_set_property_int (player, PROPERTY_SWITCH_AUDIO, audio);
+}
+
+static void
+mplayer_audio_next (player_t *player)
+{
+  int audio;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_next");
+
+  if (!player)
+    return;
+
+  audio = slave_get_property_int (player, PROPERTY_SWITCH_AUDIO);
+  audio++;
+
+  check_range (player, PROPERTY_SWITCH_AUDIO, &audio, 1);
+  slave_set_property_int (player, PROPERTY_SWITCH_AUDIO, audio);
+}
+
+static void
 mplayer_sub_set_delay (player_t *player, int value)
 {
   float delay;
@@ -3178,9 +3236,9 @@ register_functions_mplayer (void)
   funcs->audio_get_mute     = mplayer_audio_get_mute;
   funcs->audio_set_mute     = mplayer_audio_set_mute;
   funcs->audio_set_delay    = mplayer_audio_set_delay;
-  funcs->audio_select       = NULL;
-  funcs->audio_prev         = NULL;
-  funcs->audio_next         = NULL;
+  funcs->audio_select       = mplayer_audio_select;
+  funcs->audio_prev         = mplayer_audio_prev;
+  funcs->audio_next         = mplayer_audio_next;
 
   funcs->video_set_fs       = NULL;
   funcs->video_set_aspect   = NULL;
