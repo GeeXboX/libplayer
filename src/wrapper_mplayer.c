@@ -819,7 +819,8 @@ slave_get_property (player_t *player, slave_property_t property)
   if (!prop || state != ITEM_ON)
   {
     plog (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "property (%i) unsupported by MPlayer", property);
+          MODULE_NAME, "property (%i) unsupported by this version of MPlayer. "
+                       "Please upgrade to a newest build", property);
     return;
   }
 
@@ -946,7 +947,8 @@ slave_set_property (player_t *player, slave_property_t property,
   if (!prop || state != ITEM_ON)
   {
     plog (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "property (%i) unsupported by MPlayer", property);
+          MODULE_NAME, "property (%i) unsupported by this version of MPlayer. "
+                       "Please upgrade to a newest build", property);
     return;
   }
 
@@ -1031,7 +1033,8 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   if (!command || state_cmd == ITEM_OFF)
   {
     plog (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "command (%i) unsupported by MPlayer", cmd);
+          MODULE_NAME, "command (%i) unsupported by this version of MPlayer. "
+                       "Please upgrade to a newest build", cmd);
     return;
   }
 
