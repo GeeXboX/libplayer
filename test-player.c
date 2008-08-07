@@ -56,7 +56,7 @@
   " 0/9 : increase/decrease volume\n" \
   " m   : set/unset mute\n" \
   " 2/1 : 5s forward/backward\n" \
-  " 3/4 : previous/next audio track" \
+  " 3/4 : previous/next audio track\n" \
   " l   : load a stream in the playlist\n" \
   " v   : print properties and metadata of the current stream\n" \
   " i   : print current time position\n" \
