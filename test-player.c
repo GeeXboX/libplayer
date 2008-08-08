@@ -51,6 +51,7 @@
   "\n" \
   " #   : change playback mode (auto or single)\n" \
   " .   : change loop value and mode\n" \
+  " ,   : enable/disable shuffle on the playlist\n" \
   " +/- : increase/decrease speed\n" \
   " ]/[ : audio delay +/- 100 ms\n" \
   " 0/9 : increase/decrease volume\n" \
@@ -544,7 +545,7 @@ main (int argc, char **argv)
   int volume = 85;
   int time_pos;
   float speed = 1.0;
-  int loop = 0;
+  int loop = 0, shuffle = 0;
   player_loop_t loop_mode = PLAYER_LOOP_DISABLE;
   player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
   player_pb_t pb_mode = PLAYER_PB_SINGLE;
@@ -710,6 +711,12 @@ main (int argc, char **argv)
               loop);
       break;
     }
+    case ',':
+      shuffle = shuffle ? 0 : 1;
+      player_set_shuffle (player, shuffle);
+      printf ("SHUFFLE %s (playback auto must be enabled: key '#')\n",
+              shuffle ? "ON" : "OFF");
+      break;
     case '+':
       speed += 0.1;
       if (speed > 100.0)
