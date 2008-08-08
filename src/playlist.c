@@ -240,8 +240,7 @@ playlist_next_play (playlist_t *playlist)
   {
     if (!playlist_shuffle_next_available (playlist))
     {
-      playlist->shuffle = 0;
-      playlist_first_mrl (playlist); /* end shuffle, return at the top */
+      playlist_shuffle_init (playlist);
       return 0;
     }
   }
