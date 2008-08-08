@@ -219,6 +219,8 @@ playlist_next_play (playlist_t *playlist)
     if (!playlist->loop_cnt)
     {
       reset = 1;
+      if (playlist->shuffle)
+        playlist_shuffle_init (playlist);
       return 0; /* end loop */
     }
 
