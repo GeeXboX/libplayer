@@ -20,7 +20,7 @@
  */
 
 #include <stdlib.h>
-#include <time.h> /* srand rand */
+#include <time.h> /* time */
 
 #include "player.h"
 #include "player_internals.h"
