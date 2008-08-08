@@ -265,6 +265,9 @@ playlist_count_mrl (playlist_t *playlist)
     return 0;
 
   mrl = playlist->mrl_list;
+  while (mrl->prev)
+    mrl = mrl->prev;
+
   while (mrl->next)
   {
     mrl = mrl->next;
