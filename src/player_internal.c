@@ -176,7 +176,10 @@ player_sv_mrl_next_play (player_t *player)
   player_sv_playback_stop (player);
 
   if (!playlist_next_play (player->playlist))
+  {
+    player_event_send (player, PLAYER_EVENT_PLAYLIST_FINISHED, NULL);
     return;
+  }
 
   player_sv_playback_start (player);
 }
