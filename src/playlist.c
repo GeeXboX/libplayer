@@ -228,7 +228,7 @@ playlist_next_play (playlist_t *playlist)
     if (playlist->shuffle)
       playlist_shuffle_init (playlist);
     else
-    playlist_first_mrl (playlist);
+      playlist_first_mrl (playlist);
     return 1; /* first mrl */
 
   case PLAYER_LOOP_DISABLE:
@@ -251,7 +251,7 @@ playlist_next_play (playlist_t *playlist)
   if (playlist->shuffle)
     playlist_shuffle_next (playlist);
   else
-  playlist_next_mrl (playlist);
+    playlist_next_mrl (playlist);
   return 1;
 }
 
