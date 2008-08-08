@@ -20,6 +20,7 @@
  */
 
 #include <stdlib.h>
+#include <time.h> /* srand rand */
 
 #include "player.h"
 #include "player_internals.h"
@@ -28,6 +29,9 @@
 struct playlist_s {
   mrl_t *mrl_list;
   int shuffle;
+  int *shuffle_list;
+  int shuffle_it;
+  int shuffle_cnt;
   int loop;
   int loop_cnt;
   player_loop_t loop_mode;
@@ -43,7 +47,7 @@ playlist_new (int shuffle, int loop, player_loop_t loop_mode)
   if (!playlist)
     return NULL;
 
-  playlist->shuffle = shuffle;
+  playlist_set_shuffle (playlist, shuffle);
   playlist_set_loop (playlist, loop, loop_mode);
 
   return playlist;
@@ -57,6 +61,9 @@ playlist_free (playlist_t *playlist)
 
   if (playlist->mrl_list)
     mrl_list_free (playlist->mrl_list);
+
+  if (playlist->shuffle_list)
+    free (playlist->shuffle_list);
 
   free (playlist);
 }
@@ -72,6 +79,59 @@ playlist_set_loop (playlist_t *playlist, int loop, player_loop_t mode)
   playlist->loop_mode = mode;
 }
 
+static void
+playlist_goto_mrl (playlist_t *playlist, int value)
+{
+  if (!playlist)
+    return;
+
+  playlist_first_mrl (playlist);
+  while (playlist_next_mrl_available (playlist) && value--)
+    playlist_next_mrl (playlist);
+}
+
+static void
+playlist_shuffle_init (playlist_t *playlist)
+{
+  static int srnd;
+  int i;
+
+  if (!playlist)
+    return;
+
+  if (!srnd)
+  {
+    srand (time (NULL));
+    srnd = 1;
+  }
+
+  playlist->shuffle_cnt = playlist_count_mrl (playlist);
+
+  if (playlist->shuffle_list)
+    free (playlist->shuffle_list);
+
+  playlist->shuffle_list = malloc (playlist->shuffle_cnt * sizeof (int));
+  if (!playlist->shuffle_list)
+    return;
+
+  /* init list */
+  for (i = 0; i < playlist->shuffle_cnt; i++)
+    *(playlist->shuffle_list + i) = i;
+
+  /* pseudo-random shuffle */
+  for (i = 0; i < (playlist->shuffle_cnt - 1); i++)
+  {
+    int r, tmp;
+    r = i + (int) (rand () / (double) RAND_MAX * (playlist->shuffle_cnt - i));
+    tmp = *(playlist->shuffle_list + i);
+    *(playlist->shuffle_list + i) = *(playlist->shuffle_list + r);
+    *(playlist->shuffle_list + r) = tmp;
+  }
+
+  playlist->shuffle_it = 0;
+  playlist_goto_mrl (playlist, *playlist->shuffle_list); /* first mrl to play */
+}
+
 void
 playlist_set_shuffle (playlist_t *playlist, int shuffle)
 {
@@ -79,6 +139,34 @@ playlist_set_shuffle (playlist_t *playlist, int shuffle)
     return;
 
   playlist->shuffle = shuffle;
+
+  if (shuffle)
+    playlist_shuffle_init (playlist);
+}
+
+static int
+playlist_shuffle_next_available (playlist_t *playlist)
+{
+  if (!playlist)
+    return 0;
+
+  return playlist->shuffle_it < playlist->shuffle_cnt - 1;
+}
+
+static void
+playlist_shuffle_next (playlist_t *playlist)
+{
+  int *value;
+
+  if (!playlist)
+    return;
+
+  if (!playlist_shuffle_next_available (playlist))
+    return;
+
+  playlist->shuffle_it++;
+  value = playlist->shuffle_list + playlist->shuffle_it;
+  playlist_goto_mrl (playlist, *value);
 }
 
 static void
@@ -120,7 +208,12 @@ playlist_next_play (playlist_t *playlist)
     return 1; /* same mrl */
 
   case PLAYER_LOOP_PLAYLIST:
-    if (playlist_next_mrl_available (playlist))
+    if (playlist->shuffle)
+    {
+      if (playlist_shuffle_next_available (playlist))
+        break; /* next mrl */
+    }
+    else if (playlist_next_mrl_available (playlist))
       break; /* next mrl */
 
     if (!playlist->loop_cnt)
@@ -132,6 +225,9 @@ playlist_next_play (playlist_t *playlist)
     if (playlist->loop_cnt > 0) /* else: infinite */
       playlist->loop_cnt--;
 
+    if (playlist->shuffle)
+      playlist_shuffle_init (playlist);
+    else
     playlist_first_mrl (playlist);
     return 1; /* first mrl */
 
@@ -140,9 +236,21 @@ playlist_next_play (playlist_t *playlist)
     break; /* next mrl */
   }
 
-  if (!playlist_next_mrl_available (playlist))
+  if (playlist->shuffle)
+  {
+    if (!playlist_shuffle_next_available (playlist))
+    {
+      playlist->shuffle = 0;
+      playlist_first_mrl (playlist); /* end shuffle, return at the top */
+      return 0;
+    }
+  }
+  else if (!playlist_next_mrl_available (playlist))
     return 0;
 
+  if (playlist->shuffle)
+    playlist_shuffle_next (playlist);
+  else
   playlist_next_mrl (playlist);
   return 1;
 }

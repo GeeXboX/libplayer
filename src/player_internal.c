@@ -230,6 +230,10 @@ player_sv_set_shuffle (player_t *player, int value)
   if (!player)
     return;
 
+  if (player->pb_mode != PLAYER_PB_AUTO && value)
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "shuffle is only activated with PLAYBACK_AUTO mode");
+
   playlist_set_shuffle (player->playlist, value);
 }
 
