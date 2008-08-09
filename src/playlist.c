@@ -396,7 +396,7 @@ playlist_first_mrl (playlist_t *playlist)
 {
   mrl_t *mrl;
 
-  if (!playlist)
+  if (!playlist || !playlist->mrl_list)
     return;
 
   mrl = playlist->mrl_list;
@@ -412,7 +412,7 @@ playlist_last_mrl (playlist_t *playlist)
 {
   mrl_t *mrl;
 
-  if (!playlist)
+  if (!playlist || !playlist->mrl_list)
     return;
 
   mrl = playlist->mrl_list;
