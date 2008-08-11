@@ -60,6 +60,7 @@
   " 3/4 : previous/next audio track\n" \
   " 5/6 : previous/next subtitle\n" \
   " u   : toggle subtitle visibility\n" \
+  " a   : change aspect ratio (original/16:9)\n" \
   " l   : load a stream in the playlist\n" \
   " v   : print properties and metadata of the current stream\n" \
   " i   : print current time position\n" \
@@ -549,6 +550,7 @@ main (int argc, char **argv)
   float speed = 1.0;
   int loop = 0, shuffle = 0;
   int visibility = 0;
+  float ar = 0.0;
   player_loop_t loop_mode = PLAYER_LOOP_DISABLE;
   player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
   player_pb_t pb_mode = PLAYER_PB_SINGLE;
@@ -777,6 +779,11 @@ main (int argc, char **argv)
         volume = 0;
       player_audio_volume_set (player, volume);
       printf ("VOLUME %i\n", volume);
+      break;
+    case 'a':
+      ar = ar ? 0.0 : 16.0 / 9.0;
+      player_video_set_aspect_ratio (player, ar);
+      printf ("ASPECT RATIO %.2f\n", ar);
       break;
     case 'b':   /* start the previous stream in the playlist */
       player_mrl_previous (player);
