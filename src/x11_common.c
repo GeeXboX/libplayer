@@ -83,6 +83,7 @@ zoom (player_t *player, int parentwidth, int parentheight, float aspect,
     *height = parentheight;
     *x = 0;
     *y = 0;
+    convert = 1.0;
   }
   /* or calcul the best size */
   else
@@ -108,7 +109,7 @@ zoom (player_t *player, int parentwidth, int parentheight, float aspect,
   }
 
   plog (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "[zoom] x:%i y:%i w:%i h:%i", *x, *y, *width, *height);
+        MODULE_NAME, "[zoom] x:%i y:%i w:%i h:%i r:%.2f", *x, *y, *width, *height, convert);
 }
 
 Display *
