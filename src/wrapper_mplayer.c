@@ -731,10 +731,8 @@ thread_fifo (void *arg)
       default:
         pthread_mutex_lock (&mplayer->mutex_status);
         if (mplayer->status == MPLAYER_IS_LOADING)
-        {
-          mplayer->status = MPLAYER_IS_IDLE;
           pthread_cond_signal (&mplayer->cond_status);
-        }
+          mplayer->status = MPLAYER_IS_IDLE;
         pthread_mutex_unlock (&mplayer->mutex_status);
       }
     }
