@@ -173,6 +173,7 @@ typedef enum slave_cmd {
   SLAVE_SET_PROPERTY, /* set_property string string */
   SLAVE_STOP,         /* stop */
   SLAVE_SUB_LOAD,     /* sub_load string */
+  SLAVE_SWITCH_RATIO, /* switch_ratio float */
   SLAVE_SWITCH_TITLE, /* switch_title [int] */
 } slave_cmd_t;
 
@@ -186,6 +187,7 @@ static const item_list_t g_slave_cmds[] = {
   [SLAVE_SET_PROPERTY] = {"set_property", ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_STOP]         = {"stop",         ITEM_ON | ITEM_HACK, ITEM_OFF, NULL},
   [SLAVE_SUB_LOAD]     = {"sub_load",     ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SWITCH_RATIO] = {"switch_ratio", ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SWITCH_TITLE] = {"switch_title", ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_UNKNOWN]      = {NULL,           ITEM_OFF,            ITEM_OFF, NULL}
 };
@@ -1093,6 +1095,11 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
       send_to_slave (player, "%s \"%s\"", command, value->s_val);
     break;
 
+  case SLAVE_SWITCH_RATIO:
+    if (state_cmd == ITEM_ON && value)
+      send_to_slave (player, "%s %.2f", command, value->f_val);
+    break;
+
   case SLAVE_SWITCH_TITLE:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player, "%s %i", command, value->i_val);
@@ -1127,6 +1134,15 @@ slave_cmd_int_opt (player_t *player, slave_cmd_t cmd, int value, int opt)
 
   param.i_val = value;
   slave_action (player, cmd, &param, opt);
+}
+
+static inline void
+slave_cmd_float (player_t *player, slave_cmd_t cmd, float value)
+{
+  slave_value_t param;
+
+  param.f_val = value;
+  slave_action (player, cmd, &param, 0);
 }
 
 static inline void
@@ -2252,6 +2268,7 @@ executable_is_available (player_t *player, const char *bin)
  *   void  slave_cmd                (player_t, slave_cmd_t)
  *   void  slave_cmd_int            (player_t, slave_cmd_t,      int)
  *   void  slave_cmd_int_opt        (player_t, slave_cmd_t,      int,    int)
+ *   void  slave_cmd_float          (player_t, slave_cmd_t,      float)
  *   void  slave_cmd_str            (player_t, slave_cmd_t,      char *)
  *   void  slave_cmd_str_opt        (player_t, slave_cmd_t,      char *, int)
  *
@@ -3035,6 +3052,48 @@ mplayer_audio_next (player_t *player)
 }
 
 static void
+mplayer_video_set_ar (player_t *player, float value)
+{
+  mplayer_t *mplayer;
+  mrl_t *mrl;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "video_set_ar: %.2f", value);
+
+  if (!player)
+    return;
+
+  mplayer = player->priv;
+  if (!mplayer)
+    return;
+
+  pthread_mutex_lock (&mplayer->mutex_status);
+  if (mplayer->status != MPLAYER_IS_PLAYING)
+  {
+    pthread_mutex_unlock (&mplayer->mutex_status);
+    return;
+  }
+  pthread_mutex_unlock (&mplayer->mutex_status);
+
+  mrl = playlist_get_mrl (player->playlist);
+  if (mrl_uses_vo (mrl))
+    return;
+
+  /* use original aspect ratio if value is 0.0 */
+  if (!value && mrl && mrl->prop && mrl->prop->video)
+  {
+    mrl_properties_video_t *video = mrl->prop->video;
+    player->aspect = video->aspect / PLAYER_VIDEO_ASPECT_RATIO_MULT;
+  }
+  else
+    player->aspect = value;
+
+  if (player->x11)
+    x11_map (player);
+
+  slave_cmd_float (player, SLAVE_SWITCH_RATIO, player->aspect);
+}
+
+static void
 mplayer_sub_set_delay (player_t *player, int value)
 {
   float delay;
@@ -3301,7 +3360,7 @@ register_functions_mplayer (void)
   funcs->video_set_fs       = NULL;
   funcs->video_set_aspect   = NULL;
   funcs->video_set_panscan  = NULL;
-  funcs->video_set_ar       = NULL;
+  funcs->video_set_ar       = mplayer_video_set_ar;
 
   funcs->sub_set_delay      = mplayer_sub_set_delay;
   funcs->sub_set_alignment  = mplayer_sub_set_alignment;
