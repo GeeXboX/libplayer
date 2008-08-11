@@ -59,6 +59,7 @@
   " 2/1 : 5s forward/backward\n" \
   " 3/4 : previous/next audio track\n" \
   " 5/6 : previous/next subtitle\n" \
+  " u   : toggle subtitle visibility\n" \
   " l   : load a stream in the playlist\n" \
   " v   : print properties and metadata of the current stream\n" \
   " i   : print current time position\n" \
@@ -547,6 +548,7 @@ main (int argc, char **argv)
   int time_pos;
   float speed = 1.0;
   int loop = 0, shuffle = 0;
+  int visibility = 0;
   player_loop_t loop_mode = PLAYER_LOOP_DISABLE;
   player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
   player_pb_t pb_mode = PLAYER_PB_SINGLE;
@@ -827,6 +829,11 @@ main (int argc, char **argv)
     case 't':   /* remove all streams of the playlist */
       player_mrl_remove_all (player);
       printf ("ERASE PLAYLIST\n");
+      break;
+    case 'u':
+      visibility = visibility ? 0 : 1;
+      player_subtitle_set_visibility (player, visibility);
+      printf ("SUBTITLE VISIBILITY %i\n", visibility);
       break;
     case 'v':   /* print properties and metadata */
       show_info (player, player_mrl_get_current (player));
