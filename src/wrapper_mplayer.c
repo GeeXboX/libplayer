@@ -3092,6 +3092,61 @@ mplayer_sub_set_visibility (player_t *player, int value)
 }
 
 static void
+mplayer_sub_select (player_t *player, int value)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_select: %i", value);
+
+  if (!player)
+    return;
+
+  if (!check_range (player, PROPERTY_SUB, &value, 0))
+    return;
+
+  slave_set_property_int (player, PROPERTY_SUB, value);
+}
+
+static void
+mplayer_sub_prev (player_t *player)
+{
+  int sub;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_prev");
+
+  if (!player)
+    return;
+
+  sub = slave_get_property_int (player, PROPERTY_SUB);
+  sub--;
+
+  /*
+   * min value for 'sub' must be 0 but `mplayer -list-properties`
+   * returns -1.
+   */
+  if (sub < 0)
+    return;
+
+  check_range (player, PROPERTY_SUB, &sub, 1);
+  slave_set_property_int (player, PROPERTY_SUB, sub);
+}
+
+static void
+mplayer_sub_next (player_t *player)
+{
+  int sub;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_next");
+
+  if (!player)
+    return;
+
+  sub = slave_get_property_int (player, PROPERTY_SUB);
+  sub++;
+
+  check_range (player, PROPERTY_SUB, &sub, 1);
+  slave_set_property_int (player, PROPERTY_SUB, sub);
+}
+
+static void
 mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
 {
   int action;
@@ -3253,9 +3308,9 @@ register_functions_mplayer (void)
   funcs->sub_set_pos        = NULL;
   funcs->sub_set_visibility = mplayer_sub_set_visibility;
   funcs->sub_scale          = NULL;
-  funcs->sub_select         = NULL;
-  funcs->sub_prev           = NULL;
-  funcs->sub_next           = NULL;
+  funcs->sub_select         = mplayer_sub_select;
+  funcs->sub_prev           = mplayer_sub_prev;
+  funcs->sub_next           = mplayer_sub_next;
 
   funcs->dvd_nav            = mplayer_dvd_nav;
   funcs->dvd_angle_set      = mplayer_dvd_angle_set;
