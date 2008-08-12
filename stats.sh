@@ -28,20 +28,23 @@ bargraph ()
 
 varlist ()
 {
-  local VAR I PRE
+  local VAR I PRE NEWLINE
 
   VAR=$1
 
   I=0
+  NEWLINE=""
   PRE=""
   LIST=""
   for x in $VAR
   do
     if [ "$I" = "6" ]; then
-      LIST="$LIST$PRE$x,\n\t\t\t\t"
+      LIST="$LIST$PRE$x"
+      NEWLINE=",\n\t\t\t\t"
       PRE=""
     else
-      LIST="$LIST$PRE$x"
+      LIST="$LIST$NEWLINE$PRE$x"
+      NEWLINE=""
       PRE=", "
     fi
     I=`expr $I + 1`
