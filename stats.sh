@@ -38,16 +38,17 @@ varlist ()
   LIST=""
   for x in $VAR
   do
+    I=`expr $I + 1`
     if [ "$I" = "6" ]; then
       LIST="$LIST$PRE$x"
       NEWLINE=",\n\t\t\t\t"
       PRE=""
+      I=0
     else
       LIST="$LIST$NEWLINE$PRE$x"
       NEWLINE=""
       PRE=", "
     fi
-    I=`expr $I + 1`
   done
 }
 
