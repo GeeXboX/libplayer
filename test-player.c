@@ -243,6 +243,41 @@ load_res_dvd (player_t *player)
 }
 
 static mrl_t *
+load_res_vcd (player_t *player)
+{
+  int val;
+  char device[256] = "";
+  mrl_t *mrl;
+  mrl_resource_videodisc_args_t *args;
+  mrl_resource_t res = MRL_RESOURCE_VCD;
+
+  args = calloc (1, sizeof (mrl_resource_videodisc_args_t));
+  if (!args)
+    return NULL;
+
+  printf ("Device: ");
+  while (!*device) {
+    fgets (device, sizeof (device), stdin);
+    *(device + strlen (device) - 1) = '\0';
+  }
+  args->device = strdup (device);
+
+  printf ("Track start: ");
+  scanf ("%4u", &val);
+  args->track_start = (uint8_t) val;
+
+  mrl = mrl_new (player, res, args);
+  if (!mrl) {
+    if (args->device)
+      free (args->device);
+    free (args);
+    return NULL;
+  }
+
+  return mrl;
+}
+
+static mrl_t *
 load_res_network (player_t *player)
 {
   char url[4096] = "";
@@ -295,6 +330,7 @@ load_media (player_t *player)
   printf (" 2 - Compact Disc (CDDA/CDDB)\n");
   printf (" 3 - Digital Versatile Disc (Video)\n");
   printf (" 4 - Network stream (HTTP/MMS)\n");
+  printf (" 5 - Video Compact Disc (VCD)\n");
   c = getch ();
 
   switch (c) {
@@ -315,6 +351,10 @@ load_media (player_t *player)
 
   case '4':
     mrl = load_res_network (player);
+    break;
+
+  case '5':
+    mrl = load_res_vcd (player);
     break;
   }
 
