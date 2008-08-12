@@ -1190,6 +1190,7 @@ mp_resource_get_uri (mrl_t *mrl)
     /* Video discs */
     [MRL_RESOURCE_DVD]      = "dvd://",
     [MRL_RESOURCE_DVDNAV]   = "dvdnav://",
+    [MRL_RESOURCE_VCD]      = "vcd://",
 
     /* Network Streams */
     [MRL_RESOURCE_FTP]      = "ftp://",
@@ -1333,6 +1334,51 @@ mp_resource_get_uri (mrl_t *mrl)
 
     snprintf (uri, size, "%s%s%s%s",
               protocol, title_start, title_end, device ? device : "");
+
+    if (device)
+      free (device);
+
+    return uri;
+  }
+
+  case MRL_RESOURCE_VCD: /* vcd://track_start/device */
+  {
+    char *uri;
+    char *device = NULL;
+    const char *protocol = protocols[mrl->resource];
+    char track_start[4] = "";
+    size_t size = strlen (protocol);
+    mrl_resource_videodisc_args_t *args;
+
+    args = mrl->priv;
+    if (!args)
+      break;
+
+    if (args->track_start)
+    {
+      size += count_nb_dec (args->track_start);
+      snprintf (track_start, sizeof (track_start), "%u", args->track_start);
+    }
+    if (args->device)
+    {
+      size_t length = 1 + strlen (args->device);
+      size += length;
+      device = malloc (1 + length);
+      if (device)
+        snprintf (device, 1 + length, "/%s", args->device);
+    }
+
+    size++;
+    uri = malloc (size);
+    if (!uri)
+    {
+      if (device)
+        free (device);
+      break;
+    }
+
+    snprintf (uri, size, "%s%s%s",
+              protocol, track_start, device ? device : "");
 
     if (device)
       free (device);
@@ -2622,6 +2668,7 @@ mplayer_mrl_supported_res (player_t *player, mrl_resource_t res)
   case MRL_RESOURCE_CDDB:
   case MRL_RESOURCE_DVD:
   case MRL_RESOURCE_DVDNAV:
+  case MRL_RESOURCE_VCD:
   case MRL_RESOURCE_FTP:
   case MRL_RESOURCE_HTTP:
   case MRL_RESOURCE_MMS:
