@@ -110,89 +110,95 @@ typedef enum mrl_type {
   MRL_TYPE_IMAGE,
 } mrl_type_t;
 
+/*
+ * Support by wrappers
+ *
+ *                           GStreamer     MPlayer        VLC         Xine
+ *                         ------------ ------------ ------------ ------------
+ */
 typedef enum mrl_resource {
   MRL_RESOURCE_UNKNOWN,
 
   /* Local Streams */
-  MRL_RESOURCE_FIFO,
-  MRL_RESOURCE_FILE,
-  MRL_RESOURCE_STDIN,
+  MRL_RESOURCE_FIFO,        /*  NO           NO           NO           NO   */
+  MRL_RESOURCE_FILE,        /*  NO           YES          YES          YES  */
+  MRL_RESOURCE_STDIN,       /*  NO           NO           NO           NO   */
 
   /* Audio CD */
-  MRL_RESOURCE_CDDA,
-  MRL_RESOURCE_CDDB,
+  MRL_RESOURCE_CDDA,        /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_CDDB,        /*  NO           YES          NO           NO   */
 
   /* Video discs */
-  MRL_RESOURCE_DVD,
-  MRL_RESOURCE_DVDNAV,
-  MRL_RESOURCE_VCD,
+  MRL_RESOURCE_DVD,         /*  NO           YES          NO           YES  */
+  MRL_RESOURCE_DVDNAV,      /*  NO           YES          NO           YES  */
+  MRL_RESOURCE_VCD,         /*  NO           YES          NO           NO   */
 
   /* Radio/Television */
-  MRL_RESOURCE_DVB,
-  MRL_RESOURCE_PVR,
-  MRL_RESOURCE_RADIO,
-  MRL_RESOURCE_TV,
+  MRL_RESOURCE_DVB,         /*  NO           NO           NO           NO   */
+  MRL_RESOURCE_PVR,         /*  NO           NO           NO           NO   */
+  MRL_RESOURCE_RADIO,       /*  NO           NO           NO           NO   */
+  MRL_RESOURCE_TV,          /*  NO           NO           NO           NO   */
 
   /* Network Streams */
-  MRL_RESOURCE_FTP,  
-  MRL_RESOURCE_HTTP,
-  MRL_RESOURCE_MMS,
-  MRL_RESOURCE_RTP,
-  MRL_RESOURCE_RTSP,
-  MRL_RESOURCE_SMB,
-  MRL_RESOURCE_TCP,
-  MRL_RESOURCE_UDP,
-  MRL_RESOURCE_UNSV,
+  MRL_RESOURCE_FTP,         /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_HTTP,        /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_MMS,         /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_RTP,         /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_RTSP,        /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_SMB,         /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_TCP,         /*  NO           NO           NO           NO   */
+  MRL_RESOURCE_UDP,         /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_UNSV,        /*  NO           YES          NO           NO   */
 } mrl_resource_t;
 
 /* for local streams */
 typedef struct mrl_resource_local_args_s {
-  char *location;
-  int playlist;
+  char *location;           /*  NO           YES          YES          YES  */
+  int playlist;             /*  NO           NO           NO           NO   */
 } mrl_resource_local_args_t;
 
 /* for audio CD */
 typedef struct mrl_resource_cd_args_s {
-  char *device;
-  uint8_t speed;
-  uint8_t track_start;
-  uint8_t track_end;
+  char *device;             /*  NO           YES          NO           NO   */
+  uint8_t speed;            /*  NO           YES          NO           NO   */
+  uint8_t track_start;      /*  NO           YES          NO           NO   */
+  uint8_t track_end;        /*  NO           YES          NO           NO   */
 } mrl_resource_cd_args_t;
 
 /* for video discs */ 
 typedef struct mrl_resource_videodisc_args_s {
-  char *device;
-  uint8_t speed;
-  uint8_t angle;
-  uint8_t title_start;
-  uint8_t title_end;
-  uint8_t chapter_start;
-  uint8_t chapter_end;
-  uint8_t track_start;
-  uint8_t track_end;
-  char *audio_lang;
-  char *sub_lang;
-  uint8_t sub_cc;
+  char *device;             /*  NO           YES          NO           YES  */
+  uint8_t speed;            /*  NO           NO           NO           NO   */
+  uint8_t angle;            /*  NO           YES          NO           NO   */
+  uint8_t title_start;      /*  NO           YES          NO           YES  */
+  uint8_t title_end;        /*  NO           YES          NO           NO   */
+  uint8_t chapter_start;    /*  NO           NO           NO           NO   */
+  uint8_t chapter_end;      /*  NO           NO           NO           NO   */
+  uint8_t track_start;      /*  NO           YES          NO           NO   */
+  uint8_t track_end;        /*  NO           NO           NO           NO   */
+  char *audio_lang;         /*  NO           NO           NO           NO   */
+  char *sub_lang;           /*  NO           NO           NO           NO   */
+  uint8_t sub_cc;           /*  NO           NO           NO           NO   */
 } mrl_resource_videodisc_args_t;
 
 /* for radio/tv streams */ 
 typedef struct mrl_resource_tv_args_s {
-  char *device;
-  char *driver;
-  uint8_t input;
-  int width;
-  int height;
-  int fps;
-  char *output_format;
-  char *norm;
+  char *device;             /*  NO           NO           NO           NO   */
+  char *driver;             /*  NO           NO           NO           NO   */
+  uint8_t input;            /*  NO           NO           NO           NO   */
+  int width;                /*  NO           NO           NO           NO   */
+  int height;               /*  NO           NO           NO           NO   */
+  int fps;                  /*  NO           NO           NO           NO   */
+  char *output_format;      /*  NO           NO           NO           NO   */
+  char *norm;               /*  NO           NO           NO           NO   */
 } mrl_resource_tv_args_t;
 
 /* for network streams */ 
 typedef struct mrl_resource_network_args_s {
-  char *url;
-  char *username;
-  char *password;
-  char *user_agent;
+  char *url;                /*  NO           YES          NO           NO   */
+  char *username;           /*  NO           YES          NO           NO   */
+  char *password;           /*  NO           YES          NO           NO   */
+  char *user_agent;         /*  NO           NO           NO           NO   */
 } mrl_resource_network_args_t;
 
 typedef enum mrl_metadata_type {
