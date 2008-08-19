@@ -306,12 +306,19 @@ void player_set_framedrop (player_t *player, player_framedrop_t fd);
 /*                                                                         */
 /***************************************************************************/
 
+typedef enum player_pb_state {
+  PLAYER_PB_STATE_IDLE,
+  PLAYER_PB_STATE_PAUSE,
+  PLAYER_PB_STATE_PLAY,
+} player_pb_state_t;
+
 typedef enum player_pb_seek {
   PLAYER_PB_SEEK_RELATIVE,
   PLAYER_PB_SEEK_ABSOLUTE,
   PLAYER_PB_SEEK_PERCENT,
 } player_pb_seek_t;
 
+player_pb_state_t player_playback_get_state (player_t *player);
 void player_playback_start (player_t *player);
 void player_playback_stop (player_t *player);
 void player_playback_pause (player_t *player);

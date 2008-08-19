@@ -257,6 +257,26 @@ player_sv_set_framedrop (player_t *player, player_framedrop_t fd)
 /*                                                                         */
 /***************************************************************************/
 
+player_pb_state_t
+player_sv_playback_get_state (player_t *player)
+{
+  if (!player)
+    return PLAYER_PB_STATE_IDLE;
+
+  switch (player->state)
+  {
+  default:
+  case PLAYER_STATE_IDLE:
+    return PLAYER_PB_STATE_IDLE;
+
+  case PLAYER_STATE_PAUSE:
+    return PLAYER_PB_STATE_PAUSE;
+
+  case PLAYER_STATE_RUNNING:
+    return PLAYER_PB_STATE_PLAY;
+  }
+}
+
 void
 player_sv_playback_start (player_t *player)
 {

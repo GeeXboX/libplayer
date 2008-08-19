@@ -362,6 +362,17 @@ supervisor_player_set_framedrop (player_t *player, void *in, void *out)
 /************************ Playback related controls **************************/
 
 static void
+supervisor_player_pb_get_state (player_t *player, void *in, void *out)
+{
+  player_pb_state_t *output = out;
+
+  if (!player || !out)
+    return;
+
+  *output = player_sv_playback_get_state (player);
+}
+
+static void
 supervisor_player_pb_start (player_t *player, void *in, void *out)
 {
   if (!player)
@@ -809,6 +820,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_PLAYER_SET_FRAMEDROP]      = supervisor_player_set_framedrop,
 
   /* Playback related controls */
+  [SV_FUNC_PLAYER_PB_GET_STATE]       = supervisor_player_pb_get_state,
   [SV_FUNC_PLAYER_PB_START]           = supervisor_player_pb_start,
   [SV_FUNC_PLAYER_PB_STOP]            = supervisor_player_pb_stop,
   [SV_FUNC_PLAYER_PB_PAUSE]           = supervisor_player_pb_pause,

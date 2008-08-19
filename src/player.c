@@ -428,6 +428,22 @@ player_set_framedrop (player_t *player, player_framedrop_t fd)
 /*                                                                         */
 /***************************************************************************/
 
+player_pb_state_t
+player_playback_get_state (player_t *player)
+{
+  player_pb_state_t res = PLAYER_PB_STATE_IDLE;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return res;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_PLAYER_PB_GET_STATE, NULL, &res);
+
+  return res;
+}
+
 void
 player_playback_start (player_t *player)
 {

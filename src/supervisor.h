@@ -73,6 +73,7 @@ typedef enum supervisor_ctl {
   SV_FUNC_PLAYER_SET_FRAMEDROP,
 
   /* Playback related controls */
+  SV_FUNC_PLAYER_PB_GET_STATE,
   SV_FUNC_PLAYER_PB_START,
   SV_FUNC_PLAYER_PB_STOP,
   SV_FUNC_PLAYER_PB_PAUSE,

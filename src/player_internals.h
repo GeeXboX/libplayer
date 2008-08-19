@@ -274,6 +274,7 @@ void player_sv_set_shuffle (player_t *player, int value);
 void player_sv_set_framedrop (player_t *player, player_framedrop_t fd);
 
 /* Playback related controls */
+player_pb_state_t player_sv_playback_get_state (player_t *player);
 void player_sv_playback_start (player_t *player);
 void player_sv_playback_stop (player_t *player);
 void player_sv_playback_pause (player_t *player);
