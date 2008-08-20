@@ -368,13 +368,8 @@ x11_init (player_t *player)
     return 0;
   }
 
-  if (player->type == PLAYER_TYPE_MPLAYER
-      && (player->vo == PLAYER_VO_XV ||
-          player->vo == PLAYER_VO_GL ||
-          player->vo == PLAYER_VO_AUTO))
-  {
+  if (player->type == PLAYER_TYPE_MPLAYER)
     x11->use_subwin = 1;
-  }
 
   pthread_mutex_init (&x11->mutex_display, NULL);
 
