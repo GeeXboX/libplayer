@@ -401,7 +401,7 @@ x11_init (player_t *player)
   {
     /* create a window for the black background */
     screeninfo->win_black = XCreateWindow (x11->display,
-                                           XDefaultRootWindow (x11->display),
+                                           XRootWindow (x11->display, screen),
                                            0, 0, width, height,
                                            0, 0,
                                            InputOutput,
@@ -430,7 +430,7 @@ x11_init (player_t *player)
   {
     /* create a window for the video out */
     x11->window = XCreateWindow (x11->display,
-                                 XDefaultRootWindow (x11->display),
+                                 XRootWindow (x11->display, screen),
                                  0, 0, width, height,
                                  0, 0,
                                  InputOutput,
