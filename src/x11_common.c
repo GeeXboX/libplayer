@@ -399,9 +399,9 @@ x11_init (player_t *player)
   win_root = (Window) player->winid;
   if (!win_root)
   {
-  /* the video will be in fullscreen */
-  width = XDisplayWidth (x11->display, screen);
-  height = XDisplayHeight (x11->display, screen);
+    /* the video will be in fullscreen */
+    width = XDisplayWidth (x11->display, screen);
+    height = XDisplayHeight (x11->display, screen);
     visual = XDefaultVisual (x11->display, screen);
     win_root = XRootWindow (x11->display, screen);
   }
