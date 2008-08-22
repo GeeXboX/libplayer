@@ -97,7 +97,7 @@ player_event_cb (void *data, int e, void *data_cb)
 
 player_t *
 player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
-             player_verbosity_level_t verbosity,
+             player_verbosity_level_t verbosity, unsigned long winid,
              int event_cb (player_event_t e, void *data))
 {
   player_t *player = NULL;
@@ -118,6 +118,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   player->state = PLAYER_STATE_IDLE;
   player->ao = ao;
   player->vo = vo;
+  player->winid = winid;
   player->event_cb = event_cb;
   player->playlist = playlist_new (0, 0, PLAYER_LOOP_DISABLE);
 

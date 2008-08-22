@@ -195,6 +195,7 @@ struct player_s {
   player_pb_t pb_mode;  /* mode of the playback */
   player_ao_t ao;       /* audio output driver name */
   player_vo_t vo;       /* video output driver name */
+  unsigned long winid;  /* embedded WindowID for X11 */
   int x, y;             /* video position */
   int w, h;             /* video size */
   float aspect;         /* video aspect */

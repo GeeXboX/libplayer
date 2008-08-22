@@ -169,12 +169,29 @@ x11_map (player_t *player)
       changes.width = player->w;
       changes.height = player->h;
 
+      if (player->winid)
+      {
+        XWindowAttributes atts;
+        XGetWindowAttributes (x11->display, player->winid, &atts);
+        screeninfo->width = atts.width;
+        screeninfo->height = atts.height;
+      }
+
       /* fix the size and offset */
       zoom (player, screeninfo->width, screeninfo->height, player->aspect,
             &changes.x, &changes.y, &changes.width, &changes.height);
 
       XConfigureWindow (x11->display, x11->window,
                         CWX | CWY | CWWidth | CWHeight, &changes);
+
+      if (player->winid)
+      {
+        /* reconfigure black and trans windows */
+        changes.width = screeninfo->width;
+        changes.height = screeninfo->height;
+        XConfigureWindow (x11->display, screeninfo->win_black,
+                          CWWidth | CWHeight, &changes);
+      }
 
       XMapRaised (x11->display, screeninfo->win_black);
     }
@@ -330,8 +347,10 @@ x11_init (player_t *player)
 #ifdef HAVE_XINE
   x11_visual_t *vis = NULL;
 #endif /* HAVE_XINE */
+  Window win_root;
   screeninfo_t *screeninfo;
   int screen, width, height;
+  Visual *visual;
   // double res_v, res_h;
   Atom XA_NO_BORDER;
   MWMHints mwmhints;
@@ -375,11 +394,25 @@ x11_init (player_t *player)
 
   screen = XDefaultScreen (x11->display);
 
+  pthread_mutex_lock (&x11->mutex_display);
+
+  win_root = (Window) player->winid;
+  if (!win_root)
+  {
   /* the video will be in fullscreen */
   width = XDisplayWidth (x11->display, screen);
   height = XDisplayHeight (x11->display, screen);
-
-  pthread_mutex_lock (&x11->mutex_display);
+    visual = XDefaultVisual (x11->display, screen);
+    win_root = XRootWindow (x11->display, screen);
+  }
+  else
+  {
+    XWindowAttributes atts;
+    XGetWindowAttributes (x11->display, win_root, &atts);
+    width = atts.width;
+    height = atts.height;
+    visual = atts.visual;
+  }
 
   atts.override_redirect = True;  /* window on top */
   atts.background_pixel = XBlackPixel (x11->display, screen); /* black background */
@@ -396,11 +429,11 @@ x11_init (player_t *player)
   {
     /* create a window for the black background */
     screeninfo->win_black = XCreateWindow (x11->display,
-                                           XRootWindow (x11->display, screen),
+                                           win_root,
                                            0, 0, width, height,
                                            0, 0,
                                            InputOutput,
-                                           XDefaultVisual (x11->display, screen),
+                                           visual,
                                            CWOverrideRedirect | CWBackPixel, &atts);
 
     XChangeProperty (x11->display,
@@ -416,7 +449,7 @@ x11_init (player_t *player)
                                  0, 0, width, height,
                                  0, 0,
                                  InputOutput,
-                                 XDefaultVisual (x11->display, screen),
+                                 visual,
                                  CWOverrideRedirect | CWBackPixel, &atts);
 
     XMapWindow (x11->display,  x11->window);
@@ -425,11 +458,11 @@ x11_init (player_t *player)
   {
     /* create a window for the video out */
     x11->window = XCreateWindow (x11->display,
-                                 XRootWindow (x11->display, screen),
+                                 win_root,
                                  0, 0, width, height,
                                  0, 0,
                                  InputOutput,
-                                 XDefaultVisual (x11->display, screen),
+                                 visual,
                                  CWOverrideRedirect | CWBackPixel, &atts);
   }
 
