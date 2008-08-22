@@ -142,7 +142,7 @@ player_run_test (player_type_t player_type)
   player_t *player = NULL;
 
   player = player_init (player_type, PLAYER_AO_ALSA, PLAYER_VO_XV,
-                        PLAYER_MSG_INFO, frontend_event_cb);
+                        PLAYER_MSG_INFO, 0, frontend_event_cb);
   do_regression_tests (player, AUDIO_TEST_FILE);
   do_regression_tests (player, VIDEO_TEST_FILE);
   player_uninit (player);

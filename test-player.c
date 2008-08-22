@@ -693,7 +693,7 @@ main (int argc, char **argv)
   for (i = 0; i < argc; i++)
     *(argv_bak + i) = strdup (argv[i]);
 
-  player = player_init (type, ao, vo, verbosity, event_cb);
+  player = player_init (type, ao, vo, verbosity, 0, event_cb);
 
   if (!player)
     return -1;
