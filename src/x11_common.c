@@ -273,8 +273,8 @@ x11_uninit (player_t *player)
     {
       if (screeninfo->win_black)
       {
-      XUnmapWindow (x11->display, screeninfo->win_black);
-      XDestroyWindow (x11->display, screeninfo->win_black);
+        XUnmapWindow (x11->display, screeninfo->win_black);
+        XDestroyWindow (x11->display, screeninfo->win_black);
       }
       if (screeninfo->win_trans)
       {
