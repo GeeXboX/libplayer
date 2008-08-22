@@ -378,7 +378,7 @@ x11_init (player_t *player)
   x11->display = NULL;
   x11->data = NULL;
 
-  screeninfo = malloc (sizeof (screeninfo_t));
+  screeninfo = calloc (1, sizeof (screeninfo_t));
   if (!screeninfo)
   {
     free (x11);
