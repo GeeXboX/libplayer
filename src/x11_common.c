@@ -476,12 +476,12 @@ x11_init (player_t *player)
     if (player->winid)
     {
       screeninfo->win_trans = XCreateWindow (x11->display,
-                                            screeninfo->win_black,
-                                            0, 0, width, height,
-                                            0, 0,
-                                            InputOnly,
-                                            visual,
-                                            CWOverrideRedirect, &atts);
+                                             screeninfo->win_black,
+                                             0, 0, width, height,
+                                             0, 0,
+                                             InputOnly,
+                                             visual,
+                                             CWOverrideRedirect, &atts);
       XMapRaised (x11->display,  screeninfo->win_trans);
     }
   }
