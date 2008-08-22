@@ -162,7 +162,7 @@ x11_map (player_t *player)
   if (x11->use_subwin)
   {
     screeninfo = (screeninfo_t *) player->x11->data;
-    if (screeninfo && screeninfo->win_black > 0)
+    if (screeninfo && screeninfo->win_black)
     {
       XWindowChanges changes;
       changes.x = 0;
