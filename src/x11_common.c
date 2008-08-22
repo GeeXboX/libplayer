@@ -52,6 +52,7 @@ typedef struct screeninfo_s {
   double pixel_aspect;
   /* create a black background (only for MPlayer Xv video out) */
   Window win_black;
+  Window win_trans;
 } screeninfo_t;
 
 /* for no border with a X window */
@@ -191,6 +192,8 @@ x11_map (player_t *player)
         changes.height = screeninfo->height;
         XConfigureWindow (x11->display, screeninfo->win_black,
                           CWWidth | CWHeight, &changes);
+        XConfigureWindow (x11->display, screeninfo->win_trans,
+                          CWWidth | CWHeight, &changes);
       }
 
       XMapRaised (x11->display, screeninfo->win_black);
@@ -266,10 +269,18 @@ x11_uninit (player_t *player)
   if (x11->use_subwin)
   {
     screeninfo = (screeninfo_t *) player->x11->data;
-    if (screeninfo && screeninfo->win_black > 0)
+    if (screeninfo)
     {
+      if (screeninfo->win_black)
+      {
       XUnmapWindow (x11->display, screeninfo->win_black);
       XDestroyWindow (x11->display, screeninfo->win_black);
+      }
+      if (screeninfo->win_trans)
+      {
+        XUnmapWindow (x11->display, screeninfo->win_trans);
+        XDestroyWindow (x11->display, screeninfo->win_trans);
+      }
       free (screeninfo);
     }
   }
@@ -453,6 +464,26 @@ x11_init (player_t *player)
                                  CWOverrideRedirect | CWBackPixel, &atts);
 
     XMapWindow (x11->display,  x11->window);
+
+    /*
+     * Transparent window to catch all events in order to prevent sending
+     * events to MPlayer.
+     *
+     * NOTE: Only needed with embedded window, because by default the
+     *       window created by libplayer is ignored by the Window Manager
+     *       (override_redirect -> True).
+     */
+    if (player->winid)
+    {
+      screeninfo->win_trans = XCreateWindow (x11->display,
+                                            screeninfo->win_black,
+                                            0, 0, width, height,
+                                            0, 0,
+                                            InputOnly,
+                                            visual,
+                                            CWOverrideRedirect, &atts);
+      XMapRaised (x11->display,  screeninfo->win_trans);
+    }
   }
   else
   {
