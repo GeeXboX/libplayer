@@ -198,8 +198,6 @@ x11_map (player_t *player)
 
       XMapRaised (x11->display, screeninfo->win_black);
     }
-    else
-      XMapRaised (x11->display, x11->window);
   }
   else
     XMapRaised (x11->display, x11->window);
