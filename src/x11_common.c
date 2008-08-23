@@ -147,7 +147,12 @@ void
 x11_map (player_t *player)
 {
   x11_t *x11 = NULL;
-  screeninfo_t *screeninfo;
+#ifdef HAVE_XINE
+  x11_visual_t *vis;
+#endif /* HAVE_XINE */
+  screeninfo_t *screeninfo = NULL;
+  XWindowChanges changes;
+  int width, height;
 
   if (!player || !player->x11)
     return;
@@ -159,24 +164,39 @@ x11_map (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
+  if (player->type == PLAYER_TYPE_XINE)
+  {
+#ifdef HAVE_XINE
+    vis = x11->data;
+    if (vis)
+      screeninfo = vis->user_data;
+#endif /* HAVE_XINE */
+  }
+  else
+    screeninfo = x11->data;
+
+  if (player->winid)
+  {
+    XWindowAttributes atts;
+    XGetWindowAttributes (x11->display, player->winid, &atts);
+    width = atts.width;
+    height = atts.height;
+
+    if (screeninfo)
+    {
+      screeninfo->width = width;
+      screeninfo->height = height;
+    }
+  }
+
   if (x11->use_subwin)
   {
-    screeninfo = (screeninfo_t *) x11->data;
     if (screeninfo && screeninfo->win_black)
     {
-      XWindowChanges changes;
       changes.x = 0;
       changes.y = 0;
       changes.width = player->w;
       changes.height = player->h;
-
-      if (player->winid)
-      {
-        XWindowAttributes atts;
-        XGetWindowAttributes (x11->display, player->winid, &atts);
-        screeninfo->width = atts.width;
-        screeninfo->height = atts.height;
-      }
 
       /* fix the size and offset */
       zoom (player, screeninfo->width, screeninfo->height, player->aspect,
@@ -200,7 +220,18 @@ x11_map (player_t *player)
     }
   }
   else
+  {
+    if (player->winid)
+    {
+      changes.width = width;
+      changes.height = height;
+
+      XConfigureWindow (x11->display, x11->window,
+                        CWWidth | CWHeight, &changes);
+    }
+
     XMapRaised (x11->display, x11->window);
+  }
 
   XSync (x11->display, False);
   pthread_mutex_unlock (&x11->mutex_display);
