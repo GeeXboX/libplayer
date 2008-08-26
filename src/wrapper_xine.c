@@ -37,7 +37,10 @@
 #include "playlist.h"
 #include "event.h"
 #include "wrapper_xine.h"
+
+#ifdef USE_X11
 #include "x11_common.h"
+#endif /* USE_X11 */
 
 #define MODULE_NAME "xine"
 
@@ -68,9 +71,12 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
     plog (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Playback of stream has ended"); 
     player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+
+#ifdef USE_X11
     /* X11 */
     if (player->x11)
       x11_unmap (player);
+#endif /* USE_X11 */
     break;
   }
   case XINE_EVENT_PROGRESS:
@@ -419,7 +425,9 @@ xine_player_init (player_t *player)
 
   char *id_vo = NULL;
   char *id_ao = NULL;
+#ifdef USE_X11
   int use_x11 = 0;
+#endif /* USE_X11 */
   int visual = XINE_VISUAL_TYPE_NONE;
   void *data = NULL;
 
@@ -443,6 +451,7 @@ xine_player_init (player_t *player)
     id_vo = "none";
     break;
 
+#ifdef USE_X11
   case PLAYER_VO_X11:
     use_x11 = 1;
     id_vo = "xshm";
@@ -466,6 +475,7 @@ xine_player_init (player_t *player)
     id_vo = "opengl";
     visual = XINE_VISUAL_TYPE_X11;
     break;
+#endif /* USE_X11 */
 
   case PLAYER_VO_FB:
     id_vo = "fb";
@@ -478,11 +488,13 @@ xine_player_init (player_t *player)
     break;
   }
 
+#ifdef USE_X11
   if (use_x11 && (!x11_init (player) || !x11_get_data (player->x11))) {
     return PLAYER_INIT_ERROR;
   }
   else if (use_x11)
     data = x11_get_data (player->x11);
+#endif /* USE_X11 */
 
   /* init video output driver */
   if (!(x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data))) {
@@ -527,6 +539,7 @@ xine_player_init (player_t *player)
   xine_event_create_listener_thread (x->event_queue,
                                      xine_player_event_listener_cb, player);
 
+#ifdef USE_X11
   /* X11 */
   if (player->x11 && x11_get_display (player->x11)) {
     xine_gui_send_vo_data (x->stream, XINE_GUI_SEND_DRAWABLE_CHANGED,
@@ -534,6 +547,7 @@ xine_player_init (player_t *player)
     xine_gui_send_vo_data (x->stream, XINE_GUI_SEND_VIDEOWIN_VISIBLE,
                            (void *) 1);
   }
+#endif /* USE_X11 */
 
   return PLAYER_INIT_OK;
 }
@@ -604,9 +618,11 @@ xine_player_uninit (player_t *player)
   if (x->xine)
     xine_exit (x->xine);
 
+#ifdef USE_X11
   /* X11 */
   if (player->x11)
     x11_uninit (player);
+#endif /* USE_X11 */
 
   free (x);
 }
@@ -714,9 +730,11 @@ xine_player_playback_start (player_t *player)
   if (!mrl)
     return PLAYER_PB_ERROR;
 
+#ifdef USE_X11
   /* X11 */
   if (player->x11 && !mrl_uses_vo (mrl_c))
     x11_map (player);
+#endif /* USE_X11 */
 
   xine_open (x->stream, mrl);
   xine_play (x->stream, 0, 0);
@@ -729,7 +747,9 @@ xine_player_playback_start (player_t *player)
 static void
 xine_player_playback_stop (player_t *player)
 {
+#ifdef USE_X11
   mrl_t *mrl;
+#endif /* USE_X11 */
   xine_player_t *x = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
@@ -742,10 +762,12 @@ xine_player_playback_stop (player_t *player)
   if (!x->stream)
     return;
 
+#ifdef USE_X11
   /* X11 */
   mrl = playlist_get_mrl (player->playlist);
   if (player->x11 && !mrl_uses_vo (mrl))
     x11_unmap (player);
+#endif /* USE_X11 */
 
   xine_stop (x->stream);
   xine_close (x->stream);

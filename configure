@@ -61,6 +61,7 @@ show_help(){
   echo "  --cross-compile             assume a cross-compiler is used"
   echo ""
   echo "Miscellaneous:"
+  echo "  --disable-x11               disable X11 support"
   echo "  --disable-logcolor          disable colorful console output on terminals"
   exit 1
 }
@@ -364,7 +365,7 @@ wrapper_xine="auto"
 wrapper_mplayer="auto"
 wrapper_vlc="auto"
 wrapper_gstreamer="auto"
-x11="no"
+x11="auto"
 INSTALL="install"
 libplayer_version=`grep '#define LIBPLAYER_VERSION[[:space:]]' src/player.h | sed 's/[^0-9\.]//g'`
 pkgconfig_requires=""
@@ -488,6 +489,10 @@ for opt do
   --with-gstreamer-dir=*) libgstreamerdir="$optval";
   ;;
   --with-X11-dir=*) libX11dir="$optval";
+  ;;
+  --enable-x11) x11="yes";
+  ;;
+  --disable-x11) x11="no";
   ;;
   --enable-logcolor) logcolor="yes";
   ;;
@@ -756,6 +761,7 @@ fi
 #################################################
 #   check for libX11
 #################################################
+if test "$x11" = "auto" -o "$x11" = "yes"; then
 if test "$wrapper_xine" = "yes" -o "$wrapper_mplayer" = "yes"; then
   x11="no"
   echolog "Checking for libX11 ..."
@@ -765,8 +771,10 @@ if test "$wrapper_xine" = "yes" -o "$wrapper_mplayer" = "yes"; then
   fi
   check_lib X11/X.h XInitThreads -lX11 || die "Error, can't find libX11 !"
   add_extralibs -lX11
+  add_extracflags -DUSE_X11
   add_pkgconfig_requires x11
   x11="yes"
+fi
 fi
 
 #################################################
@@ -805,6 +813,9 @@ echolog "  GStreamer:         $wrapper_gstreamer"
 echolog "  MPlayer:           $wrapper_mplayer"
 echolog "  VLC:               $wrapper_vlc"
 echolog "  Xine:              $wrapper_xine"
+echolog ""
+echolog "Miscellaneous:"
+echolog "  X11 support:       $x11"
 echolog ""
 
 #################################################

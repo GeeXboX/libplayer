@@ -39,7 +39,10 @@
 #include "playlist.h"
 #include "event.h"
 #include "wrapper_mplayer.h"
+
+#ifdef USE_X11
 #include "x11_common.h"
+#endif /* USE_X11 */
 
 #define MODULE_NAME "mplayer"
 
@@ -646,8 +649,10 @@ thread_fifo (void *arg)
 
         player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
+#ifdef USE_X11
         if (player->x11)
           x11_unmap (player);
+#endif /* USE_X11 */
       }
       else
       {
@@ -2379,7 +2384,13 @@ mplayer_init (player_t *player)
   case PLAYER_VO_X11:
   case PLAYER_VO_XV:
   case PLAYER_VO_GL:
+#ifndef USE_X11
+    plog (player, PLAYER_MSG_ERROR,
+          MODULE_NAME, "libplayer is not compiled with X11 support");
+    return PLAYER_INIT_ERROR;
+#endif /* USE_X11 */
   case PLAYER_VO_AUTO:
+#ifdef USE_X11
     use_x11 = x11_init (player);
     if (player->vo != PLAYER_VO_AUTO && !use_x11)
     {
@@ -2389,6 +2400,11 @@ mplayer_init (player_t *player)
     }
     snprintf (winid, sizeof (winid),
               "%lu", (unsigned long) x11_get_window (player->x11));
+#else
+    plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
+          "auto-detection for videoout is not enabled without X11 support");
+    return PLAYER_INIT_ERROR;
+#endif /* USE_X11 */
   default:
     break;
   }
@@ -2594,8 +2610,10 @@ mplayer_uninit (player_t *player)
 
     plog (player, PLAYER_MSG_INFO, MODULE_NAME, "MPlayer child terminated");
 
+#ifdef USE_X11
     if (player->x11)
       x11_uninit (player);
+#endif /* USE_X11 */
   }
 
   item_list_free (mplayer->slave_cmds, g_slave_cmds_nb);
@@ -2783,8 +2801,10 @@ mplayer_playback_start (player_t *player)
     slave_set_property_int (player, PROPERTY_SUB, 0);
   }
 
+#ifdef USE_X11
   if (player->x11 && !mrl_uses_vo (mrl))
     x11_map (player);
+#endif /* USE_X11 */
 
   return PLAYER_PB_OK;
 }
@@ -2816,8 +2836,10 @@ mplayer_playback_stop (player_t *player)
   pthread_mutex_unlock (&mplayer->mutex_status);
 
   mrl = playlist_get_mrl (player->playlist);
+#ifdef USE_X11
   if (player->x11 && !mrl_uses_vo (mrl))
     x11_unmap (player);
+#endif /* USE_X11 */
 
   slave_cmd (player, SLAVE_STOP);
 }
@@ -3132,8 +3154,10 @@ mplayer_video_set_ar (player_t *player, float value)
   else
     player->aspect = value;
 
+#ifdef USE_X11
   if (player->x11)
     x11_map (player);
+#endif /* USE_X11 */
 
   slave_cmd_float (player, SLAVE_SWITCH_RATIO, player->aspect);
 }
