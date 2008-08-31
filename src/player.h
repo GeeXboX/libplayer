@@ -23,6 +23,12 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+/**
+ * \file player.h
+ *
+ * GeeXboX libplayer public API header.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #if 0 /* avoid EMACS indent */
@@ -44,6 +50,11 @@ extern "C" {
 /*                                                                         */
 /***************************************************************************/
 
+/**
+ * \brief Player controller.
+ *
+ * This controls a multimedia player.
+ */
 typedef struct player_s player_t;
 
 typedef enum player_type {
@@ -88,10 +99,51 @@ typedef enum {
   PLAYER_MSG_CRITICAL,      /* prevents lib from working */
 } player_verbosity_level_t;
 
+/**
+ * \brief Initialization of a new player controller.
+ *
+ * Multiple player controllers can be initialized with any wrappers.
+ * The same Window ID can be used to attach their video.
+ *
+ * Wrappers supported (even partially):
+ *  GStreamer, MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] type        Type of wrapper to load.
+ * \param[in] ao          Audio output driver to use.
+ * \param[in] vo          Video output driver to use.
+ * \param[in] verbosity   Level of verbosity to set.
+ * \param[in] winid       WinID to attach the video (X Window), 0 to disable.
+ * \param[in] event_cb    Public callback, NULL to disable.
+ * \return Player controller, NULL otherwise.
+ */
 player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
                        player_verbosity_level_t verbosity, unsigned long winid,
                        int event_cb (player_event_t e, void *data));
+
+/**
+ * \brief Uninitialization of a player controller.
+ *
+ * All MRL objects in the internal playlist will be freed.
+ *
+ * Wrappers supported (even partially):
+ *  GStreamer, MPlayer, VLC, xine
+ *
+ * \warning Must be used only as the last player function for a controller.
+ * \param[in] player      Player controller.
+ */
 void player_uninit (player_t *player);
+
+/**
+ * \brief Set verbosity level.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] level       Level of verbosity to set.
+ */
 void player_set_verbosity (player_t *player, player_verbosity_level_t level);
 
 /***************************************************************************/
@@ -101,6 +153,11 @@ void player_set_verbosity (player_t *player, player_verbosity_level_t level);
 /*                                                                         */
 /***************************************************************************/
 
+/**
+ * \brief MRL object.
+ *
+ * This handles an audio, video or image resource.
+ */
 typedef struct mrl_s mrl_t;
 
 typedef enum mrl_type {
@@ -235,21 +292,177 @@ typedef enum mrl_properties_type {
 #define PLAYER_VIDEO_ASPECT_RATIO_MULT         10000.0    /* *10000         */
 #define PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV   90000.0    /* 1/90000 sec    */
 
+/**
+ * \brief Create a new MRL object.
+ *
+ * This function can be slow when the stream is not (fastly) reachable.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] res         Resource type.
+ * \param[in] args        Arguments specific to the resource type.
+ * \return MRL object, NULL otherwise.
+ */
 mrl_t *mrl_new (player_t *player, mrl_resource_t res, void *args);
+
+/**
+ * \brief Add a subtitle file to a MRL object.
+ *
+ * \param[in] mrl         MRL object.
+ * \param[in] subtitle    Location of the subtitle file to be added.
+ */
 void mrl_add_subtitle (mrl_t *mrl, char *subtitle);
+
+/**
+ * \brief Free a MRL object 
+ *
+ * Never use this function when the MRL (or a linked MRL) is set in the
+ * playlist of a player controller.
+ *
+ * \warning Must be used only as the last mrl function for one MRL object.
+ * \param[in] mrl         MRL object.
+ * \param[in] recursive   Free all next MRLs too.
+ */
 void mrl_free (mrl_t *mrl, int recursive);
+
+/**
+ * \brief Free all linked MRL objects.
+ *
+ * Never use this function when the MRL (or a linked MRL) is set in the
+ * playlist of a player controller.
+ *
+ * \warning Must be used only as the last function for all linked MRL objects.
+ * \param[in] mrl         MRL object.
+ */
 void mrl_list_free (mrl_t *mrl);
+
+/**
+ * \brief Get type of the stream.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \return Type of MRL object.
+ */
 mrl_type_t mrl_get_type (player_t *player, mrl_t *mrl);
+
+/**
+ * \brief Get resource of the stream.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \return Resource of MRL object.
+ */
 mrl_resource_t mrl_get_resource (player_t *player, mrl_t *mrl);
+
+/**
+ * \brief Get metadata of the stream.
+ *
+ * This function can be slow when the stream is not (fastly) reachable.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, VLC, xine
+ *
+ * \warning The returned pointer must be freed when no longer used.
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \param[in] m           Type of metadata to get.
+ * \return Metadata string, NULL otherwise.
+ */
 char *mrl_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m);
+
+/**
+ * \brief Get metadata of a track with CDDA/CDDB MRL object.
+ *
+ * This function can be slow when the stream is not (fastly) reachable.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning The returned pointer must be freed when no longer used.
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \param[in] trackid     Track ID on the CD.
+ * \param[out] length     Length of the track (millisecond).
+ * \return Title of the track (CDDB only), NULL otherwise.
+ */
 char *mrl_get_metadata_cd_track (player_t *player,
                                  mrl_t *mrl, int trackid, uint32_t *length);
+
+/**
+ * \brief Get metadata of a CDDA/CDDB MRL object.
+ *
+ * This function can be slow when the stream is not (fastly) reachable.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \param[in] m           Type of metadata to get.
+ * \return Metadata value.
+ */
 uint32_t mrl_get_metadata_cd (player_t *player,
                               mrl_t *mrl, mrl_metadata_cd_type_t m);
+
+/**
+ * \brief Get property of the stream.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \param[in] p           Type of property.
+ * \return Property value.
+ */
 uint32_t mrl_get_property (player_t *player,
                            mrl_t *mrl, mrl_properties_type_t p);
+
+/**
+ * \brief Get audio codec name of the stream.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, xine
+ *
+ * \warning The returned pointer must be freed when no longer used.
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \return Audio codec name, NULL otherwise.
+ */
 char *mrl_get_audio_codec (player_t *player, mrl_t *mrl);
+
+/**
+ * \brief Get video codec name of the stream.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, xine
+ *
+ * \warning The returned pointer must be freed when no longer used.
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \return Video codec name, NULL otherwise.
+ */
 char *mrl_get_video_codec (player_t *player, mrl_t *mrl);
+
+/**
+ * \brief Get size of the resource.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \return Size of the stream (bytes).
+ */
 off_t mrl_get_size (player_t *player, mrl_t *mrl);
 
 /***************************************************************************/
@@ -263,12 +476,75 @@ typedef enum player_mrl_add {
   PLAYER_MRL_ADD_QUEUE
 } player_mrl_add_t;
 
+/**
+ * \brief Get current MRL set in the internal playlist.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \return MRL object.
+ */
 mrl_t *player_mrl_get_current (player_t *player);
+
+/**
+ * \brief Set MRL object in the internal playlist.
+ *
+ * If a MRL was already set in the playlist, then the current is freed and
+ * replaced by the new MRL object.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object to set.
+ */
 void player_mrl_set (player_t *player, mrl_t *mrl);
+
+/**
+ * \brief Append MRL object in the internal playlist.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object to append.
+ * \param[in] when        Just append, or append and go to the end to play.
+ */
 void player_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when);
+
+/**
+ * \brief Remove current MRL object in the internal playlist.
+ *
+ * Current MRL object is freed on the way.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_mrl_remove (player_t *player);
+
+/**
+ * \brief Remove all MRL objects in the internal playlist.
+ *
+ * All MRL objects are freed on the way.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_mrl_remove_all (player_t *player);
+
+/**
+ * \brief Go the the previous MRL object in the internal playlist.
+ *
+ * Playback is started if a previous MRL object exists.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_mrl_previous (player_t *player);
+
+/**
+ * \brief Go the the next MRL object in the internal playlist.
+ *
+ * Playback is started if a next MRL object exists.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_mrl_next (player_t *player);
 
 /***************************************************************************/
@@ -294,10 +570,61 @@ typedef enum player_framedrop {
   PLAYER_FRAMEDROP_HARD,
 } player_framedrop_t;
 
+/**
+ * \brief Get current time position in the current stream.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \return Time position (millisecond).
+ */
 int player_get_time_pos (player_t *player);
+
+/**
+ * \brief Set playback mode.
+ *
+ * If the playback mode is set to PLAYER_PB_AUTO, then loop and shuffle can
+ * be used with the internal playlist. By default, AUTO will just going
+ * to the next available MRL object in the playlist and start a new playback.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] pb          Mode to use.
+ */
 void player_set_playback (player_t *player, player_pb_t pb);
+
+/**
+ * \brief Set loop mode and value.
+ *
+ * Only enabled if playback mode is auto, see player_set_playback().
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] loop        Mode to use (one element or the whole playlist).
+ * \param[in] value       How many loops, negative for infinite.
+ */
 void player_set_loop (player_t *player, player_loop_t loop, int value);
+
+/**
+ * \brief Shuffle playback in the internal playlist.
+ *
+ * Only enabled if playback mode is auto, see player_set_playback().
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Different of 0 to enable.
+ */
 void player_set_shuffle (player_t *player, int value);
+
+/**
+ * \brief Set frame dropping with video playback.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] fd          Frame dropping type to set.
+ */
 void player_set_framedrop (player_t *player, player_framedrop_t fd);
 
 /***************************************************************************/
@@ -318,12 +645,88 @@ typedef enum player_pb_seek {
   PLAYER_PB_SEEK_PERCENT,
 } player_pb_seek_t;
 
+/**
+ * \brief Get current playback state.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \return Playback state.
+ */
 player_pb_state_t player_playback_get_state (player_t *player);
+
+/**
+ * \brief Start a new playback.
+ *
+ * The playback is always started from the beginning.
+ *
+ * Wrappers supported (even partially):
+ *  GStreamer, MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_playback_start (player_t *player);
+
+/**
+ * \brief Stop playback.
+ *
+ * Wrappers supported (even partially):
+ *  GStreamer, MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_playback_stop (player_t *player);
+
+/**
+ * \brief Pause and unpause playback.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_playback_pause (player_t *player);
+
+/**
+ * \brief Seek in the stream.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Value for seeking (second or percent).
+ * \param[in] seek        Seeking mode.
+ */
 void player_playback_seek (player_t *player, int value, player_pb_seek_t seek);
+
+/**
+ * \brief Seek chapter in the stream.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Value for seeking.
+ * \param[in] absolute    Mode, 0 for relative.
+ */
 void player_playback_seek_chapter (player_t *player, int value, int absolute);
+
+/**
+ * \brief Change playback speed.
+ *
+ * This function can't be used to play in backward.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Factor of playback speed to set.
+ */
 void player_playback_speed (player_t *player, float value);
 
 /***************************************************************************/
@@ -338,13 +741,105 @@ typedef enum player_mute {
   PLAYER_MUTE_OFF
 } player_mute_t;
 
+/**
+ * \brief Get current volume.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \return Volume (percent).
+ */
 int player_audio_volume_get (player_t *player);
+
+/**
+ * \brief Set volume.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Volume to set (percent).
+ */
 void player_audio_volume_set (player_t *player, int value);
+
+/**
+ * \brief Get mute state.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \return Mute state.
+ */
 player_mute_t player_audio_mute_get (player_t *player);
+
+/**
+ * \brief Set mute state.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, VLC, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Mute state to set.
+ */
 void player_audio_mute_set (player_t *player, player_mute_t value);
+
+/**
+ * \brief Set audio delay.
+ *
+ * Only useful with video files to set delay between audio and video streams.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Delay to set (millisecond).
+ * \param[in] absolute    Mode, 0 for relative.
+ */
 void player_audio_set_delay (player_t *player, int value, int absolute);
+
+/**
+ * \brief Select audio ID.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] audio_id    ID of the audio stream to select.
+ */
 void player_audio_select (player_t *player, int audio_id);
+
+/**
+ * \brief Select the previous audio ID.
+ *
+ * It stays on the same audio ID if no previous stream exists.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_audio_prev (player_t *player);
+
+/**
+ * \brief Select the next audio ID.
+ *
+ * It stays on the same audio ID if no next stream exists.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_audio_next (player_t *player);
 
 /***************************************************************************/
@@ -361,10 +856,59 @@ typedef enum player_video_aspect {
   PLAYER_VIDEO_ASPECT_SATURATION,
 } player_video_aspect_t;
 
+/**
+ * \brief Set video in fullscreen.
+ *
+ * By default the video is always in fullscreen. To work with a window,
+ * use winid parameter in player_init().
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Different of 0 to set fullscreen.
+ */
 void player_video_set_fullscreen (player_t *player, int value);
+
+/**
+ * \brief Set video aspect.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] aspect      Aspect to change.
+ * \param[in] value       Value for aspect to set.
+ * \param[in] absolute    Mode, 0 for relative.
+ */
 void player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
                               int8_t value, int absolute);
+
+/**
+ * \brief Set video panscan.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Value for panscan to set.
+ * \param[in] absolute    Mode, 0 for relative.
+ */
 void player_video_set_panscan (player_t *player, int8_t value, int absolute);
+
+/**
+ * \brief Set video aspect ratio.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Ratio to set.
+ */
 void player_video_set_aspect_ratio (player_t *player, float value);
 
 /***************************************************************************/
@@ -379,14 +923,107 @@ typedef enum player_sub_alignment {
   PLAYER_SUB_ALIGNMENT_BOTTOM,
 } player_sub_alignment_t;
 
+/**
+ * \brief Set subtitle delay.
+ *
+ * Only useful with video files to set delay between audio stream and
+ * the subtitles.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Delay to set (millisecond).
+ */
 void player_subtitle_set_delay (player_t *player, int value);
+
+/**
+ * \brief Set subtitle alignment.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] a           Alignment to set.
+ */
 void player_subtitle_set_alignment (player_t *player,
                                     player_sub_alignment_t a);
+
+/**
+ * \brief Set subtitle position.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Position to set.
+ */
 void player_subtitle_set_position (player_t *player, int value);
+
+/**
+ * \brief Set subtitle visibility.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Different of 0 to view the subtitles.
+ */
 void player_subtitle_set_visibility (player_t *player, int value);
+
+/**
+ * \brief Set subtitle scale.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Scale to set.
+ * \param[in] absolute    Mode, 0 for relative.
+ */
 void player_subtitle_scale (player_t *player, int value, int absolute);
+
+/**
+ * \brief Select subtitle ID.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] sub_id      ID of the subtitle to select.
+ */
 void player_subtitle_select (player_t *player, int sub_id);
+
+/**
+ * \brief Select the previous subtitle ID.
+ *
+ * It stays on the same subtitle ID if no previous subtitle exists.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_subtitle_prev (player_t *player);
+
+/**
+ * \brief Select the next subtitle ID.
+ *
+ * It stays on the same subtitle ID if no next subtitle exists.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_subtitle_next (player_t *player);
 
 /***************************************************************************/
@@ -404,12 +1041,92 @@ typedef enum player_dvdnav {
   PLAYER_DVDNAV_SELECT
 } player_dvdnav_t;
 
+/**
+ * \brief DVD Navigation commands.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, xine
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] value       Command to send.
+ */
 void player_dvd_nav (player_t *player, player_dvdnav_t value);
+
+/**
+ * \brief Select DVD angle.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] angle       Angle to select.
+ */
 void player_dvd_angle_select (player_t *player, int angle);
+
+/**
+ * \brief Select the previous DVD angle.
+ *
+ * It stays on the same if no previous angle exists.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_dvd_angle_prev (player_t *player);
+
+/**
+ * \brief Select the next DVD angle.
+ *
+ * It stays on the same if no next angle exists.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_dvd_angle_next (player_t *player);
+
+/**
+ * \brief Select DVD title.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] title       Title to select.
+ */
 void player_dvd_title_select (player_t *player, int title);
+
+/**
+ * \brief Select the previous DVD title.
+ *
+ * It stays on the same if no previous title exists.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_dvd_title_prev (player_t *player);
+
+/**
+ * \brief Select the next DVD title.
+ *
+ * It stays on the same if no next title exists.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_dvd_title_next (player_t *player);
 
 /***************************************************************************/
@@ -418,8 +1135,42 @@ void player_dvd_title_next (player_t *player);
 /*                                                                         */
 /***************************************************************************/
 
+/**
+ * \brief Select TV channel.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] channel     Channel to select.
+ */
 void player_tv_channel_select (player_t *player, int channel);
+
+/**
+ * \brief Select the previous TV channel.
+ *
+ * It stays on the same if no previous channel exists.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_tv_channel_prev (player_t *player);
+
+/**
+ * \brief Select the next TV channel.
+ *
+ * It stays on the same if no next channel exists.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_tv_channel_next (player_t *player);
 
 /***************************************************************************/
@@ -428,8 +1179,42 @@ void player_tv_channel_next (player_t *player);
 /*                                                                         */
 /***************************************************************************/
 
+/**
+ * \brief Select radio channel.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] channel     Channel to select.
+ */
 void player_radio_channel_select (player_t *player, int channel);
+
+/**
+ * \brief Select the previous radio channel.
+ *
+ * It stays on the same if no previous channel exists.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_radio_channel_prev (player_t *player);
+
+/**
+ * \brief Select the next radio channel.
+ *
+ * It stays on the same if no next channel exists.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ */
 void player_radio_channel_next (player_t *player);
 
 #ifdef __cplusplus
