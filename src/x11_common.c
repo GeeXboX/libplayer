@@ -563,14 +563,6 @@ x11_init (player_t *player)
                    (unsigned char *) &mwmhints,
                    PROP_MWM_HINTS_ELEMENTS);
 
-  /* calcul pixel aspect */
-  /*
-  res_h = DisplayWidth (x11->display, screen) * 1000 /
-          DisplayWidthMM (x11->display, screen);
-  res_v = DisplayHeight (x11->display, screen) * 1000 /
-          DisplayHeightMM (x11->display, screen);
-  */
-
   XSync (x11->display, False);
   pthread_mutex_unlock (&x11->mutex_display);
 
@@ -590,7 +582,6 @@ x11_init (player_t *player)
 
       screeninfo->width = width;
       screeninfo->height = height;
-      // screeninfo->pixel_aspect = res_v / res_h;
       screeninfo->pixel_aspect = 1.0;
 
       vis->user_data = (void *) screeninfo;
@@ -604,7 +595,6 @@ x11_init (player_t *player)
   {
     screeninfo->width = width;
     screeninfo->height = height;
-    // screeninfo->pixel_aspect = res_v / res_h;
     screeninfo->pixel_aspect = 1.0;
 
     x11->data = (void *) screeninfo;
