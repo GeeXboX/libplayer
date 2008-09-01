@@ -298,13 +298,11 @@ x11_unmap (player_t *player)
   if (!x11->display)
     return;
 
-  screeninfo = (screeninfo_t *) player->x11->data;
-
   pthread_mutex_lock (&x11->mutex_display);
 
   if (x11->use_subwin)
   {
-    screeninfo = (screeninfo_t *) player->x11->data;
+    screeninfo = x11_get_screeninfo (player);
     if (screeninfo && screeninfo->win_black)
       XUnmapWindow (x11->display, screeninfo->win_black);
     else
