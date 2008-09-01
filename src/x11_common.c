@@ -251,7 +251,6 @@ void
 x11_map (player_t *player)
 {
   x11_t *x11 = NULL;
-  screeninfo_t *screeninfo = NULL;
 
   if (!player || !player->x11)
     return;
@@ -265,10 +264,9 @@ x11_map (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
-  screeninfo = x11_get_screeninfo (player);
-
   if (x11->use_subwin)
   {
+    screeninfo_t *screeninfo = x11_get_screeninfo (player);
     if (screeninfo && screeninfo->win_black)
       XMapRaised (x11->display, screeninfo->win_black);
   }
@@ -288,7 +286,6 @@ void
 x11_unmap (player_t *player)
 {
   x11_t *x11 = NULL;
-  screeninfo_t *screeninfo;
 
   if (!player || !player->x11)
     return;
@@ -302,7 +299,7 @@ x11_unmap (player_t *player)
 
   if (x11->use_subwin)
   {
-    screeninfo = x11_get_screeninfo (player);
+    screeninfo_t *screeninfo = x11_get_screeninfo (player);
     if (screeninfo && screeninfo->win_black)
       XUnmapWindow (x11->display, screeninfo->win_black);
     else
@@ -321,7 +318,6 @@ void
 x11_uninit (player_t *player)
 {
   x11_t *x11 = NULL;
-  screeninfo_t *screeninfo;
 
   if (!player || !player->x11)
     return;
@@ -337,7 +333,7 @@ x11_uninit (player_t *player)
 
   if (x11->use_subwin)
   {
-    screeninfo = (screeninfo_t *) x11->data;
+    screeninfo_t *screeninfo = (screeninfo_t *) x11->data;
     if (screeninfo)
     {
       if (screeninfo->win_black)
