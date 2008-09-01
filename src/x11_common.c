@@ -331,7 +331,7 @@ x11_uninit (player_t *player)
 
   if (x11->use_subwin)
   {
-    screeninfo_t *screeninfo = (screeninfo_t *) x11->data;
+    screeninfo_t *screeninfo = x11_get_screeninfo (player);
     if (screeninfo)
     {
       if (screeninfo->win_black)
