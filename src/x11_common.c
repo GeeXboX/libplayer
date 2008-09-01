@@ -140,11 +140,8 @@ x11_get_data (x11_t *x11)
   return x11->data;
 }
 
-/**
- * Map and raise the window when a video is played.
- */
 void
-x11_map (player_t *player)
+x11_resize (player_t *player)
 {
   x11_t *x11 = NULL;
 #ifdef HAVE_XINE
@@ -215,8 +212,6 @@ x11_map (player_t *player)
         XConfigureWindow (x11->display, screeninfo->win_trans,
                           CWWidth | CWHeight, &changes);
       }
-
-      XMapRaised (x11->display, screeninfo->win_black);
     }
   }
   else
@@ -229,9 +224,56 @@ x11_map (player_t *player)
       XConfigureWindow (x11->display, x11->window,
                         CWWidth | CWHeight, &changes);
     }
-
-    XMapRaised (x11->display, x11->window);
   }
+
+  XSync (x11->display, False);
+  pthread_mutex_unlock (&x11->mutex_display);
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window resized");
+}
+
+/**
+ * Map and raise the window when a video is played.
+ */
+void
+x11_map (player_t *player)
+{
+  x11_t *x11 = NULL;
+#ifdef HAVE_XINE
+  x11_visual_t *vis;
+#endif /* HAVE_XINE */
+  screeninfo_t *screeninfo = NULL;
+
+  if (!player || !player->x11)
+    return;
+
+  x11 = player->x11;
+
+  if (!x11->display)
+    return;
+
+  x11_resize (player);
+
+  pthread_mutex_lock (&x11->mutex_display);
+
+  if (player->type == PLAYER_TYPE_XINE)
+  {
+#ifdef HAVE_XINE
+    vis = x11->data;
+    if (vis)
+      screeninfo = vis->user_data;
+#endif /* HAVE_XINE */
+  }
+  else
+    screeninfo = x11->data;
+
+  if (x11->use_subwin)
+  {
+    if (screeninfo && screeninfo->win_black)
+      XMapRaised (x11->display, screeninfo->win_black);
+  }
+  else
+    XMapRaised (x11->display, x11->window);
 
   XSync (x11->display, False);
   pthread_mutex_unlock (&x11->mutex_display);
