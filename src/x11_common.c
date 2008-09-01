@@ -140,13 +140,34 @@ x11_get_data (x11_t *x11)
   return x11->data;
 }
 
+static screeninfo_t *
+x11_get_screeninfo (player_t *player)
+{
+#ifdef HAVE_XINE
+  x11_visual_t *vis;
+#endif /* HAVE_XINE */
+
+  if (!player || !player->x11)
+    return NULL;
+
+  if (player->type == PLAYER_TYPE_XINE)
+  {
+#ifdef HAVE_XINE
+    vis = player->x11->data;
+    if (vis)
+      return vis->user_data;
+#endif /* HAVE_XINE */
+  }
+  else
+    return player->x11->data;
+
+  return NULL;
+}
+
 void
 x11_resize (player_t *player)
 {
   x11_t *x11 = NULL;
-#ifdef HAVE_XINE
-  x11_visual_t *vis;
-#endif /* HAVE_XINE */
   screeninfo_t *screeninfo = NULL;
   XWindowChanges changes;
   int width, height;
@@ -161,16 +182,7 @@ x11_resize (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
-  if (player->type == PLAYER_TYPE_XINE)
-  {
-#ifdef HAVE_XINE
-    vis = x11->data;
-    if (vis)
-      screeninfo = vis->user_data;
-#endif /* HAVE_XINE */
-  }
-  else
-    screeninfo = x11->data;
+  screeninfo = x11_get_screeninfo (player);
 
   if (player->winid)
   {
@@ -239,9 +251,6 @@ void
 x11_map (player_t *player)
 {
   x11_t *x11 = NULL;
-#ifdef HAVE_XINE
-  x11_visual_t *vis;
-#endif /* HAVE_XINE */
   screeninfo_t *screeninfo = NULL;
 
   if (!player || !player->x11)
@@ -256,16 +265,7 @@ x11_map (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
-  if (player->type == PLAYER_TYPE_XINE)
-  {
-#ifdef HAVE_XINE
-    vis = x11->data;
-    if (vis)
-      screeninfo = vis->user_data;
-#endif /* HAVE_XINE */
-  }
-  else
-    screeninfo = x11->data;
+  screeninfo = x11_get_screeninfo (player);
 
   if (x11->use_subwin)
   {
