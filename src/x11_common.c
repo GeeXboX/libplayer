@@ -438,9 +438,6 @@ x11_init (player_t *player)
   if (!x11)
     return 0;
 
-  x11->display = NULL;
-  x11->data = NULL;
-
   screeninfo = calloc (1, sizeof (screeninfo_t));
   if (!screeninfo)
   {
@@ -448,7 +445,6 @@ x11_init (player_t *player)
     player->x11 = NULL;
     return 0;
   }
-  screeninfo->win_black = 0;
 
   x11->display = XOpenDisplay (NULL);
 
