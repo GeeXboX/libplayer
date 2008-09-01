@@ -302,8 +302,6 @@ x11_unmap (player_t *player)
     screeninfo_t *screeninfo = x11_get_screeninfo (player);
     if (screeninfo && screeninfo->win_black)
       XUnmapWindow (x11->display, screeninfo->win_black);
-    else
-      XUnmapWindow (x11->display, x11->window);
   }
   else
     XUnmapWindow (x11->display, x11->window);
