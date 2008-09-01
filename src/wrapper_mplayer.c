@@ -3156,7 +3156,7 @@ mplayer_video_set_ar (player_t *player, float value)
 
 #ifdef USE_X11
   if (player->x11)
-    x11_map (player);
+    x11_resize (player);
 #endif /* USE_X11 */
 
   slave_cmd_float (player, SLAVE_SWITCH_RATIO, player->aspect);
