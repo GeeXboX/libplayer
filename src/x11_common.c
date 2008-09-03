@@ -425,7 +425,6 @@ x11_init (player_t *player)
   screeninfo_t *screeninfo;
   int screen, width, height;
   Visual *visual;
-  // double res_v, res_h;
   Atom XA_NO_BORDER;
   MWMHints mwmhints;
   XSetWindowAttributes atts;
