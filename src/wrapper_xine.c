@@ -73,7 +73,6 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
     player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
 #ifdef USE_X11
-    /* X11 */
     if (player->x11)
       x11_unmap (player);
 #endif /* USE_X11 */
@@ -540,7 +539,6 @@ xine_player_init (player_t *player)
                                      xine_player_event_listener_cb, player);
 
 #ifdef USE_X11
-  /* X11 */
   if (player->x11 && x11_get_display (player->x11)) {
     xine_gui_send_vo_data (x->stream, XINE_GUI_SEND_DRAWABLE_CHANGED,
                            (void *) x11_get_window (player->x11));
@@ -619,7 +617,6 @@ xine_player_uninit (player_t *player)
     xine_exit (x->xine);
 
 #ifdef USE_X11
-  /* X11 */
   if (player->x11)
     x11_uninit (player);
 #endif /* USE_X11 */
@@ -731,7 +728,6 @@ xine_player_playback_start (player_t *player)
     return PLAYER_PB_ERROR;
 
 #ifdef USE_X11
-  /* X11 */
   if (player->x11 && !mrl_uses_vo (mrl_c))
     x11_map (player);
 #endif /* USE_X11 */
@@ -763,7 +759,6 @@ xine_player_playback_stop (player_t *player)
     return;
 
 #ifdef USE_X11
-  /* X11 */
   mrl = playlist_get_mrl (player->playlist);
   if (player->x11 && !mrl_uses_vo (mrl))
     x11_unmap (player);
