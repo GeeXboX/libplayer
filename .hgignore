@@ -3,8 +3,10 @@ syntax: regexp
 \.a
 \.so
 \.depend
+~$
 config.log
 config.mak
 regtest-libplayer$
 test-player$
 ^libplayer.pc
+^DOCS/doxygen
