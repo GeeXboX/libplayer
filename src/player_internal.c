@@ -51,6 +51,8 @@ player_sv_init (player_t *player)
   /* player specific init */
   if (player->funcs->init)
     res = player->funcs->init (player);
+  else
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "init is unimplemented");
 
   return res;
 }
@@ -66,6 +68,8 @@ player_sv_uninit (player_t *player)
   /* free player specific private properties */
   if (player->funcs->uninit)
     player->funcs->uninit (player);
+  else
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "uninit is unimplemented");
 }
 
 void
@@ -83,6 +87,9 @@ player_sv_set_verbosity (player_t *player, player_verbosity_level_t level)
   /* player specific verbosity level */
   if (player->funcs->set_verbosity)
     player->funcs->set_verbosity (player, level);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "set_verbosity is unimplemented");
 }
 
 /***************************************************************************/
@@ -225,6 +232,9 @@ player_sv_get_time_pos (player_t *player)
   /* player specific get_time_pos() */
   if (player->funcs->get_time_pos)
     res = player->funcs->get_time_pos (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "get_time_pos is unimplemented");
 
   return res;
 }
@@ -281,6 +291,9 @@ player_sv_set_framedrop (player_t *player, player_framedrop_t fd)
   /* player specific set_framedrop() */
   if (player->funcs->set_framedrop)
     player->funcs->set_framedrop (player, fd);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "set_framedrop is unimplemented");
 }
 
 /***************************************************************************/
@@ -340,6 +353,8 @@ player_sv_playback_start (player_t *player)
   /* player specific playback_start() */
   if (player->funcs->pb_start)
     res = player->funcs->pb_start (player);
+  else
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "pb_start is unimplemented");
 
   if (res != PLAYER_PB_OK)
     return;
@@ -364,6 +379,8 @@ player_sv_playback_stop (player_t *player)
   /* player specific playback_stop() */
   if (player->funcs->pb_stop)
     player->funcs->pb_stop (player);
+  else
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "pb_stop is unimplemented");
 
   player->state = PLAYER_STATE_IDLE;
 
@@ -388,6 +405,8 @@ player_sv_playback_pause (player_t *player)
   /* player specific playback_pause() */
   if (player->funcs->pb_pause)
     res = player->funcs->pb_pause (player);
+  else
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "pb_pause is unimplemented");
 
   if (res != PLAYER_PB_OK)
     return;
@@ -409,6 +428,8 @@ player_sv_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   /* player specific playback_seek() */
   if (player->funcs->pb_seek)
     player->funcs->pb_seek (player, value, seek);
+  else
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "pb_seek is unimplemented");
 }
 
 void
@@ -422,6 +443,9 @@ player_sv_playback_seek_chapter (player_t *player, int value, int absolute)
   /* player specific playback_seek_chapter() */
   if (player->funcs->pb_seek_chapter)
     player->funcs->pb_seek_chapter (player, value, absolute);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "pb_seek_chapter is unimplemented");
 }
 
 void
@@ -435,6 +459,9 @@ player_sv_playback_speed (player_t *player, float value)
   /* player specific playback_set_speed() */
   if (player->funcs->pb_set_speed)
     player->funcs->pb_set_speed (player, value);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "pb_set_speed is unimplemented");
 }
 
 /***************************************************************************/
@@ -456,6 +483,9 @@ player_sv_audio_volume_get (player_t *player)
   /* player specific audio_get_volume() */
   if (player->funcs->audio_get_volume)
     res = player->funcs->audio_get_volume (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "audio_get_volume is unimplemented");
 
   return res;
 }
@@ -471,6 +501,9 @@ player_sv_audio_volume_set (player_t *player, int value)
   /* player specific audio_set_volume() */
   if (player->funcs->audio_set_volume)
     player->funcs->audio_set_volume (player, value);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "audio_set_volume is unimplemented");
 }
 
 player_mute_t
@@ -486,6 +519,9 @@ player_sv_audio_mute_get (player_t *player)
   /* player specific audio_get_mute() */
   if (player->funcs->audio_get_mute)
     res = player->funcs->audio_get_mute (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "audio_get_mute is unimplemented");
 
   return res;
 }
@@ -501,6 +537,9 @@ player_sv_audio_mute_set (player_t *player, player_mute_t value)
   /* player specific audio_set_mute() */
   if (player->funcs->audio_set_mute)
     player->funcs->audio_set_mute (player, value);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "audio_set_mute is unimplemented");
 }
 
 void
@@ -514,6 +553,9 @@ player_sv_audio_set_delay (player_t *player, int value, int absolute)
   /* player specific audio_set_delay() */
   if (player->funcs->audio_set_delay)
     player->funcs->audio_set_delay (player, value, absolute);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "audio_set_delay is unimplemented");
 }
 
 void
@@ -527,6 +569,9 @@ player_sv_audio_select (player_t *player, int audio_id)
   /* player specific audio_select() */
   if (player->funcs->audio_select)
     player->funcs->audio_select (player, audio_id);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "audio_select is unimplemented");
 }
 
 void
@@ -540,6 +585,9 @@ player_sv_audio_prev (player_t *player)
   /* player specific audio_prev() */
   if (player->funcs->audio_prev)
     player->funcs->audio_prev (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "audio_prev is unimplemented");
 }
 
 void
@@ -553,6 +601,9 @@ player_sv_audio_next (player_t *player)
   /* player specific audio_next() */
   if (player->funcs->audio_next)
     player->funcs->audio_next (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "audio_next is unimplemented");
 }
 
 /***************************************************************************/
@@ -572,6 +623,9 @@ player_sv_video_set_fullscreen (player_t *player, int value)
   /* player specific video_set_fs() */
   if (player->funcs->video_set_fs)
     player->funcs->video_set_fs (player, value);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "video_set_fs is unimplemented");
 }
 
 void
@@ -586,6 +640,9 @@ player_sv_video_set_aspect (player_t *player, player_video_aspect_t aspect,
   /* player specific video_set_aspect() */
   if (player->funcs->video_set_aspect)
     player->funcs->video_set_aspect (player, aspect, value, absolute);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "video_set_aspect is unimplemented");
 }
 
 void
@@ -599,6 +656,9 @@ player_sv_video_set_panscan (player_t *player, int8_t value, int absolute)
   /* player specific video_set_panscan() */
   if (player->funcs->video_set_panscan)
     player->funcs->video_set_panscan (player, value, absolute);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "video_set_panscan is unimplemented");
 }
 
 void
@@ -612,6 +672,9 @@ player_sv_video_set_aspect_ratio (player_t *player, float value)
   /* player specific video_set_ar() */
   if (player->funcs->video_set_ar)
     player->funcs->video_set_ar (player, value);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "video_set_ar is unimplemented");
 }
 
 /***************************************************************************/
@@ -631,6 +694,9 @@ player_sv_subtitle_set_delay (player_t *player, int value)
   /* player specific sub_set_delay() */
   if (player->funcs->sub_set_delay)
     player->funcs->sub_set_delay (player, value);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "sub_set_delay is unimplemented");
 }
 
 void
@@ -644,6 +710,9 @@ player_sv_subtitle_set_alignment (player_t *player, player_sub_alignment_t a)
   /* player specific sub_set_alignment() */
   if (player->funcs->sub_set_alignment)
     player->funcs->sub_set_alignment (player, a);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "sub_set_alignment is unimplemented");
 }
 
 void
@@ -657,6 +726,9 @@ player_sv_subtitle_set_position (player_t *player, int value)
   /* player specific sub_set_pos() */
   if (player->funcs->sub_set_pos)
     player->funcs->sub_set_pos (player, value);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "sub_set_pos is unimplemented");
 }
 
 void
@@ -670,6 +742,9 @@ player_sv_subtitle_set_visibility (player_t *player, int value)
   /* player specific sub_set_visibility() */
   if (player->funcs->sub_set_visibility)
     player->funcs->sub_set_visibility (player, value);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "sub_set_visibility is unimplemented");
 }
 
 void
@@ -683,6 +758,9 @@ player_sv_subtitle_scale (player_t *player, int value, int absolute)
   /* player specific sub_scale() */
   if (player->funcs->sub_scale)
     player->funcs->sub_scale (player, value, absolute);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "sub_scale is unimplemented");
 }
 
 void
@@ -696,6 +774,9 @@ player_sv_subtitle_select (player_t *player, int sub_id)
   /* player specific sub_select() */
   if (player->funcs->sub_select)
     player->funcs->sub_select (player, sub_id);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "sub_select is unimplemented");
 }
 
 void
@@ -709,6 +790,8 @@ player_sv_subtitle_prev (player_t *player)
   /* player specific sub_prev() */
   if (player->funcs->sub_prev)
     player->funcs->sub_prev (player);
+  else
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "sub_prev is unimplemented");
 }
 
 void
@@ -722,6 +805,8 @@ player_sv_subtitle_next (player_t *player)
   /* player specific sub_next() */
   if (player->funcs->sub_next)
     player->funcs->sub_next (player);
+  else
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "sub_next is unimplemented");
 }
 
 /***************************************************************************/
@@ -747,6 +832,8 @@ player_sv_dvd_nav (player_t *player, player_dvdnav_t value)
   /* player specific playback_dvdnav() */
   if (player->funcs->dvd_nav)
     player->funcs->dvd_nav (player, value);
+  else
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "dvd_nav is unimplemented");
 }
 
 void
@@ -766,6 +853,9 @@ player_sv_dvd_angle_select (player_t *player, int angle)
   /* player specific dvd_angle_set() */
   if (player->funcs->dvd_angle_set)
     player->funcs->dvd_angle_set (player, angle);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "dvd_angle_set is unimplemented");
 }
 
 void
@@ -785,6 +875,9 @@ player_sv_dvd_angle_prev (player_t *player)
   /* player specific dvd_angle_prev() */
   if (player->funcs->dvd_angle_prev)
     player->funcs->dvd_angle_prev (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "dvd_angle_prev is unimplemented");
 }
 
 void
@@ -804,6 +897,9 @@ player_sv_dvd_angle_next (player_t *player)
   /* player specific dvd_angle_next() */
   if (player->funcs->dvd_angle_next)
     player->funcs->dvd_angle_next (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "dvd_angle_next is unimplemented");
 }
 
 void
@@ -823,6 +919,9 @@ player_sv_dvd_title_select (player_t *player, int title)
   /* player specific dvd_title_set() */
   if (player->funcs->dvd_title_set)
     player->funcs->dvd_title_set (player, title);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "dvd_title_set is unimplemented");
 }
 
 void
@@ -842,6 +941,9 @@ player_sv_dvd_title_prev (player_t *player)
   /* player specific dvd_title_prev() */
   if (player->funcs->dvd_title_prev)
     player->funcs->dvd_title_prev (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "dvd_title_prev is unimplemented");
 }
 
 void
@@ -861,6 +963,9 @@ player_sv_dvd_title_next (player_t *player)
   /* player specific dvd_title_next() */
   if (player->funcs->dvd_title_next)
     player->funcs->dvd_title_next (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "dvd_title_next is unimplemented");
 }
 
 /***************************************************************************/
@@ -886,6 +991,9 @@ player_sv_tv_channel_select (player_t *player, int channel)
   /* player specific tv_channel_set() */
   if (player->funcs->tv_channel_set)
     player->funcs->tv_channel_set (player, channel);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "tv_channel_set is unimplemented");
 }
 
 void
@@ -905,6 +1013,9 @@ player_sv_tv_channel_prev (player_t *player)
   /* player specific tv_channel_prev() */
   if (player->funcs->tv_channel_prev)
     player->funcs->tv_channel_prev (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "tv_channel_prev is unimplemented");
 }
 
 void
@@ -924,6 +1035,9 @@ player_sv_tv_channel_next (player_t *player)
   /* player specific tv_channel_next() */
   if (player->funcs->tv_channel_next)
     player->funcs->tv_channel_next (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "tv_channel_next is unimplemented");
 }
 
 /***************************************************************************/
@@ -946,6 +1060,9 @@ player_sv_radio_channel_select (player_t *player, int channel)
   /* player specific radio_channel_set() */
   if (player->funcs->radio_channel_set)
     player->funcs->radio_channel_set (player, channel);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "radio_channel_set is unimplemented");
 }
 
 void
@@ -962,6 +1079,9 @@ player_sv_radio_channel_prev (player_t *player)
   /* player specific radio_channel_prev() */
   if (player->funcs->radio_channel_prev)
     player->funcs->radio_channel_prev (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "radio_channel_prev is unimplemented");
 }
 
 void
@@ -978,4 +1098,7 @@ player_sv_radio_channel_next (player_t *player)
   /* player specific radio_channel_next() */
   if (player->funcs->radio_channel_next)
     player->funcs->radio_channel_next (player);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "radio_channel_next is unimplemented");
 }

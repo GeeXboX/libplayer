@@ -427,6 +427,9 @@ mrl_retrieve_properties (player_t *player, mrl_t *mrl)
   /* player specific retrieve_props() */
   if (player->funcs->mrl_retrieve_props)
     player->funcs->mrl_retrieve_props (player, mrl);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "mrl_retrieve_props is unimplemented");
 
   mrl_properties_plog (player, mrl);
 }
@@ -524,6 +527,9 @@ mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   /* player specific init */
   if (player->funcs->mrl_retrieve_meta)
     player->funcs->mrl_retrieve_meta (player, mrl);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "mrl_retrieve_meta is unimplemented");
 
   mrl_metadata_plog (player, mrl);
 }
@@ -867,6 +873,9 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
   /* ensure player support this resource type */
   if (player->funcs->mrl_supported_res)
     support = player->funcs->mrl_supported_res (player, res);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "mrl_supported_res is unimplemented");
 
   if (!support)
   {
