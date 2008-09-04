@@ -18,7 +18,13 @@ ifeq ($(BUILD_STATIC),yes)
   LDFLAGS += $(EXTRALIBS)
 endif
 
-all: lib test
+DOXYGEN =
+
+ifeq ($(DOC),yes)
+  DOXYGEN = doxygen
+endif
+
+all: lib test $(DOXYGEN)
 
 lib:
 	$(MAKE) -C src
@@ -26,6 +32,11 @@ lib:
 test:
 	$(CC) $(LIBTEST_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(LIBTEST)
 	$(CC) $(TESTPLAYER_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTPLAYER)
+
+doxygen:
+ifeq (,$(wildcard DOCS/doxygen))
+	doxygen DOCS/Doxyfile
+endif
 
 clean:
 	$(MAKE) -C src clean
@@ -36,6 +47,7 @@ distclean: clean
 	rm -f config.log
 	rm -f config.mak
 	rm -f $(PKGCONFIG_FILE)
+	rm -rf DOCS/doxygen
 
 install: install-pkgconfig
 	$(MAKE) -C src install
@@ -54,3 +66,4 @@ uninstall:
 
 .PHONY: clean distclean
 .PHONY: install install-pkgconfig uninstall
+.PHONY: doxygen

@@ -63,6 +63,7 @@ show_help(){
   echo "Miscellaneous:"
   echo "  --disable-x11               disable X11 support"
   echo "  --disable-logcolor          disable colorful console output on terminals"
+  echo "  --enable-doc                build Doxygen documentation"
   exit 1
 }
 
@@ -370,6 +371,7 @@ INSTALL="install"
 libplayer_version=`grep '#define LIBPLAYER_VERSION[[:space:]]' src/player.h | sed 's/[^0-9\.]//g'`
 pkgconfig_requires=""
 logcolor="yes"
+doc="no"
 
 #################################################
 #   set cpu variable and specific cpu flags
@@ -497,6 +499,10 @@ for opt do
   --enable-logcolor) logcolor="yes";
   ;;
   --disable-logcolor) logcolor="no";
+  ;;
+  --enable-doc) doc="yes";
+  ;;
+  --disable-doc) doc="no";
   ;;
   --help) show_help
   ;;
@@ -784,6 +790,13 @@ if enabled logcolor; then
   add_cflags -DUSE_LOGCOLOR
 fi
 
+# Doxygen
+if enabled doc; then
+  doc="no"
+  which doxygen 2>&1 > /dev/null
+  [ "$?" = 0 ] && doc="yes"
+fi
+
 #################################################
 #   logging result
 #################################################
@@ -862,6 +875,7 @@ append_config "WRAPPER_MPLAYER=$wrapper_mplayer"
 append_config "WRAPPER_VLC=$wrapper_vlc"
 append_config "WRAPPER_GSTREAMER=$wrapper_gstreamer"
 append_config "X11=$x11"
+append_config "DOC=$doc"
 
 #################################################
 #   make pkg-config files
