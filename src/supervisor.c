@@ -1007,7 +1007,10 @@ thread_supervisor (void *arg)
 
     default:
       if (ctl > 0 && ctl < g_supervisor_funcs_nb && g_supervisor_funcs[ctl])
+      {
         g_supervisor_funcs[ctl] (player, in, out);
+        plog (player, PLAYER_MSG_INFO, MODULE_NAME, "job: %i (completed)", ctl);
+      }
       break;
     }
 
