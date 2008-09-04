@@ -69,8 +69,7 @@ player_event_cb (void *data, int e, void *data_cb)
   {
     supervisor_callback_in (player, pthread_self ());
     res = player->event_cb (e, data_cb);
-
-  supervisor_callback_out (player);
+    supervisor_callback_out (player);
   }
 
   if (e == PLAYER_EVENT_PLAYBACK_FINISHED)
