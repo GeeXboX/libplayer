@@ -57,6 +57,7 @@ extern "C" {
  */
 typedef struct player_s player_t;
 
+/** \brief Player types. */
 typedef enum player_type {
   PLAYER_TYPE_XINE,
   PLAYER_TYPE_MPLAYER,
@@ -65,6 +66,7 @@ typedef enum player_type {
   PLAYER_TYPE_DUMMY
 } player_type_t;
 
+/** \brief Player video outputs. */
 typedef enum player_vo {
   PLAYER_VO_NULL,
   PLAYER_VO_AUTO,
@@ -75,6 +77,7 @@ typedef enum player_vo {
   PLAYER_VO_FB
 } player_vo_t;
 
+/** \brief Player audio outputs. */
 typedef enum player_ao {
   PLAYER_AO_NULL,
   PLAYER_AO_AUTO,
@@ -82,6 +85,7 @@ typedef enum player_ao {
   PLAYER_AO_OSS
 } player_ao_t;
 
+/** \brief Player events. */
 typedef enum player_event {
   PLAYER_EVENT_UNKNOWN,
   PLAYER_EVENT_PLAYBACK_START,
@@ -91,6 +95,7 @@ typedef enum player_event {
   PLAYER_EVENT_MRL_UPDATED
 } player_event_t;
 
+/** \brief Player verbosity. */
 typedef enum {
   PLAYER_MSG_NONE,          /* no error messages */
   PLAYER_MSG_INFO,          /* working operations */
@@ -160,6 +165,7 @@ void player_set_verbosity (player_t *player, player_verbosity_level_t level);
  */
 typedef struct mrl_s mrl_t;
 
+/** \brief MRL types. */
 typedef enum mrl_type {
   MRL_TYPE_UNKNOWN,
   MRL_TYPE_AUDIO,
@@ -173,6 +179,7 @@ typedef enum mrl_type {
  *                           GStreamer     MPlayer        VLC         Xine
  *                         ------------ ------------ ------------ ------------
  */
+/** \brief MRL resources. */
 typedef enum mrl_resource {
   MRL_RESOURCE_UNKNOWN,
 
@@ -208,13 +215,13 @@ typedef enum mrl_resource {
   MRL_RESOURCE_UNSV,        /*  NO           YES          NO           NO   */
 } mrl_resource_t;
 
-/* for local streams */
+/** \brief Arguments for local streams. */
 typedef struct mrl_resource_local_args_s {
   char *location;           /*  NO           YES          YES          YES  */
   int playlist;             /*  NO           NO           NO           NO   */
 } mrl_resource_local_args_t;
 
-/* for audio CD */
+/** \brief Arguments for audio CD. */
 typedef struct mrl_resource_cd_args_s {
   char *device;             /*  NO           YES          NO           NO   */
   uint8_t speed;            /*  NO           YES          NO           NO   */
@@ -222,7 +229,7 @@ typedef struct mrl_resource_cd_args_s {
   uint8_t track_end;        /*  NO           YES          NO           NO   */
 } mrl_resource_cd_args_t;
 
-/* for video discs */ 
+/** \brief Arguments for video discs. */
 typedef struct mrl_resource_videodisc_args_s {
   char *device;             /*  NO           YES          NO           YES  */
   uint8_t speed;            /*  NO           NO           NO           NO   */
@@ -238,7 +245,7 @@ typedef struct mrl_resource_videodisc_args_s {
   uint8_t sub_cc;           /*  NO           NO           NO           NO   */
 } mrl_resource_videodisc_args_t;
 
-/* for radio/tv streams */ 
+/** \brief Arguments for radio/tv streams. */
 typedef struct mrl_resource_tv_args_s {
   char *device;             /*  NO           NO           NO           NO   */
   char *driver;             /*  NO           NO           NO           NO   */
@@ -250,7 +257,7 @@ typedef struct mrl_resource_tv_args_s {
   char *norm;               /*  NO           NO           NO           NO   */
 } mrl_resource_tv_args_t;
 
-/* for network streams */ 
+/** \brief Arguments for network streams. */
 typedef struct mrl_resource_network_args_s {
   char *url;                /*  NO           YES          NO           NO   */
   char *username;           /*  NO           YES          NO           NO   */
@@ -258,6 +265,7 @@ typedef struct mrl_resource_network_args_s {
   char *user_agent;         /*  NO           NO           NO           NO   */
 } mrl_resource_network_args_t;
 
+/** \brief MRL metadata. */
 typedef enum mrl_metadata_type {
   MRL_METADATA_TITLE,
   MRL_METADATA_ARTIST,
@@ -268,11 +276,13 @@ typedef enum mrl_metadata_type {
   MRL_METADATA_COMMENT,
 } mrl_metadata_type_t;
 
+/** \brief MRL CDDA/CDDB metadata. */
 typedef enum mrl_metadata_cd_type {
   MRL_METADATA_CD_DISCID,
   MRL_METADATA_CD_TRACKS,
 } mrl_metadata_cd_type_t;
 
+/** \brief MRL properties. */
 typedef enum mrl_properties_type {
   MRL_PROPERTY_SEEKABLE,
   MRL_PROPERTY_LENGTH,
@@ -471,6 +481,7 @@ off_t mrl_get_size (player_t *player, mrl_t *mrl);
 /*                                                                         */
 /***************************************************************************/
 
+/** \brief Player MRL add mode. */
 typedef enum player_mrl_add {
   PLAYER_MRL_ADD_NOW,
   PLAYER_MRL_ADD_QUEUE
@@ -553,17 +564,20 @@ void player_mrl_next (player_t *player);
 /*                                                                         */
 /***************************************************************************/
 
+/** \brief Player playback mode. */
 typedef enum player_pb {
   PLAYER_PB_SINGLE = 0,
   PLAYER_PB_AUTO,
 } player_pb_t;
 
+/** \brief Player loop mode. */
 typedef enum player_loop {
   PLAYER_LOOP_DISABLE = 0,
   PLAYER_LOOP_ELEMENT,
   PLAYER_LOOP_PLAYLIST,
 } player_loop_t;
 
+/** \brief Player frame dropping mode. */
 typedef enum player_framedrop {
   PLAYER_FRAMEDROP_DISABLE,
   PLAYER_FRAMEDROP_SOFT,
@@ -633,12 +647,14 @@ void player_set_framedrop (player_t *player, player_framedrop_t fd);
 /*                                                                         */
 /***************************************************************************/
 
+/** \brief Player playback state. */
 typedef enum player_pb_state {
   PLAYER_PB_STATE_IDLE,
   PLAYER_PB_STATE_PAUSE,
   PLAYER_PB_STATE_PLAY,
 } player_pb_state_t;
 
+/** \brief Player playback seek mode. */
 typedef enum player_pb_seek {
   PLAYER_PB_SEEK_RELATIVE,
   PLAYER_PB_SEEK_ABSOLUTE,
@@ -735,6 +751,7 @@ void player_playback_speed (player_t *player, float value);
 /*                                                                         */
 /***************************************************************************/
 
+/** \brief Player mute state. */
 typedef enum player_mute {
   PLAYER_MUTE_UNKNOWN,
   PLAYER_MUTE_ON,
@@ -848,6 +865,7 @@ void player_audio_next (player_t *player);
 /*                                                                         */
 /***************************************************************************/
 
+/** \brief Player video aspect. */
 typedef enum player_video_aspect {
   PLAYER_VIDEO_ASPECT_BRIGHTNESS,
   PLAYER_VIDEO_ASPECT_CONTRAST,
@@ -917,6 +935,7 @@ void player_video_set_aspect_ratio (player_t *player, float value);
 /*                                                                         */
 /***************************************************************************/
 
+/** \brief Player subtitle alignment. */
 typedef enum player_sub_alignment {
   PLAYER_SUB_ALIGNMENT_TOP,
   PLAYER_SUB_ALIGNMENT_CENTER,
@@ -1032,6 +1051,7 @@ void player_subtitle_next (player_t *player);
 /*                                                                         */
 /***************************************************************************/
 
+/** \brief Player DVDnav commands. */
 typedef enum player_dvdnav {
   PLAYER_DVDNAV_UP,
   PLAYER_DVDNAV_DOWN,
