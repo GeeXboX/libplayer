@@ -537,6 +537,8 @@ mrl_sv_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
 {
   mrl_properties_t *prop;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return 0;
 
@@ -603,6 +605,8 @@ mrl_sv_get_audio_codec (player_t *player, mrl_t *mrl)
   mrl_properties_t *prop;
   mrl_properties_audio_t *audio;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return NULL;
 
@@ -628,6 +632,8 @@ mrl_sv_get_video_codec (player_t *player, mrl_t *mrl)
   mrl_properties_t *prop;
   mrl_properties_video_t *video;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return NULL;
 
@@ -652,6 +658,8 @@ mrl_sv_get_size (player_t *player, mrl_t *mrl)
 {
   mrl_properties_t *prop;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return 0;
 
@@ -674,6 +682,8 @@ char *
 mrl_sv_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m)
 {
   mrl_metadata_t *meta;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return NULL;
@@ -726,6 +736,8 @@ mrl_sv_get_metadata_cd_track (player_t *player,
   mrl_metadata_cd_t *cd;
   mrl_metadata_cd_track_t *track;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return NULL;
 
@@ -768,6 +780,8 @@ mrl_sv_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
   mrl_metadata_t *meta;
   mrl_metadata_cd_t *cd;
 
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return 0;
 
@@ -806,6 +820,8 @@ mrl_sv_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
 mrl_type_t
 mrl_sv_get_type (player_t *player, mrl_t *mrl)
 {
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return MRL_TYPE_UNKNOWN;
 
@@ -820,6 +836,8 @@ mrl_sv_get_type (player_t *player, mrl_t *mrl)
 mrl_resource_t
 mrl_sv_get_resource (player_t *player, mrl_t *mrl)
 {
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
   if (!player)
     return MRL_RESOURCE_UNKNOWN;
 
@@ -836,6 +854,8 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
 {
   mrl_t *mrl = NULL;
   int support = 0;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player || !args)
     return NULL;
