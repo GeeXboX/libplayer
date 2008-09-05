@@ -207,6 +207,8 @@ struct player_s {
   void *priv;           /* specific configuration related to the player type */
 };
 
+#define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
+
 /*****************************************************************************/
 /*                          MRL Internal functions                           */
 /*****************************************************************************/
