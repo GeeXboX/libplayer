@@ -875,8 +875,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
 
 };
 
-static const int g_supervisor_funcs_nb =
-  ARRAY_NB_ELEMENTS(g_supervisor_funcs);
+static const int g_supervisor_funcs_nb = ARRAY_NB_ELEMENTS(g_supervisor_funcs);
 
 
 /*****************************************************************************/
