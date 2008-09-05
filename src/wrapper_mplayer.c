@@ -2818,7 +2818,9 @@ static void
 mplayer_playback_stop (player_t *player)
 {
   mplayer_t *mplayer = NULL;
+#ifdef USE_X11
   mrl_t *mrl;
+#endif /* USE_X11 */
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
 
@@ -2840,8 +2842,8 @@ mplayer_playback_stop (player_t *player)
   mplayer->status = MPLAYER_IS_IDLE;
   pthread_mutex_unlock (&mplayer->mutex_status);
 
-  mrl = playlist_get_mrl (player->playlist);
 #ifdef USE_X11
+  mrl = playlist_get_mrl (player->playlist);
   if (player->x11 && !mrl_uses_vo (mrl))
     x11_unmap (player);
 #endif /* USE_X11 */
