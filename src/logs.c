@@ -34,6 +34,7 @@
 #define F_RED    COLOR(31)
 #define F_GREEN  COLOR(32)
 #define F_YELLOW COLOR(33)
+#define F_BLUE   COLOR(34)
 #define B_RED    COLOR(41)
 #endif /* USE_LOGCOLOR */
 
@@ -43,6 +44,7 @@ plog (player_t *player, player_verbosity_level_t level,
 {
 #ifdef USE_LOGCOLOR
   static const char const *c[] = {
+    [PLAYER_MSG_VERBOSE]  = F_BLUE,
     [PLAYER_MSG_INFO]     = F_GREEN,
     [PLAYER_MSG_WARNING]  = F_YELLOW,
     [PLAYER_MSG_ERROR]    = F_RED,
@@ -50,6 +52,7 @@ plog (player_t *player, player_verbosity_level_t level,
   };
 #endif /* USE_LOGCOLOR */
   static const char const *l[] = {
+    [PLAYER_MSG_VERBOSE]  = "Verb",
     [PLAYER_MSG_INFO]     = "Info",
     [PLAYER_MSG_WARNING]  = "Warn",
     [PLAYER_MSG_ERROR]    = "Err",

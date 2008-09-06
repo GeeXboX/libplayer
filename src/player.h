@@ -98,6 +98,7 @@ typedef enum player_event {
 /** \brief Player verbosity. */
 typedef enum {
   PLAYER_MSG_NONE,          /* no error messages */
+  PLAYER_MSG_VERBOSE,       /* super-verbose mode: mostly for debugging */
   PLAYER_MSG_INFO,          /* working operations */
   PLAYER_MSG_WARNING,       /* harmless failures */
   PLAYER_MSG_ERROR,         /* may result in hazardous behavior */
