@@ -40,7 +40,7 @@
 
 struct x11_s {
   Display *display;
-  Window window;
+  Window win_video;
   void *data;
   int use_subwin;
   int x, y;       /* position set by the user */
@@ -130,7 +130,7 @@ x11_get_window (x11_t *x11)
   if (!x11)
     return 0;
 
-  return x11->window;
+  return x11->win_video;
 }
 
 void *
@@ -227,7 +227,7 @@ x11_resize (player_t *player)
       zoom (player, width, height, player->aspect,
             &changes.x, &changes.y, &changes.width, &changes.height);
 
-      XConfigureWindow (x11->display, x11->window,
+      XConfigureWindow (x11->display, x11->win_video,
                         CWX | CWY | CWWidth | CWHeight, &changes);
 
       /* reconfigure black and trans windows */
@@ -250,7 +250,7 @@ x11_resize (player_t *player)
     changes.width = width;
     changes.height = height;
 
-    XConfigureWindow (x11->display, x11->window,
+    XConfigureWindow (x11->display, x11->win_video,
                       CWX | CWY | CWWidth | CWHeight, &changes);
   }
 
@@ -287,7 +287,7 @@ x11_map (player_t *player)
       XMapRaised (x11->display, screeninfo->win_black);
   }
   else
-    XMapRaised (x11->display, x11->window);
+    XMapRaised (x11->display, x11->win_video);
 
   XSync (x11->display, False);
   pthread_mutex_unlock (&x11->mutex_display);
@@ -320,7 +320,7 @@ x11_unmap (player_t *player)
       XUnmapWindow (x11->display, screeninfo->win_black);
   }
   else
-    XUnmapWindow (x11->display, x11->window);
+    XUnmapWindow (x11->display, x11->win_video);
 
   XSync (x11->display, False);
   pthread_mutex_unlock (&x11->mutex_display);
@@ -342,8 +342,8 @@ x11_uninit (player_t *player)
     return;
 
   pthread_mutex_lock (&x11->mutex_display);
-  XUnmapWindow (x11->display, x11->window);
-  XDestroyWindow (x11->display, x11->window);
+  XUnmapWindow (x11->display, x11->win_video);
+  XDestroyWindow (x11->display, x11->win_video);
 
   if (x11->use_subwin)
   {
@@ -529,7 +529,7 @@ x11_init (player_t *player)
                      PROP_MWM_HINTS_ELEMENTS);
 
     /* create a window for the video out */
-    x11->window = XCreateWindow (x11->display,
+    x11->win_video = XCreateWindow (x11->display,
                                  screeninfo->win_black,
                                  0, 0, width, height,
                                  0, 0,
@@ -537,7 +537,7 @@ x11_init (player_t *player)
                                  visual,
                                  CWOverrideRedirect | CWBackPixel, &atts);
 
-    XMapWindow (x11->display,  x11->window);
+    XMapWindow (x11->display,  x11->win_video);
 
     /*
      * Transparent window to catch all events in order to prevent sending
@@ -562,7 +562,7 @@ x11_init (player_t *player)
   else
   {
     /* create a window for the video out */
-    x11->window = XCreateWindow (x11->display,
+    x11->win_video = XCreateWindow (x11->display,
                                  win_root,
                                  0, 0, width, height,
                                  0, 0,
@@ -572,7 +572,7 @@ x11_init (player_t *player)
   }
 
   XChangeProperty (x11->display,
-                   x11->window,
+                   x11->win_video,
                    XA_NO_BORDER, XA_NO_BORDER, 32,
                    PropModeReplace,
                    (unsigned char *) &mwmhints,
@@ -591,7 +591,7 @@ x11_init (player_t *player)
     {
       vis->display = x11->display;
       vis->screen = screen;
-      vis->d = x11->window;
+      vis->d = x11->win_video;
       vis->dest_size_cb = dest_size_cb;
       vis->frame_output_cb = frame_output_cb;
 
