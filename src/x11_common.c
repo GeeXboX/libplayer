@@ -43,6 +43,8 @@ struct x11_s {
   Window window;
   void *data;
   int use_subwin;
+  int x, y;       /* position set by the user */
+  int w, h;       /* size set by the user */
   pthread_mutex_t mutex_display;
 };
 
@@ -170,6 +172,7 @@ x11_resize (player_t *player)
   x11_t *x11 = NULL;
   screeninfo_t *screeninfo = NULL;
   XWindowChanges changes;
+  int x, y;
   int width, height;
 
   if (!player || !player->x11)
@@ -197,6 +200,19 @@ x11_resize (player_t *player)
       screeninfo->height = height;
     }
   }
+  else if (screeninfo)
+  {
+    width = screeninfo->width;
+    height = screeninfo->height;
+  }
+
+  /* window position and size set by the user */
+  x = x11->x;
+  y = x11->y;
+  if (x11->w)
+    width = x11->w;
+  if (x11->h)
+    height = x11->h;
 
   if (x11->use_subwin)
   {
@@ -208,34 +224,34 @@ x11_resize (player_t *player)
       changes.height = player->h;
 
       /* fix the size and offset */
-      zoom (player, screeninfo->width, screeninfo->height, player->aspect,
+      zoom (player, width, height, player->aspect,
             &changes.x, &changes.y, &changes.width, &changes.height);
 
       XConfigureWindow (x11->display, x11->window,
                         CWX | CWY | CWWidth | CWHeight, &changes);
 
-      if (player->winid)
-      {
         /* reconfigure black and trans windows */
-        changes.width = screeninfo->width;
-        changes.height = screeninfo->height;
+        changes.x = x;
+        changes.y = y;
+        changes.width = width;
+        changes.height = height;
         XConfigureWindow (x11->display, screeninfo->win_black,
-                          CWWidth | CWHeight, &changes);
+                          CWX | CWY | CWWidth | CWHeight, &changes);
+
+      if (player->winid)
         XConfigureWindow (x11->display, screeninfo->win_trans,
                           CWWidth | CWHeight, &changes);
-      }
     }
   }
   else
   {
-    if (player->winid)
-    {
+      changes.x = x;
+      changes.y = y;
       changes.width = width;
       changes.height = height;
 
       XConfigureWindow (x11->display, x11->window,
-                        CWWidth | CWHeight, &changes);
-    }
+                        CWX | CWY | CWWidth | CWHeight, &changes);
   }
 
   XSync (x11->display, False);
