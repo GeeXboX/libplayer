@@ -142,6 +142,24 @@ x11_get_data (x11_t *x11)
   return x11->data;
 }
 
+void
+x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags)
+{
+  if (!x11)
+    return;
+
+  pthread_mutex_lock (&x11->mutex_display);
+  if (flags & X11_PROPERTY_X)
+    x11->x = x;
+  if (flags & X11_PROPERTY_Y)
+    x11->y = y;
+  if (flags & X11_PROPERTY_W)
+    x11->w = w;
+  if (flags & X11_PROPERTY_H)
+    x11->h = h;
+  pthread_mutex_unlock (&x11->mutex_display);
+}
+
 static screeninfo_t *
 x11_get_screeninfo (player_t *player)
 {

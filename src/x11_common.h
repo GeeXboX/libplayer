@@ -39,4 +39,14 @@ Display *x11_get_display (x11_t *x11);
 Window x11_get_window (x11_t *x11);
 void *x11_get_data (x11_t *x11);
 
+
+typedef enum x11_winprops_flags {
+  X11_PROPERTY_X = (1 << 0),
+  X11_PROPERTY_Y = (1 << 1),
+  X11_PROPERTY_W = (1 << 2),
+  X11_PROPERTY_H = (1 << 3),
+} x11_winprops_flags_t;
+
+void x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags);
+
 #endif /* X11_COMMON_H */
