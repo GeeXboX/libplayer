@@ -249,6 +249,27 @@ player_set_verbosity (player_t *player, player_verbosity_level_t level)
                    SV_FUNC_PLAYER_SET_VERBOSITY, &level, NULL);
 }
 
+void
+player_x_window_set_properties (player_t *player,
+                                int x, int y, int w, int h, int flags)
+{
+  supervisor_data_window_t in;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  in.x = x;
+  in.y = y;
+  in.h = h;
+  in.w = w;
+  in.flags = flags;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_PLAYER_X_WINDOW_SET_PROPS, &in, NULL);
+}
+
 /***************************************************************************/
 /*                                                                         */
 /* Player to MRL connection                                                */

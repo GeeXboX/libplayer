@@ -54,6 +54,7 @@ typedef enum supervisor_ctl {
   SV_FUNC_PLAYER_INIT,
   SV_FUNC_PLAYER_UNINIT,
   SV_FUNC_PLAYER_SET_VERBOSITY,
+  SV_FUNC_PLAYER_X_WINDOW_SET_PROPS,
 
   /* Player to MRL connection */
   SV_FUNC_PLAYER_MRL_GET_CURRENT,
@@ -153,6 +154,12 @@ typedef struct supervisor_data_out_metadata_cd_s {
   char *name;
   uint32_t length;
 } supervisor_data_out_metadata_cd_t;
+
+typedef struct supervisor_data_window_s {
+  int x, y;
+  int w, h;
+  int flags;
+} supervisor_data_window_t;
 
 
 supervisor_t *supervisor_new (void);

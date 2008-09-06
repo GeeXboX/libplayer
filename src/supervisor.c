@@ -224,6 +224,18 @@ supervisor_player_set_verbosity (player_t *player, void *in, void *out)
   player_sv_set_verbosity (player, *input);
 }
 
+static void
+supervisor_player_x_window_set_props (player_t *player, void *in, void *out)
+{
+  supervisor_data_window_t *input = in;
+
+  if (!player || !in)
+    return;
+
+  player_sv_x_window_set_properties (player, input->x, input->y,
+                                             input->w, input->h, input->flags);
+}
+
 /************************* Player to MRL connection **************************/
 
 static void
@@ -801,6 +813,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_PLAYER_INIT]               = supervisor_player_init,
   [SV_FUNC_PLAYER_UNINIT]             = supervisor_player_uninit,
   [SV_FUNC_PLAYER_SET_VERBOSITY]      = supervisor_player_set_verbosity,
+  [SV_FUNC_PLAYER_X_WINDOW_SET_PROPS] = supervisor_player_x_window_set_props,
 
   /* Player to MRL connection */
   [SV_FUNC_PLAYER_MRL_GET_CURRENT]    = supervisor_player_mrl_get_current,

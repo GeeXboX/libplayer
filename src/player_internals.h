@@ -258,6 +258,8 @@ mrl_t *mrl_sv_new (player_t *player, mrl_resource_t res, void *args);
 init_status_t player_sv_init (player_t *player);
 void player_sv_uninit (player_t *player);
 void player_sv_set_verbosity (player_t *player, player_verbosity_level_t level);
+void player_sv_x_window_set_properties (player_t *player,
+                                        int x, int y, int w, int h, int flags);
 
 /* Player to MRL connection */
 mrl_t *player_sv_mrl_get_current (player_t *player);
