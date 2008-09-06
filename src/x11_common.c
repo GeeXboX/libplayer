@@ -230,13 +230,13 @@ x11_resize (player_t *player)
       XConfigureWindow (x11->display, x11->window,
                         CWX | CWY | CWWidth | CWHeight, &changes);
 
-        /* reconfigure black and trans windows */
-        changes.x = x;
-        changes.y = y;
-        changes.width = width;
-        changes.height = height;
-        XConfigureWindow (x11->display, screeninfo->win_black,
-                          CWX | CWY | CWWidth | CWHeight, &changes);
+      /* reconfigure black and trans windows */
+      changes.x = x;
+      changes.y = y;
+      changes.width = width;
+      changes.height = height;
+      XConfigureWindow (x11->display, screeninfo->win_black,
+                        CWX | CWY | CWWidth | CWHeight, &changes);
 
       if (player->winid)
         XConfigureWindow (x11->display, screeninfo->win_trans,
@@ -245,13 +245,13 @@ x11_resize (player_t *player)
   }
   else
   {
-      changes.x = x;
-      changes.y = y;
-      changes.width = width;
-      changes.height = height;
+    changes.x = x;
+    changes.y = y;
+    changes.width = width;
+    changes.height = height;
 
-      XConfigureWindow (x11->display, x11->window,
-                        CWX | CWY | CWWidth | CWHeight, &changes);
+    XConfigureWindow (x11->display, x11->window,
+                      CWX | CWY | CWWidth | CWHeight, &changes);
   }
 
   XSync (x11->display, False);
