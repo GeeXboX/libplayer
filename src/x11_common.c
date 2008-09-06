@@ -530,12 +530,12 @@ x11_init (player_t *player)
 
     /* create a window for the video out */
     x11->win_video = XCreateWindow (x11->display,
-                                 screeninfo->win_black,
-                                 0, 0, width, height,
-                                 0, 0,
-                                 InputOutput,
-                                 visual,
-                                 CWOverrideRedirect | CWBackPixel, &atts);
+                                    screeninfo->win_black,
+                                    0, 0, width, height,
+                                    0, 0,
+                                    InputOutput,
+                                    visual,
+                                    CWOverrideRedirect | CWBackPixel, &atts);
 
     XMapWindow (x11->display,  x11->win_video);
 
@@ -563,12 +563,12 @@ x11_init (player_t *player)
   {
     /* create a window for the video out */
     x11->win_video = XCreateWindow (x11->display,
-                                 win_root,
-                                 0, 0, width, height,
-                                 0, 0,
-                                 InputOutput,
-                                 visual,
-                                 CWOverrideRedirect | CWBackPixel, &atts);
+                                    win_root,
+                                    0, 0, width, height,
+                                    0, 0,
+                                    InputOutput,
+                                    visual,
+                                    CWOverrideRedirect | CWBackPixel, &atts);
   }
 
   XChangeProperty (x11->display,
