@@ -552,11 +552,11 @@ thread_fifo (void *arg)
 
     if (verbosity)
     {
-      static player_verbosity_level_t level = PLAYER_MSG_INFO;
+      static player_verbosity_level_t level = PLAYER_MSG_VERBOSE;
 
       *(buffer + strlen (buffer) - 1) = '\0';
 
-      if (level == PLAYER_MSG_INFO
+      if (level == PLAYER_MSG_VERBOSE
           && strstr (buffer, "MPlayer interrupted by signal") == buffer)
       {
         level = PLAYER_MSG_CRITICAL;
@@ -564,7 +564,7 @@ thread_fifo (void *arg)
 
       if (skip_msg)
       {
-        plog (player, PLAYER_MSG_INFO, MODULE_NAME,
+        plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME,
               "libplayer has ignored %u msg from MPlayer", skip_msg);
         skip_msg = 0;
       }
@@ -2269,7 +2269,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
             "%s '%s' is supported by your version of MPlayer", what, str);
 
       if (opt)
-        plog (player, PLAYER_MSG_INFO, MODULE_NAME,
+        plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME,
               " *** conf:%i min:%i max:%i", opt->conf, opt->min, opt->max);
     }
   }
@@ -2653,6 +2653,7 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
 
   switch (level)
   {
+  case PLAYER_MSG_VERBOSE:
   case PLAYER_MSG_INFO:
   case PLAYER_MSG_WARNING:
   case PLAYER_MSG_ERROR:
