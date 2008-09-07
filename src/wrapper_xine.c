@@ -568,6 +568,7 @@ xine_player_set_verbosity (player_t *player, player_verbosity_level_t level)
   case PLAYER_MSG_NONE:
     verbosity = XINE_VERBOSITY_NONE;
     break;
+  case PLAYER_MSG_VERBOSE:
   case PLAYER_MSG_INFO:
   case PLAYER_MSG_WARNING:
     verbosity = XINE_VERBOSITY_DEBUG;
