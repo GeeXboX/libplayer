@@ -627,8 +627,10 @@ main (int argc, char **argv)
     case 'v':
       if (verbosity == PLAYER_MSG_ERROR)
         verbosity = PLAYER_MSG_WARNING;
-      else
+      else if (verbosity == PLAYER_MSG_WARNING)
         verbosity = PLAYER_MSG_INFO;
+      else
+        verbosity = PLAYER_MSG_VERBOSE;
       break;
 
     case 'p':
