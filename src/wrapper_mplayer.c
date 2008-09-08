@@ -1936,6 +1936,7 @@ mp_identify (mrl_t *mrl, int flags)
     dup2 (mp_pipe[1], STDOUT_FILENO);
 
     params[pp++] = MPLAYER_NAME;
+    params[pp++] = "-quiet";
     params[pp++] = "-vo";
     params[pp++] = "null";
     params[pp++] = "-ao";
@@ -2444,6 +2445,7 @@ mplayer_init (player_t *player)
     /* default MPlayer arguments */
     params[pp++] = MPLAYER_NAME;
     params[pp++] = "-slave";            /* work in slave mode */
+    params[pp++] = "-quiet";            /* reduce output messages */
     params[pp++] = "-msglevel";
     params[pp++] = "all=2:global=6:cplayer=7";
     params[pp++] = "-idle";             /* MPlayer stays always alive */
