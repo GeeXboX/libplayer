@@ -307,6 +307,7 @@ register_functions_gstreamer (void)
   funcs->mrl_supported_res  = gstreamer_mrl_supported_res;
   funcs->mrl_retrieve_props = NULL;
   funcs->mrl_retrieve_meta  = NULL;
+  funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = NULL;
   funcs->set_framedrop      = NULL;

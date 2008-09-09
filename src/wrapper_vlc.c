@@ -571,6 +571,7 @@ register_functions_vlc (void)
   funcs->mrl_supported_res  = vlc_mrl_supported_res;
   funcs->mrl_retrieve_props = vlc_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = vlc_mrl_retrieve_metadata;
+  funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = vlc_get_time_pos;
   funcs->set_framedrop      = NULL;

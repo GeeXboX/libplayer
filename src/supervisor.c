@@ -191,6 +191,18 @@ supervisor_mrl_new (player_t *player, void *in, void *out)
   *output = mrl_sv_new (player, input->res, input->args);
 }
 
+static void
+supervisor_mrl_video_snapshot (player_t *player, void *in, void *out)
+{
+  supervisor_data_snapshot_t *input = in;
+
+  if (!player || !in)
+    return;
+
+  mrl_sv_video_snapshot (player, input->mrl,
+                         input->pos, input->type, input->dst);
+}
+
 /************************* Player (Un)Initialization *************************/
 
 static void
@@ -808,6 +820,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_MRL_GET_TYPE]              = supervisor_mrl_get_type,
   [SV_FUNC_MRL_GET_RESOURCE]          = supervisor_mrl_get_resource,
   [SV_FUNC_MRL_NEW]                   = supervisor_mrl_new,
+  [SV_FUNC_MRL_VIDEO_SNAPSHOT]        = supervisor_mrl_video_snapshot,
 
   /* Player (Un)Initialization */
   [SV_FUNC_PLAYER_INIT]               = supervisor_player_init,

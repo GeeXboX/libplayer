@@ -295,6 +295,14 @@ typedef struct mrl_resource_network_args_s {
   char *user_agent;         /*  NO           NO           NO           NO   */
 } mrl_resource_network_args_t;
 
+/** \brief Snapshot image file type. */
+typedef enum mrl_snapshot {
+  MRL_SNAPSHOT_JPG,         /*  NO           NO           NO           NO   */
+  MRL_SNAPSHOT_PNG,         /*  NO           NO           NO           NO   */
+  MRL_SNAPSHOT_PPM,         /*  NO           NO           NO           NO   */
+  MRL_SNAPSHOT_TGA,         /*  NO           NO           NO           NO   */
+} mrl_snapshot_t;
+
 /** \brief MRL metadata. */
 typedef enum mrl_metadata_type {
   MRL_METADATA_TITLE,
@@ -504,6 +512,25 @@ char *mrl_get_video_codec (player_t *player, mrl_t *mrl);
  * \return Size of the stream (bytes).
  */
 off_t mrl_get_size (player_t *player, mrl_t *mrl);
+
+/**
+ * \brief Take a video snapshot.
+ *
+ * One frame at the \p pos (in second) is saved to \p dest.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \param[in] pos         Time position (second).
+ * \param[in] t           Image file type.
+ * \param[in] dst         Destination file, NULL for default filename
+ *                        in the current directory.
+ */
+void mrl_video_snapshot (player_t *player, mrl_t *mrl,
+                         int pos, mrl_snapshot_t t, const char *dst);
 
 /***************************************************************************/
 /*                                                                         */

@@ -49,6 +49,7 @@ typedef enum supervisor_ctl {
   SV_FUNC_MRL_GET_TYPE,
   SV_FUNC_MRL_GET_RESOURCE,
   SV_FUNC_MRL_NEW,
+  SV_FUNC_MRL_VIDEO_SNAPSHOT,
 
   /* Player (Un)Initialization */
   SV_FUNC_PLAYER_INIT,
@@ -160,6 +161,13 @@ typedef struct supervisor_data_window_s {
   int w, h;
   int flags;
 } supervisor_data_window_t;
+
+typedef struct supervisor_data_snapshot_s {
+  mrl_t *mrl;
+  int pos;
+  int type;
+  const char *dst;
+} supervisor_data_snapshot_t;
 
 
 supervisor_t *supervisor_new (void);

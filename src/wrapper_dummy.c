@@ -196,6 +196,7 @@ register_functions_dummy (void)
   funcs->mrl_supported_res  = NULL;
   funcs->mrl_retrieve_props = dummy_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = dummy_mrl_retrieve_metadata;
+  funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = NULL;
   funcs->set_framedrop      = NULL;

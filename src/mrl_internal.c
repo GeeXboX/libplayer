@@ -899,3 +899,41 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
 
   return mrl;
 }
+
+void
+mrl_sv_video_snapshot (player_t *player, mrl_t *mrl,
+                       int pos, mrl_snapshot_t t, const char *dst)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  if (dst)
+  {
+    const char *it;
+
+    it = strrchr (dst, '/');
+    if (it && *(it + 1) == '\0')
+    {
+      plog (player, PLAYER_MSG_ERROR,
+            MODULE_NAME, "the destination (%s) must be a file", dst);
+      return;
+    }
+  }
+
+  /* try to use internal mrl? */
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
+    return;
+
+  if (mrl_sv_get_type (player, mrl) != MRL_TYPE_VIDEO)
+    return;
+
+  /* player specific mrl_video_snapshot() */
+  if (player->funcs->mrl_video_snapshot)
+    player->funcs->mrl_video_snapshot (player, mrl, pos, t, dst);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "mrl_video_snapshot is unimplemented");
+}

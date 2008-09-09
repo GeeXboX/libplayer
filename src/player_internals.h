@@ -125,6 +125,8 @@ typedef struct player_funcs_s {
   int (* mrl_supported_res) (player_t *player, mrl_resource_t res);
   void (* mrl_retrieve_props) (player_t *player, mrl_t *mrl);
   void (* mrl_retrieve_meta) (player_t *player, mrl_t *mrl);
+  void (* mrl_video_snapshot) (player_t *player, mrl_t *mrl,
+                               int pos, mrl_snapshot_t t, const char *dst);
 
   /* Player properties */
   int (* get_time_pos) (player_t *player);
@@ -249,6 +251,8 @@ uint32_t mrl_sv_get_metadata_cd (player_t *player,
 mrl_type_t mrl_sv_get_type (player_t *player, mrl_t *mrl);
 mrl_resource_t mrl_sv_get_resource (player_t *player, mrl_t *mrl);
 mrl_t *mrl_sv_new (player_t *player, mrl_resource_t res, void *args);
+void mrl_sv_video_snapshot (player_t *player, mrl_t *mrl,
+                            int pos, mrl_snapshot_t t, const char *dst);
 
 /*****************************************************************************/
 /*                 Player Internal (Supervisor) functions                    */

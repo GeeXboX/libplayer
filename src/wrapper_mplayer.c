@@ -3414,6 +3414,7 @@ register_functions_mplayer (void)
   funcs->mrl_supported_res  = mplayer_mrl_supported_res;
   funcs->mrl_retrieve_props = mplayer_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = mplayer_mrl_retrieve_metadata;
+  funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = mplayer_get_time_pos;
   funcs->set_framedrop      = mplayer_set_framedrop;

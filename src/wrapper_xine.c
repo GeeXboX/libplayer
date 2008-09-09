@@ -1022,6 +1022,7 @@ register_functions_xine (void)
   funcs->mrl_supported_res  = xine_player_mrl_supported_res;
   funcs->mrl_retrieve_props = xine_player_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = xine_player_mrl_retrieve_metadata;
+  funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = xine_player_get_time_pos;
   funcs->set_framedrop      = NULL;

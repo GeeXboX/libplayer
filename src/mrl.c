@@ -335,3 +335,23 @@ mrl_new (player_t *player, mrl_resource_t res, void *args)
 
   return out;
 }
+
+void
+mrl_video_snapshot (player_t *player, mrl_t *mrl,
+                    int pos, mrl_snapshot_t t, const char *dst)
+{
+  supervisor_data_snapshot_t in;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  in.mrl = mrl;
+  in.pos = pos;
+  in.type = t;
+  in.dst = dst;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_MRL_VIDEO_SNAPSHOT, &in, NULL);
+}
