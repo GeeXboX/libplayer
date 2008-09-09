@@ -519,7 +519,7 @@ off_t mrl_get_size (player_t *player, mrl_t *mrl);
  * One frame at the \p pos (in second) is saved to \p dest.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.
