@@ -1955,6 +1955,7 @@ mp_identify (mrl_t *mrl, int flags)
     params[pp] = NULL;
 
     execvp (MPLAYER_NAME, params);
+    break;
   }
 
   case -1:
@@ -2158,6 +2159,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
     params[pp] = NULL;
 
     execvp (MPLAYER_NAME, params);
+    break;
   }
 
   case -1:
@@ -2529,6 +2531,7 @@ mplayer_init (player_t *player)
     params[pp] = NULL;
 
     execvp (MPLAYER_NAME, params);
+    break;
   }
 
   case -1:
