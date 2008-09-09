@@ -32,6 +32,7 @@
 #include "player_internals.h"
 #include "logs.h"
 #include "playlist.h"
+#include "fs.h"
 #include "wrapper_vlc.h"
 
 #define MODULE_NAME "vlc"
@@ -272,7 +273,6 @@ static void
 vlc_identify_properties (libvlc_media_player_t *mp,
                          libvlc_exception_t *ex, mrl_t *mrl)
 {
-  struct stat st;
   libvlc_media_t *media;
 
   if (!mp || !ex || !mrl || !mrl->prop)
@@ -288,8 +288,7 @@ vlc_identify_properties (libvlc_media_player_t *mp,
       if (strstr (location, "file://") == location)
         location += 7;
       
-      stat (location, &st);
-      mrl->prop->size = st.st_size;
+      mrl->prop->size = file_size (location);
     }
   }
 

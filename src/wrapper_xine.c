@@ -36,6 +36,7 @@
 #include "logs.h"
 #include "playlist.h"
 #include "event.h"
+#include "fs.h"
 #include "wrapper_xine.h"
 
 #ifdef USE_X11
@@ -648,8 +649,6 @@ xine_player_mrl_supported_res (player_t *player, mrl_resource_t res)
 static void
 xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  struct stat st;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
 
   if (!player || !mrl || !mrl->prop)
@@ -666,8 +665,7 @@ xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
       if (strstr (location, "file:") == location)
         location += 5;
 
-      stat (location, &st);
-      mrl->prop->size = st.st_size;
+      mrl->prop->size = file_size (location);
     }
   }
 

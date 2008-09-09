@@ -2716,8 +2716,6 @@ mplayer_mrl_supported_res (player_t *player, mrl_resource_t res)
 static void
 mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  struct stat st;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
 
   if (!player || !mrl || !mrl->prop)
@@ -2734,8 +2732,7 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
       if (strstr (location, "file://") == location)
         location += 7;
 
-      stat (location, &st);
-      mrl->prop->size = st.st_size;
+      mrl->prop->size = file_size (location);
     }
   }
 

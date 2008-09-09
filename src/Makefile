@@ -23,13 +23,13 @@ SRCS =  player.c \
 	playlist.c \
 	logs.c \
 	fifo_queue.c \
+	fs.c \
 	event.c \
 	event_handler.c \
 	supervisor.c \
 	wrapper_dummy.c
 
 ifeq ($(WRAPPER_MPLAYER),yes)
-  SRCS += fs.c
   SRCS += wrapper_mplayer.c
 endif
 

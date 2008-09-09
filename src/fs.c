@@ -79,3 +79,13 @@ file_exists (const char *file)
     return 1;
   return 0;
 }
+
+off_t
+file_size (const char *file)
+{
+  struct stat st;
+
+  if (!stat (file, &st))
+    return st.st_size;
+  return 0;
+}
