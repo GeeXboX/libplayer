@@ -593,7 +593,7 @@ main (int argc, char **argv)
   int visibility = 0;
   float ar = 0.0;
   player_loop_t loop_mode = PLAYER_LOOP_DISABLE;
-  player_verbosity_level_t verbosity = PLAYER_MSG_ERROR;
+  player_verbosity_level_t verbosity = PLAYER_MSG_WARNING;
   player_pb_t pb_mode = PLAYER_PB_SINGLE;
 
   int c, index, optind_bak, argc_bak, i;
