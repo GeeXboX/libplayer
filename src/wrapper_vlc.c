@@ -24,8 +24,6 @@
 #include <inttypes.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <vlc/vlc.h>
 
 #include "player.h"

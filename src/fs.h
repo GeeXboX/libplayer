@@ -22,6 +22,8 @@
 #ifndef FS_H
 #define FS_H
 
+#include <sys/types.h>
+
 int copy_file (const char *src, const char *dst);
 int file_exists (const char *file);
 off_t file_size (const char *file);

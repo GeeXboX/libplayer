@@ -28,8 +28,6 @@
 #include <unistd.h>       /* pipe fork close dup2 */
 #include <math.h>         /* rintf */
 #include <sys/wait.h>     /* waitpid */
-#include <sys/types.h>
-#include <sys/stat.h>     /* stat */
 #include <signal.h>       /* sigaction */
 #include <pthread.h>      /* pthread_... */
 #include <semaphore.h>    /* sem_post sem_wait sem_init sem_destroy */
