@@ -297,9 +297,9 @@ typedef struct mrl_resource_network_args_s {
 
 /** \brief Snapshot image file type. */
 typedef enum mrl_snapshot {
-  MRL_SNAPSHOT_JPG,         /*  NO           NO           NO           NO   */
+  MRL_SNAPSHOT_JPG,         /*  NO           YES          NO           NO   */
   MRL_SNAPSHOT_PNG,         /*  NO           NO           NO           NO   */
-  MRL_SNAPSHOT_PPM,         /*  NO           NO           NO           NO   */
+  MRL_SNAPSHOT_PPM,         /*  NO           YES          NO           NO   */
   MRL_SNAPSHOT_TGA,         /*  NO           NO           NO           NO   */
 } mrl_snapshot_t;
 

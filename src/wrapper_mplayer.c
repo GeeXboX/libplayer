@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <stdio.h>
+#include <fcntl.h>        /* open */
 #include <string.h>       /* strstr strlen memcpy strdup */
 #include <stdarg.h>       /* va_start va_end */
 #include <unistd.h>       /* pipe fork close dup2 */
@@ -38,6 +39,7 @@
 #include "logs.h"
 #include "playlist.h"
 #include "event.h"
+#include "fs.h"
 #include "wrapper_mplayer.h"
 
 #ifdef USE_X11
@@ -48,6 +50,9 @@
 
 #define FIFO_BUFFER      256
 #define MPLAYER_NAME     "mplayer"
+
+#define SNAPSHOT_FILE    "00000001"
+#define SNAPSHOT_TMP     "/tmp/libplayer.XXXXXX"
 
 typedef enum mplayer_dvdnav {
   MPLAYER_DVDNAV_UP     = 1,
@@ -2748,6 +2753,140 @@ mplayer_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   mp_identify (mrl, IDENTIFY_METADATA);
 }
 
+static void
+mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
+                            int pos, mrl_snapshot_t t, const char *dst)
+{
+  pid_t pid;
+  char *uri = NULL;
+  char name[32] = SNAPSHOT_FILE;
+  char tmp[] = SNAPSHOT_TMP;
+  char vo[512], file[512];
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_video_snapshot");
+
+  if (!player || !mrl)
+    return;
+
+  uri = mp_resource_get_uri (mrl);
+  if (!uri)
+    return;
+
+  switch (t)
+  {
+  case MRL_SNAPSHOT_JPG:
+    snprintf (vo, sizeof (vo), "jpeg:outdir=");
+    strcat (name, ".jpg");
+    break;
+
+  case MRL_SNAPSHOT_PPM:
+    snprintf (vo, sizeof (vo), "pnm:ppm:outdir=");
+    strcat (name, ".ppm");
+    break;
+
+  default:
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "unsupported snapshot type (%i)", t);
+    free (uri);
+    return;
+  }
+
+  if (!mkdtemp (tmp))
+  {
+    plog (player, PLAYER_MSG_ERROR,
+          MODULE_NAME, "unable to create temporary directory (%s)", tmp);
+    free (uri);
+    return;
+  }
+
+  strcat (vo, tmp);
+  snprintf (file, sizeof (file), "%s/%s", tmp, name);
+
+  plog (player, PLAYER_MSG_VERBOSE,
+        MODULE_NAME, "temporary directory for snapshot: %s", tmp);
+
+  pid = fork ();
+
+  switch (pid)
+  {
+  /* the son (a new hope) */
+  case 0:
+  {
+    char *params[32];
+    char ss[32];
+    int pp = 0;
+    int fd;
+
+    fd = open ("/dev/null", O_WRONLY);
+    dup2 (fd, STDOUT_FILENO);
+    dup2 (fd, STDERR_FILENO);
+
+    params[pp++] = MPLAYER_NAME;
+    params[pp++] = "-quiet";
+    params[pp++] = "-msglevel";
+    params[pp++] = "all=0";
+    params[pp++] = "-nolirc";
+    params[pp++] = "-nojoystick";
+    params[pp++] = "-noconsolecontrols";
+
+    params[pp++] = "-vo";
+    params[pp++] = vo;
+
+    params[pp++] = "-ao";
+    params[pp++] = "null";
+
+    snprintf (ss, sizeof (ss), "%i", pos);
+    params[pp++] = "-ss";
+    params[pp++] = ss;
+
+    params[pp++] = "-frames";
+    params[pp++] = "1";
+    params[pp++] = uri;
+    params[pp] = NULL;
+
+    execvp (MPLAYER_NAME, params);
+    break;
+  }
+
+  case -1:
+    break;
+
+  /* I'm your father */
+  default:
+  {
+    /* wait the death of MPlayer */
+    waitpid (pid, NULL, 0);
+    free (uri);
+
+    if (file_exists (file))
+    {
+      /* use the current directory? */
+      if (!dst)
+        dst = name;
+
+      if (dst)
+      {
+        int res = copy_file (file, dst);
+        if (!res)
+          plog (player, PLAYER_MSG_INFO,
+                MODULE_NAME, "move %s to %s", file, dst);
+        else
+          plog (player, PLAYER_MSG_ERROR,
+                MODULE_NAME, "unable to move %s to %s", file, dst);
+      }
+
+      unlink (file);
+    }
+    else
+      plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
+            "image file (%s) is unavailable, maybe MPlayer can't seek in "
+            "this video", file);
+
+    rmdir (tmp);
+  }
+  }
+}
+
 static playback_status_t
 mplayer_playback_start (player_t *player)
 {
@@ -3414,7 +3553,7 @@ register_functions_mplayer (void)
   funcs->mrl_supported_res  = mplayer_mrl_supported_res;
   funcs->mrl_retrieve_props = mplayer_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = mplayer_mrl_retrieve_metadata;
-  funcs->mrl_video_snapshot = NULL;
+  funcs->mrl_video_snapshot = mplayer_mrl_video_snapshot;
 
   funcs->get_time_pos       = mplayer_get_time_pos;
   funcs->set_framedrop      = mplayer_set_framedrop;

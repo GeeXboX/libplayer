@@ -29,6 +29,7 @@ SRCS =  player.c \
 	wrapper_dummy.c
 
 ifeq ($(WRAPPER_MPLAYER),yes)
+  SRCS += fs.c
   SRCS += wrapper_mplayer.c
 endif
 
