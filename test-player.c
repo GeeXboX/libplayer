@@ -63,6 +63,7 @@
   " a   : change aspect ratio (original/16:9)\n" \
   " l   : load a stream in the playlist\n" \
   " v   : print properties and metadata of the current stream\n" \
+  " j   : take a video snapshot of a specific time position\n" \
   " i   : print current time position\n" \
   " p   : start a new playback\n" \
   " o   : pause/unpause the current playback\n" \
@@ -836,6 +837,15 @@ main (int argc, char **argv)
       printf ("TIME POSITION: %.2f sec\n",
               time_pos < 0 ? 0.0 : (float) time_pos / 1000.0);
       break;
+    case 'j':   /* take a video snapshot */
+    {
+      int p = 0;
+      printf ("position [second]: ");
+      scanf ("%u", &p);
+      mrl_video_snapshot (player, NULL, p, MRL_SNAPSHOT_JPG, "./snapshot.jpg");
+      printf ("SNAPSHOT: (pos %i sec) saved to ./snapshot.jpg\n", p);
+      break;
+    }
     case 'l':   /* load a stream in the playlist */
       load_media (player);
       break;
