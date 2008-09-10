@@ -476,7 +476,6 @@ x11_init (player_t *player)
     goto err_screeninfo;
 
   x11->display = XOpenDisplay (NULL);
-
   if (!x11->display)
   {
     plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
@@ -487,7 +486,6 @@ x11_init (player_t *player)
     x11->use_subwin = 1;
 
   pthread_mutex_init (&x11->mutex_display, NULL);
-
   screen = XDefaultScreen (x11->display);
 
   pthread_mutex_lock (&x11->mutex_display);
@@ -600,16 +598,15 @@ x11_init (player_t *player)
 
     if (vis)
     {
+      screeninfo->width = width;
+      screeninfo->height = height;
+      screeninfo->pixel_aspect = 1.0;
+
       vis->display = x11->display;
       vis->screen = screen;
       vis->d = x11->win_video;
       vis->dest_size_cb = dest_size_cb;
       vis->frame_output_cb = frame_output_cb;
-
-      screeninfo->width = width;
-      screeninfo->height = height;
-      screeninfo->pixel_aspect = 1.0;
-
       vis->user_data = (void *) screeninfo;
     }
 
@@ -633,7 +630,6 @@ x11_init (player_t *player)
   }
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
-
   return 1;
 
 err_display:
