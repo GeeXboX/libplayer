@@ -473,21 +473,14 @@ x11_init (player_t *player)
 
   screeninfo = calloc (1, sizeof (screeninfo_t));
   if (!screeninfo)
-  {
-    free (x11);
-    player->x11 = NULL;
-    return 0;
-  }
+    goto err_screeninfo;
 
   x11->display = XOpenDisplay (NULL);
 
   if (!x11->display)
   {
-    free (x11);
-    player->x11 = NULL;
-    free (screeninfo);
     plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
-    return 0;
+    goto err_display;
   }
 
   if (player->type == PLAYER_TYPE_MPLAYER)
@@ -642,4 +635,11 @@ x11_init (player_t *player)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
 
   return 1;
+
+err_display:
+  free (screeninfo);
+err_screeninfo:
+  free (x11);
+  player->x11 = NULL;
+  return 0;
 }
