@@ -2181,6 +2181,9 @@ mp_check_compatibility (player_t *player, checklist_t check)
 
     while (fgets (buffer, FIFO_BUFFER, mp_fifo))
     {
+      *(buffer + strlen (buffer) - 1) = '\0';
+      plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "[check] %s", buffer);
+
       if (check == CHECKLIST_PROPERTIES && !it_min && !it_max
           && strstr (buffer, "Name") && strstr (buffer, "Type"))
       {
