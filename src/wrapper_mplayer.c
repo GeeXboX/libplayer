@@ -1904,13 +1904,13 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
 }
 
 static void
-mp_identify (mrl_t *mrl, int flags)
+mp_identify (player_t *player, mrl_t *mrl, int flags)
 {
   int mp_pipe[2];
   pid_t pid;
   char *uri = NULL;
 
-  if (!mrl)
+  if (!player || !mrl)
     return;
 
   uri = mp_resource_get_uri (mrl);
@@ -1976,6 +1976,9 @@ mp_identify (mrl_t *mrl, int flags)
     while (fgets (buffer, FIFO_BUFFER, mp_fifo))
     {
       found = 0;
+
+      *(buffer + strlen (buffer) - 1) = '\0';
+      plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "[identify] %s", buffer);
 
       if (flags & IDENTIFY_VIDEO)
         found = mp_identify_video (mrl, buffer);
@@ -2746,7 +2749,7 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
     }
   }
 
-  mp_identify (mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
+  mp_identify (player, mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
 }
 
 static void
@@ -2757,7 +2760,7 @@ mplayer_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   if (!player || !mrl || !mrl->meta)
     return;
 
-  mp_identify (mrl, IDENTIFY_METADATA);
+  mp_identify (player, mrl, IDENTIFY_METADATA);
 }
 
 static void
