@@ -387,6 +387,7 @@ x11_uninit (player_t *player)
 
   pthread_mutex_destroy (&x11->mutex_display);
   free (x11);
+  player->x11 = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window destroyed");
 }
