@@ -2749,7 +2749,8 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
     }
   }
 
-  mp_identify (player, mrl, IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
+  mp_identify (player, mrl,
+               IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
 }
 
 static void
