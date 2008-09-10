@@ -52,9 +52,8 @@ typedef struct screeninfo_s {
   int width;
   int height;
   double pixel_aspect;
-  /* create a black background (only for MPlayer Xv video out) */
-  Window win_black;
-  Window win_trans;
+  Window win_black; /* black background (use_subwin to 1) */
+  Window win_trans; /* InputOnly window to catch events (use_subwin to 1) */
 } screeninfo_t;
 
 /* for no border with a X window */
@@ -70,8 +69,8 @@ typedef struct {
 #define PROP_MWM_HINTS_ELEMENTS   5
 
 
-/**
- * Center the movie in the parent window and zoom for use the max of surface.
+/*
+ * Center the movie in the parent window and zoom to use the max of surface.
  */
 void
 zoom (player_t *player, int parentwidth, int parentheight, float aspect,
@@ -91,7 +90,7 @@ zoom (player_t *player, int parentwidth, int parentheight, float aspect,
   /* or calcul the best size */
   else
   {
-    /* fix aspect */
+    /* fix aspect ratio */
     if (aspect != 0.0)
       convert = aspect;
     else
@@ -278,9 +277,6 @@ x11_resize (player_t *player)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window resized");
 }
 
-/**
- * Map and raise the window when a video is played.
- */
 void
 x11_map (player_t *player)
 {
@@ -313,9 +309,6 @@ x11_map (player_t *player)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window mapped");
 }
 
-/**
- * Unmap the window when the video is ended or stopped.
- */
 void
 x11_unmap (player_t *player)
 {
@@ -444,10 +437,11 @@ frame_output_cb(void *data, int video_width, int video_height,
 }
 #endif /* HAVE_XINE */
 
-/**
- * Init and create a window for X11, XV or X11_SDL. Currently this window
- * is only fullscreen with a black background. The window is not mapped in
- * this function. Use x11_map() and x11_unmap() for show and hide this one.
+/*
+ * This X11 initialization seems to not work very well with Compiz Window
+ * Manager and maybe all related managers. The main problem seems to be
+ * the override_redirect attribute. But it works fine when the main window
+ * is attached to an other (see player_init(), winid parameter).
  */
 int
 x11_init (player_t *player)
@@ -509,7 +503,7 @@ x11_init (player_t *player)
     visual = atts.visual;
   }
 
-  atts.override_redirect = True;  /* window on top */
+  atts.override_redirect = True; /* window ignored by the window manager */
   atts.background_pixel = XBlackPixel (x11->display, screen); /* black background */
 
   /* remove borders */
@@ -517,8 +511,12 @@ x11_init (player_t *player)
   mwmhints.flags = MWM_HINTS_DECORATIONS;
   mwmhints.decorations = 0;
 
-  /* MPlayer and Xv use the hardware scale on all the surface. A second
-   * window is then necessary for have a black background.
+  /*
+   * Some video outputs of MPlayer (like Xv and OpenGL), use the hardware
+   * scaling on all the surface (and not accordingly to the video aspect
+   * ratio). In this case, a second window is necessary in order to have a
+   * black background.
+   * Aspect ratio will be changed by the resizing of the win_video window.
    */
   if (x11->use_subwin)
   {
@@ -591,7 +589,6 @@ x11_init (player_t *player)
   XSync (x11->display, False);
   pthread_mutex_unlock (&x11->mutex_display);
 
-  /* only for Xine */
   if (player->type == PLAYER_TYPE_XINE)
   {
 #ifdef HAVE_XINE
@@ -614,7 +611,6 @@ x11_init (player_t *player)
     x11->data = (void *) vis;
 #endif /* HAVE_XINE */
   }
-  /* only for MPlayer Xv */
   else if (x11->use_subwin)
   {
     screeninfo->width = width;
@@ -623,7 +619,6 @@ x11_init (player_t *player)
 
     x11->data = (void *) screeninfo;
   }
-  /* others video out don't use data */
   else
   {
     free (screeninfo);
