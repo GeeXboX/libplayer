@@ -2403,6 +2403,7 @@ mplayer_init (player_t *player)
           MODULE_NAME, "libplayer is not compiled with X11 support");
     return PLAYER_INIT_ERROR;
 #endif /* USE_X11 */
+
   case PLAYER_VO_AUTO:
 #ifdef USE_X11
     use_x11 = x11_init (player);
@@ -2420,6 +2421,7 @@ mplayer_init (player_t *player)
           "auto-detection for videoout is not enabled without X11 support");
     return PLAYER_INIT_ERROR;
 #endif /* USE_X11 */
+
   default:
     plog (player, PLAYER_MSG_ERROR,
           MODULE_NAME, "unsupported video out (%i)", player->vo);
