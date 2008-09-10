@@ -2391,6 +2391,10 @@ mplayer_init (player_t *player)
   /* The video out is sent in our X11 window, winid is used for -wid arg. */
   switch (player->vo)
   {
+  case PLAYER_VO_NULL:
+  case PLAYER_VO_FB:
+    break;
+
   case PLAYER_VO_X11:
   case PLAYER_VO_XV:
   case PLAYER_VO_GL:
@@ -2410,13 +2414,16 @@ mplayer_init (player_t *player)
     }
     snprintf (winid, sizeof (winid),
               "%lu", (unsigned long) x11_get_window (player->x11));
+    break;
 #else
     plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
           "auto-detection for videoout is not enabled without X11 support");
     return PLAYER_INIT_ERROR;
 #endif /* USE_X11 */
   default:
-    break;
+    plog (player, PLAYER_MSG_ERROR,
+          MODULE_NAME, "unsupported video out (%i)", player->vo);
+    return PLAYER_INIT_ERROR;
   }
 
   if (pipe (mplayer->pipe_in))
