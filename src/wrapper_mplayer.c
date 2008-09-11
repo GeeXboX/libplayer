@@ -1355,8 +1355,7 @@ mp_resource_get_uri_vcd (const char *protocol,
     return NULL;
   }
 
-  snprintf (uri, size, "%s%s%s",
-            protocol, track_start, device ? device : "");
+  snprintf (uri, size, "%s%s%s", protocol, track_start, device ? device : "");
 
   if (device)
     free (device);
