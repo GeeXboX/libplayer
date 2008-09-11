@@ -516,7 +516,7 @@ off_t mrl_get_size (player_t *player, mrl_t *mrl);
 /**
  * \brief Take a video snapshot.
  *
- * One frame at the \p pos (in second) is saved to \p dest.
+ * One frame at the \p pos (in second) is saved to \p dst.
  *
  * Wrappers supported (even partially):
  *  MPlayer
