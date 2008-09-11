@@ -1258,8 +1258,8 @@ mp_resource_get_uri_cd (const char *protocol, mrl_resource_cd_args_t *args)
   size++;
   uri = malloc (size);
   if (uri)
-  snprintf (uri, size, "%s%s%s%s%s",
-            protocol, track_start, track_end, speed, device ? device : "");
+    snprintf (uri, size, "%s%s%s%s%s",
+              protocol, track_start, track_end, speed, device ? device : "");
 
   if (device)
     free (device);
@@ -1301,8 +1301,8 @@ mp_resource_get_uri_dvd (const char *protocol,
   size++;
   uri = malloc (size);
   if (uri)
-  snprintf (uri, size, "%s%s%s%s",
-            protocol, title_start, title_end, device ? device : "");
+    snprintf (uri, size, "%s%s%s%s",
+              protocol, title_start, title_end, device ? device : "");
 
   if (device)
     free (device);
@@ -1334,7 +1334,7 @@ mp_resource_get_uri_vcd (const char *protocol,
   size++;
   uri = malloc (size);
   if (uri)
-  snprintf (uri, size, "%s%s%s", protocol, track_start, device ? device : "");
+    snprintf (uri, size, "%s%s%s", protocol, track_start, device ? device : "");
 
   if (device)
     free (device);
@@ -1379,7 +1379,7 @@ mp_resource_get_uri_network (const char *protocol,
   size++;
   uri = malloc (size);
   if (uri)
-  snprintf (uri, size, "%s%s%s", protocol, at, host_file);
+    snprintf (uri, size, "%s%s%s", protocol, at, host_file);
 
   free (host_file);
 
