@@ -1190,6 +1190,230 @@ count_nb_dec (int dec)
 }
 
 static char *
+mp_resource_get_uri_local (const char *protocol,
+                           mrl_resource_local_args_t *args)
+{
+  if (!args || !args->location || !protocol)
+    return NULL;
+
+  if (strstr (args->location, "://")
+      && strncmp (args->location, protocol, strlen (protocol)))
+  {
+    return NULL;
+  }
+
+  return strdup (args->location);
+}
+
+static char *
+mp_resource_get_uri_cd (const char *protocol, mrl_resource_cd_args_t *args)
+{
+  char *uri;
+  char *device = NULL;
+  char track_start[4] = "";
+  char track_end[8] = "";
+  char speed[8] = "";
+  size_t size;
+
+  if (!args || !protocol)
+    return NULL;
+
+  size = strlen (protocol);
+
+  if (args->track_start)
+  {
+    size += count_nb_dec (args->track_start);
+    snprintf (track_start, sizeof (track_start), "%i", args->track_start);
+  }
+  if (args->track_end > args->track_start)
+  {
+    size += 1 + count_nb_dec (args->track_end);
+    snprintf (track_end, sizeof (track_end), "-%i", args->track_end);
+  }
+  if (args->speed)
+  {
+    size += 1 + count_nb_dec (args->speed);
+    snprintf (speed, sizeof (speed), ":%i", args->speed);
+  }
+  if (args->device)
+  {
+    size_t length = 1 + strlen (args->device);
+    size += length;
+    device = malloc (1 + length);
+    if (device)
+      snprintf (device, 1 + length, "/%s", args->device);
+  }
+
+  size++;
+  uri = malloc (size);
+  if (!uri)
+  {
+    if (device)
+      free (device);
+    return NULL;
+  }
+
+  snprintf (uri, size, "%s%s%s%s%s",
+            protocol, track_start, track_end, speed, device ? device : "");
+
+  if (device)
+    free (device);
+
+  return uri;
+}
+
+static char *
+mp_resource_get_uri_dvd (const char *protocol,
+                         mrl_resource_videodisc_args_t *args)
+{
+  char *uri;
+  char *device = NULL;
+  char title_start[4] = "";
+  char title_end[8] = "";
+  size_t size;
+
+  if (!args || !protocol)
+    return NULL;
+
+  size = strlen (protocol);
+
+  if (args->title_start)
+  {
+    size += count_nb_dec (args->title_start);
+    snprintf (title_start, sizeof (title_start), "%i", args->title_start);
+  }
+  if (args->title_end > args->title_start)
+  {
+    size += 1 + count_nb_dec (args->title_end);
+    snprintf (title_end, sizeof (title_end), "-%i", args->title_end);
+  }
+  /*
+   * NOTE: for dvd://, "/device" is handled by MPlayer >= r27226, and that
+   *       is just ignored with older.
+   */
+  if (args->device)
+  {
+    size_t length = 1 + strlen (args->device);
+    size += length;
+    device = malloc (1 + length);
+    if (device)
+      snprintf (device, 1 + length, "/%s", args->device);
+  }
+
+  size++;
+  uri = malloc (size);
+  if (!uri)
+  {
+    if (device)
+      free (device);
+    return NULL;
+  }
+
+  snprintf (uri, size, "%s%s%s%s",
+            protocol, title_start, title_end, device ? device : "");
+
+  if (device)
+    free (device);
+
+  return uri;
+}
+
+static char *
+mp_resource_get_uri_vcd (const char *protocol,
+                         mrl_resource_videodisc_args_t *args)
+{
+  char *uri;
+  char *device = NULL;
+  char track_start[4] = "";
+  size_t size;
+
+  if (!args || !protocol)
+    return NULL;
+
+  size = strlen (protocol);
+
+  if (args->track_start)
+  {
+    size += count_nb_dec (args->track_start);
+    snprintf (track_start, sizeof (track_start), "%u", args->track_start);
+  }
+  if (args->device)
+  {
+    size_t length = 1 + strlen (args->device);
+    size += length;
+    device = malloc (1 + length);
+    if (device)
+      snprintf (device, 1 + length, "/%s", args->device);
+  }
+
+  size++;
+  uri = malloc (size);
+  if (!uri)
+  {
+    if (device)
+      free (device);
+    return NULL;
+  }
+
+  snprintf (uri, size, "%s%s%s",
+            protocol, track_start, device ? device : "");
+
+  if (device)
+    free (device);
+
+  return uri;
+}
+
+static char *
+mp_resource_get_uri_network (const char *protocol,
+                             mrl_resource_network_args_t *args)
+{
+  char *uri, *host_file;
+  char at[256] = "";
+  size_t size;
+
+  if (!args || !args->url || !protocol)
+    return NULL;
+
+  size = strlen (protocol);
+
+  if (strstr (args->url, protocol) == args->url)
+    host_file = strdup (args->url + size);
+  else
+    host_file = strdup (args->url);
+
+  if (!host_file)
+    return NULL;
+
+  if (args->username)
+  {
+    size += 1 + strlen (args->username);
+    if (args->password)
+    {
+      size += 1 + strlen (args->password);
+      snprintf (at, sizeof (at), "%s:%s@", args->username, args->password);
+    }
+    else
+      snprintf (at, sizeof (at), "%s@", args->username);
+  }
+  size += strlen (host_file);
+
+  size++;
+  uri = malloc (size);
+  if (!uri)
+  {
+    free (host_file);
+    return NULL;
+  }
+
+  snprintf (uri, size, "%s%s%s", protocol, at, host_file);
+
+  free (host_file);
+
+  return uri;
+}
+
+static char *
 mp_resource_get_uri (mrl_t *mrl)
 {
   static const char const *protocols[] = {
@@ -1224,180 +1448,18 @@ mp_resource_get_uri (mrl_t *mrl)
   switch (mrl->resource)
   {
   case MRL_RESOURCE_FILE: /* file://location */
-  {
-    const char *protocol = protocols[mrl->resource];
-    mrl_resource_local_args_t *args = mrl->priv;
-
-    if (!args || !args->location)
-      return NULL;
-
-    if (strstr (args->location, "://")
-        && strncmp (args->location, protocol, strlen (protocol)))
-    {
-      return NULL;
-    }
-
-    return strdup (args->location);
-  }
+    return mp_resource_get_uri_local (protocols[mrl->resource], mrl->priv);
 
   case MRL_RESOURCE_CDDA: /* cdda://track_start-track_end:speed/device */
   case MRL_RESOURCE_CDDB: /* cddb://track_start-track_end:speed/device */
-  {
-    char *uri;
-    char *device = NULL;
-    const char *protocol = protocols[mrl->resource];
-    char track_start[4] = "";
-    char track_end[8] = "";
-    char speed[8] = "";
-    size_t size = strlen (protocol);
-    mrl_resource_cd_args_t *args;
-
-    args = mrl->priv;
-    if (!args)
-      break;
-
-    if (args->track_start)
-    {
-      size += count_nb_dec (args->track_start);
-      snprintf (track_start, sizeof (track_start), "%i", args->track_start);
-    }
-    if (args->track_end > args->track_start)
-    {
-      size += 1 + count_nb_dec (args->track_end);
-      snprintf (track_end, sizeof (track_end), "-%i", args->track_end);
-    }
-    if (args->speed)
-    {
-      size += 1 + count_nb_dec (args->speed);
-      snprintf (speed, sizeof (speed), ":%i", args->speed);
-    }
-    if (args->device)
-    {
-      size_t length = 1 + strlen (args->device);
-      size += length;
-      device = malloc (1 + length);
-      if (device)
-        snprintf (device, 1 + length, "/%s", args->device);
-    }
-
-    size++;
-    uri = malloc (size);
-    if (!uri)
-    {
-      if (device)
-        free (device);
-      break;
-    }
-
-    snprintf (uri, size, "%s%s%s%s%s",
-              protocol, track_start, track_end, speed, device ? device : "");
-
-    if (device)
-      free (device);
-
-    return uri;
-  }
+    return mp_resource_get_uri_cd (protocols[mrl->resource], mrl->priv);
 
   case MRL_RESOURCE_DVD:    /* dvd://title_start-title_end/device */
   case MRL_RESOURCE_DVDNAV: /* dvdnav://title_start-title_end/device */
-  {
-    char *uri;
-    char *device = NULL;
-    const char *protocol = protocols[mrl->resource];
-    char title_start[4] = "";
-    char title_end[8] = "";
-    size_t size = strlen (protocol);
-    mrl_resource_videodisc_args_t *args;
-
-    args = mrl->priv;
-    if (!args)
-      break;
-
-    if (args->title_start)
-    {
-      size += count_nb_dec (args->title_start);
-      snprintf (title_start, sizeof (title_start), "%i", args->title_start);
-    }
-    if (args->title_end > args->title_start)
-    {
-      size += 1 + count_nb_dec (args->title_end);
-      snprintf (title_end, sizeof (title_end), "-%i", args->title_end);
-    }
-    /*
-     * NOTE: for dvd://, "/device" is handled by MPlayer >= r27226, and that
-     *       is just ignored with older.
-     */
-    if (args->device)
-    {
-      size_t length = 1 + strlen (args->device);
-      size += length;
-      device = malloc (1 + length);
-      if (device)
-        snprintf (device, 1 + length, "/%s", args->device);
-    }
-
-    size++;
-    uri = malloc (size);
-    if (!uri)
-    {
-      if (device)
-        free (device);
-      break;
-    }
-
-    snprintf (uri, size, "%s%s%s%s",
-              protocol, title_start, title_end, device ? device : "");
-
-    if (device)
-      free (device);
-
-    return uri;
-  }
+    return mp_resource_get_uri_dvd (protocols[mrl->resource], mrl->priv);
 
   case MRL_RESOURCE_VCD: /* vcd://track_start/device */
-  {
-    char *uri;
-    char *device = NULL;
-    const char *protocol = protocols[mrl->resource];
-    char track_start[4] = "";
-    size_t size = strlen (protocol);
-    mrl_resource_videodisc_args_t *args;
-
-    args = mrl->priv;
-    if (!args)
-      break;
-
-    if (args->track_start)
-    {
-      size += count_nb_dec (args->track_start);
-      snprintf (track_start, sizeof (track_start), "%u", args->track_start);
-    }
-    if (args->device)
-    {
-      size_t length = 1 + strlen (args->device);
-      size += length;
-      device = malloc (1 + length);
-      if (device)
-        snprintf (device, 1 + length, "/%s", args->device);
-    }
-
-    size++;
-    uri = malloc (size);
-    if (!uri)
-    {
-      if (device)
-        free (device);
-      break;
-    }
-
-    snprintf (uri, size, "%s%s%s",
-              protocol, track_start, device ? device : "");
-
-    if (device)
-      free (device);
-
-    return uri;
-  }
+    return mp_resource_get_uri_vcd (protocols[mrl->resource], mrl->priv);
 
   case MRL_RESOURCE_FTP:  /* ftp://username:password@url   */
   case MRL_RESOURCE_HTTP: /* http://username:password@url  */
@@ -1407,52 +1469,7 @@ mp_resource_get_uri (mrl_t *mrl)
   case MRL_RESOURCE_SMB:  /* smb://username:password@url   */
   case MRL_RESOURCE_UDP:  /* udp://username:password@url   */
   case MRL_RESOURCE_UNSV: /* unsv://username:password@url  */
-  {
-    char *uri, *host_file;
-    const char *protocol = protocols[mrl->resource];
-    char at[256] = "";
-    size_t size = strlen (protocol);
-    mrl_resource_network_args_t *args;
-
-    args = mrl->priv;
-    if (!args || !args->url)
-      break;
-
-    if (strstr (args->url, protocol) == args->url)
-      host_file = strdup (args->url + size);
-    else
-      host_file = strdup (args->url);
-
-    if (!host_file)
-      break;
-
-    if (args->username)
-    {
-      size += 1 + strlen (args->username);
-      if (args->password)
-      {
-        size += 1 + strlen (args->password);
-        snprintf (at, sizeof (at), "%s:%s@", args->username, args->password);
-      }
-      else
-        snprintf (at, sizeof (at), "%s@", args->username);
-    }
-    size += strlen (host_file);
-
-    size++;
-    uri = malloc (size);
-    if (!uri)
-    {
-      free (host_file);
-      break;
-    }
-
-    snprintf (uri, size, "%s%s%s", protocol, at, host_file);
-
-    free (host_file);
-
-    return uri;
-  }
+    return mp_resource_get_uri_network (protocols[mrl->resource], mrl->priv);
 
   default:
     break;
