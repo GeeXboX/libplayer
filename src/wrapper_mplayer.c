@@ -1190,6 +1190,24 @@ count_nb_dec (int dec)
 }
 
 static char *
+uri_args_device (const char *device, size_t *size)
+{
+  char *dev;
+  size_t length;
+
+  if (!device || !size)
+    return NULL;
+
+  length = 1 + strlen (device);
+  *size += length;
+  dev = malloc (1 + length);
+  if (dev)
+    snprintf (dev, 1 + length, "/%s", device);
+
+  return dev;
+}
+
+static char *
 mp_resource_get_uri_local (const char *protocol,
                            mrl_resource_local_args_t *args)
 {
@@ -1235,14 +1253,7 @@ mp_resource_get_uri_cd (const char *protocol, mrl_resource_cd_args_t *args)
     size += 1 + count_nb_dec (args->speed);
     snprintf (speed, sizeof (speed), ":%i", args->speed);
   }
-  if (args->device)
-  {
-    size_t length = 1 + strlen (args->device);
-    size += length;
-    device = malloc (1 + length);
-    if (device)
-      snprintf (device, 1 + length, "/%s", args->device);
-  }
+  device = uri_args_device (args->device, &size);
 
   size++;
   uri = malloc (size);
@@ -1291,14 +1302,7 @@ mp_resource_get_uri_dvd (const char *protocol,
    * NOTE: for dvd://, "/device" is handled by MPlayer >= r27226, and that
    *       is just ignored with older.
    */
-  if (args->device)
-  {
-    size_t length = 1 + strlen (args->device);
-    size += length;
-    device = malloc (1 + length);
-    if (device)
-      snprintf (device, 1 + length, "/%s", args->device);
-  }
+  device = uri_args_device (args->device, &size);
 
   size++;
   uri = malloc (size);
@@ -1337,14 +1341,7 @@ mp_resource_get_uri_vcd (const char *protocol,
     size += count_nb_dec (args->track_start);
     snprintf (track_start, sizeof (track_start), "%u", args->track_start);
   }
-  if (args->device)
-  {
-    size_t length = 1 + strlen (args->device);
-    size += length;
-    device = malloc (1 + length);
-    if (device)
-      snprintf (device, 1 + length, "/%s", args->device);
-  }
+  device = uri_args_device (args->device, &size);
 
   size++;
   uri = malloc (size);
