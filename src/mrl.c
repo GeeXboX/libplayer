@@ -43,7 +43,7 @@ mrl_free (player_t *player, mrl_t *mrl)
   if (!player || !mrl)
     return;
 
-  supervisor_send (player, SV_MODE_WAIT_FOR_END, SV_FUNC_MRL_FREE, &mrl, NULL);
+  supervisor_send (player, SV_MODE_WAIT_FOR_END, SV_FUNC_MRL_FREE, mrl, NULL);
 }
 
 uint32_t
