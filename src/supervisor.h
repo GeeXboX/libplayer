@@ -49,6 +49,7 @@ typedef enum supervisor_ctl {
   SV_FUNC_MRL_GET_METADATA_CD,
   SV_FUNC_MRL_GET_TYPE,
   SV_FUNC_MRL_GET_RESOURCE,
+  SV_FUNC_MRL_ADD_SUBTITLE,
   SV_FUNC_MRL_NEW,
   SV_FUNC_MRL_VIDEO_SNAPSHOT,
 
@@ -151,6 +152,11 @@ typedef struct supervisor_data_mrl_s {
   mrl_t *mrl;
   int value;
 } supervisor_data_mrl_t;
+
+typedef struct supervisor_data_sub_s {
+  mrl_t *mrl;
+  char *sub;
+} supervisor_data_sub_t;
 
 typedef struct supervisor_data_out_metadata_cd_s {
   char *name;

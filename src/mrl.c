@@ -31,32 +31,6 @@
 
 #define MODULE_NAME "mrl"
 
-static int
-get_list_length (void *list)
-{
-  void **l = list;
-  int n = 0;
-  while (*l++)
-    n++;
-  return n;
-}
-
-void
-mrl_add_subtitle (mrl_t *mrl, char *subtitle)
-{
-  char **subs;
-  int n;
-
-  if (!mrl || !subtitle)
-    return;
-
-  subs = mrl->subs;
-  n = get_list_length (subs) + 1;
-  subs = realloc (subs, (n + 1) * sizeof (*subs));
-  subs[n] = NULL;
-  subs[n - 1] = strdup (subtitle);
-}
-
 /*****************************************************************************/
 /*                  MRL Public Multi-Threads Safe functions                  */
 /*****************************************************************************/
@@ -234,6 +208,20 @@ mrl_get_resource (player_t *player, mrl_t *mrl)
                    SV_FUNC_MRL_GET_RESOURCE, mrl, &out);
 
   return out;
+}
+
+void
+mrl_add_subtitle (player_t *player, mrl_t *mrl, char *subtitle)
+{
+  supervisor_data_sub_t in;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  in.mrl = mrl;
+  in.sub = subtitle;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_MRL_ADD_SUBTITLE, &in, NULL);
 }
 
 mrl_t *

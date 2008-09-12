@@ -189,6 +189,17 @@ supervisor_mrl_get_resource (player_t *player, void *in, void *out)
 }
 
 static void
+supervisor_mrl_add_subtitle (player_t *player, void *in, void *out)
+{
+  supervisor_data_sub_t *input = in;
+
+  if (!in)
+    return;
+
+  mrl_sv_add_subtitle (input->mrl, input->sub);
+}
+
+static void
 supervisor_mrl_new (player_t *player, void *in, void *out)
 {
   supervisor_data_args_t *input = in;
@@ -829,6 +840,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_MRL_GET_METADATA_CD]       = supervisor_mrl_get_metadata_cd,
   [SV_FUNC_MRL_GET_TYPE]              = supervisor_mrl_get_type,
   [SV_FUNC_MRL_GET_RESOURCE]          = supervisor_mrl_get_resource,
+  [SV_FUNC_MRL_ADD_SUBTITLE]          = supervisor_mrl_add_subtitle,
   [SV_FUNC_MRL_NEW]                   = supervisor_mrl_new,
   [SV_FUNC_MRL_VIDEO_SNAPSHOT]        = supervisor_mrl_video_snapshot,
 

@@ -942,6 +942,32 @@ mrl_sv_get_resource (player_t *player, mrl_t *mrl)
   return mrl->resource;
 }
 
+static int
+get_list_length (void *list)
+{
+  void **l = list;
+  int n = 0;
+  while (*l++)
+    n++;
+  return n;
+}
+
+void
+mrl_sv_add_subtitle (mrl_t *mrl, char *subtitle)
+{
+  char **subs;
+  int n;
+
+  if (!mrl || !subtitle)
+    return;
+
+  subs = mrl->subs;
+  n = get_list_length (subs) + 1;
+  subs = realloc (subs, (n + 1) * sizeof (*subs));
+  subs[n] = NULL;
+  subs[n - 1] = strdup (subtitle);
+}
+
 mrl_t *
 mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
 {
