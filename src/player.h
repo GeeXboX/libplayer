@@ -368,10 +368,11 @@ void mrl_add_subtitle (mrl_t *mrl, char *subtitle);
  * playlist of a player controller.
  *
  * \warning Must be used only as the last mrl function for one MRL object.
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
  * \param[in] mrl         MRL object.
- * \param[in] recursive   Free all next MRLs too.
  */
-void mrl_free (mrl_t *mrl, int recursive);
+void mrl_free (player_t *player, mrl_t *mrl);
 
 /**
  * \brief Get type of the stream.

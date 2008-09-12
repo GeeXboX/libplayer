@@ -304,7 +304,7 @@ playlist_set_mrl (playlist_t *playlist, mrl_t *mrl)
   {
     mrl->prev = mrl_list->prev;
     mrl->next = mrl_list->next;
-    mrl_free (mrl_list, 0);
+    mrl_sv_free (mrl_list, 0);
     playlist->mrl_list = mrl;
   }
   else
@@ -435,7 +435,7 @@ playlist_remove_mrl (playlist_t *playlist)
   mrl_p = mrl->prev;
   mrl_n = mrl->next;
 
-  mrl_free (mrl, 0);
+  mrl_sv_free (mrl, 0);
 
   /* link previous with the next and use the next as the current MRL */
   if (mrl_p && mrl_n) {

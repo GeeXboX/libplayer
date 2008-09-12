@@ -39,6 +39,7 @@ typedef enum supervisor_ctl {
   SV_FUNC_NOP  =  0,
 
   /* MRL */
+  SV_FUNC_MRL_FREE,
   SV_FUNC_MRL_GET_PROPERTY,
   SV_FUNC_MRL_GET_AO_CODEC,
   SV_FUNC_MRL_GET_VO_CODEC,

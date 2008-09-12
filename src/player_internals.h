@@ -239,6 +239,7 @@ int mrl_uses_ao (mrl_t *mrl);
 /*                   MRL Internal (Supervisor) functions                     */
 /*****************************************************************************/
 
+void mrl_sv_free (mrl_t *mrl, int recursive);
 uint32_t mrl_sv_get_property (player_t *player,
                               mrl_t *mrl, mrl_properties_type_t p);
 char *mrl_sv_get_audio_codec (player_t *player, mrl_t *mrl);

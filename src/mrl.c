@@ -35,80 +35,6 @@
 /*                      MRL Public Reentrant functions                       */
 /*****************************************************************************/
 
-void
-mrl_free (mrl_t *mrl, int recursive)
-{
-  if (!mrl)
-    return;
-
-  if (mrl->subs)
-  {
-    char **sub = mrl->subs;
-    while (*sub)
-    {
-      free (*sub);
-      (*sub)++;
-    }
-    free (mrl->subs);
-  }
-
-  if (mrl->prop)
-    mrl_properties_free (mrl->prop);
-  if (mrl->meta)
-    mrl_metadata_free (mrl->meta, mrl->resource);
-
-  if (mrl->priv)
-  {
-    switch (mrl->resource)
-    {
-    case MRL_RESOURCE_FIFO:
-    case MRL_RESOURCE_FILE:
-    case MRL_RESOURCE_STDIN:
-      mrl_resource_local_free (mrl->priv);
-      break;
-
-    case MRL_RESOURCE_CDDA:
-    case MRL_RESOURCE_CDDB:
-      mrl_resource_cd_free (mrl->priv);
-      break;
-
-    case MRL_RESOURCE_DVD:
-    case MRL_RESOURCE_DVDNAV:
-    case MRL_RESOURCE_VCD:
-      mrl_resource_videodisc_free (mrl->priv);
-      break;
-
-    case MRL_RESOURCE_DVB:
-    case MRL_RESOURCE_PVR:
-    case MRL_RESOURCE_RADIO:
-    case MRL_RESOURCE_TV:
-      mrl_resource_tv_free (mrl->priv);
-      break;
-
-    case MRL_RESOURCE_FTP: 
-    case MRL_RESOURCE_HTTP:
-    case MRL_RESOURCE_MMS:
-    case MRL_RESOURCE_RTP:
-    case MRL_RESOURCE_RTSP:
-    case MRL_RESOURCE_SMB:
-    case MRL_RESOURCE_TCP:
-    case MRL_RESOURCE_UDP:
-    case MRL_RESOURCE_UNSV:
-      mrl_resource_network_free (mrl->priv);
-      break;
-
-    default:
-      break;
-    }
-    free (mrl->priv);
-  }
-
-  if (recursive && mrl->next)
-    mrl_free (mrl->next, 1);
-
-  free (mrl);
-}
-
 static int
 get_list_length (void *list)
 {
@@ -138,6 +64,17 @@ mrl_add_subtitle (mrl_t *mrl, char *subtitle)
 /*****************************************************************************/
 /*                  MRL Public Multi-Threads Safe functions                  */
 /*****************************************************************************/
+
+void
+mrl_free (player_t *player, mrl_t *mrl)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player || !mrl)
+    return;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END, SV_FUNC_MRL_FREE, &mrl, NULL);
+}
 
 uint32_t
 mrl_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)

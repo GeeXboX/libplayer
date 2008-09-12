@@ -75,6 +75,15 @@ struct supervisor_s {
 /*********************************** MRL *************************************/
 
 static void
+supervisor_mrl_free (player_t *player, void *in, void *out)
+{
+  if (!in)
+    return;
+
+  mrl_sv_free (in, 0);
+}
+
+static void
 supervisor_mrl_get_property (player_t *player, void *in, void *out)
 {
   supervisor_data_mrl_t *input = in;
@@ -810,6 +819,7 @@ supervisor_player_radio_chan_next (player_t *player, void *in, void *out)
 
 static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   /* MRL */
+  [SV_FUNC_MRL_FREE]                  = supervisor_mrl_free,
   [SV_FUNC_MRL_GET_PROPERTY]          = supervisor_mrl_get_property,
   [SV_FUNC_MRL_GET_AO_CODEC]          = supervisor_mrl_get_ao_codec,
   [SV_FUNC_MRL_GET_VO_CODEC]          = supervisor_mrl_get_vo_codec,
