@@ -304,6 +304,19 @@ mrl_resource_network_free (mrl_resource_network_args_t *args)
     free (args->user_agent);
 }
 
+void
+mrl_list_free (mrl_t *mrl)
+{
+  if (!mrl)
+    return;
+
+  /* go to the very begining of the playlist in case of recursive free() */
+  while (mrl->prev)
+    mrl = mrl->prev;
+
+  mrl_free (mrl, 1);
+}
+
 int
 mrl_uses_vo (mrl_t *mrl)
 {

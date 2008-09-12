@@ -374,17 +374,6 @@ void mrl_add_subtitle (mrl_t *mrl, char *subtitle);
 void mrl_free (mrl_t *mrl, int recursive);
 
 /**
- * \brief Free all linked MRL objects.
- *
- * Never use this function when the MRL (or a linked MRL) is set in the
- * playlist of a player controller.
- *
- * \warning Must be used only as the last function for all linked MRL objects.
- * \param[in] mrl         MRL object.
- */
-void mrl_list_free (mrl_t *mrl);
-
-/**
  * \brief Get type of the stream.
  *
  * \warning MT-Safe in multithreaded applications.

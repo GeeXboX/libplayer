@@ -231,6 +231,7 @@ void mrl_resource_cd_free (mrl_resource_cd_args_t *args);
 void mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args);
 void mrl_resource_tv_free (mrl_resource_tv_args_t *args);
 void mrl_resource_network_free (mrl_resource_network_args_t *args);
+void mrl_list_free (mrl_t *mrl);
 int mrl_uses_vo (mrl_t *mrl);
 int mrl_uses_ao (mrl_t *mrl);
 
