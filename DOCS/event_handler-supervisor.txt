@@ -10,9 +10,9 @@
  handler is concurrent accordingly to the internal library _and_ the public API.
 
    To have asynchroneous public events but _not concurrent_, it is necessary
- to use a supervisor. The function event_send() can call a special function
- provided by the supervisor. This function is recatch() and releases the
- supervisor in favor of the event handler. So, when the event handler calls
+ to use a supervisor. The function player_event_send() can call a special
+ function provided by the supervisor. This function is recatch() and releases
+ the supervisor in favor of the event handler. So, when the event handler calls
  it own release() function, the supervisor can catch() the synchronization to
  continue the job previously interrupted by the event.
   This functionality can be compared as a preemption (1) by the event handler
@@ -37,7 +37,7 @@
  will released in favor of the event handler. Then each turn, the supervisor
  and the event handler is working (this is right only if the supervisor is not
  preempted (1) by the event_send() function, for example when an event is sent
- with the MPlayer parser or from Xine, VLC or GStreamer callbacks).
+ with the MPlayer parser or from xine, VLC or GStreamer callbacks).
 
    Two modes exists to send a control to the supervisor. First is WAIT_FOR_END,
  then the function will return only when the internal function is finished.
@@ -52,7 +52,7 @@
  that will create deadlocks on the supervisor, always use player_internal
  and mrl_internal functions.
 
-   Never send events from the public API, that will break the M-T Safe (2)
+   Never send events from the public API, that will break the MT-Safe (2)
  state of the function. Only _one_ supervisor_send() must exist in every
  public function!
 
@@ -71,6 +71,5 @@
   (1) preemption (preempted) is not used here as a reference to the Real-Time,
       but only like a naive comparison.
 
-  (2) not all public functions are M-T Safe; player_init() and player_uninit()
-      must be used only as the first and as the last function called for a
-      specific player_t object. And some MRL functions are only reentrants.
+  (2) not all public functions are MT-Safe; player_uninit() must be used only
+      as the last function called for a specific player_t controller.
