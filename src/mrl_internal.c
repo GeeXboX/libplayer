@@ -947,7 +947,7 @@ get_list_length (void *list)
 {
   void **l = list;
   int n = 0;
-  while (*l++)
+  while (l && *l++)
     n++;
   return n;
 }
