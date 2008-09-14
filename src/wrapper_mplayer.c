@@ -2832,6 +2832,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
     params[pp++] = "-nolirc";
     params[pp++] = "-nojoystick";
     params[pp++] = "-noconsolecontrols";
+    params[pp++] = "-nosound";
 
     params[pp++] = "-vo";
     params[pp++] = vo;
