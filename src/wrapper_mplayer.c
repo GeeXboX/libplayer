@@ -1927,7 +1927,8 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
 
   /*
    * ID_LENGTH is not usable with all resources. For CDDA/CDDB the length is
-   * calculated by the MSF sum of each track.
+   * calculated by the MSF sum of each track; for DVD/DVDNAV, by the sum of
+   * each title.
    */
   switch (mrl->resource)
   {
@@ -1944,6 +1945,23 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
     if (it == buffer && strstr (buffer, "_MSF="))
     {
       mrl->prop->length += (uint32_t) parse_msf (parse_field (it));
+      return 1;
+    }
+    break;
+
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
+    it = strstr (buffer, "ID_DVD_TITLES=");
+    if (it == buffer)
+    {
+      mrl->prop->length = 0;
+      return 1;
+    }
+
+    it = strstr (buffer, "ID_DVD_TITLE_");
+    if (it == buffer && strstr (buffer, "_LENGTH="))
+    {
+      mrl->prop->length += (uint32_t) (atof (parse_field (it)) * 1000.0);
       return 1;
     }
     break;
