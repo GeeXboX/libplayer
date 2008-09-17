@@ -157,6 +157,48 @@ mrl_metadata_cd_new (void)
   return cd;
 }
 
+mrl_metadata_dvd_title_t *
+mrl_metadata_dvd_title_new (void)
+{
+  mrl_metadata_dvd_title_t *title;
+
+  title = calloc (1, sizeof (mrl_metadata_dvd_title_t));
+
+  return title;
+}
+
+void
+mrl_metadata_dvd_title_append (mrl_metadata_dvd_t *dvd,
+                               mrl_metadata_dvd_title_t *title)
+{
+  mrl_metadata_dvd_title_t *title_p;
+
+  if (!dvd || !title)
+    return;
+
+  if (!dvd->title)
+  {
+    dvd->title = title;
+    return;
+  }
+
+  title_p = dvd->title;
+  while (title_p->next)
+    title_p = title_p->next;
+
+  title_p->next = title;
+}
+
+static mrl_metadata_dvd_t *
+mrl_metadata_dvd_new (void)
+{
+  mrl_metadata_dvd_t *dvd;
+
+  dvd = calloc (1, sizeof (mrl_metadata_dvd_t));
+
+  return dvd;
+}
+
 mrl_metadata_t *
 mrl_metadata_new (mrl_resource_t res)
 {
@@ -171,6 +213,11 @@ mrl_metadata_new (mrl_resource_t res)
   case MRL_RESOURCE_CDDA:
   case MRL_RESOURCE_CDDB:
     meta->priv = mrl_metadata_cd_new ();
+    break;
+
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
+    meta->priv = mrl_metadata_dvd_new ();
     break;
 
   default:
@@ -196,6 +243,26 @@ mrl_metadata_cd_free (mrl_metadata_cd_t *cd)
     track_p = track;
     track = track->next;
     free (track_p);
+  }
+}
+
+static void
+mrl_metadata_dvd_free (mrl_metadata_dvd_t *dvd)
+{
+  mrl_metadata_dvd_title_t *title, *title_p;
+
+  if (!dvd)
+    return;
+
+  if (dvd->volumeid)
+    free (dvd->volumeid);
+
+  title = dvd->title;
+  while (title)
+  {
+    title_p = title;
+    title = title->next;
+    free (title_p);
   }
 }
 
@@ -227,6 +294,11 @@ mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res)
     case MRL_RESOURCE_CDDA:
     case MRL_RESOURCE_CDDB:
       mrl_metadata_cd_free (meta->priv);
+      break;
+
+    case MRL_RESOURCE_DVD:
+    case MRL_RESOURCE_DVDNAV:
+      mrl_metadata_dvd_free (meta->priv);
       break;
 
     default:
@@ -516,6 +588,36 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
 
       cnt++;
       track = track->next;
+    }
+  }
+
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
+  {
+    int cnt = 1;
+    mrl_metadata_dvd_t *dvd = meta->priv;
+    mrl_metadata_dvd_title_t *title = dvd->title;
+
+    if (dvd->volumeid)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Meta DVD VolumeID: %s", dvd->volumeid);
+
+    plog (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "Meta DVD Titles: %i", dvd->titles);
+
+    while (title)
+    {
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Meta DVD Title %i Chapters: %i", cnt, title->chapters);
+
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Meta DVD Title %i Angles: %i", cnt, title->angles);
+
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Meta DVD Title %i Length: %i ms", cnt, title->length);
+
+      cnt++;
+      title = title->next;
     }
   }
 
@@ -908,6 +1010,99 @@ mrl_sv_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
   default:
     return 0;
   }
+}
+
+uint32_t
+mrl_sv_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
+                               int titleid, mrl_metadata_dvd_type_t m)
+{
+  int i;
+  mrl_metadata_t *meta;
+  mrl_metadata_dvd_t *dvd;
+  mrl_metadata_dvd_title_t *title;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return 0;
+
+  /* try to use internal mrl? */
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
+    return 0;
+
+  if (mrl->resource != MRL_RESOURCE_DVD && mrl->resource != MRL_RESOURCE_DVDNAV)
+    return 0;
+
+  if (!mrl->meta)
+    mrl_retrieve_metadata (player, mrl);
+
+  meta = mrl->meta;
+  if (!meta)
+    return 0;
+
+  dvd = meta->priv;
+  if (!dvd)
+    return 0;
+
+  title = dvd->title;
+  for (i = 1; i < titleid && title; i++)
+    title = title->next;
+
+  /* track unavailable */
+  if (i != titleid || !title)
+    return 0;
+
+  switch (m)
+  {
+  case MRL_METADATA_DVD_TITLE_CHAPTERS:
+    return title->chapters;
+
+  case MRL_METADATA_DVD_TITLE_ANGLES:
+    return title->angles;
+
+  case MRL_METADATA_DVD_TITLE_LENGTH:
+    return title->length;
+
+  default:
+    return 0;
+  }
+}
+
+char *
+mrl_sv_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles)
+{
+  mrl_metadata_t *meta;
+  mrl_metadata_dvd_t *dvd;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return NULL;
+
+  /* try to use internal mrl? */
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
+    return NULL;
+
+  if (mrl->resource != MRL_RESOURCE_DVD && mrl->resource != MRL_RESOURCE_DVDNAV)
+    return NULL;
+
+  if (!mrl->meta)
+    mrl_retrieve_metadata (player, mrl);
+
+  meta = mrl->meta;
+  if (!meta)
+    return NULL;
+
+  dvd = meta->priv;
+  if (!dvd)
+    return NULL;
+
+  if (titles)
+    *titles = dvd->titles;
+
+  return dvd->volumeid ? strdup (dvd->volumeid) : NULL;
 }
 
 mrl_type_t

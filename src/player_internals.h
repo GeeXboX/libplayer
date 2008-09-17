@@ -64,6 +64,19 @@ typedef struct mrl_metadata_cd_s {
   mrl_metadata_cd_track_t *track;
 } mrl_metadata_cd_t;
 
+typedef struct mrl_metadata_dvd_title_s {
+  uint32_t chapters;
+  uint32_t angles;
+  uint32_t length;
+  struct mrl_metadata_dvd_title_s *next;
+} mrl_metadata_dvd_title_t;
+
+typedef struct mrl_metadata_dvd_s {
+  char *volumeid;
+  uint8_t titles;
+  mrl_metadata_dvd_title_t *title;
+} mrl_metadata_dvd_t;
+
 typedef struct mrl_metadata_s {
   char *title;
   char *artist;
@@ -226,6 +239,9 @@ void mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res);
 mrl_metadata_cd_track_t *mrl_metadata_cd_track_new (void);
 void mrl_metadata_cd_track_append (mrl_metadata_cd_t *cd,
                                    mrl_metadata_cd_track_t *track);
+mrl_metadata_dvd_title_t *mrl_metadata_dvd_title_new (void);
+void mrl_metadata_dvd_title_append (mrl_metadata_dvd_t *dvd,
+                                    mrl_metadata_dvd_title_t *title);
 void mrl_resource_local_free (mrl_resource_local_args_t *args);
 void mrl_resource_cd_free (mrl_resource_cd_args_t *args);
 void mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args);
@@ -250,6 +266,9 @@ char *mrl_sv_get_metadata_cd_track (player_t *player,
                                     mrl_t *mrl, int trackid, uint32_t *length);
 uint32_t mrl_sv_get_metadata_cd (player_t *player,
                                  mrl_t *mrl, mrl_metadata_cd_type_t m);
+uint32_t mrl_sv_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
+                                        int titleid, mrl_metadata_dvd_type_t m);
+char *mrl_sv_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles);
 mrl_type_t mrl_sv_get_type (player_t *player, mrl_t *mrl);
 mrl_resource_t mrl_sv_get_resource (player_t *player, mrl_t *mrl);
 void mrl_sv_add_subtitle (mrl_t *mrl, char *subtitle);

@@ -320,6 +320,13 @@ typedef enum mrl_metadata_cd_type {
   MRL_METADATA_CD_TRACKS,
 } mrl_metadata_cd_type_t;
 
+/** \brief MRL DVD/DVDNAV metadata. */
+typedef enum mrl_metadata_dvd_type {
+  MRL_METADATA_DVD_TITLE_CHAPTERS,
+  MRL_METADATA_DVD_TITLE_ANGLES,
+  MRL_METADATA_DVD_TITLE_LENGTH,
+} mrl_metadata_dvd_type_t;
+
 /** \brief MRL properties. */
 typedef enum mrl_properties_type {
   MRL_PROPERTY_SEEKABLE,
@@ -448,6 +455,40 @@ char *mrl_get_metadata_cd_track (player_t *player,
  */
 uint32_t mrl_get_metadata_cd (player_t *player,
                               mrl_t *mrl, mrl_metadata_cd_type_t m);
+
+/**
+ * \brief Get metadata of a title with DVD/DVDNAV MRL object.
+ *
+ * This function can be slow when the stream is not (fastly) reachable.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \param[in] titleid     Title ID on the DVD.
+ * \param[in] m           Type of metadata to get.
+ * \return Metadata value.
+ */
+uint32_t mrl_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
+                                     int titleid, mrl_metadata_dvd_type_t m);
+
+/**
+ * \brief Get metadata of a DVD/DVDNAV MRL object.
+ *
+ * This function can be slow when the stream is not (fastly) reachable.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \param[out] titles     How many titles on the DVD.
+ * \return Volume ID, NULL otherwise.
+ */
+char *mrl_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles);
 
 /**
  * \brief Get property of the stream.

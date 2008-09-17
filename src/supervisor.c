@@ -167,6 +167,30 @@ supervisor_mrl_get_metadata_cd (player_t *player, void *in, void *out)
 }
 
 static void
+supervisor_mrl_get_metadata_dvd_title (player_t *player, void *in, void *out)
+{
+  supervisor_data_in_metadata_dvd_t *input = in;
+  uint32_t *output = out;
+
+  if (!player || !in || !out)
+    return;
+
+  *output = mrl_sv_get_metadata_dvd_title (player,
+                                           input->mrl, input->id, input->type);
+}
+
+static void
+supervisor_mrl_get_metadata_dvd (player_t *player, void *in, void *out)
+{
+  supervisor_data_out_metadata_dvd_t *output = out;
+
+  if (!player || !out)
+    return;
+
+  output->volumeid = mrl_sv_get_metadata_dvd (player, in, &output->titles);
+}
+
+static void
 supervisor_mrl_get_type (player_t *player, void *in, void *out)
 {
   mrl_type_t *output = out;
@@ -838,6 +862,8 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_MRL_GET_METADATA]          = supervisor_mrl_get_metadata,
   [SV_FUNC_MRL_GET_METADATA_CD_TRACK] = supervisor_mrl_get_metadata_cd_track,
   [SV_FUNC_MRL_GET_METADATA_CD]       = supervisor_mrl_get_metadata_cd,
+  [SV_FUNC_MRL_GET_METADATA_DVD_TITLE] = supervisor_mrl_get_metadata_dvd_title,
+  [SV_FUNC_MRL_GET_METADATA_DVD]       = supervisor_mrl_get_metadata_dvd,
   [SV_FUNC_MRL_GET_TYPE]              = supervisor_mrl_get_type,
   [SV_FUNC_MRL_GET_RESOURCE]          = supervisor_mrl_get_resource,
   [SV_FUNC_MRL_ADD_SUBTITLE]          = supervisor_mrl_add_subtitle,

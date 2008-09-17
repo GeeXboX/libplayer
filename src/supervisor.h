@@ -47,6 +47,8 @@ typedef enum supervisor_ctl {
   SV_FUNC_MRL_GET_METADATA,
   SV_FUNC_MRL_GET_METADATA_CD_TRACK,
   SV_FUNC_MRL_GET_METADATA_CD,
+  SV_FUNC_MRL_GET_METADATA_DVD_TITLE,
+  SV_FUNC_MRL_GET_METADATA_DVD,
   SV_FUNC_MRL_GET_TYPE,
   SV_FUNC_MRL_GET_RESOURCE,
   SV_FUNC_MRL_ADD_SUBTITLE,
@@ -162,6 +164,16 @@ typedef struct supervisor_data_out_metadata_cd_s {
   char *name;
   uint32_t length;
 } supervisor_data_out_metadata_cd_t;
+
+typedef struct supervisor_data_in_metadata_dvd_s {
+  mrl_t *mrl;
+  int id, type;
+} supervisor_data_in_metadata_dvd_t;
+
+typedef struct supervisor_data_out_metadata_dvd_s {
+  char *volumeid;
+  uint8_t titles;
+} supervisor_data_out_metadata_dvd_t;
 
 typedef struct supervisor_data_window_s {
   int x, y;
