@@ -1714,6 +1714,77 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
 }
 
 static int
+mp_identify_metadata_dvd (mrl_t *mrl, const char *buffer)
+{
+  int cnt = 0, res;
+  char *it;
+  char val[256];
+  mrl_metadata_t *meta;
+  mrl_metadata_dvd_t *dvd;
+
+  if (!mrl || !mrl->meta || !mrl->meta->priv)
+    return 0;
+
+  if (!buffer || !strstr (buffer, "ID_DVD"))
+    return 0;
+
+  meta = mrl->meta;
+  dvd = meta->priv;
+
+  it = strstr (buffer, "ID_DVD_VOLUME_ID=");
+  if (it == buffer)
+  {
+    if (dvd->volumeid)
+      free (dvd->volumeid);
+    dvd->volumeid = strdup (parse_field (it));
+    return 1;
+  }
+
+  it = strstr (buffer, "ID_DVD_TITLES=");
+  if (it == buffer)
+  {
+    dvd->titles = atoi (parse_field (it));
+    return 1;
+  }
+
+  res = sscanf (buffer, "ID_DVD_TITLE_%i_%s", &cnt, val);
+  if (res && cnt)
+  {
+    int i;
+    mrl_metadata_dvd_title_t *title = NULL;
+
+    for (i = 0; i < cnt; i++)
+    {
+      if (!i)
+      {
+        if (!dvd->title)
+          dvd->title = mrl_metadata_dvd_title_new ();
+        title = dvd->title;
+      }
+      else
+      {
+        if (!title->next)
+          title->next = mrl_metadata_dvd_title_new ();
+        title = title->next;
+      }
+    }
+
+    if (!title)
+      return 1;
+
+    if (strstr (val, "CHAPTERS") == val)
+      title->chapters = atoi (parse_field (val));
+    else if (strstr (val, "ANGLES") == val)
+      title->angles = atoi (parse_field (val));
+    else if (strstr (val, "LENGTH") == val)
+      title->length = (uint32_t) (atof (parse_field (val)) * 1000.0);
+    return 1;
+  }
+
+  return 0;
+}
+
+static int
 mp_identify_metadata (mrl_t *mrl, const char *buffer)
 {
   if (!mrl || !mrl->meta || !buffer)
@@ -1724,6 +1795,10 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
   case MRL_RESOURCE_CDDA:
   case MRL_RESOURCE_CDDB:
     return mp_identify_metadata_cd (mrl, buffer);
+
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
+    return mp_identify_metadata_dvd (mrl, buffer);
 
   default:
     return mp_identify_metadata_clip (mrl, buffer);
