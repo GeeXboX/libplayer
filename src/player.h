@@ -462,7 +462,7 @@ uint32_t mrl_get_metadata_cd (player_t *player,
  * This function can be slow when the stream is not (fastly) reachable.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.
@@ -480,7 +480,7 @@ uint32_t mrl_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
  * This function can be slow when the stream is not (fastly) reachable.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.

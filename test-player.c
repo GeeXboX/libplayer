@@ -575,6 +575,37 @@ show_info (player_t *player, mrl_t *mrl)
         printf (" Meta CD Track %i Length: %i sec\n", i, length / 1000);
     }
   }
+
+  /* DVD/DVDNAV */
+
+  meta = mrl_get_metadata_dvd (player, mrl, (uint8_t *) &prop);
+  if (meta)
+  {
+    printf (" Meta DVD VolumeID: %s\n", meta);
+    free (meta);
+  }
+
+  if (prop)
+  {
+    int i;
+
+    printf (" Meta DVD Titles: %i\n", prop);
+
+    for (i = 1; i <= prop; i++)
+    {
+      uint32_t chapters, angles, length;
+
+      chapters = mrl_get_metadata_dvd_title (player, mrl, i,
+                                             MRL_METADATA_DVD_TITLE_CHAPTERS);
+      angles = mrl_get_metadata_dvd_title (player, mrl, i,
+                                           MRL_METADATA_DVD_TITLE_ANGLES);
+      length = mrl_get_metadata_dvd_title (player, mrl, i,
+                                           MRL_METADATA_DVD_TITLE_LENGTH);
+
+      printf (" Meta DVD Title %i (%.2f sec), Chapters: %i, Angles: %i\n",
+              i, length / 1000.0, chapters, angles);
+    }
+  }
 }
 
 int
