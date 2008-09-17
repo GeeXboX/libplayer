@@ -740,7 +740,7 @@ thread_fifo (void *arg)
       if (*buffer != '*')
         plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
               "MPlayer slave buffer is full. It happens when a command is "
-              "larger of 256 chars.");
+              "larger than 256 chars.");
 
       switch (wait_uninit)
       {
