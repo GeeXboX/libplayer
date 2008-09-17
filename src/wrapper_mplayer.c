@@ -727,9 +727,21 @@ thread_fifo (void *arg)
      * MPlayer was loading a stream.
      * But if EOF is detected before 'uninit', this is considered as a
      * 'stop' or an 'end of stream'.
+     *
+     * NOTE: The second test is useful when MPlayer can't execute a slave
+     *       command because the buffer is full. It happens for example with
+     *       'loadfile', when the location of the file is very long
+     *       (max 256 chars).
      */
-    else if (strstr (buffer, "*** uninit") == buffer)
+    else if (strstr (buffer, "*** uninit") == buffer
+             || strstr (buffer, "Command buffer of file descriptor 0 is full")
+                == buffer)
     {
+      if (*buffer != '*')
+        plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
+              "MPlayer slave buffer is full. It happens when a command is "
+              "larger of 256 chars.");
+
       switch (wait_uninit)
       {
       case MPLAYER_EOF_STOP:
