@@ -279,7 +279,7 @@ player_x_window_set_properties (player_t *player,
 mrl_t *
 player_mrl_get_current (player_t *player)
 {
-  mrl_t *mrl = NULL;
+  mrl_t *out = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -287,9 +287,9 @@ player_mrl_get_current (player_t *player)
     return NULL;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_MRL_GET_CURRENT, NULL, &mrl);
+                   SV_FUNC_PLAYER_MRL_GET_CURRENT, NULL, &out);
 
-  return mrl;
+  return out;
 }
 
 void
@@ -378,7 +378,7 @@ player_mrl_next (player_t *player)
 int
 player_get_time_pos (player_t *player)
 {
-  int res = -1;
+  int out = -1;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -386,9 +386,9 @@ player_get_time_pos (player_t *player)
     return -1;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_GET_TIME_POS, NULL, &res);
+                   SV_FUNC_PLAYER_GET_TIME_POS, NULL, &out);
 
-  return res;
+  return out;
 }
 
 void
@@ -406,18 +406,18 @@ player_set_playback (player_t *player, player_pb_t pb)
 void
 player_set_loop (player_t *player, player_loop_t loop, int value)
 {
-  supervisor_data_mode_t data;
+  supervisor_data_mode_t in;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  data.value = value;
-  data.mode = loop;
+  in.value = value;
+  in.mode = loop;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SET_LOOP, &data, NULL);
+                   SV_FUNC_PLAYER_SET_LOOP, &in, NULL);
 }
 
 void
@@ -453,17 +453,17 @@ player_set_framedrop (player_t *player, player_framedrop_t fd)
 player_pb_state_t
 player_playback_get_state (player_t *player)
 {
-  player_pb_state_t res = PLAYER_PB_STATE_IDLE;
+  player_pb_state_t out = PLAYER_PB_STATE_IDLE;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
-    return res;
+    return out;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_PB_GET_STATE, NULL, &res);
+                   SV_FUNC_PLAYER_PB_GET_STATE, NULL, &out);
 
-  return res;
+  return out;
 }
 
 void
@@ -505,35 +505,35 @@ player_playback_pause (player_t *player)
 void
 player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
-  supervisor_data_mode_t data;
+  supervisor_data_mode_t in;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  data.value = value;
-  data.mode = seek;
+  in.value = value;
+  in.mode = seek;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_PB_SEEK, &data, NULL);
+                   SV_FUNC_PLAYER_PB_SEEK, &in, NULL);
 }
 
 void
 player_playback_seek_chapter (player_t *player, int value, int absolute)
 {
-  supervisor_data_mode_t data;
+  supervisor_data_mode_t in;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  data.value = value;
-  data.mode = absolute;
+  in.value = value;
+  in.mode = absolute;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_PB_SEEK_CHAPTER, &data, NULL);
+                   SV_FUNC_PLAYER_PB_SEEK_CHAPTER, &in, NULL);
 }
 
 void
@@ -557,7 +557,7 @@ player_playback_speed (player_t *player, float value)
 int
 player_audio_volume_get (player_t *player)
 {
-  int res = -1;
+  int out = -1;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -565,9 +565,9 @@ player_audio_volume_get (player_t *player)
     return -1;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_VOLUME_GET, NULL, &res);
+                   SV_FUNC_PLAYER_AO_VOLUME_GET, NULL, &out);
 
-  return res;
+  return out;
 }
 
 void
@@ -585,17 +585,17 @@ player_audio_volume_set (player_t *player, int value)
 player_mute_t
 player_audio_mute_get (player_t *player)
 {
-  player_mute_t res = PLAYER_MUTE_UNKNOWN;
+  player_mute_t out = PLAYER_MUTE_UNKNOWN;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
-    return res;
+    return out;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_MUTE_GET, NULL, &res);
+                   SV_FUNC_PLAYER_AO_MUTE_GET, NULL, &out);
 
-  return res;
+  return out;
 }
 
 void
@@ -613,18 +613,18 @@ player_audio_mute_set (player_t *player, player_mute_t value)
 void
 player_audio_set_delay (player_t *player, int value, int absolute)
 {
-  supervisor_data_mode_t data;
+  supervisor_data_mode_t in;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  data.value = value;
-  data.mode = absolute;
+  in.value = value;
+  in.mode = absolute;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_SET_DELAY, &data, NULL);
+                   SV_FUNC_PLAYER_AO_SET_DELAY, &in, NULL);
 }
 
 void
@@ -685,37 +685,37 @@ void
 player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
                          int8_t value, int absolute)
 {
-  supervisor_data_vo_t data;
+  supervisor_data_vo_t in;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  data.list = aspect;
-  data.value = value;
-  data.mode = absolute;
+  in.list = aspect;
+  in.value = value;
+  in.mode = absolute;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_VO_SET_ASPECT, &data, NULL);
+                   SV_FUNC_PLAYER_VO_SET_ASPECT, &in, NULL);
 }
 
 void
 player_video_set_panscan (player_t *player, int8_t value, int absolute)
 {
-  supervisor_data_vo_t data;
+  supervisor_data_vo_t in;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  data.list = 0;
-  data.value = value;
-  data.mode = absolute;
+  in.list = 0;
+  in.value = value;
+  in.mode = absolute;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_VO_SET_PANSCAN, &data, NULL);
+                   SV_FUNC_PLAYER_VO_SET_PANSCAN, &in, NULL);
 }
 
 void
@@ -788,18 +788,18 @@ player_subtitle_set_visibility (player_t *player, int value)
 void
 player_subtitle_scale (player_t *player, int value, int absolute)
 {
-  supervisor_data_mode_t data;
+  supervisor_data_mode_t in;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
 
-  data.value = value;
-  data.mode = absolute;
+  in.value = value;
+  in.mode = absolute;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SUB_SCALE, &data, NULL);
+                   SV_FUNC_PLAYER_SUB_SCALE, &in, NULL);
 }
 
 void
