@@ -279,7 +279,7 @@ player_x_window_set_properties (player_t *player,
 mrl_t *
 player_mrl_get_current (player_t *player)
 {
-  mrl_t *mrl;
+  mrl_t *mrl = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 

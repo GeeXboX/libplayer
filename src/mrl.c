@@ -50,7 +50,7 @@ uint32_t
 mrl_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
 {
   supervisor_data_mrl_t in;
-  uint32_t out;
+  uint32_t out = 0;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -69,7 +69,7 @@ mrl_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
 char *
 mrl_get_audio_codec (player_t *player, mrl_t *mrl)
 {
-  char *out;
+  char *out = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -85,7 +85,7 @@ mrl_get_audio_codec (player_t *player, mrl_t *mrl)
 char *
 mrl_get_video_codec (player_t *player, mrl_t *mrl)
 {
-  char *out;
+  char *out = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -101,7 +101,7 @@ mrl_get_video_codec (player_t *player, mrl_t *mrl)
 off_t
 mrl_get_size (player_t *player, mrl_t *mrl)
 {
-  off_t out;
+  off_t out = 0;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -118,7 +118,7 @@ char *
 mrl_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m)
 {
   supervisor_data_mrl_t in;
-  char *out;
+  char *out = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -149,6 +149,7 @@ mrl_get_metadata_cd_track (player_t *player,
   in.mrl = mrl;
   in.value = trackid;
 
+  memset (&out, 0, sizeof (supervisor_data_out_metadata_cd_t));
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_MRL_GET_METADATA_CD_TRACK, &in, &out);
 
@@ -162,7 +163,7 @@ uint32_t
 mrl_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
 {
   supervisor_data_mrl_t in;
-  uint32_t out;
+  uint32_t out = 0;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -183,7 +184,7 @@ mrl_get_metadata_dvd_title (player_t *player,
                             mrl_t *mrl, int titleid, mrl_metadata_dvd_type_t m)
 {
   supervisor_data_in_metadata_dvd_t in;
-  uint32_t out;
+  uint32_t out = 0;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -210,6 +211,7 @@ mrl_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles)
   if (!player)
     return NULL;
 
+  memset (&out, 0, sizeof (supervisor_data_out_metadata_dvd_t));
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_MRL_GET_METADATA_DVD, mrl, &out);
 
@@ -222,7 +224,7 @@ mrl_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles)
 mrl_type_t
 mrl_get_type (player_t *player, mrl_t *mrl)
 {
-  mrl_type_t out;
+  mrl_type_t out = MRL_TYPE_UNKNOWN;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -238,7 +240,7 @@ mrl_get_type (player_t *player, mrl_t *mrl)
 mrl_resource_t
 mrl_get_resource (player_t *player, mrl_t *mrl)
 {
-  mrl_resource_t out;
+  mrl_resource_t out = MRL_RESOURCE_UNKNOWN;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -269,7 +271,7 @@ mrl_t *
 mrl_new (player_t *player, mrl_resource_t res, void *args)
 {
   supervisor_data_args_t in;
-  mrl_t *out;
+  mrl_t *out = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
