@@ -1605,7 +1605,7 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
 static int
 mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
 {
-  static int cnt;
+  int cnt = 0, res;
   char *it;
   char str[256];
   mrl_metadata_t *meta;
@@ -1625,25 +1625,37 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_CDDA_TRACKS=");
   if (it == buffer)
   {
-    cnt = 1;
     cd->tracks = atoi (parse_field (it));
     return 1;
   }
 
-  snprintf (str, sizeof (str), "ID_CDDA_TRACK_%i_MSF=", cnt);
-  it = strstr (buffer, str);
-  if (it == buffer)
+  res = sscanf (buffer, "ID_CDDA_TRACK_%i_%s", &cnt, str);
+  if (res && cnt)
   {
-    mrl_metadata_cd_track_t *track = mrl_metadata_cd_track_new ();
-    if (!track)
+    int i;
+    mrl_metadata_cd_track_t *track = NULL;
+
+    for (i = 0; i < cnt; i++)
     {
-      cnt++;
-      return 1;
+      if (!i)
+      {
+        if (!cd->track)
+          cd->track = mrl_metadata_cd_track_new ();
+        track = cd->track;
+      }
+      else
+      {
+        if (!track->next)
+          track->next = mrl_metadata_cd_track_new ();
+        track = track->next;
+      }
     }
 
-    track->length = parse_msf (parse_field (it));
-    mrl_metadata_cd_track_append (cd, track);
-    cnt++;
+    if (!track)
+      return 1;
+
+    if (strstr (str, "MSF") == str)
+      track->length = parse_msf (parse_field ((char *) buffer));
     return 1;
   }
 
@@ -1659,30 +1671,35 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
 
   it = strstr (buffer, "ID_CDDB_INFO_TRACKS=");
   if (it == buffer)
-  {
-    cnt = 1;
     return 1;
-  }
 
-  snprintf (str, sizeof (str), "ID_CDDB_INFO_TRACK_%i_NAME=", cnt);
-  it = strstr (buffer, str);
-  if (it == buffer)
+  res = sscanf (buffer, "ID_CDDB_INFO_TRACK_%i_%s", &cnt, str);
+  if (res && cnt)
   {
     int i;
-    mrl_metadata_cd_track_t *track;
+    mrl_metadata_cd_track_t *track = NULL;
 
-    track = cd->track;
-    for (i = 1; i < cnt && track; i++)
-      track = track->next;
+    for (i = 0; i < cnt; i++)
+    {
+      if (!i)
+      {
+        if (!cd->track)
+          cd->track = mrl_metadata_cd_track_new ();
+        track = cd->track;
+      }
+      else
+      {
+        if (!track->next)
+          track->next = mrl_metadata_cd_track_new ();
+        track = track->next;
+      }
+    }
 
-    /* track unavailable */
-    if (i != cnt || !track)
+    if (!track)
       return 1;
 
-    if (track->name)
-      free (track->name);
-    track->name = strdup (parse_field (it));
-    cnt++;
+    if (strstr (str, "NAME") == str)
+      track->name = strdup (parse_field ((char *) buffer));
     return 1;
   }
 
