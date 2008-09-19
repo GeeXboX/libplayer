@@ -237,11 +237,7 @@ void mrl_properties_free (mrl_properties_t *prop);
 mrl_metadata_t *mrl_metadata_new (mrl_resource_t res);
 void mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res);
 mrl_metadata_cd_track_t *mrl_metadata_cd_track_new (void);
-void mrl_metadata_cd_track_append (mrl_metadata_cd_t *cd,
-                                   mrl_metadata_cd_track_t *track);
 mrl_metadata_dvd_title_t *mrl_metadata_dvd_title_new (void);
-void mrl_metadata_dvd_title_append (mrl_metadata_dvd_t *dvd,
-                                    mrl_metadata_dvd_title_t *title);
 void mrl_resource_local_free (mrl_resource_local_args_t *args);
 void mrl_resource_cd_free (mrl_resource_cd_args_t *args);
 void mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args);

@@ -125,28 +125,6 @@ mrl_metadata_cd_track_new (void)
   return track;
 }
 
-void
-mrl_metadata_cd_track_append (mrl_metadata_cd_t *cd,
-                              mrl_metadata_cd_track_t *track)
-{
-  mrl_metadata_cd_track_t *track_p;
-
-  if (!cd || !track)
-    return;
-
-  if (!cd->track)
-  {
-    cd->track = track;
-    return;
-  }
-
-  track_p = cd->track;
-  while (track_p->next)
-    track_p = track_p->next;
-
-  track_p->next = track;
-}
-
 static mrl_metadata_cd_t *
 mrl_metadata_cd_new (void)
 {
@@ -165,28 +143,6 @@ mrl_metadata_dvd_title_new (void)
   title = calloc (1, sizeof (mrl_metadata_dvd_title_t));
 
   return title;
-}
-
-void
-mrl_metadata_dvd_title_append (mrl_metadata_dvd_t *dvd,
-                               mrl_metadata_dvd_title_t *title)
-{
-  mrl_metadata_dvd_title_t *title_p;
-
-  if (!dvd || !title)
-    return;
-
-  if (!dvd->title)
-  {
-    dvd->title = title;
-    return;
-  }
-
-  title_p = dvd->title;
-  while (title_p->next)
-    title_p = title_p->next;
-
-  title_p->next = title;
 }
 
 static mrl_metadata_dvd_t *
