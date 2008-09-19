@@ -125,6 +125,34 @@ mrl_metadata_cd_track_new (void)
   return track;
 }
 
+mrl_metadata_cd_track_t *
+mrl_metadata_cd_get_track (mrl_metadata_cd_t *cd, int id)
+{
+  int i;
+  mrl_metadata_cd_track_t *track = NULL;
+
+  if (!cd)
+    return NULL;
+
+  for (i = 0; i < id; i++)
+  {
+    if (!i)
+    {
+      if (!cd->track)
+        cd->track = mrl_metadata_cd_track_new ();
+      track = cd->track;
+    }
+    else
+    {
+      if (!track->next)
+        track->next = mrl_metadata_cd_track_new ();
+      track = track->next;
+    }
+  }
+
+  return track;
+}
+
 static mrl_metadata_cd_t *
 mrl_metadata_cd_new (void)
 {
@@ -141,6 +169,34 @@ mrl_metadata_dvd_title_new (void)
   mrl_metadata_dvd_title_t *title;
 
   title = calloc (1, sizeof (mrl_metadata_dvd_title_t));
+
+  return title;
+}
+
+mrl_metadata_dvd_title_t *
+mrl_metadata_dvd_get_title (mrl_metadata_dvd_t *dvd, int id)
+{
+  int i;
+  mrl_metadata_dvd_title_t *title = NULL;
+
+  if (!dvd)
+    return NULL;
+
+  for (i = 0; i < id; i++)
+  {
+    if (!i)
+    {
+      if (!dvd->title)
+        dvd->title = mrl_metadata_dvd_title_new ();
+      title = dvd->title;
+    }
+    else
+    {
+      if (!title->next)
+        title->next = mrl_metadata_dvd_title_new ();
+      title = title->next;
+    }
+  }
 
   return title;
 }

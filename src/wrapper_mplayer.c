@@ -1632,24 +1632,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   res = sscanf (buffer, "ID_CDDA_TRACK_%i_%s", &cnt, str);
   if (res && cnt)
   {
-    int i;
-    mrl_metadata_cd_track_t *track = NULL;
-
-    for (i = 0; i < cnt; i++)
-    {
-      if (!i)
-      {
-        if (!cd->track)
-          cd->track = mrl_metadata_cd_track_new ();
-        track = cd->track;
-      }
-      else
-      {
-        if (!track->next)
-          track->next = mrl_metadata_cd_track_new ();
-        track = track->next;
-      }
-    }
+    mrl_metadata_cd_track_t *track = mrl_metadata_cd_get_track (cd, cnt);
 
     if (!track)
       return 1;
@@ -1676,24 +1659,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   res = sscanf (buffer, "ID_CDDB_INFO_TRACK_%i_%s", &cnt, str);
   if (res && cnt)
   {
-    int i;
-    mrl_metadata_cd_track_t *track = NULL;
-
-    for (i = 0; i < cnt; i++)
-    {
-      if (!i)
-      {
-        if (!cd->track)
-          cd->track = mrl_metadata_cd_track_new ();
-        track = cd->track;
-      }
-      else
-      {
-        if (!track->next)
-          track->next = mrl_metadata_cd_track_new ();
-        track = track->next;
-      }
-    }
+    mrl_metadata_cd_track_t *track = mrl_metadata_cd_get_track (cd, cnt);
 
     if (!track)
       return 1;
@@ -1779,24 +1745,7 @@ mp_identify_metadata_dvd (mrl_t *mrl, const char *buffer)
   res = sscanf (buffer, "ID_DVD_TITLE_%i_%s", &cnt, val);
   if (res && cnt)
   {
-    int i;
-    mrl_metadata_dvd_title_t *title = NULL;
-
-    for (i = 0; i < cnt; i++)
-    {
-      if (!i)
-      {
-        if (!dvd->title)
-          dvd->title = mrl_metadata_dvd_title_new ();
-        title = dvd->title;
-      }
-      else
-      {
-        if (!title->next)
-          title->next = mrl_metadata_dvd_title_new ();
-        title = title->next;
-      }
-    }
+    mrl_metadata_dvd_title_t *title = mrl_metadata_dvd_get_title (dvd, cnt);
 
     if (!title)
       return 1;
