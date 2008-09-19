@@ -589,6 +589,7 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
       cnt++;
       track = track->next;
     }
+    break;
   }
 
   case MRL_RESOURCE_DVD:
@@ -619,6 +620,7 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
       cnt++;
       title = title->next;
     }
+    break;
   }
 
   default:
