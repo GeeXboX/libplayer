@@ -2000,6 +2000,7 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
     dup2 (mp_pipe[1], STDOUT_FILENO);
 
     params[pp++] = MPLAYER_NAME;
+    params[pp++] = "-nocache";
     params[pp++] = "-quiet";
     params[pp++] = "-vo";
     params[pp++] = "null";
@@ -2905,6 +2906,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
     dup2 (fd, STDERR_FILENO);
 
     params[pp++] = MPLAYER_NAME;
+    params[pp++] = "-nocache";
     params[pp++] = "-quiet";
     params[pp++] = "-msglevel";
     params[pp++] = "all=0";
