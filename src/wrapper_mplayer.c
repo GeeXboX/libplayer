@@ -2854,6 +2854,11 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
     strcat (name, ".jpg");
     break;
 
+  case MRL_SNAPSHOT_PNG:
+    snprintf (vo, sizeof (vo), "png:z=2:outdir=");
+    strcat (name, ".png");
+    break;
+
   case MRL_SNAPSHOT_PPM:
     snprintf (vo, sizeof (vo), "pnm:ppm:outdir=");
     strcat (name, ".ppm");
