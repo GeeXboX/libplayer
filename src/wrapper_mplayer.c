@@ -1991,7 +1991,7 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
   /* the son (a new hope) */
   case 0:
   {
-    char *params[16];
+    char *params[32];
     int pp = 0;
 
     close (mp_pipe[0]);
