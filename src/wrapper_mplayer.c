@@ -2008,6 +2008,8 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
     params[pp++] = "-nolirc";
     params[pp++] = "-nojoystick";
     params[pp++] = "-noconsolecontrols";
+    params[pp++] = "-noar";
+    params[pp++] = "-nomouseinput";
     params[pp++] = "-endpos";
     params[pp++] = "0";
     params[pp++] = uri;
@@ -2537,6 +2539,7 @@ mplayer_init (player_t *player)
     params[pp++] = "-nolirc";
     params[pp++] = "-nojoystick";
     params[pp++] = "-nomouseinput";
+    params[pp++] = "-noar";
     params[pp++] = "-nograbpointer";
     params[pp++] = "-noconsolecontrols";
 
@@ -2908,6 +2911,8 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
     params[pp++] = "-nolirc";
     params[pp++] = "-nojoystick";
     params[pp++] = "-noconsolecontrols";
+    params[pp++] = "-noar";
+    params[pp++] = "-nomouseinput";
     params[pp++] = "-nosound";
 
     params[pp++] = "-vo";
