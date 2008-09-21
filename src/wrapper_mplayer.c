@@ -722,26 +722,35 @@ thread_fifo (void *arg)
     }
 
     /*
+     * This test is useful when MPlayer can't execute a slave command because
+     * the buffer is full. It happens for example with 'loadfile', when the
+     * location of the file is very long (max 256 chars).
+     */
+    else if (strstr (buffer,
+                     "Command buffer of file descriptor 0 is full") == buffer)
+    {
+      plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
+            "MPlayer slave buffer is full. It happens when a command is "
+            "larger than 256 chars.");
+
+      pthread_mutex_lock (&mplayer->mutex_status);
+      if (mplayer->status == MPLAYER_IS_LOADING)
+      {
+        pthread_cond_signal (&mplayer->cond_status);
+        mplayer->status = MPLAYER_IS_IDLE;
+      }
+      pthread_mutex_unlock (&mplayer->mutex_status);
+    }
+
+    /*
      * If this 'uninit' is detected, we can be sure that nothing is playing.
      * The status of MPlayer will be changed and a signal will be sent if
      * MPlayer was loading a stream.
      * But if EOF is detected before 'uninit', this is considered as a
      * 'stop' or an 'end of stream'.
-     *
-     * NOTE: The second test is useful when MPlayer can't execute a slave
-     *       command because the buffer is full. It happens for example with
-     *       'loadfile', when the location of the file is very long
-     *       (max 256 chars).
      */
-    else if (strstr (buffer, "*** uninit") == buffer
-             || strstr (buffer, "Command buffer of file descriptor 0 is full")
-                == buffer)
+    else if (strstr (buffer, "*** uninit") == buffer)
     {
-      if (*buffer != '*')
-        plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
-              "MPlayer slave buffer is full. It happens when a command is "
-              "larger than 256 chars.");
-
       switch (wait_uninit)
       {
       case MPLAYER_EOF_STOP:
