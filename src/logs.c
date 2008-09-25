@@ -39,6 +39,28 @@
 #define B_RED    COLOR(41)
 #endif /* USE_LOGCOLOR */
 
+int
+plog_test (player_t *player, player_verbosity_level_t level)
+{
+  int verbosity;
+
+  if (!player)
+    return 0;
+
+  pthread_mutex_lock (&player->mutex_verb);
+  verbosity = player->verbosity;
+  pthread_mutex_unlock (&player->mutex_verb);
+
+  /* do we really want logging ? */
+  if (verbosity == PLAYER_MSG_NONE)
+    return 0;
+
+  if (level < verbosity)
+    return 0;
+
+  return 1;
+}
+
 void
 plog (player_t *player, player_verbosity_level_t level,
       const char *module, const char *format, ...)
@@ -60,20 +82,11 @@ plog (player_t *player, player_verbosity_level_t level,
     [PLAYER_MSG_CRITICAL] = "Crit",
   };
   va_list va;
-  int verbosity;
 
   if (!player || !format)
     return;
 
-  pthread_mutex_lock (&player->mutex_verb);
-  verbosity = player->verbosity;
-  pthread_mutex_unlock (&player->mutex_verb);
-
-  /* do we really want loging ? */
-  if (verbosity == PLAYER_MSG_NONE)
-    return;
-
-  if (level < verbosity)
+  if (!plog_test (player, level))
     return;
 
   va_start (va, format);
