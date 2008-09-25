@@ -444,6 +444,9 @@ mrl_properties_plog (player_t *player, mrl_t *mrl)
   if (!player || !mrl)
     return;
 
+  if (!plog_test (player, PLAYER_MSG_INFO))
+    return;
+
   prop = mrl->prop;
   if (!prop)
     return;
@@ -537,6 +540,9 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
   mrl_metadata_t *meta;
 
   if (!player || !mrl)
+    return;
+
+  if (!plog_test (player, PLAYER_MSG_INFO))
     return;
 
   meta = mrl->meta;
