@@ -98,7 +98,7 @@ player_event_cb (void *data, int e, void *data_cb)
 player_t *
 player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
              player_verbosity_level_t verbosity, unsigned long winid,
-             int event_cb (player_event_t e, void *data))
+             int (*event_cb) (player_event_t e, void *data))
 {
   player_t *player = NULL;
   init_status_t res = PLAYER_INIT_ERROR;
