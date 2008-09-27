@@ -38,6 +38,7 @@
 #include "playlist.h"
 #include "event.h"
 #include "fs.h"
+#include "parse_utils.h"
 #include "wrapper_mplayer.h"
 
 #ifdef USE_X11
@@ -489,7 +490,7 @@ parse_msf (const char *str)
 static char *
 parse_field (char *line)
 {
-  char *its, *ite;
+  char *its;
 
   /* value start */
   its = strchr (line, '=');
@@ -497,14 +498,7 @@ parse_field (char *line)
     return line;
   its++;
 
-  ite = its;
-  while (*ite != '\0' && *ite != '\n')
-    ite++;
-
-  /* value end */
-  *ite = '\0';
-
-  return its;
+  return trim_whitespaces (its);
 }
 
 static void *

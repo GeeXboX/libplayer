@@ -24,6 +24,7 @@ SRCS =  player.c \
 	logs.c \
 	fifo_queue.c \
 	fs.c \
+	parse_utils.c \
 	event.c \
 	event_handler.c \
 	supervisor.c \
