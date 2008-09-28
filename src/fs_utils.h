@@ -19,8 +19,8 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef FS_H
-#define FS_H
+#ifndef FS_UTILS_H
+#define FS_UTILS_H
 
 #include <sys/types.h>
 
@@ -28,4 +28,4 @@ int copy_file (const char *src, const char *dst);
 int file_exists (const char *file);
 off_t file_size (const char *file);
 
-#endif /* FS_H */
+#endif /* FS_UTILS_H */

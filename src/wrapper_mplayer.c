@@ -37,7 +37,7 @@
 #include "logs.h"
 #include "playlist.h"
 #include "event.h"
-#include "fs.h"
+#include "fs_utils.h"
 #include "parse_utils.h"
 #include "wrapper_mplayer.h"
 

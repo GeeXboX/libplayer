@@ -23,7 +23,7 @@ SRCS =  player.c \
 	playlist.c \
 	logs.c \
 	fifo_queue.c \
-	fs.c \
+	fs_utils.c \
 	parse_utils.c \
 	event.c \
 	event_handler.c \

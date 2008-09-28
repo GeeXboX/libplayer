@@ -24,7 +24,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#include "fs.h"
+#include "fs_utils.h"
 
 #define BUFFER_SIZE 512
 

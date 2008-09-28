@@ -30,7 +30,7 @@
 #include "player_internals.h"
 #include "logs.h"
 #include "playlist.h"
-#include "fs.h"
+#include "fs_utils.h"
 #include "wrapper_vlc.h"
 
 #define MODULE_NAME "vlc"
