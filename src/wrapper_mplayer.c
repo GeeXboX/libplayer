@@ -1633,7 +1633,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   }
 
   res = sscanf (buffer, "ID_CDDA_TRACK_%i_%s", &cnt, str);
-  if (res && cnt)
+  if (res && res != EOF && cnt)
   {
     mrl_metadata_cd_track_t *track = mrl_metadata_cd_get_track (cd, cnt);
 
@@ -1660,7 +1660,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
     return 1;
 
   res = sscanf (buffer, "ID_CDDB_INFO_TRACK_%i_%s", &cnt, str);
-  if (res && cnt)
+  if (res && res != EOF && cnt)
   {
     mrl_metadata_cd_track_t *track = mrl_metadata_cd_get_track (cd, cnt);
 
@@ -1746,7 +1746,7 @@ mp_identify_metadata_dvd (mrl_t *mrl, const char *buffer)
   }
 
   res = sscanf (buffer, "ID_DVD_TITLE_%i_%s", &cnt, val);
-  if (res && cnt)
+  if (res && res != EOF && cnt)
   {
     mrl_metadata_dvd_title_t *title = mrl_metadata_dvd_get_title (dvd, cnt);
 
@@ -1792,7 +1792,7 @@ mp_identify_metadata_sub (mrl_t *mrl, const char *buffer)
   }
 
   res = sscanf (buffer, "ID_SID_%i_%s", &cnt, val);
-  if (res)
+  if (res && res != EOF)
   {
     mrl_metadata_sub_t *sub = mrl_metadata_sub_get (&meta->subs, cnt);
 
