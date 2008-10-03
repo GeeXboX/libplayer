@@ -1766,8 +1766,62 @@ mp_identify_metadata_dvd (mrl_t *mrl, const char *buffer)
 }
 
 static int
+mp_identify_metadata_sub (mrl_t *mrl, const char *buffer)
+{
+  int cnt = 0, res;
+  char *it;
+  char val[256];
+  mrl_metadata_t *meta;
+
+  if (!mrl || !mrl->meta || !buffer)
+    return 0;
+
+  meta = mrl->meta;
+
+  it = strstr (buffer, "ID_SUBTITLE_ID=");
+  if (it == buffer)
+  {
+    int id = atoi (parse_field (it));
+    mrl_metadata_sub_t *sub = mrl_metadata_sub_get (&meta->subs, id);
+
+    if (!sub)
+      return 1;
+
+    sub->id = id;
+    return 1;
+  }
+
+  res = sscanf (buffer, "ID_SID_%i_%s", &cnt, val);
+  if (res)
+  {
+    mrl_metadata_sub_t *sub = mrl_metadata_sub_get (&meta->subs, cnt);
+
+    if (!sub)
+      return 1;
+
+    if (strstr (val, "NAME") == val)
+    {
+      if (sub->name)
+        free (sub->name);
+      sub->name = strdup (parse_field (val));
+    }
+    else if (strstr (val, "LANG") == val)
+    {
+      if (sub->lang)
+        free (sub->lang);
+      sub->lang = strdup (parse_field (val));
+    }
+    return 1;
+  }
+
+  return 0;
+}
+
+static int
 mp_identify_metadata (mrl_t *mrl, const char *buffer)
 {
+  int ret = 0;
+
   if (!mrl || !mrl->meta || !buffer)
     return 0;
 
@@ -1775,15 +1829,23 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
   {
   case MRL_RESOURCE_CDDA:
   case MRL_RESOURCE_CDDB:
-    return mp_identify_metadata_cd (mrl, buffer);
+    ret = mp_identify_metadata_cd (mrl, buffer);
+    break;
 
   case MRL_RESOURCE_DVD:
   case MRL_RESOURCE_DVDNAV:
-    return mp_identify_metadata_dvd (mrl, buffer);
+    ret = mp_identify_metadata_dvd (mrl, buffer);
+    break;
 
   default:
-    return mp_identify_metadata_clip (mrl, buffer);
+    ret = mp_identify_metadata_clip (mrl, buffer);
+    break;
   }
+
+  if (!ret)
+    ret = mp_identify_metadata_sub (mrl, buffer);
+
+  return ret;
 }
 
 static int
