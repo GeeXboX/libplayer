@@ -491,6 +491,31 @@ uint32_t mrl_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
 char *mrl_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles);
 
 /**
+ * \brief Get subtitle metadata of the MRL object.
+ *
+ * This function can be slow when the stream is not (fastly) reachable.
+ *
+ * The \p pos argument is the position of the subtitle in the internal list
+ * of libplayer. The first subtitle begins with 1.
+ * \p id returned by this function can be used with player_subtitle_select().
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning The pointers (*name and *lang) must be freed when no longer used.
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \param[in] pos         Position of the subtitle.
+ * \param[out] id         ID of the subtitle, NULL to ignore.
+ * \param[out] name       Name of the subtitle, NULL to ignore.
+ * \param[out] lang       Language of the subtitle, NULL to ignore.
+ * \return 1 for success, 0 if the subtitle is not available.
+ */
+int mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
+                               uint32_t *id, char **name, char **lang);
+
+/**
  * \brief Get property of the stream.
  *
  * Wrappers supported (even partially):

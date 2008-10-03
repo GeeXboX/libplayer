@@ -278,6 +278,8 @@ uint32_t mrl_sv_get_metadata_cd (player_t *player,
 uint32_t mrl_sv_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
                                         int titleid, mrl_metadata_dvd_type_t m);
 char *mrl_sv_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles);
+int mrl_sv_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
+                                  uint32_t *id, char **name, char **lang);
 mrl_type_t mrl_sv_get_type (player_t *player, mrl_t *mrl);
 mrl_resource_t mrl_sv_get_resource (player_t *player, mrl_t *mrl);
 void mrl_sv_add_subtitle (mrl_t *mrl, char *subtitle);

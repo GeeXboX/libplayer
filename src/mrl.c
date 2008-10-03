@@ -221,6 +221,39 @@ mrl_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles)
   return out.volumeid;
 }
 
+int
+mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
+                           uint32_t *id, char **name, char **lang)
+{
+  supervisor_data_mrl_t in;
+  supervisor_data_out_metadata_sub_t out;
+
+  if (!player)
+    return 0;
+
+  in.mrl = mrl;
+  in.value = pos;
+
+  memset (&out, 0, sizeof (supervisor_data_out_metadata_sub_t));
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_MRL_GET_METADATA_SUBTITLE, &in, &out);
+
+  if (id)
+    *id = out.id;
+
+  if (name)
+    *name = out.name;
+  else if (out.name)
+    free (out.name);
+
+  if (lang)
+    *lang = out.lang;
+  else if (out.lang)
+    free (out.lang);
+
+  return out.ret;
+}
+
 mrl_type_t
 mrl_get_type (player_t *player, mrl_t *mrl)
 {
