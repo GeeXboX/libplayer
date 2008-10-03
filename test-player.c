@@ -429,6 +429,7 @@ show_resource (player_t *player, mrl_t *mrl)
 static void
 show_info (player_t *player, mrl_t *mrl)
 {
+  int i;
   char *meta;
   char *codec;
   uint32_t prop;
@@ -546,6 +547,33 @@ show_info (player_t *player, mrl_t *mrl)
   if (meta) {
     printf (" Meta Comment: %s\n", meta);
     free (meta);
+  }
+
+  /* Subtitles */
+
+  prop = mrl_get_metadata_subtitles (player, mrl);
+  for (i = 1; i <= prop; i++)
+  {
+    int ret;
+    uint32_t id = 0;
+    char *name = NULL, *lang = NULL;
+
+    ret = mrl_get_metadata_subtitle (player, mrl, i, &id, &name, &lang);
+    if (!ret)
+      continue;
+
+    printf (" Meta Subtitle %u", id);
+    if (name)
+    {
+      printf (" Name: %s", name);
+      free (name);
+    }
+    if (lang)
+    {
+      printf (" (%s)", lang);
+      free (lang);
+    }
+    printf ("\n");
   }
 
   /* CDDA/CDDB */
