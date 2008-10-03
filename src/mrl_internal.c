@@ -211,6 +211,44 @@ mrl_metadata_dvd_new (void)
   return dvd;
 }
 
+static mrl_metadata_sub_t *
+mrl_metadata_sub_new (void)
+{
+  mrl_metadata_sub_t *sub;
+
+  sub = calloc (1, sizeof (mrl_metadata_sub_t));
+
+  return sub;
+}
+
+mrl_metadata_sub_t *
+mrl_metadata_sub_get (mrl_metadata_sub_t **sub, int id)
+{
+  mrl_metadata_sub_t *subtitle, *subtitle_p;
+
+  if (!sub)
+    return NULL;
+
+  if (!*sub)
+  {
+    *sub = mrl_metadata_sub_new ();
+    return *sub;
+  }
+
+  subtitle = *sub;
+  while (subtitle)
+  {
+    if (subtitle->id == id)
+      return subtitle;
+    subtitle_p = subtitle;
+    subtitle = subtitle->next;
+  }
+
+  /* not found */
+  subtitle_p->next = mrl_metadata_sub_new ();
+  return subtitle_p->next;
+}
+
 mrl_metadata_t *
 mrl_metadata_new (mrl_resource_t res)
 {
@@ -278,6 +316,23 @@ mrl_metadata_dvd_free (mrl_metadata_dvd_t *dvd)
   }
 }
 
+static void
+mrl_metadata_sub_free (mrl_metadata_sub_t *sub)
+{
+  mrl_metadata_sub_t *sub_n;
+
+  while (sub)
+  {
+    if (sub->name)
+      free (sub->name);
+    if (sub->lang)
+      free (sub->lang);
+    sub_n = sub->next;
+    free (sub);
+    sub = sub_n;
+  }
+}
+
 void
 mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res)
 {
@@ -298,6 +353,9 @@ mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res)
     free (meta->track);
   if (meta->comment)
     free (meta->comment);
+
+  if (meta->subs)
+    mrl_metadata_sub_free (meta->subs);
 
   if (meta->priv)
   {
@@ -538,6 +596,7 @@ static void
 mrl_metadata_plog (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
+  mrl_metadata_sub_t *sub;
 
   if (!player || !mrl)
     return;
@@ -576,6 +635,20 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
   if (meta->comment)
     plog (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Comment: %s", meta->comment);
+
+  sub = meta->subs;
+  while (sub)
+  {
+    if (sub->name)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Subtitle %u Name: %s", sub->id, sub->name);
+
+    if (sub->lang)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Subtitle %u Language: %s", sub->id, sub->lang);
+
+    sub = sub->next;
+  }
 
   if (!meta->priv)
     return;

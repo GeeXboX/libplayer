@@ -77,6 +77,13 @@ typedef struct mrl_metadata_dvd_s {
   mrl_metadata_dvd_title_t *title;
 } mrl_metadata_dvd_t;
 
+typedef struct mrl_metadata_sub_s {
+  char *name;
+  char *lang;
+  uint32_t id;
+  struct mrl_metadata_sub_s *next;
+} mrl_metadata_sub_t;
+
 typedef struct mrl_metadata_s {
   char *title;
   char *artist;
@@ -85,6 +92,7 @@ typedef struct mrl_metadata_s {
   char *year;
   char *track;
   char *comment;
+  mrl_metadata_sub_t *subs;
   void *priv; /* private metadata, depending on resource type */
 } mrl_metadata_t;
 
@@ -242,6 +250,7 @@ mrl_metadata_cd_track_t *mrl_metadata_cd_track_new (void);
 mrl_metadata_dvd_title_t *mrl_metadata_dvd_get_title (mrl_metadata_dvd_t *dvd,
                                                       int id);
 mrl_metadata_dvd_title_t *mrl_metadata_dvd_title_new (void);
+mrl_metadata_sub_t *mrl_metadata_sub_get (mrl_metadata_sub_t **sub, int id);
 void mrl_resource_local_free (mrl_resource_local_args_t *args);
 void mrl_resource_cd_free (mrl_resource_cd_args_t *args);
 void mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args);
