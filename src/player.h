@@ -516,6 +516,21 @@ int mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
                                uint32_t *id, char **name, char **lang);
 
 /**
+ * \brief Get the number of available subtitles.
+ *
+ * This function can be slow when the stream is not (fastly) reachable.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \return Number of subtitles.
+ */
+uint32_t mrl_get_metadata_subtitles (player_t *player, mrl_t *mrl);
+
+/**
  * \brief Get property of the stream.
  *
  * Wrappers supported (even partially):

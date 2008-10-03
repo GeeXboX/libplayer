@@ -1240,6 +1240,40 @@ mrl_sv_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
   return 1;
 }
 
+uint32_t
+mrl_sv_get_metadata_subtitles (player_t *player, mrl_t *mrl)
+{
+  uint32_t nb = 0;
+  mrl_metadata_t *meta;
+  mrl_metadata_sub_t *sub;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return 0;
+
+  /* try to use internal mrl? */
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
+    return 0;
+
+  if (!mrl->meta)
+    mrl_retrieve_metadata (player, mrl);
+
+  meta = mrl->meta;
+  if (!meta)
+    return 0;
+
+  sub = meta->subs;
+  while (sub)
+  {
+    sub = sub->next;
+    nb++;
+  }
+
+  return nb;
+}
+
 mrl_type_t
 mrl_sv_get_type (player_t *player, mrl_t *mrl)
 {

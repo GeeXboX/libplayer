@@ -205,6 +205,17 @@ supervisor_mrl_get_metadata_subtitle (player_t *player, void *in, void *out)
 }
 
 static void
+supervisor_mrl_get_metadata_subtitles (player_t *player, void *in, void *out)
+{
+  uint32_t *output = out;
+
+  if (!player || !out)
+    return;
+
+  *output = mrl_sv_get_metadata_subtitles (player, in);
+}
+
+static void
 supervisor_mrl_get_type (player_t *player, void *in, void *out)
 {
   mrl_type_t *output = out;
@@ -879,6 +890,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_MRL_GET_METADATA_DVD_TITLE] = supervisor_mrl_get_metadata_dvd_title,
   [SV_FUNC_MRL_GET_METADATA_DVD]       = supervisor_mrl_get_metadata_dvd,
   [SV_FUNC_MRL_GET_METADATA_SUBTITLE]  = supervisor_mrl_get_metadata_subtitle,
+  [SV_FUNC_MRL_GET_METADATA_SUBTITLES] = supervisor_mrl_get_metadata_subtitles,
   [SV_FUNC_MRL_GET_TYPE]               = supervisor_mrl_get_type,
   [SV_FUNC_MRL_GET_RESOURCE]           = supervisor_mrl_get_resource,
   [SV_FUNC_MRL_ADD_SUBTITLE]           = supervisor_mrl_add_subtitle,

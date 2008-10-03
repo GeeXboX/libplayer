@@ -254,6 +254,22 @@ mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
   return out.ret;
 }
 
+uint32_t
+mrl_get_metadata_subtitles (player_t *player, mrl_t *mrl)
+{
+  uint32_t out = 0;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return 0;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_MRL_GET_METADATA_SUBTITLES, mrl, &out);
+
+  return out;
+}
+
 mrl_type_t
 mrl_get_type (player_t *player, mrl_t *mrl)
 {
