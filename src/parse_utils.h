@@ -23,5 +23,6 @@
 #define PARSE_UTILS_H
 
 char *trim_whitespaces (char *str);
+int count_nb_dec (int dec);
 
 #endif /* PARSE_UTILS_H */

@@ -1193,17 +1193,6 @@ slave_cmd_str_opt (player_t *player, slave_cmd_t cmd, char *str, int opt)
 /*                                MRL's args                                 */
 /*****************************************************************************/
 
-static int
-count_nb_dec (int dec)
-{
-  int size = 1;
-
-  while (dec /= 10)
-    size++;
-
-  return size;
-}
-
 static char *
 uri_args_device (const char *device, size_t *size)
 {

@@ -35,6 +35,7 @@
 #include "playlist.h"
 #include "event.h"
 #include "fs_utils.h"
+#include "parse_utils.h"
 #include "wrapper_xine.h"
 
 #ifdef USE_X11
@@ -107,17 +108,6 @@ send_event (player_t *player, int event)
   xine_event.data_length = 0;
 
   xine_event_send (x->stream, &xine_event);
-}
-
-static int
-count_nb_dec (int dec)
-{
-  int size = 1;
-
-  while (dec /= 10)
-    size++;
-
-  return size;
 }
 
 static char *
