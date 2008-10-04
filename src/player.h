@@ -115,6 +115,11 @@ typedef enum player_x_window_flags {
 } player_x_window_flags_t;
 
 /**
+ * \name Player (Un)Initialization and tuning.
+ * @{
+ */
+
+/**
  * \brief Initialization of a new player controller.
  *
  * Multiple player controllers can be initialized with any wrappers.
@@ -180,6 +185,10 @@ void player_set_verbosity (player_t *player, player_verbosity_level_t level);
  */
 void player_x_window_set_properties (player_t *player,
                                      int x, int y, int w, int h, int flags);
+
+/**
+ * @}
+ */
 
 /***************************************************************************/
 /*                                                                         */
@@ -346,6 +355,11 @@ typedef enum mrl_properties_type {
 
 #define PLAYER_VIDEO_ASPECT_RATIO_MULT         10000.0    /* *10000         */
 #define PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV   90000.0    /* 1/90000 sec    */
+
+/**
+ * \name Media Resource Locater (MRL) Helpers.
+ * @{
+ */
 
 /**
  * \brief Create a new MRL object.
@@ -605,6 +619,10 @@ off_t mrl_get_size (player_t *player, mrl_t *mrl);
 void mrl_video_snapshot (player_t *player, mrl_t *mrl,
                          int pos, mrl_snapshot_t t, const char *dst);
 
+/**
+ * @}
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /* Player to MRL connection                                                */
@@ -616,6 +634,11 @@ typedef enum player_mrl_add {
   PLAYER_MRL_ADD_NOW,
   PLAYER_MRL_ADD_QUEUE
 } player_mrl_add_t;
+
+/**
+ * \name Player to MRL connection.
+ * @{
+ */
 
 /**
  * \brief Get current MRL set in the internal playlist.
@@ -688,6 +711,10 @@ void player_mrl_previous (player_t *player);
  */
 void player_mrl_next (player_t *player);
 
+/**
+ * @}
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /* Player tuning & properties                                              */
@@ -713,6 +740,11 @@ typedef enum player_framedrop {
   PLAYER_FRAMEDROP_SOFT,
   PLAYER_FRAMEDROP_HARD,
 } player_framedrop_t;
+
+/**
+ * \name Player tuning & properties.
+ * @{
+ */
 
 /**
  * \brief Get current time position in the current stream.
@@ -771,6 +803,10 @@ void player_set_shuffle (player_t *player, int value);
  */
 void player_set_framedrop (player_t *player, player_framedrop_t fd);
 
+/**
+ * @}
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /* Playback related controls                                               */
@@ -790,6 +826,11 @@ typedef enum player_pb_seek {
   PLAYER_PB_SEEK_ABSOLUTE,
   PLAYER_PB_SEEK_PERCENT,
 } player_pb_seek_t;
+
+/**
+ * \name Playback related controls.
+ * @{
+ */
 
 /**
  * \brief Get current playback state.
@@ -875,6 +916,10 @@ void player_playback_seek_chapter (player_t *player, int value, int absolute);
  */
 void player_playback_speed (player_t *player, float value);
 
+/**
+ * @}
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /* Audio related controls                                                  */
@@ -887,6 +932,11 @@ typedef enum player_mute {
   PLAYER_MUTE_ON,
   PLAYER_MUTE_OFF
 } player_mute_t;
+
+/**
+ * \name Audio related controls.
+ * @{
+ */
 
 /**
  * \brief Get current volume.
@@ -989,6 +1039,10 @@ void player_audio_prev (player_t *player);
  */
 void player_audio_next (player_t *player);
 
+/**
+ * @}
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /* Video related controls                                                  */
@@ -1003,6 +1057,11 @@ typedef enum player_video_aspect {
   PLAYER_VIDEO_ASPECT_HUE,
   PLAYER_VIDEO_ASPECT_SATURATION,
 } player_video_aspect_t;
+
+/**
+ * \name Video related controls.
+ * @{
+ */
 
 /**
  * \brief Set video in fullscreen.
@@ -1059,6 +1118,10 @@ void player_video_set_panscan (player_t *player, int8_t value, int absolute);
  */
 void player_video_set_aspect_ratio (player_t *player, float value);
 
+/**
+ * @}
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /* Subtitles related controls                                              */
@@ -1071,6 +1134,11 @@ typedef enum player_sub_alignment {
   PLAYER_SUB_ALIGNMENT_CENTER,
   PLAYER_SUB_ALIGNMENT_BOTTOM,
 } player_sub_alignment_t;
+
+/**
+ * \name Subtitles related controls.
+ * @{
+ */
 
 /**
  * \brief Set subtitle delay.
@@ -1175,6 +1243,10 @@ void player_subtitle_prev (player_t *player);
  */
 void player_subtitle_next (player_t *player);
 
+/**
+ * @}
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /* DVD specific controls                                                   */
@@ -1190,6 +1262,11 @@ typedef enum player_dvdnav {
   PLAYER_DVDNAV_MENU,
   PLAYER_DVDNAV_SELECT
 } player_dvdnav_t;
+
+/**
+ * \name DVD specific controls.
+ * @{
+ */
 
 /**
  * \brief DVD Navigation commands.
@@ -1279,11 +1356,20 @@ void player_dvd_title_prev (player_t *player);
  */
 void player_dvd_title_next (player_t *player);
 
+/**
+ * @}
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /* TV/DVB specific controls                                                */
 /*                                                                         */
 /***************************************************************************/
+
+/**
+ * \name TV/DVB specific controls.
+ * @{
+ */
 
 /**
  * \brief Select TV channel.
@@ -1323,11 +1409,20 @@ void player_tv_channel_prev (player_t *player);
  */
 void player_tv_channel_next (player_t *player);
 
+/**
+ * @}
+ */
+
 /***************************************************************************/
 /*                                                                         */
 /* Radio specific controls                                                 */
 /*                                                                         */
 /***************************************************************************/
+
+/**
+ * \name Radio specific controls.
+ * @{
+ */
 
 /**
  * \brief Select radio channel.
@@ -1366,6 +1461,10 @@ void player_radio_channel_prev (player_t *player);
  * \param[in] player      Player controller.
  */
 void player_radio_channel_next (player_t *player);
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 #if 0 /* avoid EMACS indent */
