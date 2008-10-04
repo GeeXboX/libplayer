@@ -380,7 +380,7 @@ mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res)
   free (meta);
 }
 
-void
+static void
 mrl_resource_local_free (mrl_resource_local_args_t *args)
 {
   if (!args)
@@ -390,7 +390,7 @@ mrl_resource_local_free (mrl_resource_local_args_t *args)
     free (args->location);
 }
 
-void
+static void
 mrl_resource_cd_free (mrl_resource_cd_args_t *args)
 {
   if (!args)
@@ -400,7 +400,7 @@ mrl_resource_cd_free (mrl_resource_cd_args_t *args)
     free (args->device);
 }
 
-void
+static void
 mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args)
 {
   if (!args)
@@ -414,7 +414,7 @@ mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args)
     free (args->sub_lang);
 }
 
-void
+static void
 mrl_resource_tv_free (mrl_resource_tv_args_t *args)
 {
   if (!args)
@@ -430,7 +430,7 @@ mrl_resource_tv_free (mrl_resource_tv_args_t *args)
     free (args->norm);
 }
 
-void
+static void
 mrl_resource_network_free (mrl_resource_network_args_t *args)
 {
   if (!args)

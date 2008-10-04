@@ -251,11 +251,6 @@ mrl_metadata_dvd_title_t *mrl_metadata_dvd_get_title (mrl_metadata_dvd_t *dvd,
                                                       int id);
 mrl_metadata_dvd_title_t *mrl_metadata_dvd_title_new (void);
 mrl_metadata_sub_t *mrl_metadata_sub_get (mrl_metadata_sub_t **sub, int id);
-void mrl_resource_local_free (mrl_resource_local_args_t *args);
-void mrl_resource_cd_free (mrl_resource_cd_args_t *args);
-void mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args);
-void mrl_resource_tv_free (mrl_resource_tv_args_t *args);
-void mrl_resource_network_free (mrl_resource_network_args_t *args);
 void mrl_list_free (mrl_t *mrl);
 int mrl_uses_vo (mrl_t *mrl);
 int mrl_uses_ao (mrl_t *mrl);
