@@ -1493,7 +1493,7 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
   static int cnt;
   static slave_property_t property = PROPERTY_UNKNOWN;
   char *it;
-  char str[256];
+  char str[FIFO_BUFFER];
   mrl_metadata_t *meta;
 
   if (!mrl || !mrl->meta || !buffer || !strstr (buffer, "ID_CLIP_INFO"))
@@ -1599,7 +1599,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
 {
   int cnt = 0, res;
   char *it;
-  char str[256];
+  char str[FIFO_BUFFER];
   mrl_metadata_t *meta;
   mrl_metadata_cd_t *cd;
 
@@ -1705,7 +1705,7 @@ mp_identify_metadata_dvd (mrl_t *mrl, const char *buffer)
 {
   int cnt = 0, res;
   char *it;
-  char val[256];
+  char val[FIFO_BUFFER];
   mrl_metadata_t *meta;
   mrl_metadata_dvd_t *dvd;
 
@@ -1759,7 +1759,7 @@ mp_identify_metadata_sub (mrl_t *mrl, const char *buffer)
 {
   int cnt = 0, res;
   char *it;
-  char val[256];
+  char val[FIFO_BUFFER];
   mrl_metadata_t *meta;
 
   if (!mrl || !mrl->meta || !buffer)
