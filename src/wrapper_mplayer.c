@@ -48,6 +48,7 @@
 #define MODULE_NAME "mplayer"
 
 #define FIFO_BUFFER      256
+#define PATH_BUFFER      512
 #define MPLAYER_NAME     "mplayer"
 
 #define SNAPSHOT_FILE    "00000001"
@@ -2410,7 +2411,7 @@ static int
 executable_is_available (player_t *player, const char *bin)
 {
   char *p, *fp, *env;
-  char prog[256];
+  char prog[PATH_BUFFER];
 
   env = getenv ("PATH");
 
@@ -2894,7 +2895,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
   char *uri = NULL;
   char name[32] = SNAPSHOT_FILE;
   char tmp[] = SNAPSHOT_TMP;
-  char vo[512], file[512];
+  char vo[PATH_BUFFER], file[PATH_BUFFER];
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_video_snapshot");
 
