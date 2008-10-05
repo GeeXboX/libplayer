@@ -1495,7 +1495,7 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
   static slave_property_t property = PROPERTY_UNKNOWN;
   char *it;
   char str[FIFO_BUFFER];
-  mrl_metadata_t *meta;
+  mrl_metadata_t *meta = mrl->meta;
 
   if (!strstr (buffer, "ID_CLIP_INFO"))
     return 0;
@@ -1507,8 +1507,6 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
     property = PROPERTY_UNKNOWN;
     return 0;
   }
-
-  meta = mrl->meta;
 
   snprintf (str, sizeof (str), "ID_CLIP_INFO_NAME%i=", cnt);
   it = strstr (buffer, str);
@@ -1601,17 +1599,11 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   int cnt = 0, res;
   char *it;
   char str[FIFO_BUFFER];
-  mrl_metadata_t *meta;
-  mrl_metadata_cd_t *cd;
+  mrl_metadata_t *meta = mrl->meta;
+  mrl_metadata_cd_t *cd = mrl->meta->priv;
 
-  if (!mrl->meta->priv)
+  if (!cd || !strstr (buffer, "ID_CDD"))
     return 0;
-
-  if (!strstr (buffer, "ID_CDD"))
-    return 0;
-
-  meta = mrl->meta;
-  cd = meta->priv;
 
   /* CDDA track length */
 
@@ -1707,17 +1699,10 @@ mp_identify_metadata_dvd (mrl_t *mrl, const char *buffer)
   int cnt = 0, res;
   char *it;
   char val[FIFO_BUFFER];
-  mrl_metadata_t *meta;
-  mrl_metadata_dvd_t *dvd;
+  mrl_metadata_dvd_t *dvd = mrl->meta->priv;
 
-  if (!mrl->meta->priv)
+  if (!dvd || !strstr (buffer, "ID_DVD"))
     return 0;
-
-  if (!strstr (buffer, "ID_DVD"))
-    return 0;
-
-  meta = mrl->meta;
-  dvd = meta->priv;
 
   it = strstr (buffer, "ID_DVD_VOLUME_ID=");
   if (it == buffer)
@@ -1761,9 +1746,7 @@ mp_identify_metadata_sub (mrl_t *mrl, const char *buffer)
   int cnt = 0, res;
   char *it;
   char val[FIFO_BUFFER];
-  mrl_metadata_t *meta;
-
-  meta = mrl->meta;
+  mrl_metadata_t *meta = mrl->meta;
 
   it = strstr (buffer, "ID_SUBTITLE_ID=");
   if (it == buffer)
