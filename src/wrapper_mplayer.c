@@ -2421,6 +2421,53 @@ executable_is_available (player_t *player, const char *bin)
   return 0;
 }
 
+static int
+mp_preinit_vo (player_t *player, unsigned long *winid)
+{
+  int ret = 1;
+
+  /* The video out is sent in our X11 window, winid is used for -wid arg. */
+  switch (player->vo)
+  {
+  case PLAYER_VO_NULL:
+  case PLAYER_VO_FB:
+    break;
+
+  case PLAYER_VO_X11:
+  case PLAYER_VO_XV:
+  case PLAYER_VO_GL:
+#ifndef USE_X11
+    plog (player, PLAYER_MSG_ERROR,
+          MODULE_NAME, "libplayer is not compiled with X11 support");
+    return -1;
+#endif /* USE_X11 */
+
+  case PLAYER_VO_AUTO:
+#ifdef USE_X11
+    ret = x11_init (player);
+    if (player->vo != PLAYER_VO_AUTO && !ret)
+    {
+      plog (player, PLAYER_MSG_ERROR,
+            MODULE_NAME, "initialization for X has failed");
+      return -1;
+    }
+    *winid = x11_get_window (player->x11);
+    break;
+#else
+    plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
+          "auto-detection for videoout is not enabled without X11 support");
+    return -1;
+#endif /* USE_X11 */
+
+  default:
+    plog (player, PLAYER_MSG_ERROR,
+          MODULE_NAME, "unsupported video out (%i)", player->vo);
+    return -1;
+  }
+
+  return ret;
+}
+
 /*****************************************************************************/
 /*                           Private Wrapper funcs                           */
 /*****************************************************************************/
@@ -2453,6 +2500,7 @@ mplayer_init (player_t *player)
   struct sigaction action;
   mplayer_t *mplayer = NULL;
   char winid[32];
+  unsigned long winid_l = 0;
   int use_x11 = 0;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
@@ -2493,45 +2541,11 @@ mplayer_init (player_t *player)
   action.sa_flags = 0;
   sigaction (SIGPIPE, &action, NULL);
 
-  /* The video out is sent in our X11 window, winid is used for -wid arg. */
-  switch (player->vo)
-  {
-  case PLAYER_VO_NULL:
-  case PLAYER_VO_FB:
-    break;
-
-  case PLAYER_VO_X11:
-  case PLAYER_VO_XV:
-  case PLAYER_VO_GL:
-#ifndef USE_X11
-    plog (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "libplayer is not compiled with X11 support");
+  use_x11 = mp_preinit_vo (player, &winid_l);
+  if (use_x11 < 0)
     return PLAYER_INIT_ERROR;
-#endif /* USE_X11 */
 
-  case PLAYER_VO_AUTO:
-#ifdef USE_X11
-    use_x11 = x11_init (player);
-    if (player->vo != PLAYER_VO_AUTO && !use_x11)
-    {
-      plog (player, PLAYER_MSG_ERROR,
-            MODULE_NAME, "initialization for X has failed");
-      return PLAYER_INIT_ERROR;
-    }
-    snprintf (winid, sizeof (winid),
-              "%lu", (unsigned long) x11_get_window (player->x11));
-    break;
-#else
-    plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
-          "auto-detection for videoout is not enabled without X11 support");
-    return PLAYER_INIT_ERROR;
-#endif /* USE_X11 */
-
-  default:
-    plog (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "unsupported video out (%i)", player->vo);
-    return PLAYER_INIT_ERROR;
-  }
+  snprintf (winid, sizeof (winid), "%lu", winid_l);
 
   if (pipe (mplayer->pipe_in))
     return PLAYER_INIT_ERROR;
