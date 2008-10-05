@@ -3756,9 +3756,6 @@ register_private_mplayer (void)
     return NULL;
 
   mplayer->status = MPLAYER_IS_DEAD;
-  mplayer->fifo_in = NULL;
-  mplayer->fifo_out = NULL;
-  mplayer->search = NULL;
 
   sem_init (&mplayer->sem, 0, 0);
   pthread_cond_init (&mplayer->cond_start, NULL);

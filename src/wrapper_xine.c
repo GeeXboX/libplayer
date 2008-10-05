@@ -1071,9 +1071,6 @@ register_private_xine (void)
   if (!x)
     return NULL;
 
-  x->xine = NULL;
-  x->stream = NULL;
-  x->event_queue = NULL;
   x->vo_port = PLAYER_VO_NULL;
   x->ao_port = PLAYER_AO_NULL;
 

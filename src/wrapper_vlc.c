@@ -631,8 +631,5 @@ register_private_vlc (void)
   if (!vlc)
     return NULL;
 
-  vlc->core = NULL;
-  vlc->mp   = NULL;
-
   return vlc;
 }

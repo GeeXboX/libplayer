@@ -370,11 +370,5 @@ register_private_gstreamer (void)
   if (!g)
     return NULL;
 
-  g->loop = NULL;
-  g->bin = NULL;
-  g->bus = NULL;
-  g->video_sink = NULL;
-  g->audio_sink = NULL;
-
   return g;
 }
