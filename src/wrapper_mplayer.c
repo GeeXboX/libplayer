@@ -1497,7 +1497,7 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
   char str[FIFO_BUFFER];
   mrl_metadata_t *meta;
 
-  if (!mrl || !mrl->meta || !buffer || !strstr (buffer, "ID_CLIP_INFO"))
+  if (!strstr (buffer, "ID_CLIP_INFO"))
     return 0;
 
   /* no new metadata */
@@ -1604,10 +1604,10 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   mrl_metadata_t *meta;
   mrl_metadata_cd_t *cd;
 
-  if (!mrl || !mrl->meta || !mrl->meta->priv)
+  if (!mrl->meta->priv)
     return 0;
 
-  if (!buffer || !strstr (buffer, "ID_CDD"))
+  if (!strstr (buffer, "ID_CDD"))
     return 0;
 
   meta = mrl->meta;
@@ -1710,10 +1710,10 @@ mp_identify_metadata_dvd (mrl_t *mrl, const char *buffer)
   mrl_metadata_t *meta;
   mrl_metadata_dvd_t *dvd;
 
-  if (!mrl || !mrl->meta || !mrl->meta->priv)
+  if (!mrl->meta->priv)
     return 0;
 
-  if (!buffer || !strstr (buffer, "ID_DVD"))
+  if (!strstr (buffer, "ID_DVD"))
     return 0;
 
   meta = mrl->meta;
@@ -1763,9 +1763,6 @@ mp_identify_metadata_sub (mrl_t *mrl, const char *buffer)
   char val[FIFO_BUFFER];
   mrl_metadata_t *meta;
 
-  if (!mrl || !mrl->meta || !buffer)
-    return 0;
-
   meta = mrl->meta;
 
   it = strstr (buffer, "ID_SUBTITLE_ID=");
@@ -1812,7 +1809,7 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
 {
   int ret = 0;
 
-  if (!mrl || !mrl->meta || !buffer)
+  if (!mrl->meta)
     return 0;
 
   switch (mrl->resource)
@@ -1844,7 +1841,7 @@ mp_identify_audio (mrl_t *mrl, const char *buffer)
   char *it;
   mrl_properties_audio_t *audio;
 
-  if (!mrl || !mrl->prop || !buffer || !strstr (buffer, "ID_AUDIO"))
+  if (!mrl->prop || !strstr (buffer, "ID_AUDIO"))
     return 0;
 
   if (!mrl->prop->audio)
@@ -1892,7 +1889,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   float val;
   mrl_properties_video_t *video;
 
-  if (!mrl || !mrl->prop || !buffer || !strstr (buffer, "ID_VIDEO"))
+  if (!mrl->prop || !strstr (buffer, "ID_VIDEO"))
     return 0;
 
   if (!mrl->prop->video)
@@ -1955,7 +1952,7 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
 {
   char *it;
 
-  if (!mrl || !mrl->prop || !buffer)
+  if (!mrl->prop)
     return 0;
 
   /*
