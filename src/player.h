@@ -797,6 +797,9 @@ void player_set_shuffle (player_t *player, int value);
 /**
  * \brief Set frame dropping with video playback.
  *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.
  * \param[in] fd          Frame dropping type to set.
