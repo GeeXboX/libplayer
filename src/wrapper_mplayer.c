@@ -2188,6 +2188,107 @@ mp_prop_get_option (char *buffer, char *it_min, char *it_max)
 }
 
 static int
+mp_check_get_vars (player_t *player, checklist_t check,
+                   int *nb, item_list_t **list, const char **what)
+{
+  mplayer_t *mplayer = player->priv;
+
+  switch (check)
+  {
+  case CHECKLIST_COMMANDS:
+    if (nb)
+      *nb = g_slave_cmds_nb;
+    if (list)
+      *list = mplayer->slave_cmds;
+    if (what)
+      *what = "command";
+    break;
+
+  case CHECKLIST_PROPERTIES:
+    if (nb)
+      *nb = g_slave_props_nb;
+    if (list)
+      *list = mplayer->slave_props;
+    if (what)
+      *what = "property";
+    break;
+
+  default:
+    return 0;
+  }
+
+  return 1;
+}
+
+static void
+mp_check_list (player_t *player, checklist_t check)
+{
+  item_list_t *list;
+  int i, nb = 0;
+  const char *what;
+
+  if (!mp_check_get_vars (player, check, &nb, &list, &what))
+    return;
+
+  /* check items list */
+  for (i = 1; i < nb; i++)
+  {
+    int state_libplayer;
+    item_state_t *state_mp = &list[i].state_mp;
+    const int *state_lib = &list[i].state_lib;
+    const char *str = list[i].str;
+    item_opt_t *opt = list[i].opt;
+
+    if (!str || !state_mp || !state_lib)
+      continue;
+
+    state_libplayer = *state_lib & ALL_ITEM_STATES;
+
+    if (strchr (str, '/'))
+      continue;
+
+    if (state_libplayer == ITEM_ON && *state_mp == ITEM_OFF)
+    {
+      plog (player, PLAYER_MSG_WARNING,
+            MODULE_NAME, "slave %s '%s' is needed and not supported by your "
+                         "version of MPlayer, all actions with this item will "
+                         "be ignored", what, str);
+    }
+    else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_OFF)
+    {
+      plog (player, PLAYER_MSG_WARNING,
+            MODULE_NAME, "slave %s '%s' is needed and not supported by your "
+                         "version of MPlayer and libplayer, then a hack is "
+                         "used", what, str);
+    }
+    else if (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_OFF)
+    {
+      plog (player, PLAYER_MSG_WARNING,
+            MODULE_NAME, "slave %s '%s' is needed and not supported by your "
+                         "version of MPlayer, then a hack is used", what, str);
+    }
+    else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_ON)
+    {
+      plog (player, PLAYER_MSG_WARNING,
+            MODULE_NAME, "slave %s '%s' is supported by your version of "
+                         "MPlayer but not by libplayer, then a hack is "
+                         "used", what, str);
+    }
+    else if ((state_libplayer == ITEM_ON && *state_mp == ITEM_ON) ||
+             (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_ON))
+    {
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "slave %s '%s' is supported by your version of "
+                         "MPlayer", what, str);
+
+      if (opt)
+        plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME,
+              " *** conf:%i min:%i max:%i", opt->conf, opt->min, opt->max);
+    }
+  }
+}
+
+static int
 mp_check_compatibility (player_t *player, checklist_t check)
 {
   mplayer_t *mplayer;
@@ -2195,8 +2296,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
   int mp_pipe[2];
   pid_t pid;
   item_list_t *list = NULL;
-  const char *str, *what = NULL;
-  const int *state_lib;
+  const char *str;
   item_state_t *state_mp;
 
   if (!player)
@@ -2206,28 +2306,13 @@ mp_check_compatibility (player_t *player, checklist_t check)
   if (!mplayer)
     return 0;
 
-  if (pipe (mp_pipe))
+  if (!mp_check_get_vars (player, check, &nb, &list, NULL))
     return 0;
 
-  switch (check)
-  {
-  case CHECKLIST_COMMANDS:
-    nb = g_slave_cmds_nb;
-    list = mplayer->slave_cmds;
-    what = "slave command";
-    break;
+  if (!list)
+    return 0;
 
-  case CHECKLIST_PROPERTIES:
-    nb = g_slave_props_nb;
-    list = mplayer->slave_props;
-    what = "slave property";
-    break;
-
-  default:
-    break;
-  }
-
-  if (!list || !what)
+  if (pipe (mp_pipe))
     return 0;
 
   pid = fork ();
@@ -2329,60 +2414,8 @@ mp_check_compatibility (player_t *player, checklist_t check)
   }
   }
 
-  /* check items list */
-  for (i = 1; i < nb; i++)
-  {
-    int state_libplayer;
-    item_opt_t *opt;
-
-    state_mp = &list[i].state_mp;
-    state_lib = &list[i].state_lib;
-    str = list[i].str;
-    opt = list[i].opt;
-
-    if (!str || !state_mp || !state_lib)
-      continue;
-
-    state_libplayer = *state_lib & ALL_ITEM_STATES;
-
-    if (strchr (str, '/'))
-      continue;
-
-    if (state_libplayer == ITEM_ON && *state_mp == ITEM_OFF)
-    {
-      plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
-            "%s '%s' is needed and not supported by your version of MPlayer, "
-            "all actions with this item will be ignored", what, str);
-    }
-    else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_OFF)
-    {
-      plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
-            "%s '%s' is needed and not supported by your version of MPlayer "
-            "and libplayer, then a hack is used", what, str);
-    }
-    else if (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_OFF)
-    {
-      plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
-            "%s '%s' is needed and not supported by your version of MPlayer, "
-            "then a hack is used", what, str);
-    }
-    else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_ON)
-    {
-      plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
-            "%s '%s' is supported by your version of MPlayer but not by "
-            "libplayer, then a hack is used", what, str);
-    }
-    else if ((state_libplayer == ITEM_ON && *state_mp == ITEM_ON) ||
-             (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_ON))
-    {
-      plog (player, PLAYER_MSG_INFO, MODULE_NAME,
-            "%s '%s' is supported by your version of MPlayer", what, str);
-
-      if (opt)
-        plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME,
-              " *** conf:%i min:%i max:%i", opt->conf, opt->min, opt->max);
-    }
-  }
+  if (plog_test (player, PLAYER_MSG_WARNING))
+    mp_check_list (player, check);
 
   return 1;
 }
