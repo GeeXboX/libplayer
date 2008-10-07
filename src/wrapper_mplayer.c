@@ -2191,7 +2191,14 @@ static int
 mp_check_get_vars (player_t *player, checklist_t check,
                    int *nb, item_list_t **list, const char **what)
 {
-  mplayer_t *mplayer = player->priv;
+  mplayer_t *mplayer;
+
+  if (!player)
+    return 0;
+
+  mplayer = player->priv;
+  if (!mplayer)
+    return 0;
 
   switch (check)
   {
@@ -2291,20 +2298,12 @@ mp_check_list (player_t *player, checklist_t check)
 static int
 mp_check_compatibility (player_t *player, checklist_t check)
 {
-  mplayer_t *mplayer;
   int i, nb = 0;
   int mp_pipe[2];
   pid_t pid;
   item_list_t *list = NULL;
   const char *str;
   item_state_t *state_mp;
-
-  if (!player)
-    return 0;
-
-  mplayer = (mplayer_t *) player->priv;
-  if (!mplayer)
-    return 0;
 
   if (!mp_check_get_vars (player, check, &nb, &list, NULL))
     return 0;
