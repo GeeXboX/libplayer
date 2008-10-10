@@ -551,7 +551,7 @@ show_info (player_t *player, mrl_t *mrl)
 
   /* Subtitles */
 
-  prop = mrl_get_metadata_subtitles (player, mrl);
+  prop = mrl_get_metadata_subtitle_nb (player, mrl);
   for (i = 1; i <= prop; i++)
   {
     int ret;

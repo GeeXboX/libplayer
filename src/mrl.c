@@ -255,7 +255,7 @@ mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
 }
 
 uint32_t
-mrl_get_metadata_subtitles (player_t *player, mrl_t *mrl)
+mrl_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl)
 {
   uint32_t out = 0;
 
@@ -265,7 +265,7 @@ mrl_get_metadata_subtitles (player_t *player, mrl_t *mrl)
     return 0;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_METADATA_SUBTITLES, mrl, &out);
+                   SV_FUNC_MRL_GET_METADATA_SUBTITLE_NB, mrl, &out);
 
   return out;
 }

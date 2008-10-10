@@ -285,7 +285,7 @@ uint32_t mrl_sv_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
 char *mrl_sv_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles);
 int mrl_sv_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
                                   uint32_t *id, char **name, char **lang);
-uint32_t mrl_sv_get_metadata_subtitles (player_t *player, mrl_t *mrl);
+uint32_t mrl_sv_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl);
 int mrl_sv_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
                                uint32_t *id, char **name, char **lang);
 uint32_t mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl);

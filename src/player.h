@@ -542,7 +542,7 @@ int mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
  * \param[in] mrl         MRL object, NULL for current.
  * \return Number of subtitles.
  */
-uint32_t mrl_get_metadata_subtitles (player_t *player, mrl_t *mrl);
+uint32_t mrl_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl);
 
 /**
  * \brief Get audio metadata of the MRL object.

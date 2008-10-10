@@ -1324,7 +1324,7 @@ mrl_sv_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
 }
 
 uint32_t
-mrl_sv_get_metadata_subtitles (player_t *player, mrl_t *mrl)
+mrl_sv_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
   mrl_metadata_sub_t *sub;
