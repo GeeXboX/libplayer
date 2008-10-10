@@ -1312,6 +1312,7 @@ uint32_t
 mrl_sv_get_metadata_subtitles (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
+  mrl_metadata_sub_t *sub;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -1330,7 +1331,8 @@ mrl_sv_get_metadata_subtitles (player_t *player, mrl_t *mrl)
   if (!meta)
     return 0;
 
-  RETURN_NB_ELEMENTS(meta->subs);
+  sub = meta->subs;
+  RETURN_NB_ELEMENTS(sub);
 }
 
 int
@@ -1379,6 +1381,7 @@ uint32_t
 mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
+  mrl_metadata_audio_t *audio;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -1397,7 +1400,8 @@ mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
   if (!meta)
     return 0;
 
-  RETURN_NB_ELEMENTS(meta->audio_streams);
+  audio = meta->audio_streams;
+  RETURN_NB_ELEMENTS(audio);
 }
 
 mrl_type_t
