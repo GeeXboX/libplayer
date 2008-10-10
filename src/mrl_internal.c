@@ -665,6 +665,7 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
   mrl_metadata_sub_t *sub;
+  mrl_metadata_audio_t *audio;
 
   if (!player || !mrl)
     return;
@@ -716,6 +717,20 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
             MODULE_NAME, "Subtitle %u Language: %s", sub->id, sub->lang);
 
     sub = sub->next;
+  }
+
+  audio = meta->audio_streams;
+  while (audio)
+  {
+    if (audio->name)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Stream %u Name: %s", audio->id, audio->name);
+
+    if (audio->lang)
+      plog (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Audio Stream %u Language: %s", audio->id, audio->lang);
+
+    audio = audio->next;
   }
 
   if (!meta->priv)
