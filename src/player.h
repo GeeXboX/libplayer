@@ -554,7 +554,7 @@ uint32_t mrl_get_metadata_subtitles (player_t *player, mrl_t *mrl);
  * \p id returned by this function can be used with player_audio_select().
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning The pointers (*name and *lang) must be freed when no longer used.
  * \warning MT-Safe in multithreaded applications.
@@ -575,7 +575,7 @@ int mrl_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
  * This function can be slow when the stream is not (fastly) reachable.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.

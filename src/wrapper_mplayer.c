@@ -1788,6 +1788,55 @@ mp_identify_metadata_sub (mrl_t *mrl, const char *buffer)
 }
 
 static int
+mp_identify_metadata_audio (mrl_t *mrl, const char *buffer)
+{
+  int cnt = 0, res;
+  char *it;
+  char val[FIFO_BUFFER];
+  mrl_metadata_t *meta = mrl->meta;
+
+  it = strstr (buffer, "ID_AUDIO_ID=");
+  if (it == buffer)
+  {
+    int id = atoi (parse_field (it));
+    mrl_metadata_audio_t *audio =
+      mrl_metadata_audio_get (&meta->audio_streams, id);
+
+    if (!audio)
+      return 1;
+
+    audio->id = id;
+    return 1;
+  }
+
+  res = sscanf (buffer, "ID_AID_%i_%s", &cnt, val);
+  if (res && res != EOF)
+  {
+    mrl_metadata_audio_t *audio =
+      mrl_metadata_audio_get (&meta->audio_streams, cnt);
+
+    if (!audio)
+      return 1;
+
+    if (strstr (val, "NAME") == val)
+    {
+      if (audio->name)
+        free (audio->name);
+      audio->name = strdup (parse_field (val));
+    }
+    else if (strstr (val, "LANG") == val)
+    {
+      if (audio->lang)
+        free (audio->lang);
+      audio->lang = strdup (parse_field (val));
+    }
+    return 1;
+  }
+
+  return 0;
+}
+
+static int
 mp_identify_metadata (mrl_t *mrl, const char *buffer)
 {
   int ret = 0;
@@ -1814,6 +1863,8 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
 
   if (!ret)
     ret = mp_identify_metadata_sub (mrl, buffer);
+  if (!ret)
+    ret = mp_identify_metadata_audio (mrl, buffer);
 
   return ret;
 }
