@@ -179,12 +179,12 @@ typedef struct supervisor_data_out_metadata_dvd_s {
   uint8_t titles;
 } supervisor_data_out_metadata_dvd_t;
 
-typedef struct supervisor_data_out_metadata_sub_s {
+typedef struct supervisor_data_out_metadata_s {
   char *name;
   char *lang;
   uint32_t id;
   int ret;
-} supervisor_data_out_metadata_sub_t;
+} supervisor_data_out_metadata_t;
 
 typedef struct supervisor_data_window_s {
   int x, y;

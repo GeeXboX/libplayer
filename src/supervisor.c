@@ -194,7 +194,7 @@ static void
 supervisor_mrl_get_metadata_subtitle (player_t *player, void *in, void *out)
 {
   supervisor_data_mrl_t *input = in;
-  supervisor_data_out_metadata_sub_t *output = out;
+  supervisor_data_out_metadata_t *output = out;
 
   if (!player || !in || !out)
     return;
@@ -219,7 +219,7 @@ static void
 supervisor_mrl_get_metadata_audio (player_t *player, void *in, void *out)
 {
   supervisor_data_mrl_t *input = in;
-  supervisor_data_out_metadata_sub_t *output = out;
+  supervisor_data_out_metadata_t *output = out;
 
   if (!player || !in || !out)
     return;

@@ -226,7 +226,7 @@ mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
                            uint32_t *id, char **name, char **lang)
 {
   supervisor_data_mrl_t in;
-  supervisor_data_out_metadata_sub_t out;
+  supervisor_data_out_metadata_t out;
 
   if (!player)
     return 0;
@@ -234,7 +234,7 @@ mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
   in.mrl = mrl;
   in.value = pos;
 
-  memset (&out, 0, sizeof (supervisor_data_out_metadata_sub_t));
+  memset (&out, 0, sizeof (supervisor_data_out_metadata_t));
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_MRL_GET_METADATA_SUBTITLE, &in, &out);
 
@@ -275,7 +275,7 @@ mrl_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
                         uint32_t *id, char **name, char **lang)
 {
   supervisor_data_mrl_t in;
-  supervisor_data_out_metadata_sub_t out;
+  supervisor_data_out_metadata_t out;
 
   if (!player)
     return 0;
@@ -283,7 +283,7 @@ mrl_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
   in.mrl = mrl;
   in.value = pos;
 
-  memset (&out, 0, sizeof (supervisor_data_out_metadata_sub_t));
+  memset (&out, 0, sizeof (supervisor_data_out_metadata_t));
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_MRL_GET_METADATA_AUDIO, &in, &out);
 
