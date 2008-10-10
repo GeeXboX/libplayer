@@ -545,6 +545,46 @@ int mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
 uint32_t mrl_get_metadata_subtitles (player_t *player, mrl_t *mrl);
 
 /**
+ * \brief Get audio metadata of the MRL object.
+ *
+ * This function can be slow when the stream is not (fastly) reachable.
+ *
+ * The \p pos argument is the position of the audio stream in the internal list
+ * of libplayer. The first audio stream begins with 1.
+ * \p id returned by this function can be used with player_audio_select().
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning The pointers (*name and *lang) must be freed when no longer used.
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \param[in] pos         Position of the audio stream.
+ * \param[out] id         ID of the audio stream, NULL to ignore.
+ * \param[out] name       Name of the audio stream, NULL to ignore.
+ * \param[out] lang       Language of the audio stream, NULL to ignore.
+ * \return 1 for success, 0 if the audio stream is not available.
+ */
+int mrl_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
+                            uint32_t *id, char **name, char **lang);
+
+/**
+ * \brief Get the number of available audio streams.
+ *
+ * This function can be slow when the stream is not (fastly) reachable.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] player      Player controller.
+ * \param[in] mrl         MRL object, NULL for current.
+ * \return Number of audio streams.
+ */
+uint32_t mrl_get_metadata_audio_nb (player_t *player, mrl_t *mrl);
+
+/**
  * \brief Get property of the stream.
  *
  * Wrappers supported (even partially):

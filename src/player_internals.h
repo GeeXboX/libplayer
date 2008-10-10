@@ -84,6 +84,13 @@ typedef struct mrl_metadata_sub_s {
   struct mrl_metadata_sub_s *next;
 } mrl_metadata_sub_t;
 
+typedef struct mrl_metadata_audio_s {
+  char *name;
+  char *lang;
+  uint32_t id;
+  struct mrl_metadata_audio_s *next;
+} mrl_metadata_audio_t;
+
 typedef struct mrl_metadata_s {
   char *title;
   char *artist;
@@ -93,6 +100,7 @@ typedef struct mrl_metadata_s {
   char *track;
   char *comment;
   mrl_metadata_sub_t *subs;
+  mrl_metadata_audio_t *audio_streams;
   void *priv; /* private metadata, depending on resource type */
 } mrl_metadata_t;
 
@@ -251,6 +259,8 @@ mrl_metadata_dvd_title_t *mrl_metadata_dvd_get_title (mrl_metadata_dvd_t *dvd,
                                                       int id);
 mrl_metadata_dvd_title_t *mrl_metadata_dvd_title_new (void);
 mrl_metadata_sub_t *mrl_metadata_sub_get (mrl_metadata_sub_t **sub, int id);
+mrl_metadata_audio_t *mrl_metadata_audio_get (mrl_metadata_audio_t **audio,
+                                              int id);
 void mrl_list_free (mrl_t *mrl);
 int mrl_uses_vo (mrl_t *mrl);
 int mrl_uses_ao (mrl_t *mrl);
@@ -276,6 +286,9 @@ char *mrl_sv_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles);
 int mrl_sv_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
                                   uint32_t *id, char **name, char **lang);
 uint32_t mrl_sv_get_metadata_subtitles (player_t *player, mrl_t *mrl);
+int mrl_sv_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
+                               uint32_t *id, char **name, char **lang);
+uint32_t mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl);
 mrl_type_t mrl_sv_get_type (player_t *player, mrl_t *mrl);
 mrl_resource_t mrl_sv_get_resource (player_t *player, mrl_t *mrl);
 void mrl_sv_add_subtitle (mrl_t *mrl, char *subtitle);

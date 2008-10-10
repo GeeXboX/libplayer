@@ -249,6 +249,44 @@ mrl_metadata_sub_get (mrl_metadata_sub_t **sub, int id)
   return subtitle_p->next;
 }
 
+static mrl_metadata_audio_t *
+mrl_metadata_audio_new (void)
+{
+  mrl_metadata_audio_t *audio;
+
+  audio = calloc (1, sizeof (mrl_metadata_audio_t));
+
+  return audio;
+}
+
+mrl_metadata_audio_t *
+mrl_metadata_audio_get (mrl_metadata_audio_t **audio, int id)
+{
+  mrl_metadata_audio_t *a, *a_p;
+
+  if (!audio)
+    return NULL;
+
+  if (!*audio)
+  {
+    *audio = mrl_metadata_audio_new ();
+    return *audio;
+  }
+
+  a = *audio;
+  while (a)
+  {
+    if (a->id == id)
+      return a;
+    a_p = a;
+    a = a->next;
+  }
+
+  /* not found */
+  a_p->next = mrl_metadata_audio_new ();
+  return a_p->next;
+}
+
 mrl_metadata_t *
 mrl_metadata_new (mrl_resource_t res)
 {
@@ -333,6 +371,23 @@ mrl_metadata_sub_free (mrl_metadata_sub_t *sub)
   }
 }
 
+static void
+mrl_metadata_audio_free (mrl_metadata_audio_t *audio)
+{
+  mrl_metadata_audio_t *audio_n;
+
+  while (audio)
+  {
+    if (audio->name)
+      free (audio->name);
+    if (audio->lang)
+      free (audio->lang);
+    audio_n = audio->next;
+    free (audio);
+    audio = audio_n;
+  }
+}
+
 void
 mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res)
 {
@@ -356,6 +411,8 @@ mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res)
 
   if (meta->subs)
     mrl_metadata_sub_free (meta->subs);
+  if (meta->audio_streams)
+    mrl_metadata_audio_free (meta->audio_streams);
 
   if (meta->priv)
   {
@@ -1268,6 +1325,82 @@ mrl_sv_get_metadata_subtitles (player_t *player, mrl_t *mrl)
   while (sub)
   {
     sub = sub->next;
+    nb++;
+  }
+
+  return nb;
+}
+
+int
+mrl_sv_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
+                           uint32_t *id, char **name, char **lang)
+{
+  int i;
+  mrl_metadata_t *meta;
+  mrl_metadata_audio_t *audio;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return 0;
+
+  /* try to use internal mrl? */
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
+    return 0;
+
+  if (!mrl->meta)
+    mrl_retrieve_metadata (player, mrl);
+
+  meta = mrl->meta;
+  if (!meta)
+    return 0;
+
+  audio = meta->audio_streams;
+  for (i = 1; i < pos && audio; i++)
+    audio = audio->next;
+
+  /* subtitle unavailable */
+  if (i != pos || !audio)
+    return 0;
+
+  if (id)
+    *id = audio->id;
+  if (name)
+    *name = audio->name ? strdup (audio->name) : NULL;
+  if (lang)
+    *lang = audio->lang ? strdup (audio->lang) : NULL;
+  return 1;
+}
+
+uint32_t
+mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
+{
+  uint32_t nb = 0;
+  mrl_metadata_t *meta;
+  mrl_metadata_audio_t *audio;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return 0;
+
+  /* try to use internal mrl? */
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
+    return 0;
+
+  if (!mrl->meta)
+    mrl_retrieve_metadata (player, mrl);
+
+  meta = mrl->meta;
+  if (!meta)
+    return 0;
+
+  audio = meta->audio_streams;
+  while (audio)
+  {
+    audio = audio->next;
     nb++;
   }
 
