@@ -576,6 +576,33 @@ show_info (player_t *player, mrl_t *mrl)
     printf ("\n");
   }
 
+  /* Audio streams */
+
+  prop = mrl_get_metadata_audio_nb (player, mrl);
+  for (i = 1; i <= prop; i++)
+  {
+    int ret;
+    uint32_t id = 0;
+    char *name = NULL, *lang = NULL;
+
+    ret = mrl_get_metadata_audio (player, mrl, i, &id, &name, &lang);
+    if (!ret)
+      continue;
+
+    printf (" Meta Audio Stream %u", id);
+    if (name)
+    {
+      printf (" Name: %s", name);
+      free (name);
+    }
+    if (lang)
+    {
+      printf (" (%s)", lang);
+      free (lang);
+    }
+    printf ("\n");
+  }
+
   /* CDDA/CDDB */
 
   prop = mrl_get_metadata_cd (player, mrl, MRL_METADATA_CD_DISCID);
