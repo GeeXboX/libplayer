@@ -31,6 +31,17 @@
 
 #define MODULE_NAME "mrl"
 
+#define RETURN_NB_ELEMENTS(m) \
+  {                           \
+    uint32_t nb = 0;          \
+    while (m)                 \
+    {                         \
+      m = m->next;            \
+      nb++;                   \
+    }                         \
+    return nb;                \
+  }
+
 /*****************************************************************************/
 /*                          MRL Internal functions                           */
 /*****************************************************************************/
@@ -1300,9 +1311,7 @@ mrl_sv_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
 uint32_t
 mrl_sv_get_metadata_subtitles (player_t *player, mrl_t *mrl)
 {
-  uint32_t nb = 0;
   mrl_metadata_t *meta;
-  mrl_metadata_sub_t *sub;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -1321,14 +1330,7 @@ mrl_sv_get_metadata_subtitles (player_t *player, mrl_t *mrl)
   if (!meta)
     return 0;
 
-  sub = meta->subs;
-  while (sub)
-  {
-    sub = sub->next;
-    nb++;
-  }
-
-  return nb;
+  RETURN_NB_ELEMENTS(meta->subs);
 }
 
 int
@@ -1376,9 +1378,7 @@ mrl_sv_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
 uint32_t
 mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
 {
-  uint32_t nb = 0;
   mrl_metadata_t *meta;
-  mrl_metadata_audio_t *audio;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -1397,14 +1397,7 @@ mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
   if (!meta)
     return 0;
 
-  audio = meta->audio_streams;
-  while (audio)
-  {
-    audio = audio->next;
-    nb++;
-  }
-
-  return nb;
+  RETURN_NB_ELEMENTS(meta->audio_streams);
 }
 
 mrl_type_t
