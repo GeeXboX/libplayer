@@ -92,7 +92,6 @@ typedef enum player_event {
   PLAYER_EVENT_PLAYBACK_STOP,
   PLAYER_EVENT_PLAYBACK_FINISHED,
   PLAYER_EVENT_PLAYLIST_FINISHED,
-  PLAYER_EVENT_MRL_UPDATED
 } player_event_t;
 
 /** \brief Player verbosity. */
