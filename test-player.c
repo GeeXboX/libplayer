@@ -127,7 +127,8 @@ load_res_local (player_t *player)
   mrl_resource_local_args_t *args;
 
   printf ("Media to load (file): ");
-  while (!*file) {
+  while (!*file)
+  {
     fgets (file, sizeof (file), stdin);
     *(file + strlen (file) - 1) = '\0';
   }
@@ -139,7 +140,8 @@ load_res_local (player_t *player)
   args->location = strdup (file);
 
   mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
-  if (!mrl) {
+  if (!mrl)
+  {
     if (args->location)
       free (args->location);
     free (args);
@@ -163,7 +165,8 @@ load_res_cd (player_t *player)
     return NULL;
 
   printf ("Device: ");
-  while (!*device) {
+  while (!*device)
+  {
     fgets (device, sizeof (device), stdin);
     *(device + strlen (device) - 1) = '\0';
   }
@@ -186,7 +189,8 @@ load_res_cd (player_t *player)
   args->speed = (uint8_t) val;
 
   mrl = mrl_new (player, res, args);
-  if (!mrl) {
+  if (!mrl)
+  {
     if (args->device)
       free (args->device);
     free (args);
@@ -210,7 +214,8 @@ load_res_dvd (player_t *player)
     return NULL;
 
   printf ("Device: ");
-  while (!*device) {
+  while (!*device)
+  {
     fgets (device, sizeof (device), stdin);
     *(device + strlen (device) - 1) = '\0';
   }
@@ -233,7 +238,8 @@ load_res_dvd (player_t *player)
   args->angle = (uint8_t) val;
 
   mrl = mrl_new (player, res, args);
-  if (!mrl) {
+  if (!mrl)
+  {
     if (args->device)
       free (args->device);
     free (args);
@@ -257,7 +263,8 @@ load_res_vcd (player_t *player)
     return NULL;
 
   printf ("Device: ");
-  while (!*device) {
+  while (!*device)
+  {
     fgets (device, sizeof (device), stdin);
     *(device + strlen (device) - 1) = '\0';
   }
@@ -268,7 +275,8 @@ load_res_vcd (player_t *player)
   args->track_start = (uint8_t) val;
 
   mrl = mrl_new (player, res, args);
-  if (!mrl) {
+  if (!mrl)
+  {
     if (args->device)
       free (args->device);
     free (args);
@@ -291,7 +299,8 @@ load_res_network (player_t *player)
     return NULL;
 
   printf ("URL: ");
-  while (!*url) {
+  while (!*url)
+  {
     fgets (url, sizeof (url), stdin);
     *(url + strlen (url) - 1) = '\0';
   }
@@ -311,7 +320,8 @@ load_res_network (player_t *player)
   }
 
   mrl = mrl_new (player, res, args);
-  if (!mrl) {
+  if (!mrl)
+  {
     free (args->url);
     free (args);
     return NULL;
@@ -334,7 +344,8 @@ load_media (player_t *player)
   printf (" 5 - Video Compact Disc (VCD)\n");
   c = getch ();
 
-  switch (c) {
+  switch (c)
+  {
   default:
     return;
 
@@ -374,7 +385,8 @@ show_type (player_t *player, mrl_t *mrl)
   if (!mrl)
     printf ("unknown\n");
 
-  switch (mrl_get_type (player, mrl)) {
+  switch (mrl_get_type (player, mrl))
+  {
   case MRL_TYPE_AUDIO:
     printf ("audio\n");
     break;
@@ -451,7 +463,8 @@ show_info (player_t *player, mrl_t *mrl)
   printf (" Length: %.2f sec\n", (float) prop / 1000.0);
 
   codec = mrl_get_video_codec (player, mrl);
-  if (codec) {
+  if (codec)
+  {
     printf (" Video Codec: %s\n", codec);
     free (codec);
   }
@@ -486,7 +499,8 @@ show_info (player_t *player, mrl_t *mrl)
             PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV / prop);
 
   codec = mrl_get_audio_codec (player, mrl);
-  if (codec) {
+  if (codec)
+  {
     printf (" Audio Codec: %s\n", codec);
     free (codec);
   }
@@ -508,43 +522,50 @@ show_info (player_t *player, mrl_t *mrl)
     printf (" Audio Sample Rate: %i Hz\n", prop);
 
   meta = mrl_get_metadata (player, mrl, MRL_METADATA_TITLE);
-  if (meta) {
+  if (meta)
+  {
     printf (" Meta Title: %s\n", meta);
     free (meta);
   }
 
   meta = mrl_get_metadata (player, mrl, MRL_METADATA_ARTIST);
-  if (meta) {
+  if (meta)
+  {
     printf (" Meta Artist: %s\n", meta);
     free (meta);
   }
 
   meta = mrl_get_metadata (player, mrl, MRL_METADATA_GENRE);
-  if (meta) {
+  if (meta)
+  {
     printf (" Meta Genre: %s\n", meta);
     free (meta);
   }
 
   meta = mrl_get_metadata (player, mrl, MRL_METADATA_ALBUM);
-  if (meta) {
+  if (meta)
+  {
     printf (" Meta Album: %s\n", meta);
     free (meta);
   }
 
   meta = mrl_get_metadata (player, mrl, MRL_METADATA_YEAR);
-  if (meta) {
+  if (meta)
+  {
     printf (" Meta Year: %s\n", meta);
     free (meta);
   }
 
   meta = mrl_get_metadata (player, mrl, MRL_METADATA_TRACK);
-  if (meta) {
+  if (meta)
+  {
     printf (" Meta Track: %s\n", meta);
     free (meta);
   }
 
   meta = mrl_get_metadata (player, mrl, MRL_METADATA_COMMENT);
-  if (meta) {
+  if (meta)
+  {
     printf (" Meta Comment: %s\n", meta);
     free (meta);
   }
@@ -695,13 +716,15 @@ main (int argc, char **argv)
   };
 
   /* command line argument processing */
-  while (1) {
+  while (1)
+  {
     c = getopt_long (argc, argv, short_options, long_options, &index);
 
     if (c == EOF)
       break;
 
-    switch (c) {
+    switch (c)
+    {
     case 0:
       /* opt = long_options[index].name; */
       break;
@@ -788,8 +811,10 @@ main (int argc, char **argv)
     return -1;
 
   /* these arguments are files */
-  if (optind_bak < argc_bak) {
-    do {
+  if (optind_bak < argc_bak)
+  {
+    do
+    {
       mrl_t *mrl;
       mrl_resource_local_args_t *args;
 
@@ -811,12 +836,14 @@ main (int argc, char **argv)
   printf (TESTPLAYER_COMMANDS);
 
   /* main loop */
-  while (run) {
+  while (run)
+  {
     printf ("action> ");
     fflush (stdout);
     input = getch ();
 
-    switch (input) {
+    switch (input)
+    {
     case '#':
       pb_mode = pb_mode == PLAYER_PB_SINGLE ? PLAYER_PB_AUTO : PLAYER_PB_SINGLE;
       player_set_playback (player, pb_mode);
@@ -936,11 +963,13 @@ main (int argc, char **argv)
       load_media (player);
       break;
     case 'm':   /* set/unset mute */
-      if (player_audio_mute_get (player) != PLAYER_MUTE_ON) {
+      if (player_audio_mute_get (player) != PLAYER_MUTE_ON)
+      {
         player_audio_mute_set (player, PLAYER_MUTE_ON);
         printf ("MUTE\n");
       }
-      else {
+      else
+      {
         player_audio_mute_set (player, PLAYER_MUTE_OFF);
         printf ("UNMUTE\n");
       }
