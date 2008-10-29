@@ -214,7 +214,7 @@ $ECHO -e "  ~~~~~~~~~~~~~~~~~~~~~~~~"
 $ECHO -e ""
 
 TOTAL_W=0
-TOTAL=`expr $TOTAL_FCT + $TOTAL_AO + $TOTAL_VO + $TOTAL_RES`
+TOTAL=$((TOTAL_FCT + TOTAL_AO + TOTAL_VO + TOTAL_RES))
 I=0
 for wrapper in $WRAPPER_LIST;
 do
