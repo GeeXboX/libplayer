@@ -12,17 +12,17 @@ bargraph ()
   PERCENT=$1
 
   J=44
-  I=`expr $PERCENT \* $J / 100`
+  I=$((PERCENT * J / 100))
   BARGRAPH=""
   while [ $J -ne 0 ]
   do
     if [ $I -ne 0 ]; then
       BARGRAPH="$BARGRAPH#"
-      I=`expr $I - 1`
+      I=$((I - 1))
     else
       BARGRAPH="${BARGRAPH}."
     fi
-    J=`expr $J - 1`
+    J=$((J - 1))
   done
 }
 
@@ -38,7 +38,7 @@ varlist ()
   LIST=""
   for x in $VAR
   do
-    I=`expr $I + 1`
+    I=$((I + 1))
     if [ "$I" = "6" ]; then
       LIST="$LIST$PRE$x"
       NEWLINE=",\n\t\t\t\t"
@@ -60,8 +60,8 @@ imp_functions ()
   TOTAL=$2
 
   NB_OK=`grep -h -c "funcs->.*$NAME.*" $wrapper`
-  NB_NULL=`expr $TOTAL - $NB_OK`
-  PERCENT=`expr $NB_OK \* 100 / $TOTAL`
+  NB_NULL=$((TOTAL - NB_OK))
+  PERCENT=$((NB_OK * 100 / TOTAL))
 
   bargraph $PERCENT
   $ECHO -e "     $NAME\t: ($NB_OK)\t$PERCENT% \t[$BARGRAPH]"
@@ -77,7 +77,7 @@ sup_output ()
   PATTERN=$4
 
   NB_OK=`grep PLAYER_${TYPE}_ $wrapper | sed "s%$PATTERN%\1%" | sort -u | grep ".*" -c`
-  PERCENT=`expr $NB_OK \* 100 / $TOTAL`
+  PERCENT=$((NB_OK * 100 / TOTAL))
   VAR=`grep PLAYER_${TYPE}_ $wrapper | sed "s%$PATTERN%\1%" | sort -u`
 
   varlist "$VAR"
@@ -93,7 +93,7 @@ sup_resource ()
   PATTERN=$3
 
   NB_OK=`grep MRL_RESOURCE_ $wrapper | sed "s%$PATTERN%\1%" | sort -u | grep ".*" -c`
-  PERCENT=`expr $NB_OK \* 100 / $TOTAL`
+  PERCENT=$((NB_OK * 100 / TOTAL))
   VAR=`grep MRL_RESOURCE_ $wrapper | sed "s%$PATTERN%\1%" | sort -u`
 
   varlist "$VAR"
@@ -124,7 +124,7 @@ do
 
   eval TOTAL_$I=\$NB_OK
 
-  I=`expr $I + 1`
+  I=$((I + 1))
 done
 
 $ECHO -e ""
@@ -147,10 +147,10 @@ do
   sup_output $TYPE $NAME $TOTAL_AO $PATTERN
 
   eval TOT=\$TOTAL_$I
-  TOT=`expr $TOT + $NB_OK`
+  TOT=$((TOT + NB_OK))
   eval TOTAL_$I=\$TOT
 
-  I=`expr $I + 1`
+  I=$((I + 1))
 done
 
 $ECHO -e ""
@@ -173,10 +173,10 @@ do
   sup_output $TYPE $NAME $TOTAL_VO $PATTERN
 
   eval TOT=\$TOTAL_$I
-  TOT=`expr $TOT + $NB_OK`
+  TOT=$((TOT + NB_OK))
   eval TOTAL_$I=\$TOT
 
-  I=`expr $I + 1`
+  I=$((I + 1))
 done
 
 $ECHO -e ""
@@ -198,10 +198,10 @@ do
   sup_resource $NAME $TOTAL_RES $PATTERN
 
   eval TOT=\$TOTAL_$I
-  TOT=`expr $TOT + $NB_OK`
+  TOT=$((TOT + NB_OK))
   eval TOTAL_$I=\$TOT
 
-  I=`expr $I + 1`
+  I=$((I + 1))
 done
 
 $ECHO -e ""
@@ -220,19 +220,19 @@ for wrapper in $WRAPPER_LIST;
 do
   NAME=`$ECHO -e $wrapper | sed "s%.*_\(.*\)\.c%\1%"`
   eval TOTAL_S=\$TOTAL_$I
-  TOTAL_W=`expr $TOTAL_W + $TOTAL_S`
-  PERCENT=`expr $TOTAL_S \* 100 / $TOTAL`
+  TOTAL_W=$((TOTAL_W + TOTAL_S))
+  PERCENT=$((TOTAL_S * 100 / TOTAL))
 
   bargraph $PERCENT
   $ECHO -e "     $NAME\t: ($TOTAL_S)\t$PERCENT% \t[$BARGRAPH]"
 
-  I=`expr $I + 1`
+  I=$((I + 1))
 done
 
 $ECHO -e ""
 $ECHO -e "   Maximum: $TOTAL"
 
-PERCENT=`expr $TOTAL_W \* 100 / \( $TOTAL \* $I \)`
+PERCENT=$((TOTAL_W * 100 / (TOTAL * I)))
 bargraph $PERCENT
 $ECHO -e ""
 $ECHO -e ""
