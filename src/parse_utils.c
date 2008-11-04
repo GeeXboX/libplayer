@@ -55,3 +55,17 @@ count_nb_dec (int dec)
 
   return size;
 }
+
+char *
+my_strrstr (const char *buf, const char *str)
+{
+  char *ptr, *res = NULL;
+
+  while ((ptr = strstr (buf, str)))
+  {
+    res = ptr;
+    buf = ptr + strlen (str);
+  }
+
+  return res;
+}

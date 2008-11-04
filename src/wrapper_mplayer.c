@@ -776,7 +776,7 @@ thread_fifo (void *arg)
     {
       const char *it;
 
-      if ((it = strstr (buffer, "--language=")))
+      if ((it = my_strrstr (buffer, "--language=")))
       {
         if (strncmp (it + 11, "en", 2) &&
             strncmp (it + 11, "all", 3))
