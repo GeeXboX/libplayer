@@ -170,7 +170,7 @@ typedef struct mplayer_s {
  * Paused mode is lost without using pausing_keep. But this causes the media
  * to advance a bit.
  *
- * NOTE: Only used with get/set_property.
+ * NOTE: Only used with get/set_property and switch_ratio.
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
@@ -1124,7 +1124,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_SWITCH_RATIO:
     if (state_cmd == ITEM_ON && value)
-      send_to_slave (player, "%s %.2f", command, value->f_val);
+      send_to_slave (player, SLAVE_CMD_PREFIX "%s %.2f", command, value->f_val);
     break;
 
   case SLAVE_SWITCH_TITLE:
