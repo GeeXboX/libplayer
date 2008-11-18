@@ -172,7 +172,7 @@ typedef struct mplayer_s {
  *
  * NOTE: Only used with get/set_property.
  */
-#define PROPERTY_CMD_PREFIX "pausing_keep "
+#define SLAVE_CMD_PREFIX "pausing_keep "
 
 /*****************************************************************************/
 /*                              Slave Commands                               */
@@ -857,7 +857,7 @@ slave_get_property (player_t *player, slave_property_t property)
   if (!command || state != ITEM_ON)
     return;
 
-  send_to_slave (player, PROPERTY_CMD_PREFIX "%s %s", command, prop);
+  send_to_slave (player, SLAVE_CMD_PREFIX "%s %s", command, prop);
 }
 
 static char *
@@ -985,7 +985,7 @@ slave_set_property (player_t *player, slave_property_t property,
   if (!command || state != ITEM_ON)
     return;
 
-  snprintf (cmd, sizeof (cmd), PROPERTY_CMD_PREFIX "%s %s", command, prop);
+  snprintf (cmd, sizeof (cmd), SLAVE_CMD_PREFIX "%s %s", command, prop);
 
   switch (property)
   {
