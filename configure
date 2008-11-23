@@ -719,6 +719,7 @@ fi
 #################################################
 if test "$wrapper_mplayer" = "auto"; then
   wrapper_mplayer="no"
+  echolog "Checking for MPlayer ..."
   which mplayer 2>&1 > /dev/null
   if [ "$?" = 0 ]; then
     wrapper_mplayer="yes"
