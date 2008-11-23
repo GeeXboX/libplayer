@@ -231,6 +231,7 @@ typedef enum slave_property {
   PROPERTY_METADATA,
   PROPERTY_METADATA_ALBUM,
   PROPERTY_METADATA_ARTIST,
+  PROPERTY_METADATA_AUTHOR,
   PROPERTY_METADATA_COMMENT,
   PROPERTY_METADATA_GENRE,
   PROPERTY_METADATA_NAME,
@@ -264,6 +265,7 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_METADATA]         = {"metadata",         ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_METADATA_ALBUM]   = {"metadata/album",   ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_METADATA_ARTIST]  = {"metadata/artist",  ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_METADATA_AUTHOR]  = {"metadata/author",  ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_METADATA_COMMENT] = {"metadata/comment", ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_METADATA_GENRE]   = {"metadata/genre",   ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_METADATA_NAME]    = {"metadata/name",    ITEM_ON,  ITEM_OFF, NULL},
@@ -1518,6 +1520,8 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
       property = PROPERTY_METADATA_NAME;
     else if (!strcasecmp (parse_field (it), "artist"))
       property = PROPERTY_METADATA_ARTIST;
+    else if (!strcasecmp (parse_field (it), "author"))
+      property = PROPERTY_METADATA_AUTHOR;
     else if (!strcasecmp (parse_field (it), "genre"))
       property = PROPERTY_METADATA_GENRE;
     else if (!strcasecmp (parse_field (it), "album"))
@@ -1549,6 +1553,7 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
     break;
 
   case PROPERTY_METADATA_ARTIST:
+  case PROPERTY_METADATA_AUTHOR:
     if (meta->artist)
       free (meta->artist);
     meta->artist = strdup (parse_field (it));
