@@ -721,10 +721,12 @@ if test "$wrapper_mplayer" = "auto"; then
   wrapper_mplayer="no"
   which mplayer 2>&1 > /dev/null
   if [ "$?" = 0 ]; then
-    add_extracflags -DHAVE_MPLAYER
-    add_extralibs -lm
     wrapper_mplayer="yes"
   fi
+fi
+if test "$wrapper_mplayer" = "yes"; then
+  add_extracflags -DHAVE_MPLAYER
+  add_extralibs -lm
 fi
 
 #################################################
