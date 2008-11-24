@@ -162,6 +162,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
 
   if (!player->funcs || !player->priv)
   {
+    plog (player, PLAYER_MSG_ERROR, MODULE_NAME, "no wrapper registered");
     player_uninit (player);
     return NULL;
   }
