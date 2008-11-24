@@ -891,9 +891,6 @@ slave_result (slave_property_t property, player_t *player)
 
   mplayer = (mplayer_t *) player->priv;
 
-  if (!mplayer || !mplayer->fifo_in || !mplayer->fifo_out)
-    return NULL;
-
   if (get_mplayer_status (player) == MPLAYER_IS_DEAD)
     return NULL;
 
@@ -1077,9 +1074,6 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     return;
 
   mplayer = (mplayer_t *) player->priv;
-
-  if (!mplayer)
-    return;
 
   if (get_mplayer_status (player) == MPLAYER_IS_DEAD)
     return;
