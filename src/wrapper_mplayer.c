@@ -2846,8 +2846,6 @@ mplayer_uninit (player_t *player)
     /* wait the death of MPlayer */
     waitpid (mplayer->pid, NULL, 0);
 
-    mplayer->status = MPLAYER_IS_DEAD;
-
     close (mplayer->pipe_in[1]);
     close (mplayer->pipe_out[0]);
 
