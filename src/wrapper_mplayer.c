@@ -812,6 +812,11 @@ thread_fifo (void *arg)
     }
   }
 
+#ifdef USE_X11
+  if (player->x11)
+    x11_unmap (player);
+#endif /* USE_X11 */
+
   pthread_mutex_lock (&mplayer->mutex_status);
   mplayer->status = MPLAYER_IS_DEAD;
   pthread_mutex_unlock (&mplayer->mutex_status);
