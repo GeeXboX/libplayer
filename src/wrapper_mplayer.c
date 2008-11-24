@@ -458,6 +458,21 @@ check_range (player_t *player,
   return 1;
 }
 
+static mplayer_status_t
+get_mplayer_status (player_t *player)
+{
+  mplayer_t *mplayer = player->priv;
+  mplayer_status_t status;
+
+  if (!mplayer)
+    return MPLAYER_IS_DEAD;
+
+  pthread_mutex_lock (&mplayer->mutex_status);
+  status = mplayer->status;
+  pthread_mutex_unlock (&mplayer->mutex_status);
+  return status;
+}
+
 /*****************************************************************************/
 /*                          MPlayer messages Parser                          */
 /*****************************************************************************/
@@ -879,6 +894,9 @@ slave_result (slave_property_t property, player_t *player)
   if (!mplayer || !mplayer->fifo_in || !mplayer->fifo_out)
     return NULL;
 
+  if (get_mplayer_status (player) == MPLAYER_IS_DEAD)
+    return NULL;
+
   prop = get_prop (player, property, &state);
   if (!prop || state != ITEM_ON)
     return NULL;
@@ -974,6 +992,9 @@ slave_set_property (player_t *player, slave_property_t property,
   if (!player)
     return;
 
+  if (get_mplayer_status (player) == MPLAYER_IS_DEAD)
+    return;
+
   prop = get_prop (player, property, &state);
   if (!prop || state != ITEM_ON)
   {
@@ -1058,6 +1079,9 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   mplayer = (mplayer_t *) player->priv;
 
   if (!mplayer)
+    return;
+
+  if (get_mplayer_status (player) == MPLAYER_IS_DEAD)
     return;
 
   command = get_cmd (player, cmd, &state_cmd);
