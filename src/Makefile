@@ -74,12 +74,14 @@ clean:
 	rm -f .depend
 
 install: $(BUILD_RULES)
+	$(INSTALL) -d $(libdir)
 	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir); \
 	if [ $(BUILD_SHARED) = yes ]; then \
 	  $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(libdir); \
 	  $(LN) -sf $(SHARED_LIBNAME_VERSION) $(libdir)/$(SHARED_LIBNAME_MAJOR); \
 	  $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(libdir)/$(SHARED_LIBNAME); \
 	fi
+	$(INSTALL) -d $(includedir)
 	$(INSTALL) -c -m 644 player.h $(includedir)
 
 uninstall:

@@ -51,6 +51,7 @@ distclean: clean
 
 install: install-pkgconfig
 	$(MAKE) -C src install
+	$(INSTALL) -d $(bindir)
 	$(INSTALL) -c -m 755 $(LIBTEST) $(bindir)
 	$(INSTALL) -c -m 755 $(TESTPLAYER) $(bindir)
 
