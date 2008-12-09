@@ -825,6 +825,45 @@ mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   mrl_metadata_plog (player, mrl);
 }
 
+static char *
+mrl_get_codec (player_t *player, mrl_t *mrl, mrl_type_t type)
+{
+  mrl_properties_t *prop;
+
+  if (!player)
+    return NULL;
+
+  /* try to use internal mrl? */
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
+    return NULL;
+
+  if (!mrl->prop)
+    mrl_retrieve_properties (player, mrl);
+
+  prop = mrl->prop;
+  if (!prop)
+    return NULL;
+
+  switch (type)
+  {
+  case MRL_TYPE_AUDIO:
+  {
+    mrl_properties_audio_t *audio = prop->audio;
+    return audio && audio->codec ? strdup (audio->codec) : NULL;
+  }
+
+  case MRL_TYPE_VIDEO:
+  {
+    mrl_properties_video_t *video = prop->video;
+    return video && video->codec ? strdup (video->codec) : NULL;
+  }
+
+  default:
+    return NULL;
+  }
+}
+
 /*****************************************************************************/
 /*                   MRL Internal (Supervisor) functions                     */
 /*****************************************************************************/
@@ -973,55 +1012,17 @@ mrl_sv_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
 char *
 mrl_sv_get_audio_codec (player_t *player, mrl_t *mrl)
 {
-  mrl_properties_t *prop;
-  mrl_properties_audio_t *audio;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  if (!player)
-    return NULL;
-
-  /* try to use internal mrl? */
-  mrl_use_internal (player, &mrl);
-  if (!mrl)
-    return NULL;
-
-  if (!mrl->prop)
-    mrl_retrieve_properties (player, mrl);
-
-  prop = mrl->prop;
-  if (!prop)
-    return NULL;
-
-  audio = prop->audio;
-  return audio && audio->codec ? strdup (audio->codec) : NULL;
+  return mrl_get_codec (player, mrl, MRL_TYPE_AUDIO);
 }
 
 char *
 mrl_sv_get_video_codec (player_t *player, mrl_t *mrl)
 {
-  mrl_properties_t *prop;
-  mrl_properties_video_t *video;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
-  if (!player)
-    return NULL;
-
-  /* try to use internal mrl? */
-  mrl_use_internal (player, &mrl);
-  if (!mrl)
-    return NULL;
-
-  if (!mrl->prop)
-    mrl_retrieve_properties (player, mrl);
-
-  prop = mrl->prop;
-  if (!prop)
-    return NULL;
-
-  video = prop->video;
-  return video && video->codec ? strdup (video->codec) : NULL;
+  return mrl_get_codec (player, mrl, MRL_TYPE_VIDEO);
 }
 
 off_t
