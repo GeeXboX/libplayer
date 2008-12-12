@@ -112,8 +112,8 @@ player_sv_x_window_set_properties (player_t *player,
 #ifdef USE_X11
   if (flags == PLAYER_X_WINDOW_AUTO)
   {
-    f = PLAYER_X_WINDOW_X | PLAYER_X_WINDOW_Y |
-        PLAYER_X_WINDOW_W | PLAYER_X_WINDOW_H;
+    f = X11_PROPERTY_X | X11_PROPERTY_Y |
+        X11_PROPERTY_W | X11_PROPERTY_H;
     x = 0;
     y = 0;
     w = 0;
