@@ -34,9 +34,10 @@
 #define RETURN_NB_ELEMENTS(m) \
   {                           \
     uint32_t nb = 0;          \
-    while (m)                 \
+    typeof (m) _m = (m);      \
+    while (_m)                \
     {                         \
-      m = m->next;            \
+      _m = _m->next;          \
       nb++;                   \
     }                         \
     return nb;                \
@@ -1328,7 +1329,6 @@ uint32_t
 mrl_sv_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
-  mrl_metadata_sub_t *sub;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -1347,8 +1347,7 @@ mrl_sv_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl)
   if (!meta)
     return 0;
 
-  sub = meta->subs;
-  RETURN_NB_ELEMENTS(sub);
+  RETURN_NB_ELEMENTS(meta->subs);
 }
 
 int
@@ -1397,7 +1396,6 @@ uint32_t
 mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
-  mrl_metadata_audio_t *audio;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -1416,8 +1414,7 @@ mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
   if (!meta)
     return 0;
 
-  audio = meta->audio_streams;
-  RETURN_NB_ELEMENTS(audio);
+  RETURN_NB_ELEMENTS(meta->audio_streams);
 }
 
 mrl_type_t
