@@ -1130,7 +1130,8 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_SEEK:
     if (state_cmd == ITEM_ON && value)
-      send_to_slave (player, SLAVE_CMD_PREFIX "%s %i %i", command, value->i_val, opt);
+      send_to_slave (player,
+                     SLAVE_CMD_PREFIX "%s %i %i", command, value->i_val, opt);
     break;
 
   case SLAVE_STOP:
