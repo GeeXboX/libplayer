@@ -456,9 +456,15 @@ player_sv_playback_pause (player_t *player)
     return;
 
   if (player->state == PLAYER_STATE_RUNNING)
+  {
     player->state = PLAYER_STATE_PAUSE;
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_PAUSE, NULL);
+  }
   else
+  {
     player->state = PLAYER_STATE_RUNNING;
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_UNPAUSE, NULL);
+  }
 }
 
 void
