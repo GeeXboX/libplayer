@@ -289,6 +289,7 @@ typedef struct mrl_resource_videodisc_args_s {
 typedef struct mrl_resource_tv_args_s {
   char *device;             /*  NO           NO           NO           NO   */
   char *driver;             /*  NO           NO           NO           NO   */
+  char *channel;            /*  NO           NO           NO           NO   */
   uint8_t input;            /*  NO           NO           NO           NO   */
   int width;                /*  NO           NO           NO           NO   */
   int height;               /*  NO           NO           NO           NO   */

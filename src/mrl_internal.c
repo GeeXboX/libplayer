@@ -493,6 +493,8 @@ mrl_resource_tv_free (mrl_resource_tv_args_t *args)
     free (args->device);
   if (args->driver)
     free (args->driver);
+  if (args->channel)
+    free (args->channel);
   if (args->output_format)
     free (args->output_format);
   if (args->norm)
