@@ -1434,7 +1434,7 @@ void player_tv_channel_select (player_t *player, int channel);
  * It stays on the same if no previous channel exists.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.
@@ -1447,7 +1447,7 @@ void player_tv_channel_prev (player_t *player);
  * It stays on the same if no next channel exists.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.

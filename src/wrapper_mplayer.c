@@ -170,7 +170,8 @@ typedef struct mplayer_s {
  * Paused mode is lost without using pausing_keep. But this causes the media
  * to advance a bit.
  *
- * NOTE: Only used with get/set_property, seek, switch_ratio and tv_set_norm.
+ * NOTE: Only used with get/set_property, seek, switch_ratio, tv_set_norm
+ *       and tv_step_channel.
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
@@ -192,6 +193,7 @@ typedef enum slave_cmd {
   SLAVE_SWITCH_RATIO, /* switch_ratio float */
   SLAVE_SWITCH_TITLE, /* switch_title [int] */
   SLAVE_TV_SET_NORM,  /* tv_set_norm string */
+  SLAVE_TV_STEP_CHANNEL, /* tv_step_channel int */
 } slave_cmd_t;
 
 static const item_list_t g_slave_cmds[] = {
@@ -207,6 +209,7 @@ static const item_list_t g_slave_cmds[] = {
   [SLAVE_SWITCH_RATIO] = {"switch_ratio", ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SWITCH_TITLE] = {"switch_title", ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_TV_SET_NORM]  = {"tv_set_norm",  ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_TV_STEP_CHANNEL] = {"tv_step_channel", ITEM_ON,       ITEM_OFF, NULL},
   [SLAVE_UNKNOWN]      = {NULL,           ITEM_OFF,            ITEM_OFF, NULL}
 };
 /*                              ^                   ^             ^       ^
@@ -1163,6 +1166,11 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   case SLAVE_TV_SET_NORM:
     if (state_cmd == ITEM_ON && value && value->s_val)
       send_to_slave (player, SLAVE_CMD_PREFIX "%s %s", command, value->s_val);
+    break;
+
+  case SLAVE_TV_STEP_CHANNEL:
+    if (state_cmd == ITEM_ON && value)
+      send_to_slave (player, SLAVE_CMD_PREFIX "%s %i", command, value->i_val);
     break;
 
   default:
@@ -3831,6 +3839,40 @@ mplayer_dvd_title_set (player_t *player, int value)
   slave_cmd_int (player, SLAVE_SWITCH_TITLE, value);
 }
 
+static void
+mplayer_tv_channel_prev (player_t *player)
+{
+  mrl_resource_t res;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "tv_channel_prev");
+
+  if (!player)
+    return;
+
+  res = mrl_sv_get_resource (player, NULL);
+  if (res == MRL_RESOURCE_TV)
+    slave_cmd_int (player, SLAVE_TV_STEP_CHANNEL, 0);
+  else /* MRL_RESOURCE_DVB */
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "unsupported with DVB");
+}
+
+static void
+mplayer_tv_channel_next (player_t *player)
+{
+  mrl_resource_t res;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "tv_channel_next");
+
+  if (!player)
+    return;
+
+  res = mrl_sv_get_resource (player, NULL);
+  if (res == MRL_RESOURCE_TV)
+    slave_cmd_int (player, SLAVE_TV_STEP_CHANNEL, 1);
+  else /* MRL_RESOURCE_DVB */
+    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "unsupported with DVB");
+}
+
 /*****************************************************************************/
 /*                           Public Wrapper API                              */
 /*****************************************************************************/
@@ -3895,8 +3937,8 @@ register_functions_mplayer (void)
   funcs->dvd_title_next     = NULL;
 
   funcs->tv_channel_set     = NULL;
-  funcs->tv_channel_prev    = NULL;
-  funcs->tv_channel_next    = NULL;
+  funcs->tv_channel_prev    = mplayer_tv_channel_prev;
+  funcs->tv_channel_next    = mplayer_tv_channel_next;
 
   funcs->radio_channel_set  = NULL;
   funcs->radio_channel_prev = NULL;
