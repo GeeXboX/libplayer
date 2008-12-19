@@ -59,6 +59,7 @@
   " 2/1 : 5s forward/backward\n" \
   " 3/4 : previous/next audio track\n" \
   " 5/6 : previous/next subtitle\n" \
+  " 7/8 : previous/next TV analog channel\n" \
   " u   : toggle subtitle visibility\n" \
   " a   : change aspect ratio (original/16:9)\n" \
   " l   : load a stream in the playlist\n" \
@@ -984,6 +985,14 @@ main (int argc, char **argv)
     case '6':
       player_subtitle_next (player);
       printf ("SUBTITLE NEXT\n");
+      break;
+    case '7':
+      player_tv_channel_prev (player);
+      printf ("TV CHANNEL PREV\n");
+      break;
+    case '8':
+      player_tv_channel_next (player);
+      printf ("TV CHANNEL NEXT\n");
       break;
     case '9':   /* decrease volume */
       if (--volume < 0)
