@@ -76,9 +76,9 @@ sup_output ()
   TOTAL=$3
   PATTERN=$4
 
-  NB_OK=`grep PLAYER_${TYPE}_ $wrapper | sed "s%$PATTERN%\1%" | sort -u | grep ".*" -c`
-  PERCENT=$((NB_OK * 100 / TOTAL))
   VAR=`grep PLAYER_${TYPE}_ $wrapper | sed "s%$PATTERN%\1%" | sort -u`
+  NB_OK=`echo $VAR | sed "s% %\n%g" | grep ".*" -c`
+  PERCENT=$((NB_OK * 100 / TOTAL))
 
   varlist "$VAR"
   $ECHO -e "     $NAME\t: ($NB_OK)\t$PERCENT%\t$LIST"
@@ -92,9 +92,9 @@ sup_resource ()
   TOTAL=$2
   PATTERN=$3
 
-  NB_OK=`grep MRL_RESOURCE_ $wrapper | sed "s%$PATTERN%\1%" | sort -u | grep ".*" -c`
-  PERCENT=$((NB_OK * 100 / TOTAL))
   VAR=`grep MRL_RESOURCE_ $wrapper | sed "s%$PATTERN%\1%" | sort -u`
+  NB_OK=`echo $VAR | sed "s% %\n%g" | grep ".*" -c`
+  PERCENT=$((NB_OK * 100 / TOTAL))
 
   varlist "$VAR"
   $ECHO -e "     $NAME\t: ($NB_OK)\t$PERCENT%\t$LIST"
