@@ -241,7 +241,7 @@ typedef enum mrl_resource {
   MRL_RESOURCE_DVB,         /*  NO           NO           NO           NO   */
   MRL_RESOURCE_PVR,         /*  NO           NO           NO           NO   */
   MRL_RESOURCE_RADIO,       /*  NO           NO           NO           NO   */
-  MRL_RESOURCE_TV,          /*  NO           NO           NO           NO   */
+  MRL_RESOURCE_TV,          /*  NO           YES          NO           NO   */
 
   /* Network Streams */
   MRL_RESOURCE_FTP,         /*  NO           YES          NO           NO   */
@@ -289,13 +289,13 @@ typedef struct mrl_resource_videodisc_args_s {
 typedef struct mrl_resource_tv_args_s {
   char *device;             /*  NO           NO           NO           NO   */
   char *driver;             /*  NO           NO           NO           NO   */
-  char *channel;            /*  NO           NO           NO           NO   */
-  uint8_t input;            /*  NO           NO           NO           NO   */
+  char *channel;            /*  NO           YES          NO           NO   */
+  uint8_t input;            /*  NO           YES          NO           NO   */
   int width;                /*  NO           NO           NO           NO   */
   int height;               /*  NO           NO           NO           NO   */
   int fps;                  /*  NO           NO           NO           NO   */
   char *output_format;      /*  NO           NO           NO           NO   */
-  char *norm;               /*  NO           NO           NO           NO   */
+  char *norm;               /*  NO           YES          NO           NO   */
 } mrl_resource_tv_args_t;
 
 /** \brief Arguments for network streams. */

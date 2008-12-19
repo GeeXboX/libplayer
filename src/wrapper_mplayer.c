@@ -170,7 +170,7 @@ typedef struct mplayer_s {
  * Paused mode is lost without using pausing_keep. But this causes the media
  * to advance a bit.
  *
- * NOTE: Only used with get/set_property, seek and switch_ratio.
+ * NOTE: Only used with get/set_property, seek, switch_ratio and tv_set_norm.
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
@@ -191,6 +191,7 @@ typedef enum slave_cmd {
   SLAVE_SUB_LOAD,     /* sub_load string */
   SLAVE_SWITCH_RATIO, /* switch_ratio float */
   SLAVE_SWITCH_TITLE, /* switch_title [int] */
+  SLAVE_TV_SET_NORM,  /* tv_set_norm string */
 } slave_cmd_t;
 
 static const item_list_t g_slave_cmds[] = {
@@ -205,6 +206,7 @@ static const item_list_t g_slave_cmds[] = {
   [SLAVE_SUB_LOAD]     = {"sub_load",     ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SWITCH_RATIO] = {"switch_ratio", ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SWITCH_TITLE] = {"switch_title", ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_TV_SET_NORM]  = {"tv_set_norm",  ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_UNKNOWN]      = {NULL,           ITEM_OFF,            ITEM_OFF, NULL}
 };
 /*                              ^                   ^             ^       ^
@@ -1158,6 +1160,11 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
       send_to_slave (player, "%s %i", command, value->i_val);
     break;
 
+  case SLAVE_TV_SET_NORM:
+    if (state_cmd == ITEM_ON && value && value->s_val)
+      send_to_slave (player, SLAVE_CMD_PREFIX "%s %s", command, value->s_val);
+    break;
+
   default:
     plog (player, PLAYER_MSG_ERROR,
           MODULE_NAME, "what to do with the slave command '%s'?", command);
@@ -1374,6 +1381,29 @@ mp_resource_get_uri_vcd (const char *protocol,
 }
 
 static char *
+mp_resource_get_uri_tv (const char *protocol, mrl_resource_tv_args_t *args)
+{
+  char *uri;
+  size_t size;
+
+  if (!args || !protocol)
+    return NULL;
+
+  size = strlen (protocol);
+
+  if (args->channel)
+    size += strlen (args->channel);
+
+  size += count_nb_dec (args->input) + 2;
+  uri = malloc (size);
+  if (uri)
+    snprintf (uri, size, "%s%s/%i",
+              protocol, args->channel ? args->channel : "", args->input);
+
+  return uri;
+}
+
+static char *
 mp_resource_get_uri_network (const char *protocol,
                              mrl_resource_network_args_t *args)
 {
@@ -1433,6 +1463,9 @@ mp_resource_get_uri (mrl_t *mrl)
     [MRL_RESOURCE_DVDNAV]   = "dvdnav://",
     [MRL_RESOURCE_VCD]      = "vcd://",
 
+    /* Radio/Television */
+    [MRL_RESOURCE_TV]       = "tv://",
+
     /* Network Streams */
     [MRL_RESOURCE_FTP]      = "ftp://",
     [MRL_RESOURCE_HTTP]     = "http://",
@@ -1465,6 +1498,9 @@ mp_resource_get_uri (mrl_t *mrl)
   case MRL_RESOURCE_VCD: /* vcd://track_start/device */
     return mp_resource_get_uri_vcd (protocols[mrl->resource], mrl->priv);
 
+  case MRL_RESOURCE_TV: /* tv://channel/input */
+    return mp_resource_get_uri_tv (protocols[mrl->resource], mrl->priv);
+
   case MRL_RESOURCE_FTP:  /* ftp://username:password@url   */
   case MRL_RESOURCE_HTTP: /* http://username:password@url  */
   case MRL_RESOURCE_MMS:  /* mms://username:password@url   */
@@ -1490,6 +1526,16 @@ mp_resource_load_args (player_t *player, mrl_t *mrl)
 
   switch (mrl->resource)
   {
+  /* device, driver, width, height, fps, output_format, norm */
+  case MRL_RESOURCE_TV:
+  {
+    mrl_resource_tv_args_t *args = mrl->priv;
+
+    if (args->norm)
+      slave_cmd_str (player, SLAVE_TV_SET_NORM, args->norm);
+    break;
+  }
+
   /* speed, angle, audio_lang, sub_lang, sub_cc */
   case MRL_RESOURCE_DVD:
   case MRL_RESOURCE_DVDNAV:
@@ -2940,6 +2986,7 @@ mplayer_mrl_supported_res (player_t *player, mrl_resource_t res)
   case MRL_RESOURCE_DVD:
   case MRL_RESOURCE_DVDNAV:
   case MRL_RESOURCE_VCD:
+  case MRL_RESOURCE_TV:
   case MRL_RESOURCE_FTP:
   case MRL_RESOURCE_HTTP:
   case MRL_RESOURCE_MMS:
