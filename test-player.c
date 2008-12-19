@@ -287,6 +287,56 @@ load_res_vcd (player_t *player)
 }
 
 static mrl_t *
+load_res_tv (player_t *player)
+{
+  int val;
+  char str[256] = "";
+  mrl_t *mrl;
+  mrl_resource_tv_args_t *args;
+  mrl_resource_t res = MRL_RESOURCE_TV;
+
+  args = calloc (1, sizeof (mrl_resource_tv_args_t));
+  if (!args)
+    return NULL;
+
+  printf ("Channel ('null' to disable): ");
+  while (!*str)
+  {
+    fgets (str, sizeof (str), stdin);
+    *(str + strlen (str) - 1) = '\0';
+  }
+  if (strcmp (str, "null"))
+    args->channel = strdup (str);
+  *str = '\0';
+
+  printf ("Input: ");
+  scanf ("%u", &val);
+  args->input = (uint8_t) val;
+
+  printf ("Norm (null, PAL, SECAM, NTSC, ...): ");
+  while (!*str)
+  {
+    fgets (str, sizeof (str), stdin);
+    *(str + strlen (str) - 1) = '\0';
+  }
+  if (strcmp (str, "null"))
+    args->norm = strdup (str);
+
+  mrl = mrl_new (player, res, args);
+  if (!mrl)
+  {
+    if (args->channel)
+      free (args->channel);
+    if (args->norm)
+      free (args->norm);
+    free (args);
+    return NULL;
+  }
+
+  return mrl;
+}
+
+static mrl_t *
 load_res_network (player_t *player)
 {
   char url[4096] = "";
@@ -342,6 +392,7 @@ load_media (player_t *player)
   printf (" 3 - Digital Versatile Disc (Video)\n");
   printf (" 4 - Network stream (HTTP/MMS)\n");
   printf (" 5 - Video Compact Disc (VCD)\n");
+  printf (" 6 - Television analog (TV)\n");
   c = getch ();
 
   switch (c)
@@ -367,6 +418,10 @@ load_media (player_t *player)
 
   case '5':
     mrl = load_res_vcd (player);
+    break;
+
+  case '6':
+    mrl = load_res_tv (player);
     break;
   }
 
