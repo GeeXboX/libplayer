@@ -181,42 +181,42 @@ typedef struct mplayer_s {
 
 typedef enum slave_cmd {
   SLAVE_UNKNOWN = 0,
-  SLAVE_DVDNAV,       /* dvdnav int */
-  SLAVE_GET_PROPERTY, /* get_property string */
-  SLAVE_LOADFILE,     /* loadfile string [int] */
-  SLAVE_PAUSE,        /* pause */
-  SLAVE_QUIT,         /* quit [int] */
-  SLAVE_SEEK,         /* seek float [int] */
-  SLAVE_SET_PROPERTY, /* set_property string string */
-  SLAVE_STOP,         /* stop */
-  SLAVE_SUB_LOAD,     /* sub_load string */
-  SLAVE_SWITCH_RATIO, /* switch_ratio float */
-  SLAVE_SWITCH_TITLE, /* switch_title [int] */
-  SLAVE_TV_SET_NORM,  /* tv_set_norm string */
+  SLAVE_DVDNAV,          /* dvdnav int */
+  SLAVE_GET_PROPERTY,    /* get_property string */
+  SLAVE_LOADFILE,        /* loadfile string [int] */
+  SLAVE_PAUSE,           /* pause */
+  SLAVE_QUIT,            /* quit [int] */
+  SLAVE_SEEK,            /* seek float [int] */
+  SLAVE_SET_PROPERTY,    /* set_property string string */
+  SLAVE_STOP,            /* stop */
+  SLAVE_SUB_LOAD,        /* sub_load string */
+  SLAVE_SWITCH_RATIO,    /* switch_ratio float */
+  SLAVE_SWITCH_TITLE,    /* switch_title [int] */
+  SLAVE_TV_SET_NORM,     /* tv_set_norm string */
   SLAVE_TV_STEP_CHANNEL, /* tv_step_channel int */
 } slave_cmd_t;
 
 static const item_list_t g_slave_cmds[] = {
-  [SLAVE_DVDNAV]       = {"dvdnav",       ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_GET_PROPERTY] = {"get_property", ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_LOADFILE]     = {"loadfile",     ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_PAUSE]        = {"pause",        ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_QUIT]         = {"quit",         ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SEEK]         = {"seek",         ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SET_PROPERTY] = {"set_property", ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_STOP]         = {"stop",         ITEM_ON | ITEM_HACK, ITEM_OFF, NULL},
-  [SLAVE_SUB_LOAD]     = {"sub_load",     ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SWITCH_RATIO] = {"switch_ratio", ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SWITCH_TITLE] = {"switch_title", ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_TV_SET_NORM]  = {"tv_set_norm",  ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_TV_STEP_CHANNEL] = {"tv_step_channel", ITEM_ON,       ITEM_OFF, NULL},
-  [SLAVE_UNKNOWN]      = {NULL,           ITEM_OFF,            ITEM_OFF, NULL}
+  [SLAVE_DVDNAV]          = {"dvdnav",          ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_GET_PROPERTY]    = {"get_property",    ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_LOADFILE]        = {"loadfile",        ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_PAUSE]           = {"pause",           ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_QUIT]            = {"quit",            ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SEEK]            = {"seek",            ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SET_PROPERTY]    = {"set_property",    ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_STOP]            = {"stop",            ITEM_ON | ITEM_HACK, ITEM_OFF, NULL},
+  [SLAVE_SUB_LOAD]        = {"sub_load",        ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SWITCH_RATIO]    = {"switch_ratio",    ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SWITCH_TITLE]    = {"switch_title",    ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_TV_SET_NORM]     = {"tv_set_norm",     ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_TV_STEP_CHANNEL] = {"tv_step_channel", ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_UNKNOWN]         = {NULL,              ITEM_OFF,            ITEM_OFF, NULL}
 };
-/*                              ^                   ^             ^       ^
- * slave command (const) -------'                   |             |       |
- * state in libplayer (const flags) ----------------'             |       |
- * state in MPlayer (set at the init) ----------------------------'       |
- * options with the command (unused) -------------------------------------'
+/*                                 ^                     ^              ^       ^
+ * slave command (const) ----------'                     |              |       |
+ * state in libplayer (const flags) ---------------------'              |       |
+ * state in MPlayer (set at the init) ----------------------------------'       |
+ * options with the command (unused) -------------------------------------------'
  */
 
 /*****************************************************************************/
