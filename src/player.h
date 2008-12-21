@@ -1420,7 +1420,7 @@ void player_dvd_title_next (player_t *player);
  * \brief Select TV channel.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.
