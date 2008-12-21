@@ -110,7 +110,7 @@ typedef struct mp_search_s {
 typedef union slave_value {
   int i_val;
   float f_val;
-  char *s_val;
+  const char *s_val;
 } slave_value_t;
 
 typedef enum item_state {
@@ -1219,7 +1219,7 @@ slave_cmd_float (player_t *player, slave_cmd_t cmd, float value)
 }
 
 static inline void
-slave_cmd_str (player_t *player, slave_cmd_t cmd, char *str)
+slave_cmd_str (player_t *player, slave_cmd_t cmd, const char *str)
 {
   slave_value_t param;
 
@@ -1228,7 +1228,7 @@ slave_cmd_str (player_t *player, slave_cmd_t cmd, char *str)
 }
 
 static inline void
-slave_cmd_str_opt (player_t *player, slave_cmd_t cmd, char *str, int opt)
+slave_cmd_str_opt (player_t *player, slave_cmd_t cmd, const char *str, int opt)
 {
   slave_value_t param;
 
