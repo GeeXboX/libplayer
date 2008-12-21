@@ -170,9 +170,9 @@ typedef struct mplayer_s {
  * Paused mode is lost without using pausing_keep. But this causes the media
  * to advance a bit.
  *
- * NOTE: Only used with get/set_property, seek, switch_ratio, switch_title,
- *       tv_set_norm, tv_step_channel, tv_set_channel, radio_step_channel and
- *       radio_set_channel.
+ * NOTE: Only used with get/set_property, dvdnav, seek, switch_ratio,
+ *       switch_title, tv_set_norm, tv_step_channel, tv_set_channel,
+ *       radio_step_channel and radio_set_channel.
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
@@ -1101,11 +1101,6 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   switch (cmd)
   {
-  case SLAVE_DVDNAV:
-    if (state_cmd == ITEM_ON && value)
-      send_to_slave (player, "%s %i", command, value->i_val);
-    break;
-
   case SLAVE_LOADFILE:
     if (state_cmd == ITEM_ON && value && value->s_val)
     {
@@ -1163,6 +1158,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
       send_to_slave (player, SLAVE_CMD_PREFIX "%s %s", command, value->s_val);
     break;
 
+  case SLAVE_DVDNAV:
   case SLAVE_RADIO_STEP_CHANNEL:
   case SLAVE_SWITCH_TITLE:
   case SLAVE_TV_STEP_CHANNEL:
