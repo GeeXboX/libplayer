@@ -1473,7 +1473,7 @@ void player_tv_channel_next (player_t *player);
  * \brief Select radio channel.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.

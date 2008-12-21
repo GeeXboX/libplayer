@@ -171,7 +171,8 @@ typedef struct mplayer_s {
  * to advance a bit.
  *
  * NOTE: Only used with get/set_property, seek, switch_ratio, tv_set_norm,
- *       tv_step_channel, tv_set_channel and radio_step_channel.
+ *       tv_step_channel, tv_set_channel, radio_step_channel and
+ *       radio_set_channel.
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
@@ -186,6 +187,7 @@ typedef enum slave_cmd {
   SLAVE_LOADFILE,           /* loadfile string [int] */
   SLAVE_PAUSE,              /* pause */
   SLAVE_QUIT,               /* quit [int] */
+  SLAVE_RADIO_SET_CHANNEL,  /* radio_set_channel string */
   SLAVE_RADIO_STEP_CHANNEL, /* radio_step_channel int */
   SLAVE_SEEK,               /* seek float [int] */
   SLAVE_SET_PROPERTY,       /* set_property string string */
@@ -204,6 +206,7 @@ static const item_list_t g_slave_cmds[] = {
   [SLAVE_LOADFILE]           = {"loadfile",           ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_PAUSE]              = {"pause",              ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_QUIT]               = {"quit",               ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_RADIO_SET_CHANNEL]  = {"radio_set_channel",  ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_RADIO_STEP_CHANNEL] = {"radio_step_channel", ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SEEK]               = {"seek",               ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SET_PROPERTY]       = {"set_property",       ITEM_ON,             ITEM_OFF, NULL},
@@ -1126,6 +1129,11 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   case SLAVE_QUIT:
     if (state_cmd == ITEM_ON)
       send_to_slave (player, command);
+    break;
+
+  case SLAVE_RADIO_SET_CHANNEL:
+    if (state_cmd == ITEM_ON && value && value->s_val)
+      send_to_slave (player, SLAVE_CMD_PREFIX "%s %s", command, value->s_val);
     break;
 
   case SLAVE_RADIO_STEP_CHANNEL:
@@ -3914,6 +3922,18 @@ mplayer_tv_channel_next (player_t *player)
 }
 
 static void
+mplayer_radio_channel_set (player_t *player, const char *channel)
+{
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "radio_channel_set: %s", channel ? channel : "?");
+
+  if (!player || !channel)
+    return;
+
+  slave_cmd_str (player, SLAVE_RADIO_SET_CHANNEL, channel);
+}
+
+static void
 mplayer_radio_channel_prev (player_t *player)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "radio_channel_prev");
@@ -4002,7 +4022,7 @@ register_functions_mplayer (void)
   funcs->tv_channel_prev    = mplayer_tv_channel_prev;
   funcs->tv_channel_next    = mplayer_tv_channel_next;
 
-  funcs->radio_channel_set  = NULL;
+  funcs->radio_channel_set  = mplayer_radio_channel_set;
   funcs->radio_channel_prev = mplayer_radio_channel_prev;
   funcs->radio_channel_next = mplayer_radio_channel_next;
 
