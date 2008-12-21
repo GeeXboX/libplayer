@@ -936,7 +936,7 @@ player_dvd_title_next (player_t *player)
 /***************************************************************************/
 
 void
-player_tv_channel_select (player_t *player, int channel)
+player_tv_channel_select (player_t *player, const char *channel)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -944,7 +944,7 @@ player_tv_channel_select (player_t *player, int channel)
     return;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_TV_CHAN_SELECT, &channel, NULL);
+                   SV_FUNC_PLAYER_TV_CHAN_SELECT, (void *) channel, NULL);
 }
 
 void
@@ -978,7 +978,7 @@ player_tv_channel_next (player_t *player)
 /***************************************************************************/
 
 void
-player_radio_channel_select (player_t *player, int channel)
+player_radio_channel_select (player_t *player, const char *channel)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
@@ -986,7 +986,7 @@ player_radio_channel_select (player_t *player, int channel)
     return;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_RADIO_CHAN_SELECT, &channel, NULL);
+                   SV_FUNC_PLAYER_RADIO_CHAN_SELECT, (void *) channel, NULL);
 }
 
 void

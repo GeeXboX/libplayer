@@ -844,12 +844,10 @@ supervisor_player_dvd_title_next (player_t *player, void *in, void *out)
 static void
 supervisor_player_tv_chan_select (player_t *player, void *in, void *out)
 {
-  int *input = in;
-
   if (!player || !in)
     return;
 
-  player_sv_tv_channel_select (player, *input);
+  player_sv_tv_channel_select (player, in);
 }
 
 static void
@@ -875,12 +873,10 @@ supervisor_player_tv_chan_next (player_t *player, void *in, void *out)
 static void
 supervisor_player_radio_chan_select (player_t *player, void *in, void *out)
 {
-  int *input = in;
-
   if (!player || !in)
     return;
 
-  player_sv_radio_channel_select (player, *input);
+  player_sv_radio_channel_select (player, in);
 }
 
 static void

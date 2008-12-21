@@ -206,12 +206,12 @@ typedef struct player_funcs_s {
   void (* dvd_title_next) (player_t *player);
 
   /* TV */
-  void (* tv_channel_set) (player_t *player, int channel);
+  void (* tv_channel_set) (player_t *player, const char *channel);
   void (* tv_channel_prev) (player_t *player);
   void (* tv_channel_next) (player_t *player);
 
   /* Radio */
-  void (* radio_channel_set) (player_t *player, int channel);
+  void (* radio_channel_set) (player_t *player, const char *channel);
   void (* radio_channel_prev) (player_t *player);
   void (* radio_channel_next) (player_t *player);
 
@@ -373,12 +373,12 @@ void player_sv_dvd_title_prev (player_t *player);
 void player_sv_dvd_title_next (player_t *player);
 
 /* TV/DVB specific controls */
-void player_sv_tv_channel_select (player_t *player, int channel);
+void player_sv_tv_channel_select (player_t *player, const char *channel);
 void player_sv_tv_channel_prev (player_t *player);
 void player_sv_tv_channel_next (player_t *player);
 
 /* Radio specific controls */
-void player_sv_radio_channel_select (player_t *player, int channel);
+void player_sv_radio_channel_select (player_t *player, const char *channel);
 void player_sv_radio_channel_prev (player_t *player);
 void player_sv_radio_channel_next (player_t *player);
 

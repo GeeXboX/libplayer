@@ -1426,7 +1426,7 @@ void player_dvd_title_next (player_t *player);
  * \param[in] player      Player controller.
  * \param[in] channel     Channel to select.
  */
-void player_tv_channel_select (player_t *player, int channel);
+void player_tv_channel_select (player_t *player, const char *channel);
 
 /**
  * \brief Select the previous TV channel.
@@ -1479,7 +1479,7 @@ void player_tv_channel_next (player_t *player);
  * \param[in] player      Player controller.
  * \param[in] channel     Channel to select.
  */
-void player_radio_channel_select (player_t *player, int channel);
+void player_radio_channel_select (player_t *player, const char *channel);
 
 /**
  * \brief Select the previous radio channel.

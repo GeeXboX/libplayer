@@ -1025,7 +1025,7 @@ player_sv_dvd_title_next (player_t *player)
 /***************************************************************************/
 
 void
-player_sv_tv_channel_select (player_t *player, int channel)
+player_sv_tv_channel_select (player_t *player, const char *channel)
 {
   mrl_resource_t res;
 
@@ -1097,7 +1097,7 @@ player_sv_tv_channel_next (player_t *player)
 /***************************************************************************/
 
 void
-player_sv_radio_channel_select (player_t *player, int channel)
+player_sv_radio_channel_select (player_t *player, const char *channel)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
