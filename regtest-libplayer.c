@@ -124,10 +124,10 @@ do_regression_tests (player_t *player, char *name)
   player_dvd_title_select (player, 1);
   player_dvd_title_prev (player);
   player_dvd_title_next (player);
-  player_tv_channel_select (player, 1);
+  player_tv_channel_select (player, "S21");
   player_tv_channel_prev (player);
   player_tv_channel_next (player);
-  player_radio_channel_select (player, 1);
+  player_radio_channel_select (player, "R1");
   player_radio_channel_prev (player);
   player_radio_channel_next (player);
   player_playback_pause (player);
