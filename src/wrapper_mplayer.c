@@ -1117,10 +1117,6 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   case SLAVE_PAUSE:
-    if (state_cmd == ITEM_ON)
-      send_to_slave (player, command);
-    break;
-
   case SLAVE_QUIT:
     if (state_cmd == ITEM_ON)
       send_to_slave (player, command);
