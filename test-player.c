@@ -60,6 +60,7 @@
   " 3/4 : previous/next audio track\n" \
   " 5/6 : previous/next subtitle\n" \
   " 7/8 : previous/next TV analog channel\n" \
+  " {/} : previous/next radio channel\n" \
   " u   : toggle subtitle visibility\n" \
   " a   : change aspect ratio (original/16:9)\n" \
   " l   : load a stream in the playlist\n" \
@@ -288,6 +289,39 @@ load_res_vcd (player_t *player)
 }
 
 static mrl_t *
+load_res_radio (player_t *player)
+{
+  char str[256] = "";
+  mrl_t *mrl;
+  mrl_resource_tv_args_t *args;
+  mrl_resource_t res = MRL_RESOURCE_RADIO;
+
+  args = calloc (1, sizeof (mrl_resource_tv_args_t));
+  if (!args)
+    return NULL;
+
+  printf ("Channel ('null' to disable): ");
+  while (!*str)
+  {
+    fgets (str, sizeof (str), stdin);
+    *(str + strlen (str) - 1) = '\0';
+  }
+  if (strcmp (str, "null"))
+    args->channel = strdup (str);
+
+  mrl = mrl_new (player, res, args);
+  if (!mrl)
+  {
+    if (args->channel)
+      free (args->channel);
+    free (args);
+    return NULL;
+  }
+
+  return mrl;
+}
+
+static mrl_t *
 load_res_tv (player_t *player)
 {
   int val;
@@ -394,6 +428,7 @@ load_media (player_t *player)
   printf (" 4 - Network stream (HTTP/MMS)\n");
   printf (" 5 - Video Compact Disc (VCD)\n");
   printf (" 6 - Television analog (TV)\n");
+  printf (" 7 - Radio analog (RADIO)\n");
   c = getch ();
 
   switch (c)
@@ -423,6 +458,10 @@ load_media (player_t *player)
 
   case '6':
     mrl = load_res_tv (player);
+    break;
+
+  case '7':
+    mrl = load_res_radio (player);
     break;
   }
 
@@ -955,6 +994,14 @@ main (int argc, char **argv)
     case ']':
       player_audio_set_delay (player, 100, 0);
       printf ("AUDIO DELAY +100 ms\n");
+      break;
+    case '{':
+      player_radio_channel_prev (player);
+      printf ("RADIO CHANNEL PREV\n");
+      break;
+    case '}':
+      player_radio_channel_next (player);
+      printf ("RADIO CHANNEL NEXT\n");
       break;
     case '0':   /* increase volume */
       if (++volume > 100)
