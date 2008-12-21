@@ -1138,7 +1138,7 @@ main (int argc, char **argv)
       if (input == 'y')
         player_radio_channel_select (player, channel);
       else
-      player_tv_channel_select (player, channel);
+        player_tv_channel_select (player, channel);
       break;
     }
     case 0x1B5B41: /* UP */
