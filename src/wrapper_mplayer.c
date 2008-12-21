@@ -1389,6 +1389,28 @@ mp_resource_get_uri_vcd (const char *protocol,
 }
 
 static char *
+mp_resource_get_uri_radio (const char *protocol, mrl_resource_tv_args_t *args)
+{
+  char *uri;
+  size_t size;
+
+  if (!args || !protocol)
+    return NULL;
+
+  size = strlen (protocol);
+
+  if (args->channel)
+    size += strlen (args->channel);
+
+  size++;
+  uri = malloc (size);
+  if (uri)
+    snprintf (uri, size, "%s%s", protocol, args->channel ? args->channel : "");
+
+  return uri;
+}
+
+static char *
 mp_resource_get_uri_tv (const char *protocol, mrl_resource_tv_args_t *args)
 {
   char *uri;
@@ -1472,6 +1494,7 @@ mp_resource_get_uri (mrl_t *mrl)
     [MRL_RESOURCE_VCD]      = "vcd://",
 
     /* Radio/Television */
+    [MRL_RESOURCE_RADIO]    = "radio://",
     [MRL_RESOURCE_TV]       = "tv://",
 
     /* Network Streams */
@@ -1505,6 +1528,9 @@ mp_resource_get_uri (mrl_t *mrl)
 
   case MRL_RESOURCE_VCD: /* vcd://track_start/device */
     return mp_resource_get_uri_vcd (protocols[mrl->resource], mrl->priv);
+
+  case MRL_RESOURCE_RADIO: /* radio://channel/capture */
+    return mp_resource_get_uri_radio (protocols[mrl->resource], mrl->priv);
 
   case MRL_RESOURCE_TV: /* tv://channel/input */
     return mp_resource_get_uri_tv (protocols[mrl->resource], mrl->priv);
@@ -2994,6 +3020,7 @@ mplayer_mrl_supported_res (player_t *player, mrl_resource_t res)
   case MRL_RESOURCE_DVD:
   case MRL_RESOURCE_DVDNAV:
   case MRL_RESOURCE_VCD:
+  case MRL_RESOURCE_RADIO:
   case MRL_RESOURCE_TV:
   case MRL_RESOURCE_FTP:
   case MRL_RESOURCE_HTTP:
