@@ -66,6 +66,7 @@
   " l   : load a stream in the playlist\n" \
   " v   : print properties and metadata of the current stream\n" \
   " j   : take a video snapshot of a specific time position\n" \
+  " y   : select a radio channel\n" \
   " z   : select a TV channel\n" \
   " i   : print current time position\n" \
   " p   : start a new playback\n" \
@@ -1124,6 +1125,7 @@ main (int argc, char **argv)
     case 'v':   /* print properties and metadata */
       show_info (player, player_mrl_get_current (player));
       break;
+    case 'y':
     case 'z':
     {
       char channel[16] = "";
@@ -1133,6 +1135,9 @@ main (int argc, char **argv)
         fgets (channel, sizeof (channel), stdin);
         *(channel + strlen (channel) - 1) = '\0';
       }
+      if (input == 'y')
+        player_radio_channel_select (player, channel);
+      else
       player_tv_channel_select (player, channel);
       break;
     }
