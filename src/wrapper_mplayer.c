@@ -592,6 +592,10 @@ thread_fifo (void *arg)
       }
 
       plog (player, level, MODULE_NAME, "[process] %s", buffer);
+
+      if (strstr (buffer, "No stream found to handle url") == buffer)
+        plog (player, PLAYER_MSG_WARNING,
+              MODULE_NAME, "%s with this version of MPlayer", buffer);
     }
 
     /*
