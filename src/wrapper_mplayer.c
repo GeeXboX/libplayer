@@ -651,15 +651,8 @@ thread_fifo (void *arg)
 
         if (state == ITEM_ON)
         {
-          pthread_mutex_lock (&mplayer->mutex_status);
-          if (mplayer->status == MPLAYER_IS_IDLE)
-          {
-            pthread_mutex_unlock (&mplayer->mutex_status);
+          if (get_mplayer_status (player) == MPLAYER_IS_IDLE)
             wait_uninit = MPLAYER_EOF_STOP;
-          }
-          else
-            pthread_mutex_unlock (&mplayer->mutex_status);
-
           continue;
         }
       }
@@ -717,14 +710,8 @@ thread_fifo (void *arg)
       if (state != ITEM_HACK)
         continue;
 
-      pthread_mutex_lock (&mplayer->mutex_status);
-      if (mplayer->status == MPLAYER_IS_IDLE)
-      {
-        pthread_mutex_unlock (&mplayer->mutex_status);
+      if (get_mplayer_status (player) == MPLAYER_IS_IDLE)
         wait_uninit = MPLAYER_EOF_STOP;
-      }
-      else
-        pthread_mutex_unlock (&mplayer->mutex_status);
     }
 
     /*
@@ -3263,13 +3250,8 @@ mplayer_playback_start (player_t *player)
 
   free (uri);
 
-  pthread_mutex_lock (&mplayer->mutex_status);
-  if (mplayer->status != MPLAYER_IS_PLAYING)
-  {
-    pthread_mutex_unlock (&mplayer->mutex_status);
+  if (get_mplayer_status (player) != MPLAYER_IS_PLAYING)
     return PLAYER_PB_ERROR;
-  }
-  pthread_mutex_unlock (&mplayer->mutex_status);
 
   /*
    * Not all parameters can be set by the MRL, this function try to set/load
@@ -3624,13 +3606,8 @@ mplayer_video_set_ar (player_t *player, float value)
   if (!mplayer)
     return;
 
-  pthread_mutex_lock (&mplayer->mutex_status);
-  if (mplayer->status != MPLAYER_IS_PLAYING)
-  {
-    pthread_mutex_unlock (&mplayer->mutex_status);
+  if (get_mplayer_status (player) != MPLAYER_IS_PLAYING)
     return;
-  }
-  pthread_mutex_unlock (&mplayer->mutex_status);
 
   mrl = playlist_get_mrl (player->playlist);
   if (mrl_uses_vo (mrl))
