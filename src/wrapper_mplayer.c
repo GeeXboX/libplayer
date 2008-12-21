@@ -1131,16 +1131,6 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
       send_to_slave (player, command);
     break;
 
-  case SLAVE_RADIO_SET_CHANNEL:
-    if (state_cmd == ITEM_ON && value && value->s_val)
-      send_to_slave (player, SLAVE_CMD_PREFIX "%s %s", command, value->s_val);
-    break;
-
-  case SLAVE_RADIO_STEP_CHANNEL:
-    if (state_cmd == ITEM_ON && value)
-      send_to_slave (player, SLAVE_CMD_PREFIX "%s %i", command, value->i_val);
-    break;
-
   case SLAVE_SEEK:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player,
@@ -1171,16 +1161,14 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
       send_to_slave (player, "%s %i", command, value->i_val);
     break;
 
+  case SLAVE_RADIO_SET_CHANNEL:
   case SLAVE_TV_SET_CHANNEL:
-    if (state_cmd == ITEM_ON && value && value->s_val)
-      send_to_slave (player, SLAVE_CMD_PREFIX "%s %s", command, value->s_val);
-    break;
-
   case SLAVE_TV_SET_NORM:
     if (state_cmd == ITEM_ON && value && value->s_val)
       send_to_slave (player, SLAVE_CMD_PREFIX "%s %s", command, value->s_val);
     break;
 
+  case SLAVE_RADIO_STEP_CHANNEL:
   case SLAVE_TV_STEP_CHANNEL:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player, SLAVE_CMD_PREFIX "%s %i", command, value->i_val);
