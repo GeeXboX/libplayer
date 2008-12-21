@@ -170,8 +170,8 @@ typedef struct mplayer_s {
  * Paused mode is lost without using pausing_keep. But this causes the media
  * to advance a bit.
  *
- * NOTE: Only used with get/set_property, seek, switch_ratio, tv_set_norm
- *       and tv_step_channel.
+ * NOTE: Only used with get/set_property, seek, switch_ratio, tv_set_norm,
+ *       tv_step_channel and radio_step_channel.
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
@@ -186,6 +186,7 @@ typedef enum slave_cmd {
   SLAVE_LOADFILE,        /* loadfile string [int] */
   SLAVE_PAUSE,           /* pause */
   SLAVE_QUIT,            /* quit [int] */
+  SLAVE_RADIO_STEP_CHANNEL, /* radio_step_channel int */
   SLAVE_SEEK,            /* seek float [int] */
   SLAVE_SET_PROPERTY,    /* set_property string string */
   SLAVE_STOP,            /* stop */
@@ -202,6 +203,7 @@ static const item_list_t g_slave_cmds[] = {
   [SLAVE_LOADFILE]        = {"loadfile",        ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_PAUSE]           = {"pause",           ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_QUIT]            = {"quit",            ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_RADIO_STEP_CHANNEL] = {"radio_step_channel", ITEM_ON,       ITEM_OFF, NULL},
   [SLAVE_SEEK]            = {"seek",            ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SET_PROPERTY]    = {"set_property",    ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_STOP]            = {"stop",            ITEM_ON | ITEM_HACK, ITEM_OFF, NULL},
@@ -1131,6 +1133,11 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   case SLAVE_QUIT:
     if (state_cmd == ITEM_ON)
       send_to_slave (player, command);
+    break;
+
+  case SLAVE_RADIO_STEP_CHANNEL:
+    if (state_cmd == ITEM_ON && value)
+      send_to_slave (player, SLAVE_CMD_PREFIX "%s %i", command, value->i_val);
     break;
 
   case SLAVE_SEEK:
@@ -3900,6 +3907,28 @@ mplayer_tv_channel_next (player_t *player)
     plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "unsupported with DVB");
 }
 
+static void
+mplayer_radio_channel_prev (player_t *player)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "radio_channel_prev");
+
+  if (!player)
+    return;
+
+  slave_cmd_int (player, SLAVE_RADIO_STEP_CHANNEL, -1);
+}
+
+static void
+mplayer_radio_channel_next (player_t *player)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "radio_channel_next");
+
+  if (!player)
+    return;
+
+  slave_cmd_int (player, SLAVE_RADIO_STEP_CHANNEL, 1);
+}
+
 /*****************************************************************************/
 /*                           Public Wrapper API                              */
 /*****************************************************************************/
@@ -3968,8 +3997,8 @@ register_functions_mplayer (void)
   funcs->tv_channel_next    = mplayer_tv_channel_next;
 
   funcs->radio_channel_set  = NULL;
-  funcs->radio_channel_prev = NULL;
-  funcs->radio_channel_next = NULL;
+  funcs->radio_channel_prev = mplayer_radio_channel_prev;
+  funcs->radio_channel_next = mplayer_radio_channel_next;
 
   return funcs;
 }
