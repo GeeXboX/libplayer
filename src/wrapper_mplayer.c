@@ -1588,7 +1588,8 @@ mp_resource_load_args (player_t *player, mrl_t *mrl)
 /*****************************************************************************/
 
 static int
-mp_identify_metadata_clip (mrl_t *mrl, const char *buffer, mp_identify_clip_t *clip)
+mp_identify_metadata_clip (mrl_t *mrl,
+                           const char *buffer, mp_identify_clip_t *clip)
 {
   char *it;
   char str[FIFO_BUFFER];
