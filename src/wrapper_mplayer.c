@@ -534,6 +534,7 @@ parse_field (char *line)
 static void *
 thread_fifo (void *arg)
 {
+  player_verbosity_level_t level = PLAYER_MSG_VERBOSE;
   unsigned int skip_msg = 0;
   int start_ok = 1, check_lang = 1, verbosity = 0;
   mplayer_eof_t wait_uninit = MPLAYER_EOF_NO;
@@ -579,8 +580,6 @@ thread_fifo (void *arg)
 
     if (verbosity)
     {
-      static player_verbosity_level_t level = PLAYER_MSG_VERBOSE;
-
       *(buffer + strlen (buffer) - 1) = '\0';
 
       if (level == PLAYER_MSG_VERBOSE
