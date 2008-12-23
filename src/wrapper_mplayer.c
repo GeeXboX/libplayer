@@ -2601,7 +2601,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
 static int
 executable_is_available (player_t *player, const char *bin)
 {
-  char *p, *fp, *env;
+  char *p, *fp, *env, *save_p;
   char prog[PATH_BUFFER];
 
   env = getenv ("PATH");
@@ -2615,7 +2615,7 @@ executable_is_available (player_t *player, const char *bin)
   if (!fp)
     return 0;
 
-  for (p = strtok (p, ":"); p; p = strtok (NULL, ":"))
+  for (p = strtok_r (p, ":", &save_p); p; p = strtok_r (NULL, ":", &save_p))
   {
     snprintf (prog, sizeof (prog), "%s/%s", p, bin);
     if (!access (prog, X_OK))
