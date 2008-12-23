@@ -34,6 +34,7 @@ struct playlist_s {
   int shuffle_cnt;
   int loop;
   int loop_cnt;
+  int reset;
   player_loop_t loop_mode;
 };
 
@@ -181,15 +182,13 @@ playlist_reset_counter (playlist_t *playlist, player_loop_t mode)
 int
 playlist_next_play (playlist_t *playlist)
 {
-  static int reset;
-
   if (!playlist)
     return 0;
 
-  if (reset) /* manual start? ok, then reset */
+  if (playlist->reset) /* manual start? ok, then reset */
   {
     playlist_reset_counter (playlist, playlist->loop_mode);
-    reset = 0;
+    playlist->reset = 0;
   }
 
   switch (playlist->loop_mode)
@@ -197,7 +196,7 @@ playlist_next_play (playlist_t *playlist)
   case PLAYER_LOOP_ELEMENT:
     if (!playlist->loop_cnt)
     {
-      reset = 1;
+      playlist->reset = 1;
       return 0; /* end loop */
     }
 
@@ -218,7 +217,7 @@ playlist_next_play (playlist_t *playlist)
 
     if (!playlist->loop_cnt)
     {
-      reset = 1;
+      playlist->reset = 1;
       if (playlist->shuffle)
         playlist_shuffle_init (playlist);
       return 0; /* end loop */
