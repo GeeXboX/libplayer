@@ -2250,6 +2250,36 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
   }
 }
 
+static void
+mp_mrl_retrieve (player_t *player, mrl_t *mrl)
+{
+  int flags = 0;
+
+  if (mrl->prop)
+  {
+    flags |= IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES;
+
+    if (mrl->resource == MRL_RESOURCE_FILE)
+    {
+      mrl_resource_local_args_t *args = mrl->priv;
+      if (args && args->location)
+      {
+        const char *location = args->location;
+
+        if (strstr (location, "file://") == location)
+          location += 7;
+
+        mrl->prop->size = file_size (location);
+      }
+    }
+  }
+
+  if (mrl->meta)
+    flags |= IDENTIFY_METADATA;
+
+  mp_identify (player, mrl, flags);
+}
+
 /*****************************************************************************/
 /*                            Pre-Init functions                             */
 /*                             - check compatibility, availability           */
@@ -3026,6 +3056,15 @@ mplayer_mrl_supported_res (player_t *player, mrl_resource_t res)
   }
 }
 
+/*
+ * NOTE: mplayer -identify returns always all informations (properties and
+ *       metadata).
+ *
+ * mplayer_mrl_retrieve_properties() and mplayer_mrl_retrieve_metadata() will
+ * retrieve all informations in order to avoid executing twice MPlayer with
+ * an identical output.
+ */
+
 static void
 mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
@@ -3034,23 +3073,10 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
   if (!player || !mrl || !mrl->prop)
     return;
 
-  /* now fetch properties */
-  if (mrl->resource == MRL_RESOURCE_FILE)
-  {
-    mrl_resource_local_args_t *args = mrl->priv;
-    if (args && args->location)
-    {
-      const char *location = args->location;
+  if (!mrl->meta)
+    mrl->meta = mrl_metadata_new (mrl->resource);
 
-      if (strstr (location, "file://") == location)
-        location += 7;
-
-      mrl->prop->size = file_size (location);
-    }
-  }
-
-  mp_identify (player, mrl,
-               IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
+  mp_mrl_retrieve (player, mrl);
 }
 
 static void
@@ -3061,7 +3087,10 @@ mplayer_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   if (!player || !mrl || !mrl->meta)
     return;
 
-  mp_identify (player, mrl, IDENTIFY_METADATA);
+  if (!mrl->prop)
+    mrl->prop = mrl_properties_new ();
+
+  mp_mrl_retrieve (player, mrl);
 }
 
 static void
