@@ -387,7 +387,7 @@ mrl_t *mrl_new (player_t *player, mrl_resource_t res, void *args);
 void mrl_add_subtitle (player_t *player, mrl_t *mrl, char *subtitle);
 
 /**
- * \brief Free a MRL object 
+ * \brief Free a MRL object.
  *
  * Never use this function when the MRL (or a linked MRL) is set in the
  * playlist of a player controller.
@@ -518,7 +518,7 @@ char *mrl_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning The pointers (*name and *lang) must be freed when no longer used.
+ * \warning The pointers (\p name and \p lang) must be freed when no longer used.
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
@@ -558,7 +558,7 @@ uint32_t mrl_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning The pointers (*name and *lang) must be freed when no longer used.
+ * \warning The pointers (\p name and \p lang) must be freed when no longer used.
  * \warning MT-Safe in multithreaded applications.
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
