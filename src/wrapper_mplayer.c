@@ -106,6 +106,11 @@ typedef struct mp_search_s {
   char *value;
 } mp_search_t;
 
+typedef struct mp_identify_clip_s {
+  int cnt;
+  int property;
+} mp_identify_clip_t;
+
 /* union for set_property */
 typedef union slave_value {
   int i_val;
@@ -1583,10 +1588,8 @@ mp_resource_load_args (player_t *player, mrl_t *mrl)
 /*****************************************************************************/
 
 static int
-mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
+mp_identify_metadata_clip (mrl_t *mrl, const char *buffer, mp_identify_clip_t *clip)
 {
-  static int cnt;
-  static slave_property_t property = PROPERTY_UNKNOWN;
   char *it;
   char str[FIFO_BUFFER];
   mrl_metadata_t *meta = mrl->meta;
@@ -1596,46 +1599,42 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
 
   /* no new metadata */
   if (strstr (buffer, "ID_CLIP_INFO_N=") == buffer)
-  {
-    cnt = 0;
-    property = PROPERTY_UNKNOWN;
     return 0;
-  }
 
-  snprintf (str, sizeof (str), "ID_CLIP_INFO_NAME%i=", cnt);
+  snprintf (str, sizeof (str), "ID_CLIP_INFO_NAME%i=", clip->cnt);
   it = strstr (buffer, str);
   if (it == buffer)
   {
     if (!strcasecmp (parse_field (it), "title"))
-      property = PROPERTY_METADATA_TITLE;
+      clip->property = PROPERTY_METADATA_TITLE;
     else if (!strcasecmp (parse_field (it), "name"))
-      property = PROPERTY_METADATA_NAME;
+      clip->property = PROPERTY_METADATA_NAME;
     else if (!strcasecmp (parse_field (it), "artist"))
-      property = PROPERTY_METADATA_ARTIST;
+      clip->property = PROPERTY_METADATA_ARTIST;
     else if (!strcasecmp (parse_field (it), "author"))
-      property = PROPERTY_METADATA_AUTHOR;
+      clip->property = PROPERTY_METADATA_AUTHOR;
     else if (!strcasecmp (parse_field (it), "genre"))
-      property = PROPERTY_METADATA_GENRE;
+      clip->property = PROPERTY_METADATA_GENRE;
     else if (!strcasecmp (parse_field (it), "album"))
-      property = PROPERTY_METADATA_ALBUM;
+      clip->property = PROPERTY_METADATA_ALBUM;
     else if (!strcasecmp (parse_field (it), "year"))
-      property = PROPERTY_METADATA_YEAR;
+      clip->property = PROPERTY_METADATA_YEAR;
     else if (!strcasecmp (parse_field (it), "track"))
-      property = PROPERTY_METADATA_TRACK;
+      clip->property = PROPERTY_METADATA_TRACK;
     else if (!strcasecmp (parse_field (it), "comment"))
-      property = PROPERTY_METADATA_COMMENT;
+      clip->property = PROPERTY_METADATA_COMMENT;
     else
-      property = PROPERTY_UNKNOWN;
+      clip->property = PROPERTY_UNKNOWN;
 
     return 1;
   }
 
-  snprintf (str, sizeof (str), "ID_CLIP_INFO_VALUE%i=", cnt);
+  snprintf (str, sizeof (str), "ID_CLIP_INFO_VALUE%i=", clip->cnt);
   it = strstr (buffer, str);
   if (it != buffer)
     return 0;
 
-  switch (property)
+  switch (clip->property)
   {
   case PROPERTY_METADATA_NAME:
   case PROPERTY_METADATA_TITLE:
@@ -1685,8 +1684,8 @@ mp_identify_metadata_clip (mrl_t *mrl, const char *buffer)
     break;
   }
 
-  cnt++;
-  property = PROPERTY_UNKNOWN;
+  clip->cnt++;
+  clip->property = PROPERTY_UNKNOWN;
   return 1;
 }
 
@@ -1934,7 +1933,7 @@ mp_identify_metadata_audio (mrl_t *mrl, const char *buffer)
 }
 
 static int
-mp_identify_metadata (mrl_t *mrl, const char *buffer)
+mp_identify_metadata (mrl_t *mrl, const char *buffer, mp_identify_clip_t *clip)
 {
   int ret = 0;
 
@@ -1954,7 +1953,7 @@ mp_identify_metadata (mrl_t *mrl, const char *buffer)
     break;
 
   default:
-    ret = mp_identify_metadata_clip (mrl, buffer);
+    ret = mp_identify_metadata_clip (mrl, buffer, clip);
     break;
   }
 
@@ -2214,6 +2213,10 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
     char buffer[FIFO_BUFFER];
     int found;
     FILE *mp_fifo;
+    mp_identify_clip_t clip = {
+      .cnt      = 0,
+      .property = PROPERTY_UNKNOWN
+    };
 
     free (uri);
     close (mp_pipe[1]);
@@ -2234,7 +2237,7 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
         found = mp_identify_audio (mrl, buffer);
 
       if (!found && (flags & IDENTIFY_METADATA))
-        found = mp_identify_metadata (mrl, buffer);
+        found = mp_identify_metadata (mrl, buffer, &clip);
 
       if (!found && (flags & IDENTIFY_PROPERTIES))
         found = mp_identify_properties (mrl, buffer);
