@@ -2969,8 +2969,8 @@ mplayer_uninit (player_t *player)
   }
 
 #ifdef USE_X11
-    if (player->x11)
-      x11_uninit (player);
+  if (player->x11)
+    x11_uninit (player);
 #endif /* USE_X11 */
 
   item_list_free (mplayer->slave_cmds, g_slave_cmds_nb);
