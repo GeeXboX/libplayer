@@ -47,8 +47,8 @@
  *
  * Most functions in this API are indicated as being MT-Safe in multithreaded
  * applications. That is right <b>only</b> if the functions are used
- * concurrently with the same (#player_t) controller or with different
- * wrapper types (#player_type_t). Else, unexpected behaviours can appear.
+ * concurrently with the same (#player_t) controller. Else, unexpected 
+ * behaviours can appear.
  */
 
 #ifdef __cplusplus
