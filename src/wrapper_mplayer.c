@@ -2966,12 +2966,12 @@ mplayer_uninit (player_t *player)
     fclose (mplayer->fifo_out);
 
     plog (player, PLAYER_MSG_INFO, MODULE_NAME, "MPlayer child terminated");
+  }
 
 #ifdef USE_X11
     if (player->x11)
       x11_uninit (player);
 #endif /* USE_X11 */
-  }
 
   item_list_free (mplayer->slave_cmds, g_slave_cmds_nb);
   item_list_free (mplayer->slave_props, g_slave_props_nb);
