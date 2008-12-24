@@ -2181,6 +2181,7 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
 
     dup2 (mp_pipe[1], STDERR_FILENO);
     dup2 (mp_pipe[1], STDOUT_FILENO);
+    close (mp_pipe[1]);
 
     params[pp++] = MPLAYER_NAME;
     params[pp++] = "-nocache";
@@ -2508,6 +2509,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
 
     close (mp_pipe[0]);
     dup2 (mp_pipe[1], STDOUT_FILENO);
+    close (mp_pipe[1]);
 
     params[pp++] = MPLAYER_NAME;
     switch (check)
@@ -2785,9 +2787,11 @@ mplayer_init (player_t *player)
     close (mplayer->pipe_out[0]);
 
     dup2 (mplayer->pipe_in[0], STDIN_FILENO);
+    close (mplayer->pipe_in[0]);
 
     dup2 (mplayer->pipe_out[1], STDERR_FILENO);
     dup2 (mplayer->pipe_out[1], STDOUT_FILENO);
+    close (mplayer->pipe_out[1]);
 
     /* default MPlayer arguments */
     params[pp++] = MPLAYER_NAME;
@@ -3168,6 +3172,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
     fd = open ("/dev/null", O_WRONLY);
     dup2 (fd, STDOUT_FILENO);
     dup2 (fd, STDERR_FILENO);
+    close (fd);
 
     params[pp++] = MPLAYER_NAME;
     params[pp++] = "-nocache";
