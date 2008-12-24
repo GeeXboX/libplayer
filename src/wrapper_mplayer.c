@@ -2220,7 +2220,6 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
       .property = PROPERTY_UNKNOWN
     };
 
-    free (uri);
     close (mp_pipe[1]);
 
     mp_fifo = fdopen (mp_pipe[0], "r");
@@ -2247,7 +2246,7 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
 
     /* wait the death of MPlayer */
     waitpid (pid, NULL, 0);
-
+    free (uri);
     close (mp_pipe[0]);
     fclose (mp_fifo);
   }
