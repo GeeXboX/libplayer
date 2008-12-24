@@ -29,6 +29,28 @@
  * GeeXboX libplayer public API header.
  */
 
+/**
+ * \mainpage
+ *
+ * libplayer is a multimedia A/V abstraction layer API. Its goal is to
+ * interact with Enna Media Center.
+ *
+ * libplayer provides a generic A/V API that relies on various multimedia
+ * player for Linux systems. It currently supports
+ * <a href="http://www.mplayerhq.hu">MPlayer</a> (through slave-mode), <a 
+ * href="http://www.xinehq.de">xine</a>, <a href="http://www.videolan.org">
+ * VLC</a> and <a href="http://www.gstreamer.org">GStreamer</a>.
+ *
+ * Its main goal is to provide an unique API that player frontends can use
+ * to control any kind of multimedia player underneath. For example, it
+ * provides a library to easily control MPlayer famous slave-mode.
+ *
+ * Most functions in this API are indicated as being MT-Safe in multithreaded
+ * applications. That is right <b>only</b> if the functions are used
+ * concurrently with the same (#player_t) controller or with different
+ * wrapper types (#player_type_t). Else, unexpected behaviours can appear.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #if 0 /* avoid EMACS indent */
