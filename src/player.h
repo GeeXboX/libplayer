@@ -45,6 +45,7 @@
  * to control any kind of multimedia player underneath. For example, it
  * provides a library to easily control MPlayer famous slave-mode.
  *
+ * \section mtlevel MT-Level
  * Most functions in this API are indicated as being MT-Safe in multithreaded
  * applications. That is right <b>only</b> if the functions are used
  * concurrently with the same (#player_t) controller. Else, unexpected 
@@ -151,7 +152,7 @@ typedef enum player_x_window_flags {
  * Wrappers supported (even partially):
  *  GStreamer, MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] type        Type of wrapper to load.
  * \param[in] ao          Audio output driver to use.
  * \param[in] vo          Video output driver to use.
@@ -183,7 +184,7 @@ void player_uninit (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] level       Level of verbosity to set.
  */
@@ -198,7 +199,7 @@ void player_set_verbosity (player_t *player, player_verbosity_level_t level);
  *  MPlayer, xine
  *
  * \warning Only usable with video outputs X11 compliant.
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] x           X coordinate (pixel).
  * \param[in] y           Y coordinate (pixel).
@@ -390,7 +391,7 @@ typedef enum mrl_properties_type {
  *
  * This function can be slow when the stream is not (fastly) reachable.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] res         Resource type.
  * \param[in] args        Arguments specific to the resource type.
@@ -401,7 +402,7 @@ mrl_t *mrl_new (player_t *player, mrl_resource_t res, void *args);
 /**
  * \brief Add a subtitle file to a MRL object.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object.
  * \param[in] subtitle    Location of the subtitle file to be added.
@@ -415,7 +416,7 @@ void mrl_add_subtitle (player_t *player, mrl_t *mrl, char *subtitle);
  * playlist of a player controller.
  *
  * \warning Must be used only as the last mrl function for one MRL object.
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object.
  */
@@ -424,7 +425,7 @@ void mrl_free (player_t *player, mrl_t *mrl);
 /**
  * \brief Get type of the stream.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \return Type of MRL object.
@@ -434,7 +435,7 @@ mrl_type_t mrl_get_type (player_t *player, mrl_t *mrl);
 /**
  * \brief Get resource of the stream.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \return Resource of MRL object.
@@ -450,7 +451,7 @@ mrl_resource_t mrl_get_resource (player_t *player, mrl_t *mrl);
  *  MPlayer, VLC, xine
  *
  * \warning The returned pointer must be freed when no longer used.
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \param[in] m           Type of metadata to get.
@@ -467,7 +468,7 @@ char *mrl_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m);
  *  MPlayer
  *
  * \warning The returned pointer must be freed when no longer used.
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \param[in] trackid     Track ID on the CD.
@@ -485,7 +486,7 @@ char *mrl_get_metadata_cd_track (player_t *player,
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \param[in] m           Type of metadata to get.
@@ -502,7 +503,7 @@ uint32_t mrl_get_metadata_cd (player_t *player,
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \param[in] titleid     Title ID on the DVD.
@@ -520,7 +521,7 @@ uint32_t mrl_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \param[out] titles     How many titles on the DVD.
@@ -541,7 +542,7 @@ char *mrl_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles);
  *  MPlayer
  *
  * \warning The pointers (\p name and \p lang) must be freed when no longer used.
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \param[in] pos         Position of the subtitle.
@@ -561,7 +562,7 @@ int mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \return Number of subtitles.
@@ -581,7 +582,7 @@ uint32_t mrl_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl);
  *  MPlayer
  *
  * \warning The pointers (\p name and \p lang) must be freed when no longer used.
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \param[in] pos         Position of the audio stream.
@@ -601,7 +602,7 @@ int mrl_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \return Number of audio streams.
@@ -614,7 +615,7 @@ uint32_t mrl_get_metadata_audio_nb (player_t *player, mrl_t *mrl);
  * Wrappers supported (even partially):
  *  MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \param[in] p           Type of property.
@@ -630,7 +631,7 @@ uint32_t mrl_get_property (player_t *player,
  *  MPlayer, xine
  *
  * \warning The returned pointer must be freed when no longer used.
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \return Audio codec name, NULL otherwise.
@@ -644,7 +645,7 @@ char *mrl_get_audio_codec (player_t *player, mrl_t *mrl);
  *  MPlayer, xine
  *
  * \warning The returned pointer must be freed when no longer used.
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \return Video codec name, NULL otherwise.
@@ -657,7 +658,7 @@ char *mrl_get_video_codec (player_t *player, mrl_t *mrl);
  * Wrappers supported (even partially):
  *  MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \return Size of the stream (bytes).
@@ -672,7 +673,7 @@ off_t mrl_get_size (player_t *player, mrl_t *mrl);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
  * \param[in] pos         Time position (second).
@@ -707,7 +708,7 @@ typedef enum player_mrl_add {
 /**
  * \brief Get current MRL set in the internal playlist.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \return MRL object.
  */
@@ -719,7 +720,7 @@ mrl_t *player_mrl_get_current (player_t *player);
  * If a MRL was already set in the playlist, then the current is freed and
  * replaced by the new MRL object.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object to set.
  */
@@ -728,7 +729,7 @@ void player_mrl_set (player_t *player, mrl_t *mrl);
 /**
  * \brief Append MRL object in the internal playlist.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object to append.
  * \param[in] when        Just append, or append and go to the end to play.
@@ -740,7 +741,7 @@ void player_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when);
  *
  * Current MRL object is freed on the way.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_mrl_remove (player_t *player);
@@ -750,7 +751,7 @@ void player_mrl_remove (player_t *player);
  *
  * All MRL objects are freed on the way.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_mrl_remove_all (player_t *player);
@@ -760,7 +761,7 @@ void player_mrl_remove_all (player_t *player);
  *
  * Playback is started if a previous MRL object exists.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_mrl_previous (player_t *player);
@@ -770,7 +771,7 @@ void player_mrl_previous (player_t *player);
  *
  * Playback is started if a next MRL object exists.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_mrl_next (player_t *player);
@@ -816,7 +817,7 @@ typedef enum player_framedrop {
  * Wrappers supported (even partially):
  *  MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \return Time position (millisecond).
  */
@@ -829,7 +830,7 @@ int player_get_time_pos (player_t *player);
  * be used with the internal playlist. By default, AUTO will just going
  * to the next available MRL object in the playlist and start a new playback.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] pb          Mode to use.
  */
@@ -840,7 +841,7 @@ void player_set_playback (player_t *player, player_pb_t pb);
  *
  * Only enabled if playback mode is auto, see player_set_playback().
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] loop        Mode to use (one element or the whole playlist).
  * \param[in] value       How many loops, negative for infinite.
@@ -852,7 +853,7 @@ void player_set_loop (player_t *player, player_loop_t loop, int value);
  *
  * Only enabled if playback mode is auto, see player_set_playback().
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Different of 0 to enable.
  */
@@ -864,7 +865,7 @@ void player_set_shuffle (player_t *player, int value);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] fd          Frame dropping type to set.
  */
@@ -902,7 +903,7 @@ typedef enum player_pb_seek {
 /**
  * \brief Get current playback state.
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \return Playback state.
  */
@@ -916,7 +917,7 @@ player_pb_state_t player_playback_get_state (player_t *player);
  * Wrappers supported (even partially):
  *  GStreamer, MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_playback_start (player_t *player);
@@ -927,7 +928,7 @@ void player_playback_start (player_t *player);
  * Wrappers supported (even partially):
  *  GStreamer, MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_playback_stop (player_t *player);
@@ -938,7 +939,7 @@ void player_playback_stop (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_playback_pause (player_t *player);
@@ -949,7 +950,7 @@ void player_playback_pause (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Value for seeking (second or percent).
  * \param[in] seek        Seeking mode.
@@ -962,7 +963,7 @@ void player_playback_seek (player_t *player, int value, player_pb_seek_t seek);
  * Wrappers supported (even partially):
  *  none
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Value for seeking.
  * \param[in] absolute    Mode, 0 for relative.
@@ -977,7 +978,7 @@ void player_playback_seek_chapter (player_t *player, int value, int absolute);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Factor of playback speed to set.
  */
@@ -1011,7 +1012,7 @@ typedef enum player_mute {
  * Wrappers supported (even partially):
  *  MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \return Volume (percent).
  */
@@ -1023,7 +1024,7 @@ int player_audio_volume_get (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Volume to set (percent).
  */
@@ -1035,7 +1036,7 @@ void player_audio_volume_set (player_t *player, int value);
  * Wrappers supported (even partially):
  *  MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \return Mute state.
  */
@@ -1047,7 +1048,7 @@ player_mute_t player_audio_mute_get (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Mute state to set.
  */
@@ -1061,7 +1062,7 @@ void player_audio_mute_set (player_t *player, player_mute_t value);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Delay to set (millisecond).
  * \param[in] absolute    Mode, 0 for relative.
@@ -1074,7 +1075,7 @@ void player_audio_set_delay (player_t *player, int value, int absolute);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] audio_id    ID of the audio stream to select.
  */
@@ -1088,7 +1089,7 @@ void player_audio_select (player_t *player, int audio_id);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_audio_prev (player_t *player);
@@ -1101,7 +1102,7 @@ void player_audio_prev (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_audio_next (player_t *player);
@@ -1139,7 +1140,7 @@ typedef enum player_video_aspect {
  * Wrappers supported (even partially):
  *  none
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Different of 0 to set fullscreen.
  */
@@ -1151,7 +1152,7 @@ void player_video_set_fullscreen (player_t *player, int value);
  * Wrappers supported (even partially):
  *  none
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] aspect      Aspect to change.
  * \param[in] value       Value for aspect to set.
@@ -1166,7 +1167,7 @@ void player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
  * Wrappers supported (even partially):
  *  none
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Value for panscan to set.
  * \param[in] absolute    Mode, 0 for relative.
@@ -1179,7 +1180,7 @@ void player_video_set_panscan (player_t *player, int8_t value, int absolute);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Ratio to set.
  */
@@ -1216,7 +1217,7 @@ typedef enum player_sub_alignment {
  * Wrappers supported (even partially):
  *  MPlayer, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Delay to set (millisecond).
  */
@@ -1228,7 +1229,7 @@ void player_subtitle_set_delay (player_t *player, int value);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] a           Alignment to set.
  */
@@ -1241,7 +1242,7 @@ void player_subtitle_set_alignment (player_t *player,
  * Wrappers supported (even partially):
  *  none
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Position to set.
  */
@@ -1253,7 +1254,7 @@ void player_subtitle_set_position (player_t *player, int value);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Different of 0 to view the subtitles.
  */
@@ -1265,7 +1266,7 @@ void player_subtitle_set_visibility (player_t *player, int value);
  * Wrappers supported (even partially):
  *  none
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Scale to set.
  * \param[in] absolute    Mode, 0 for relative.
@@ -1278,7 +1279,7 @@ void player_subtitle_scale (player_t *player, int value, int absolute);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] sub_id      ID of the subtitle to select.
  */
@@ -1292,7 +1293,7 @@ void player_subtitle_select (player_t *player, int sub_id);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_subtitle_prev (player_t *player);
@@ -1305,7 +1306,7 @@ void player_subtitle_prev (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_subtitle_next (player_t *player);
@@ -1341,7 +1342,7 @@ typedef enum player_dvdnav {
  * Wrappers supported (even partially):
  *  MPlayer, xine
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] value       Command to send.
  */
@@ -1353,7 +1354,7 @@ void player_dvd_nav (player_t *player, player_dvdnav_t value);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] angle       Angle to select.
  */
@@ -1367,7 +1368,7 @@ void player_dvd_angle_select (player_t *player, int angle);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_dvd_angle_prev (player_t *player);
@@ -1380,7 +1381,7 @@ void player_dvd_angle_prev (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_dvd_angle_next (player_t *player);
@@ -1391,7 +1392,7 @@ void player_dvd_angle_next (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] title       Title to select.
  */
@@ -1405,7 +1406,7 @@ void player_dvd_title_select (player_t *player, int title);
  * Wrappers supported (even partially):
  *  none
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_dvd_title_prev (player_t *player);
@@ -1418,7 +1419,7 @@ void player_dvd_title_prev (player_t *player);
  * Wrappers supported (even partially):
  *  none
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_dvd_title_next (player_t *player);
@@ -1444,7 +1445,7 @@ void player_dvd_title_next (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] channel     Channel to select.
  */
@@ -1458,7 +1459,7 @@ void player_tv_channel_select (player_t *player, const char *channel);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_tv_channel_prev (player_t *player);
@@ -1471,7 +1472,7 @@ void player_tv_channel_prev (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_tv_channel_next (player_t *player);
@@ -1497,7 +1498,7 @@ void player_tv_channel_next (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] channel     Channel to select.
  */
@@ -1511,7 +1512,7 @@ void player_radio_channel_select (player_t *player, const char *channel);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_radio_channel_prev (player_t *player);
@@ -1524,7 +1525,7 @@ void player_radio_channel_prev (player_t *player);
  * Wrappers supported (even partially):
  *  MPlayer
  *
- * \warning MT-Safe in multithreaded applications.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  */
 void player_radio_channel_next (player_t *player);
