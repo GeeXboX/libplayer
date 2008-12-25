@@ -35,7 +35,7 @@ test:
 
 doxygen:
 ifeq (,$(wildcard DOCS/doxygen))
-	doxygen DOCS/Doxyfile
+	PROJECT_NUMBER="$(LIBPLAYER_VERSION)" doxygen DOCS/Doxyfile
 endif
 
 clean:
