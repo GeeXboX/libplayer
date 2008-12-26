@@ -1591,7 +1591,7 @@ static int
 mp_identify_metadata_clip (mrl_t *mrl,
                            const char *buffer, mp_identify_clip_t *clip)
 {
-  char *it;
+  char *it, *value;
   char str[FIFO_BUFFER];
   mrl_metadata_t *meta = mrl->meta;
 
@@ -1635,50 +1635,52 @@ mp_identify_metadata_clip (mrl_t *mrl,
   if (it != buffer)
     return 0;
 
+  value = parse_field (it);
+
   switch (clip->property)
   {
   case PROPERTY_METADATA_NAME:
   case PROPERTY_METADATA_TITLE:
     if (meta->title)
       free (meta->title);
-    meta->title = strdup (parse_field (it));
+    meta->title = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_ARTIST:
   case PROPERTY_METADATA_AUTHOR:
     if (meta->artist)
       free (meta->artist);
-    meta->artist = strdup (parse_field (it));
+    meta->artist = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_GENRE:
     if (meta->genre)
       free (meta->genre);
-    meta->genre = strdup (parse_field (it));
+    meta->genre = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_ALBUM:
     if (meta->album)
       free (meta->album);
-    meta->album = strdup (parse_field (it));
+    meta->album = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_YEAR:
     if (meta->year)
       free (meta->year);
-    meta->year = strdup (parse_field (it));
+    meta->year = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_TRACK:
     if (meta->track)
       free (meta->track);
-    meta->track = strdup (parse_field (it));
+    meta->track = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_COMMENT:
     if (meta->comment)
       free (meta->comment);
-    meta->comment = strdup (parse_field (it));
+    meta->comment = *value ? strdup (value) : NULL;
     break;
 
   default:
