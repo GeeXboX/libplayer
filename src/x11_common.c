@@ -360,15 +360,15 @@ x11_uninit (player_t *player)
     screeninfo_t *screeninfo = x11_get_screeninfo (player);
     if (screeninfo)
     {
-      if (screeninfo->win_black)
-      {
-        XUnmapWindow (x11->display, screeninfo->win_black);
-        XDestroyWindow (x11->display, screeninfo->win_black);
-      }
       if (screeninfo->win_trans)
       {
         XUnmapWindow (x11->display, screeninfo->win_trans);
         XDestroyWindow (x11->display, screeninfo->win_trans);
+      }
+      if (screeninfo->win_black)
+      {
+        XUnmapWindow (x11->display, screeninfo->win_black);
+        XDestroyWindow (x11->display, screeninfo->win_black);
       }
       free (screeninfo);
     }
