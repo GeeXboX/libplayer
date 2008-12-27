@@ -112,7 +112,7 @@ dummy_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 static void
 dummy_dvd_nav (player_t *player, player_dvdnav_t value)
 {
-  char log[8] = "unknown";
+  char log[16] = "unknown";
 
   switch (value)
   {
@@ -138,6 +138,15 @@ dummy_dvd_nav (player_t *player, player_dvdnav_t value)
 
   case PLAYER_DVDNAV_SELECT:
     strcpy (log, "select");
+    break;
+
+  case PLAYER_DVDNAV_PREVMENU:
+    strcpy (log, "prevmenu");
+    break;
+
+  case PLAYER_DVDNAV_MOUSECLICK:
+    strcpy (log, "mouseclick");
+    break;
   }
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %s", log);
