@@ -544,7 +544,7 @@ x11_init (player_t *player)
                                     visual,
                                     CWOverrideRedirect | CWBackPixel, &atts);
 
-    XMapWindow (x11->display,  x11->win_video);
+    XMapWindow (x11->display, x11->win_video);
 
   /*
    * Transparent window to catch all events in order to prevent sending
@@ -557,7 +557,7 @@ x11_init (player_t *player)
                                            InputOnly,
                                            visual,
                                            CWOverrideRedirect, &atts);
-    XMapRaised (x11->display,  screeninfo->win_trans);
+    XMapRaised (x11->display, screeninfo->win_trans);
   }
   else
   {
