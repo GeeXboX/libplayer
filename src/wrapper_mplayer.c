@@ -177,7 +177,7 @@ typedef struct mplayer_s {
  *
  * NOTE: Only used with get/set_property, dvdnav, seek, switch_ratio,
  *       switch_title, tv_set_norm, tv_step_channel, tv_set_channel,
- *       radio_step_channel and radio_set_channel.
+ *       radio_step_channel, radio_set_channel and set_mouse_pos.
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
@@ -195,6 +195,7 @@ typedef enum slave_cmd {
   SLAVE_RADIO_SET_CHANNEL,  /* radio_set_channel string */
   SLAVE_RADIO_STEP_CHANNEL, /* radio_step_channel int */
   SLAVE_SEEK,               /* seek float [int] */
+  SLAVE_SET_MOUSE_POS,      /* set_mouse_pos int int */
   SLAVE_SET_PROPERTY,       /* set_property string string */
   SLAVE_STOP,               /* stop */
   SLAVE_SUB_LOAD,           /* sub_load string */
@@ -214,6 +215,7 @@ static const item_list_t g_slave_cmds[] = {
   [SLAVE_RADIO_SET_CHANNEL]  = {"radio_set_channel",  ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_RADIO_STEP_CHANNEL] = {"radio_step_channel", ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SEEK]               = {"seek",               ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SET_MOUSE_POS]      = {"set_mouse_pos",      ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SET_PROPERTY]       = {"set_property",       ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_STOP]               = {"stop",               ITEM_ON | ITEM_HACK, ITEM_OFF, NULL},
   [SLAVE_SUB_LOAD]           = {"sub_load",           ITEM_ON,             ITEM_OFF, NULL},
@@ -1127,6 +1129,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   case SLAVE_SEEK:
+  case SLAVE_SET_MOUSE_POS:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player,
                      SLAVE_CMD_PREFIX "%s %i %i", command, value->i_val, opt);
@@ -2807,6 +2810,7 @@ mplayer_init (player_t *player)
     params[pp++] = "-noborder";         /* no border decoration */
     params[pp++] = "-nolirc";
     params[pp++] = "-nojoystick";
+    params[pp++] = "-mouse-movements";
     params[pp++] = "-nomouseinput";
     params[pp++] = "-noar";
     params[pp++] = "-nograbpointer";
@@ -3509,6 +3513,17 @@ mplayer_set_framedrop (player_t *player, player_framedrop_t fd)
 }
 
 static void
+mplayer_set_mouse_pos (player_t *player, int x, int y)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_mouse_pos: %i %i", x, y);
+
+  if (!player)
+    return;
+
+  slave_cmd_int_opt (player, SLAVE_SET_MOUSE_POS, x, y);
+}
+
+static void
 mplayer_audio_set_volume (player_t *player, int value)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
@@ -3993,7 +4008,7 @@ register_functions_mplayer (void)
 
   funcs->get_time_pos       = mplayer_get_time_pos;
   funcs->set_framedrop      = mplayer_set_framedrop;
-  funcs->set_mouse_pos      = NULL;
+  funcs->set_mouse_pos      = mplayer_set_mouse_pos;
 
   funcs->pb_start           = mplayer_playback_start;
   funcs->pb_stop            = mplayer_playback_stop;
