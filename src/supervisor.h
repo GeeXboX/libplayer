@@ -63,7 +63,6 @@ typedef enum supervisor_ctl {
   SV_FUNC_PLAYER_INIT,
   SV_FUNC_PLAYER_UNINIT,
   SV_FUNC_PLAYER_SET_VERBOSITY,
-  SV_FUNC_PLAYER_X_WINDOW_SET_PROPS,
 
   /* Player to MRL connection */
   SV_FUNC_PLAYER_MRL_GET_CURRENT,
@@ -82,6 +81,7 @@ typedef enum supervisor_ctl {
   SV_FUNC_PLAYER_SET_SHUFFLE,
   SV_FUNC_PLAYER_SET_FRAMEDROP,
   SV_FUNC_PLAYER_SET_MOUSE_POS,
+  SV_FUNC_PLAYER_X_WINDOW_SET_PROPS,
 
   /* Playback related controls */
   SV_FUNC_PLAYER_PB_GET_STATE,

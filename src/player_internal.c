@@ -96,46 +96,6 @@ player_sv_set_verbosity (player_t *player, player_verbosity_level_t level)
           MODULE_NAME, "set_verbosity is unimplemented");
 }
 
-void
-player_sv_x_window_set_properties (player_t *player,
-                                   int x, int y, int w, int h, int flags)
-{
-#ifdef USE_X11
-  int f = 0;
-#endif /* USE_X11 */
-
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
-
-  if (!player || !player->x11)
-    return;
-
-#ifdef USE_X11
-  if (flags == PLAYER_X_WINDOW_AUTO)
-  {
-    f = X11_PROPERTY_X | X11_PROPERTY_Y |
-        X11_PROPERTY_W | X11_PROPERTY_H;
-    x = 0;
-    y = 0;
-    w = 0;
-    h = 0;
-  }
-  else
-  {
-    if (flags & PLAYER_X_WINDOW_X)
-      f = X11_PROPERTY_X;
-    if (flags & PLAYER_X_WINDOW_Y)
-      f |= X11_PROPERTY_Y;
-    if (flags & PLAYER_X_WINDOW_W)
-      f |= X11_PROPERTY_W;
-    if (flags & PLAYER_X_WINDOW_H)
-      f |= X11_PROPERTY_H;
-  }
-
-  x11_set_winprops (player->x11, x, y, w, h, f);
-  x11_resize (player);
-#endif /* USE_X11 */
-}
-
 /***************************************************************************/
 /*                                                                         */
 /* Player to MRL connection                                                */
@@ -354,6 +314,46 @@ player_sv_set_mouse_position (player_t *player, int x, int y)
   else
     plog (player, PLAYER_MSG_WARNING,
           MODULE_NAME, "set_mouse_pos is unimplemented");
+}
+
+void
+player_sv_x_window_set_properties (player_t *player,
+                                   int x, int y, int w, int h, int flags)
+{
+#ifdef USE_X11
+  int f = 0;
+#endif /* USE_X11 */
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player || !player->x11)
+    return;
+
+#ifdef USE_X11
+  if (flags == PLAYER_X_WINDOW_AUTO)
+  {
+    f = X11_PROPERTY_X | X11_PROPERTY_Y |
+        X11_PROPERTY_W | X11_PROPERTY_H;
+    x = 0;
+    y = 0;
+    w = 0;
+    h = 0;
+  }
+  else
+  {
+    if (flags & PLAYER_X_WINDOW_X)
+      f = X11_PROPERTY_X;
+    if (flags & PLAYER_X_WINDOW_Y)
+      f |= X11_PROPERTY_Y;
+    if (flags & PLAYER_X_WINDOW_W)
+      f |= X11_PROPERTY_W;
+    if (flags & PLAYER_X_WINDOW_H)
+      f |= X11_PROPERTY_H;
+  }
+
+  x11_set_winprops (player->x11, x, y, w, h, f);
+  x11_resize (player);
+#endif /* USE_X11 */
 }
 
 /***************************************************************************/

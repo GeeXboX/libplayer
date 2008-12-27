@@ -330,18 +330,6 @@ supervisor_player_set_verbosity (player_t *player, void *in, void *out)
   player_sv_set_verbosity (player, *input);
 }
 
-static void
-supervisor_player_x_window_set_props (player_t *player, void *in, void *out)
-{
-  supervisor_data_window_t *input = in;
-
-  if (!player || !in)
-    return;
-
-  player_sv_x_window_set_properties (player, input->x, input->y,
-                                             input->w, input->h, input->flags);
-}
-
 /************************* Player to MRL connection **************************/
 
 static void
@@ -486,6 +474,18 @@ supervisor_player_set_mouse_pos (player_t *player, void *in, void *out)
     return;
 
   player_sv_set_mouse_position (player, input->x, input->y);
+}
+
+static void
+supervisor_player_x_window_set_props (player_t *player, void *in, void *out)
+{
+  supervisor_data_window_t *input = in;
+
+  if (!player || !in)
+    return;
+
+  player_sv_x_window_set_properties (player, input->x, input->y,
+                                             input->w, input->h, input->flags);
 }
 
 /************************ Playback related controls **************************/
@@ -935,7 +935,6 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_PLAYER_INIT]                  = supervisor_player_init,
   [SV_FUNC_PLAYER_UNINIT]                = supervisor_player_uninit,
   [SV_FUNC_PLAYER_SET_VERBOSITY]         = supervisor_player_set_verbosity,
-  [SV_FUNC_PLAYER_X_WINDOW_SET_PROPS]    = supervisor_player_x_window_set_props,
 
   /* Player to MRL connection */
   [SV_FUNC_PLAYER_MRL_GET_CURRENT]       = supervisor_player_mrl_get_current,
@@ -954,6 +953,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_PLAYER_SET_SHUFFLE]           = supervisor_player_set_shuffle,
   [SV_FUNC_PLAYER_SET_FRAMEDROP]         = supervisor_player_set_framedrop,
   [SV_FUNC_PLAYER_SET_MOUSE_POS]         = supervisor_player_set_mouse_pos,
+  [SV_FUNC_PLAYER_X_WINDOW_SET_PROPS]    = supervisor_player_x_window_set_props,
 
   /* Playback related controls */
   [SV_FUNC_PLAYER_PB_GET_STATE]          = supervisor_player_pb_get_state,

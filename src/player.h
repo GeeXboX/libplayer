@@ -129,15 +129,6 @@ typedef enum {
   PLAYER_MSG_CRITICAL,      /* prevents lib from working */
 } player_verbosity_level_t;
 
-/** \brief Player X11 window flags. */
-typedef enum player_x_window_flags {
-  PLAYER_X_WINDOW_AUTO = 0,
-  PLAYER_X_WINDOW_X    = (1 << 0),
-  PLAYER_X_WINDOW_Y    = (1 << 1),
-  PLAYER_X_WINDOW_W    = (1 << 2),
-  PLAYER_X_WINDOW_H    = (1 << 3),
-} player_x_window_flags_t;
-
 /**
  * \name Player (Un)Initialization and tuning.
  * @{
@@ -189,26 +180,6 @@ void player_uninit (player_t *player);
  * \param[in] level       Level of verbosity to set.
  */
 void player_set_verbosity (player_t *player, player_verbosity_level_t level);
-
-/**
- * \brief Set properties of X11 window handled by libplayer.
- *
- * Origin to the top-left corner.
- *
- * Wrappers supported (even partially):
- *  MPlayer, xine
- *
- * \warning Only usable with video outputs X11 compliant.
- * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
- * \param[in] player      Player controller.
- * \param[in] x           X coordinate (pixel).
- * \param[in] y           Y coordinate (pixel).
- * \param[in] w           Width (pixel).
- * \param[in] h           Height (pixel).
- * \param[in] flags       Flags to select properties to change.
- */
-void player_x_window_set_properties (player_t *player,
-                                     int x, int y, int w, int h, int flags);
 
 /**
  * @}
@@ -806,6 +777,15 @@ typedef enum player_framedrop {
   PLAYER_FRAMEDROP_HARD,
 } player_framedrop_t;
 
+/** \brief Player X11 window flags. */
+typedef enum player_x_window_flags {
+  PLAYER_X_WINDOW_AUTO = 0,
+  PLAYER_X_WINDOW_X    = (1 << 0),
+  PLAYER_X_WINDOW_Y    = (1 << 1),
+  PLAYER_X_WINDOW_W    = (1 << 2),
+  PLAYER_X_WINDOW_H    = (1 << 3),
+} player_x_window_flags_t;
+
 /**
  * \name Player tuning & properties.
  * @{
@@ -882,6 +862,26 @@ void player_set_framedrop (player_t *player, player_framedrop_t fd);
  * \param[in] y           Y coordinate (pixel).
  */
 void player_set_mouse_position (player_t *player, int x, int y);
+
+/**
+ * \brief Set properties of X11 window handled by libplayer.
+ *
+ * Origin to the top-left corner.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer, xine
+ *
+ * \warning Only usable with video outputs X11 compliant.
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
+ * \param[in] player      Player controller.
+ * \param[in] x           X coordinate (pixel).
+ * \param[in] y           Y coordinate (pixel).
+ * \param[in] w           Width (pixel).
+ * \param[in] h           Height (pixel).
+ * \param[in] flags       Flags to select properties to change.
+ */
+void player_x_window_set_properties (player_t *player,
+                                     int x, int y, int w, int h, int flags);
 
 /**
  * @}
