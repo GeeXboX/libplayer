@@ -872,6 +872,18 @@ void player_set_shuffle (player_t *player, int value);
 void player_set_framedrop (player_t *player, player_framedrop_t fd);
 
 /**
+ * \brief Set the mouse position to the player.
+ *
+ * The main goal is to select buttons in DVD menu.
+ *
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
+ * \param[in] player      Player controller.
+ * \param[in] x           X coordinate (pixel).
+ * \param[in] y           Y coordinate (pixel).
+ */
+void player_set_mouse_position (player_t *player, int x, int y);
+
+/**
  * @}
  */
 

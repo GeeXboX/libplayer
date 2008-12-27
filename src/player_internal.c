@@ -340,6 +340,22 @@ player_sv_set_framedrop (player_t *player, player_framedrop_t fd)
           MODULE_NAME, "set_framedrop is unimplemented");
 }
 
+void
+player_sv_set_mouse_position (player_t *player, int x, int y)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  /* player specific set_mouse_pos() */
+  if (player->funcs->set_mouse_pos)
+    player->funcs->set_mouse_pos (player, x, y);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "set_mouse_pos is unimplemented");
+}
+
 /***************************************************************************/
 /*                                                                         */
 /* Playback related controls                                               */

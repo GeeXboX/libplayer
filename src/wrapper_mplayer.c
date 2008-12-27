@@ -3993,6 +3993,7 @@ register_functions_mplayer (void)
 
   funcs->get_time_pos       = mplayer_get_time_pos;
   funcs->set_framedrop      = mplayer_set_framedrop;
+  funcs->set_mouse_pos      = NULL;
 
   funcs->pb_start           = mplayer_playback_start;
   funcs->pb_stop            = mplayer_playback_stop;

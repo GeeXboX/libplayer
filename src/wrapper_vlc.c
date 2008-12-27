@@ -572,6 +572,7 @@ register_functions_vlc (void)
 
   funcs->get_time_pos       = vlc_get_time_pos;
   funcs->set_framedrop      = NULL;
+  funcs->set_mouse_pos      = NULL;
 
   funcs->pb_start           = vlc_playback_start;
   funcs->pb_stop            = vlc_playback_stop;

@@ -445,6 +445,23 @@ player_set_framedrop (player_t *player, player_framedrop_t fd)
                    SV_FUNC_PLAYER_SET_FRAMEDROP, &fd, NULL);
 }
 
+void
+player_set_mouse_position (player_t *player, int x, int y)
+{
+  supervisor_data_coord_t in;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  in.x = x;
+  in.y = y;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_PLAYER_SET_MOUSE_POS, &in, NULL);
+}
+
 /***************************************************************************/
 /*                                                                         */
 /* Playback related controls                                               */

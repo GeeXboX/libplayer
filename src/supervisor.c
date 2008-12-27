@@ -477,6 +477,17 @@ supervisor_player_set_framedrop (player_t *player, void *in, void *out)
   player_sv_set_framedrop (player, *input);
 }
 
+static void
+supervisor_player_set_mouse_pos (player_t *player, void *in, void *out)
+{
+  supervisor_data_coord_t *input = in;
+
+  if (!player || !in)
+    return;
+
+  player_sv_set_mouse_position (player, input->x, input->y);
+}
+
 /************************ Playback related controls **************************/
 
 static void
@@ -942,6 +953,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_PLAYER_SET_LOOP]              = supervisor_player_set_loop,
   [SV_FUNC_PLAYER_SET_SHUFFLE]           = supervisor_player_set_shuffle,
   [SV_FUNC_PLAYER_SET_FRAMEDROP]         = supervisor_player_set_framedrop,
+  [SV_FUNC_PLAYER_SET_MOUSE_POS]         = supervisor_player_set_mouse_pos,
 
   /* Playback related controls */
   [SV_FUNC_PLAYER_PB_GET_STATE]          = supervisor_player_pb_get_state,
