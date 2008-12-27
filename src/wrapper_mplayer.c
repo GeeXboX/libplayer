@@ -61,6 +61,8 @@ typedef enum mplayer_dvdnav {
   MPLAYER_DVDNAV_RIGHT  = 4,
   MPLAYER_DVDNAV_MENU   = 5,
   MPLAYER_DVDNAV_SELECT = 6,
+  MPLAYER_DVDNAV_PREV   = 7,
+  MPLAYER_DVDNAV_MOUSE  = 8,
 } mplayer_dvdnav_t;
 
 typedef enum mplayer_sub_alignment {
@@ -3820,6 +3822,14 @@ mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
 
   case PLAYER_DVDNAV_SELECT:
     action = MPLAYER_DVDNAV_SELECT;
+    break;
+
+  case PLAYER_DVDNAV_PREVMENU:
+    action = MPLAYER_DVDNAV_PREV;
+    break;
+
+  case PLAYER_DVDNAV_MOUSECLICK:
+    action = MPLAYER_DVDNAV_MOUSE;
     break;
 
   default:
