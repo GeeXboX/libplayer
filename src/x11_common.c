@@ -254,8 +254,7 @@ x11_resize (player_t *player)
       changes.height = height;
       XConfigureWindow (x11->display, screeninfo->win_black,
                         CWX | CWY | CWWidth | CWHeight, &changes);
-
-      if (player->winid)
+      if (screeninfo->win_trans)
         XConfigureWindow (x11->display, screeninfo->win_trans,
                           CWWidth | CWHeight, &changes);
     }
@@ -550,13 +549,7 @@ x11_init (player_t *player)
     /*
      * Transparent window to catch all events in order to prevent sending
      * events to MPlayer.
-     *
-     * NOTE: Only needed with embedded window, because by default the
-     *       window created by libplayer is ignored by the Window Manager
-     *       (override_redirect -> True).
      */
-    if (player->winid)
-    {
       screeninfo->win_trans = XCreateWindow (x11->display,
                                              screeninfo->win_black,
                                              0, 0, width, height,
@@ -565,7 +558,6 @@ x11_init (player_t *player)
                                              visual,
                                              CWOverrideRedirect, &atts);
       XMapRaised (x11->display,  screeninfo->win_trans);
-    }
   }
   else
   {
