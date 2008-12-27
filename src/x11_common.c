@@ -546,10 +546,10 @@ x11_init (player_t *player)
 
     XMapWindow (x11->display, x11->win_video);
 
-  /*
-   * Transparent window to catch all events in order to prevent sending
-   * events to MPlayer.
-   */
+    /*
+     * Transparent window to catch all events in order to prevent sending
+     * events to MPlayer.
+     */
     screeninfo->win_trans = XCreateWindow (x11->display,
                                            screeninfo->win_black,
                                            0, 0, width, height,
