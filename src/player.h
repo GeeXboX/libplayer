@@ -130,7 +130,7 @@ typedef enum {
 } player_verbosity_level_t;
 
 /**
- * \name Player (Un)Initialization and tuning.
+ * \name Player (Un)Initialization.
  * @{
  */
 
