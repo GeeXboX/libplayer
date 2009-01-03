@@ -976,7 +976,7 @@ void player_playback_seek (player_t *player, int value, player_pb_seek_t seek);
  * \brief Seek chapter in the stream.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.

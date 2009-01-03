@@ -177,9 +177,10 @@ typedef struct mplayer_s {
  * Paused mode is lost without using pausing_keep. But this causes the media
  * to advance a bit.
  *
- * NOTE: Only used with get/set_property, dvdnav, seek, switch_ratio,
- *       switch_title, tv_set_norm, tv_step_channel, tv_set_channel,
- *       radio_step_channel, radio_set_channel and set_mouse_pos.
+ * NOTE: Only used with get/set_property, dvdnav, seek, seek_chapter,
+ *       switch_ratio, switch_title, tv_set_norm, tv_step_channel,
+ *       tv_set_channel, radio_step_channel, radio_set_channel
+ *       and set_mouse_pos.
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
@@ -197,6 +198,7 @@ typedef enum slave_cmd {
   SLAVE_RADIO_SET_CHANNEL,  /* radio_set_channel string */
   SLAVE_RADIO_STEP_CHANNEL, /* radio_step_channel int */
   SLAVE_SEEK,               /* seek float [int] */
+  SLAVE_SEEK_CHAPTER,       /* seek_chapter int [int] */
   SLAVE_SET_MOUSE_POS,      /* set_mouse_pos int int */
   SLAVE_SET_PROPERTY,       /* set_property string string */
   SLAVE_STOP,               /* stop */
@@ -217,6 +219,7 @@ static const item_list_t g_slave_cmds[] = {
   [SLAVE_RADIO_SET_CHANNEL]  = {"radio_set_channel",  ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_RADIO_STEP_CHANNEL] = {"radio_step_channel", ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SEEK]               = {"seek",               ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SEEK_CHAPTER]       = {"seek_chapter",       ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SET_MOUSE_POS]      = {"set_mouse_pos",      ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SET_PROPERTY]       = {"set_property",       ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_STOP]               = {"stop",               ITEM_ON | ITEM_HACK, ITEM_OFF, NULL},
@@ -1131,6 +1134,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   case SLAVE_SEEK:
+  case SLAVE_SEEK_CHAPTER:
   case SLAVE_SET_MOUSE_POS:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player,
@@ -3398,6 +3402,22 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 }
 
 static void
+mplayer_playback_seek_chapter (player_t *player, int value, int absolute)
+{
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "playback_seek_chapter: %i %i", value, absolute);
+
+  if (!player)
+    return;
+
+  /*
+   * NOTE: seek_chapter needs at least MPlayer >= 28226 to work correctly,
+   *       else MPlayer hangs if a chapter after the last is reached.
+   */
+  slave_cmd_int_opt (player, SLAVE_SEEK_CHAPTER, value, absolute);
+}
+
+static void
 mplayer_playback_set_speed (player_t *player, float value)
 {
   int speed;
@@ -4024,7 +4044,7 @@ register_functions_mplayer (void)
   funcs->pb_stop            = mplayer_playback_stop;
   funcs->pb_pause           = mplayer_playback_pause;
   funcs->pb_seek            = mplayer_playback_seek;
-  funcs->pb_seek_chapter    = NULL;
+  funcs->pb_seek_chapter    = mplayer_playback_seek_chapter;
   funcs->pb_set_speed       = mplayer_playback_set_speed;
 
   funcs->audio_get_volume   = mplayer_audio_get_volume;
