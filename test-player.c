@@ -61,6 +61,7 @@
   " 5/6 : previous/next subtitle\n" \
   " 7/8 : previous/next TV analog channel\n" \
   " {/} : previous/next radio channel\n" \
+  " (/) : previous/next chapter\n" \
   " u   : toggle subtitle visibility\n" \
   " a   : change aspect ratio (original/16:9)\n" \
   " l   : load a stream in the playlist\n" \
@@ -1004,6 +1005,14 @@ main (int argc, char **argv)
     case '}':
       player_radio_channel_next (player);
       printf ("RADIO CHANNEL NEXT\n");
+      break;
+    case '(':
+      player_playback_seek_chapter (player, -1, 0);
+      printf ("SEEK CHAPTER -1\n");
+      break;
+    case ')':
+      player_playback_seek_chapter (player, 1, 0);
+      printf ("SEEK CHAPTER +1\n");
       break;
     case '0':   /* increase volume */
       if (++volume > 100)
