@@ -1,6 +1,6 @@
 /*
  * GeeXboX libplayer: a multimedia A/V abstraction layer API.
- * Copyright (C) 2008 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2008-2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
  * This file is part of libplayer.
  *
