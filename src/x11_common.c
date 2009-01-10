@@ -72,7 +72,7 @@ typedef struct {
 /*
  * Center the movie in the parent window and zoom to use the max of surface.
  */
-void
+static void
 zoom (player_t *player, int parentwidth, int parentheight, float aspect,
       int *x, int *y, int *width, int *height)
 {
