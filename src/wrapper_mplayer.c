@@ -3660,16 +3660,11 @@ mplayer_audio_next (player_t *player)
 static void
 mplayer_video_set_ar (player_t *player, float value)
 {
-  mplayer_t *mplayer;
   mrl_t *mrl;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "video_set_ar: %.2f", value);
 
   if (!player)
-    return;
-
-  mplayer = player->priv;
-  if (!mplayer)
     return;
 
   if (get_mplayer_status (player) != MPLAYER_IS_PLAYING)
