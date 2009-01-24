@@ -319,8 +319,8 @@ static const item_list_t g_slave_props[] = {
  */
 
 
-static const int g_slave_cmds_nb = ARRAY_NB_ELEMENTS(g_slave_cmds);
-static const int g_slave_props_nb = ARRAY_NB_ELEMENTS(g_slave_props);
+static const int g_slave_cmds_nb = ARRAY_NB_ELEMENTS (g_slave_cmds);
+static const int g_slave_props_nb = ARRAY_NB_ELEMENTS (g_slave_props);
 
 
 static void
