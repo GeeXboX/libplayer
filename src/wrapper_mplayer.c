@@ -2213,7 +2213,6 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
   default:
   {
     char buffer[FIFO_BUFFER];
-    int found;
     FILE *mp_fifo;
     mp_identify_clip_t clip = {
       .cnt      = 0,
@@ -2226,22 +2225,20 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
 
     while (fgets (buffer, FIFO_BUFFER, mp_fifo))
     {
-      found = 0;
-
       *(buffer + strlen (buffer) - 1) = '\0';
       plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "[identify] %s", buffer);
 
       if (flags & IDENTIFY_VIDEO)
-        found = mp_identify_video (mrl, buffer);
+        mp_identify_video (mrl, buffer);
 
-      if (!found && (flags & IDENTIFY_AUDIO))
-        found = mp_identify_audio (mrl, buffer);
+      if (flags & IDENTIFY_AUDIO)
+        mp_identify_audio (mrl, buffer);
 
-      if (!found && (flags & IDENTIFY_METADATA))
-        found = mp_identify_metadata (mrl, buffer, &clip);
+      if (flags & IDENTIFY_METADATA)
+        mp_identify_metadata (mrl, buffer, &clip);
 
-      if (!found && (flags & IDENTIFY_PROPERTIES))
-        found = mp_identify_properties (mrl, buffer);
+      if (flags & IDENTIFY_PROPERTIES)
+        mp_identify_properties (mrl, buffer);
     }
 
     /* wait the death of MPlayer */
