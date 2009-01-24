@@ -504,27 +504,16 @@ get_mplayer_status (player_t *player)
 static int
 parse_msf (const char *str)
 {
-  char buf[4];
-  const char *_s = NULL, *_f = NULL;
+  int res;
   int m, s, f;
 
   if (!str)
     return 0;
 
-  _s = strchr (str, ':');
-  _f = strrchr (str, ':');
+  res = sscanf (str, "%i:%i:%i", &m, &s, &f);
 
-  if (!_s || !_f)
+  if (res != 3)
     return 0;
-  if (_s == _f)
-    return 0;
-
-  snprintf (buf, 3, "%s", str);
-  m = atoi (buf);
-  snprintf (buf, 3, "%s", _s + 1);
-  s = atoi (buf);
-  snprintf (buf, 3, "%s", _f + 1);
-  f = atoi (buf);
 
   return m * 60 * 1000 + s * 1000 + f;
 }
