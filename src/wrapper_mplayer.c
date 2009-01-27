@@ -691,8 +691,8 @@ thread_fifo (void *arg)
         get_cmd (player, SLAVE_STOP, &state);
 
         /*
-         * Oops, 'stop' is arrived just before "EOF code != 1" and was not
-         * handled like a stop.
+         * Oops, 'stop' is arrived just after the parsing of "EOF code" and
+         * it was not handled like a stop but like an end of file.
          */
         if (state == ITEM_ON)
         {
