@@ -54,6 +54,9 @@ typedef struct screeninfo_s {
   double pixel_aspect;
   Window win_black; /* black background (use_subwin to 1) */
   Window win_trans; /* InputOnly window to catch events (use_subwin to 1) */
+#ifdef HAVE_XINE
+  pthread_mutex_t *mutex_display; /* pointer on x11_t's mutex for xine cb */
+#endif /* HAVE_XINE */
 } screeninfo_t;
 
 /* for no border with a X window */
@@ -391,9 +394,11 @@ dest_size_cb(void *data, int video_width, int video_height,
 
   if (screeninfo)
   {
+    pthread_mutex_lock (screeninfo->mutex_display);
     *dest_width = screeninfo->width;
     *dest_height = screeninfo->height;
     *dest_pixel_aspect = screeninfo->pixel_aspect;
+    pthread_mutex_unlock (screeninfo->mutex_display);
   }
   else
   {
@@ -419,9 +424,11 @@ frame_output_cb(void *data, int video_width, int video_height,
 
   if (screeninfo)
   {
+    pthread_mutex_lock (screeninfo->mutex_display);
     *dest_width = screeninfo->width;
     *dest_height = screeninfo->height;
     *dest_pixel_aspect = screeninfo->pixel_aspect;
+    pthread_mutex_unlock (screeninfo->mutex_display);
   }
   else
   {
@@ -587,6 +594,7 @@ x11_init (player_t *player)
       screeninfo->width = width;
       screeninfo->height = height;
       screeninfo->pixel_aspect = 1.0;
+      screeninfo->mutex_display = &x11->mutex_display;
 
       vis->display = x11->display;
       vis->screen = screen;
