@@ -449,9 +449,6 @@ int
 x11_init (player_t *player)
 {
   x11_t *x11 = NULL;
-#ifdef HAVE_XINE
-  x11_visual_t *vis = NULL;
-#endif /* HAVE_XINE */
   Window win_root;
   screeninfo_t *screeninfo;
   int screen, width, height;
@@ -587,7 +584,7 @@ x11_init (player_t *player)
   if (player->type == PLAYER_TYPE_XINE)
   {
 #ifdef HAVE_XINE
-    vis = malloc (sizeof (x11_visual_t));
+    x11_visual_t *vis = malloc (sizeof (x11_visual_t));
 
     if (vis)
     {
