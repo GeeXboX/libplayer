@@ -529,9 +529,9 @@ xine_player_init (player_t *player)
 
 #ifdef USE_X11
   if (player->x11 && x11_get_display (player->x11)) {
-    xine_gui_send_vo_data (x->stream, XINE_GUI_SEND_DRAWABLE_CHANGED,
+    xine_port_send_gui_data (x->vo_port, XINE_GUI_SEND_DRAWABLE_CHANGED,
                            (void *) x11_get_window (player->x11));
-    xine_gui_send_vo_data (x->stream, XINE_GUI_SEND_VIDEOWIN_VISIBLE,
+    xine_port_send_gui_data (x->vo_port, XINE_GUI_SEND_VIDEOWIN_VISIBLE,
                            (void *) 1);
   }
 #endif /* USE_X11 */
