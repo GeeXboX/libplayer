@@ -146,75 +146,75 @@ struct mrl_s {
 
 typedef struct player_funcs_s {
   /* Player (Un)Init */
-  init_status_t (* init) (player_t *player);
-  void (* uninit) (player_t *player);
-  void (* set_verbosity) (player_t *player, player_verbosity_level_t level);
+  init_status_t (*init) (player_t *player);
+  void (*uninit) (player_t *player);
+  void (*set_verbosity) (player_t *player, player_verbosity_level_t level);
 
   /* MRLs */
-  int (* mrl_supported_res) (player_t *player, mrl_resource_t res);
-  void (* mrl_retrieve_props) (player_t *player, mrl_t *mrl);
-  void (* mrl_retrieve_meta) (player_t *player, mrl_t *mrl);
-  void (* mrl_video_snapshot) (player_t *player, mrl_t *mrl,
-                               int pos, mrl_snapshot_t t, const char *dst);
+  int (*mrl_supported_res) (player_t *player, mrl_resource_t res);
+  void (*mrl_retrieve_props) (player_t *player, mrl_t *mrl);
+  void (*mrl_retrieve_meta) (player_t *player, mrl_t *mrl);
+  void (*mrl_video_snapshot) (player_t *player, mrl_t *mrl,
+                              int pos, mrl_snapshot_t t, const char *dst);
 
   /* Player properties */
-  int (* get_time_pos) (player_t *player);
-  void (* set_framedrop) (player_t *player, player_framedrop_t fd);
-  void (* set_mouse_pos) (player_t *player, int x, int y);
+  int (*get_time_pos) (player_t *player);
+  void (*set_framedrop) (player_t *player, player_framedrop_t fd);
+  void (*set_mouse_pos) (player_t *player, int x, int y);
 
   /* Playback */
-  playback_status_t (* pb_start) (player_t *player);
-  void (* pb_stop) (player_t *player);
-  playback_status_t (* pb_pause) (player_t *player);
-  void (* pb_seek) (player_t *player, int value, player_pb_seek_t seek);
-  void (* pb_seek_chapter) (player_t *player, int value, int absolute);
-  void (* pb_set_speed) (player_t *player, float value);
+  playback_status_t (*pb_start) (player_t *player);
+  void (*pb_stop) (player_t *player);
+  playback_status_t (*pb_pause) (player_t *player);
+  void (*pb_seek) (player_t *player, int value, player_pb_seek_t seek);
+  void (*pb_seek_chapter) (player_t *player, int value, int absolute);
+  void (*pb_set_speed) (player_t *player, float value);
 
   /* Audio */
-  int (* audio_get_volume) (player_t *player);
-  void (* audio_set_volume) (player_t *player, int value);
-  player_mute_t (* audio_get_mute) (player_t *player);
-  void (* audio_set_mute) (player_t *player, player_mute_t value);
-  void (* audio_set_delay) (player_t *player, int value, int absolute);
-  void (* audio_select) (player_t *player, int audio_id);
-  void (* audio_prev) (player_t *player);
-  void (* audio_next) (player_t *player);
+  int (*audio_get_volume) (player_t *player);
+  void (*audio_set_volume) (player_t *player, int value);
+  player_mute_t (*audio_get_mute) (player_t *player);
+  void (*audio_set_mute) (player_t *player, player_mute_t value);
+  void (*audio_set_delay) (player_t *player, int value, int absolute);
+  void (*audio_select) (player_t *player, int audio_id);
+  void (*audio_prev) (player_t *player);
+  void (*audio_next) (player_t *player);
 
   /* Video */
-  void (* video_set_fs) (player_t *player, int value);
-  void (* video_set_aspect) (player_t *player, player_video_aspect_t aspect,
-                             int8_t value, int absolute);
-  void (* video_set_panscan) (player_t *player, int8_t value, int absolute);
-  void (* video_set_ar) (player_t *player, float value);
+  void (*video_set_fs) (player_t *player, int value);
+  void (*video_set_aspect) (player_t *player, player_video_aspect_t aspect,
+                            int8_t value, int absolute);
+  void (*video_set_panscan) (player_t *player, int8_t value, int absolute);
+  void (*video_set_ar) (player_t *player, float value);
 
   /* Subtitles */
-  void (* sub_set_delay) (player_t *player, int value);
-  void (* sub_set_alignment) (player_t *player, player_sub_alignment_t a);
-  void (* sub_set_pos) (player_t *player, int value);
-  void (* sub_set_visibility) (player_t *player, int value);
-  void (* sub_scale) (player_t *player, int value, int absolute);
-  void (* sub_select) (player_t *player, int sub_id);
-  void (* sub_prev) (player_t *player);
-  void (* sub_next) (player_t *player);
+  void (*sub_set_delay) (player_t *player, int value);
+  void (*sub_set_alignment) (player_t *player, player_sub_alignment_t a);
+  void (*sub_set_pos) (player_t *player, int value);
+  void (*sub_set_visibility) (player_t *player, int value);
+  void (*sub_scale) (player_t *player, int value, int absolute);
+  void (*sub_select) (player_t *player, int sub_id);
+  void (*sub_prev) (player_t *player);
+  void (*sub_next) (player_t *player);
 
   /* DVD */
-  void (* dvd_nav) (player_t *player, player_dvdnav_t value);
-  void (* dvd_angle_set) (player_t *player, int angle);
-  void (* dvd_angle_prev) (player_t *player);
-  void (* dvd_angle_next) (player_t *player);
-  void (* dvd_title_set) (player_t *player, int title);
-  void (* dvd_title_prev) (player_t *player);
-  void (* dvd_title_next) (player_t *player);
+  void (*dvd_nav) (player_t *player, player_dvdnav_t value);
+  void (*dvd_angle_set) (player_t *player, int angle);
+  void (*dvd_angle_prev) (player_t *player);
+  void (*dvd_angle_next) (player_t *player);
+  void (*dvd_title_set) (player_t *player, int title);
+  void (*dvd_title_prev) (player_t *player);
+  void (*dvd_title_next) (player_t *player);
 
   /* TV */
-  void (* tv_channel_set) (player_t *player, const char *channel);
-  void (* tv_channel_prev) (player_t *player);
-  void (* tv_channel_next) (player_t *player);
+  void (*tv_channel_set) (player_t *player, const char *channel);
+  void (*tv_channel_prev) (player_t *player);
+  void (*tv_channel_next) (player_t *player);
 
   /* Radio */
-  void (* radio_channel_set) (player_t *player, const char *channel);
-  void (* radio_channel_prev) (player_t *player);
-  void (* radio_channel_next) (player_t *player);
+  void (*radio_channel_set) (player_t *player, const char *channel);
+  void (*radio_channel_prev) (player_t *player);
+  void (*radio_channel_next) (player_t *player);
 
 } player_funcs_t;
 
