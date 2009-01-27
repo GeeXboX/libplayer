@@ -162,17 +162,13 @@ x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags)
 static screeninfo_t *
 x11_get_screeninfo (player_t *player)
 {
-#ifdef HAVE_XINE
-  x11_visual_t *vis;
-#endif /* HAVE_XINE */
-
   if (!player || !player->x11)
     return NULL;
 
   if (player->type == PLAYER_TYPE_XINE)
   {
 #ifdef HAVE_XINE
-    vis = player->x11->data;
+    x11_visual_t *vis = player->x11->data;
     if (vis)
       return vis->user_data;
 #endif /* HAVE_XINE */
