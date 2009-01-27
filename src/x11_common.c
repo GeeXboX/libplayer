@@ -385,7 +385,7 @@ x11_uninit (player_t *player)
 
 #ifdef HAVE_XINE
 static void
-dest_size_cb(void *data, int video_width, int video_height,
+xine_dest_size_cb(void *data, int video_width, int video_height,
              double video_pixel_aspect, int *dest_width,
              int *dest_height, double *dest_pixel_aspect)
 {
@@ -409,7 +409,7 @@ dest_size_cb(void *data, int video_width, int video_height,
 }
 
 static void
-frame_output_cb(void *data, int video_width, int video_height,
+xine_frame_output_cb(void *data, int video_width, int video_height,
                 double video_pixel_aspect, int *dest_x, int *dest_y,
                 int *dest_width, int *dest_height,
                 double *dest_pixel_aspect, int *win_x, int *win_y)
@@ -596,8 +596,8 @@ x11_init (player_t *player)
       vis->display = x11->display;
       vis->screen = screen;
       vis->d = x11->win_video;
-      vis->dest_size_cb = dest_size_cb;
-      vis->frame_output_cb = frame_output_cb;
+      vis->dest_size_cb = xine_dest_size_cb;
+      vis->frame_output_cb = xine_frame_output_cb;
       vis->user_data = (void *) screeninfo;
     }
 
