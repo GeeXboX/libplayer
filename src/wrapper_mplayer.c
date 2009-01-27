@@ -847,7 +847,7 @@ send_to_slave (player_t *player, const char *format, ...)
 
   if (!mplayer->fifo_in)
   {
-    plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
+    plog (player, PLAYER_MSG_CRITICAL, MODULE_NAME,
           "the command can not be sent to slave, stdin unavailable");
     return;
   }
