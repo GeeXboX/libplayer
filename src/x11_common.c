@@ -584,7 +584,7 @@ x11_init (player_t *player)
   if (player->type == PLAYER_TYPE_XINE)
   {
 #ifdef HAVE_XINE
-    x11_visual_t *vis = malloc (sizeof (x11_visual_t));
+    x11_visual_t *vis = calloc (1, sizeof (x11_visual_t));
 
     if (vis)
     {
