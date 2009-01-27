@@ -922,7 +922,8 @@ slave_result (slave_property_t property, player_t *player)
 
   slave_get_property (player, property);
 
-  /* HACK: Old MPlayer versions needs this hack to detect when a property
+  /*
+   * HACK: Old MPlayer versions need this hack to detect when a property
    *       is unavailable. An error message is returned by the command
    *       'loadfile' (without argument).
    *
