@@ -1106,11 +1106,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     {
       pthread_mutex_lock (&mplayer->mutex_status);
       mplayer->status = MPLAYER_IS_LOADING;
-      pthread_mutex_unlock (&mplayer->mutex_status);
-
       send_to_slave (player, "%s \"%s\" %i", command, value->s_val, opt);
-
-      pthread_mutex_lock (&mplayer->mutex_status);
       pthread_cond_wait (&mplayer->cond_status, &mplayer->mutex_status);
       pthread_mutex_unlock (&mplayer->mutex_status);
     }
