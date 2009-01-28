@@ -780,7 +780,6 @@ if test "$x11" = "auto" -o "$x11" = "yes"; then
     fi
     check_lib X11/X.h XInitThreads -lX11
     if [ "$?" = 0 ]; then
-      add_extralibs -lX11
       add_extracflags -DUSE_X11
       add_pkgconfig_requires x11
       x11="yes"
