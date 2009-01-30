@@ -621,9 +621,9 @@ x11_init (player_t *player)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
   return 1;
 
-err_display:
+ err_display:
   free (screeninfo);
-err_screeninfo:
+ err_screeninfo:
   free (x11);
   player->x11 = NULL;
   return 0;
