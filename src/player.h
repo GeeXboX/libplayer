@@ -492,6 +492,7 @@ uint32_t mrl_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
  * Wrappers supported (even partially):
  *  MPlayer
  *
+ * \warning The returned pointer must be freed when no longer used.
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] mrl         MRL object, NULL for current.
