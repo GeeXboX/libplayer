@@ -2844,6 +2844,8 @@ mplayer_init (player_t *player)
       params[pp++] = "-wid";
       params[pp++] = winid;
     }
+    else
+      params[pp++] = "-nofixed-vo";
 
     /* select the audio output */
     /* TODO: possibility to add parameters for each audio output */
