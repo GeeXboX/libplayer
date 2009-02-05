@@ -788,7 +788,7 @@ player_sv_dvd_nav (player_t *player, player_dvdnav_t value)
   if (res != MRL_RESOURCE_DVDNAV)
     return;
 
-  /* player specific playback_dvdnav() */
+  /* player specific dvd_nav() */
   PLAYER_FUNCS (dvd_nav, value)
 }
 

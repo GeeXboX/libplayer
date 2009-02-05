@@ -653,7 +653,7 @@ mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 
   mrl->prop = mrl_properties_new ();
 
-  /* player specific retrieve_props() */
+  /* player specific mrl_retrieve_props() */
   PLAYER_FUNCS (mrl_retrieve_props, mrl)
 
   mrl_properties_plog (player, mrl);
@@ -814,7 +814,7 @@ mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 
   mrl->meta = mrl_metadata_new (mrl->resource);
 
-  /* player specific init */
+  /* player specific mrl_retrieve_meta() */
   PLAYER_FUNCS (mrl_retrieve_meta, mrl)
 
   mrl_metadata_plog (player, mrl);
