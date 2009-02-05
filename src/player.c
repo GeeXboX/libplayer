@@ -462,6 +462,26 @@ player_x_window_set_properties (player_t *player,
                    SV_FUNC_PLAYER_X_WINDOW_SET_PROPS, &in, NULL);
 }
 
+void
+player_osd_show_text (player_t *player,
+                      const char *text, int x, int y, int duration)
+{
+  supervisor_data_osd_t in;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  in.text     = text;
+  in.x        = x;
+  in.y        = y;
+  in.duration = duration;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_PLAYER_OSD_SHOW_TEXT, &in, NULL);
+}
+
 /***************************************************************************/
 /*                                                                         */
 /* Playback related controls                                               */

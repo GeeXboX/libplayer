@@ -488,6 +488,18 @@ supervisor_player_x_window_set_props (player_t *player, void *in, void *out)
                                              input->w, input->h, input->flags);
 }
 
+static void
+supervisor_player_osd_show_text (player_t *player, void *in, void *out)
+{
+  supervisor_data_osd_t *input = in;
+
+  if (!player || !in)
+    return;
+
+  player_sv_osd_show_text (player,
+                           input->text, input->x, input->y, input->duration);
+}
+
 /************************ Playback related controls **************************/
 
 static void
@@ -954,6 +966,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_PLAYER_SET_FRAMEDROP]         = supervisor_player_set_framedrop,
   [SV_FUNC_PLAYER_SET_MOUSE_POS]         = supervisor_player_set_mouse_pos,
   [SV_FUNC_PLAYER_X_WINDOW_SET_PROPS]    = supervisor_player_x_window_set_props,
+  [SV_FUNC_PLAYER_OSD_SHOW_TEXT]         = supervisor_player_osd_show_text,
 
   /* Playback related controls */
   [SV_FUNC_PLAYER_PB_GET_STATE]          = supervisor_player_pb_get_state,

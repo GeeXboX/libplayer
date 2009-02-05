@@ -888,6 +888,22 @@ void player_x_window_set_properties (player_t *player,
                                      int x, int y, int w, int h, int flags);
 
 /**
+ * \brief Show a text on the On-screen Display.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
+ * \param[in] player      Player controller.
+ * \param[in] text        Text to show on the OSD.
+ * \param[in] x           X coordinate (pixel).
+ * \param[in] y           Y coordinate (pixel).
+ * \param[in] duration    Duration (millisecond).
+ */
+void player_osd_show_text (player_t *player,
+                           const char *text, int x, int y, int duration);
+
+/**
  * @}
  */
 

@@ -1013,6 +1013,7 @@ register_functions_xine (void)
   funcs->get_time_pos       = xine_player_get_time_pos;
   funcs->set_framedrop      = NULL;
   funcs->set_mouse_pos      = NULL;
+  funcs->osd_show_text      = NULL;
 
   funcs->pb_start           = xine_player_playback_start;
   funcs->pb_stop            = xine_player_playback_stop;

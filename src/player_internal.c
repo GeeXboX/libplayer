@@ -356,6 +356,23 @@ player_sv_x_window_set_properties (player_t *player,
 #endif /* USE_X11 */
 }
 
+void
+player_sv_osd_show_text (player_t *player,
+                         const char *text, int x, int y, int duration)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  /* player specific osd_show_text() */
+  if (player->funcs->osd_show_text)
+    player->funcs->osd_show_text (player, text, x, y, duration);
+  else
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "osd_show_text is unimplemented");
+}
+
 /***************************************************************************/
 /*                                                                         */
 /* Playback related controls                                               */

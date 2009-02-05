@@ -82,6 +82,7 @@ typedef enum supervisor_ctl {
   SV_FUNC_PLAYER_SET_FRAMEDROP,
   SV_FUNC_PLAYER_SET_MOUSE_POS,
   SV_FUNC_PLAYER_X_WINDOW_SET_PROPS,
+  SV_FUNC_PLAYER_OSD_SHOW_TEXT,
 
   /* Playback related controls */
   SV_FUNC_PLAYER_PB_GET_STATE,
@@ -204,6 +205,13 @@ typedef struct supervisor_data_coord_s {
   int x;
   int y;
 } supervisor_data_coord_t;
+
+typedef struct supervisor_data_osd_s {
+  const char *text;
+  int x;
+  int y;
+  int duration;
+} supervisor_data_osd_t;
 
 
 supervisor_t *supervisor_new (void);
