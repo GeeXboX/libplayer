@@ -180,7 +180,7 @@ typedef struct mplayer_s {
  * NOTE: Only used with get/set_property, dvdnav, seek, seek_chapter,
  *       switch_ratio, switch_title, tv_set_norm, tv_step_channel,
  *       tv_set_channel, radio_step_channel, radio_set_channel
- *       and set_mouse_pos.
+ *       osd_show_text and set_mouse_pos.
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
@@ -193,6 +193,7 @@ typedef enum slave_cmd {
   SLAVE_DVDNAV,             /* dvdnav int */
   SLAVE_GET_PROPERTY,       /* get_property string */
   SLAVE_LOADFILE,           /* loadfile string [int] */
+  SLAVE_OSD_SHOW_TEXT,      /* osd_show_text string [int] [int] */
   SLAVE_PAUSE,              /* pause */
   SLAVE_QUIT,               /* quit [int] */
   SLAVE_RADIO_SET_CHANNEL,  /* radio_set_channel string */
@@ -214,6 +215,7 @@ static const item_list_t g_slave_cmds[] = {
   [SLAVE_DVDNAV]             = {"dvdnav",             ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_GET_PROPERTY]       = {"get_property",       ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_LOADFILE]           = {"loadfile",           ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_OSD_SHOW_TEXT]      = {"osd_show_text",      ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_PAUSE]              = {"pause",              ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_QUIT]               = {"quit",               ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_RADIO_SET_CHANNEL]  = {"radio_set_channel",  ITEM_ON,             ITEM_OFF, NULL},
@@ -1111,6 +1113,12 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
       pthread_cond_wait (&mplayer->cond_status, &mplayer->mutex_status);
       pthread_mutex_unlock (&mplayer->mutex_status);
     }
+    break;
+
+  case SLAVE_OSD_SHOW_TEXT:
+    if (state_cmd == ITEM_ON && value && value->s_val)
+      send_to_slave (player, SLAVE_CMD_PREFIX "%s \"%s\" %i 0",
+                             command, value->s_val, opt);
     break;
 
   case SLAVE_PAUSE:
@@ -3531,6 +3539,27 @@ mplayer_set_mouse_pos (player_t *player, int x, int y)
 }
 
 static void
+mplayer_osd_show_text (player_t *player,
+                       const char *text, int x, int y, int duration)
+{
+  plog (player, PLAYER_MSG_INFO,
+        MODULE_NAME, "osd_show_text: %s %i %i %i", text, x, y, duration);
+
+  if (!player || !text)
+    return;
+
+  /* Prevent buggy behaviours with the slave and some characters. */
+  if (strchr (text, '"') || strchr (text, '\n') || strchr (text, '\r'))
+  {
+    plog (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, "'\"' '\\r' and '\\n' are prohibited in the string");
+    return;
+  }
+
+  slave_cmd_str_opt (player, SLAVE_OSD_SHOW_TEXT, text, duration);
+}
+
+static void
 mplayer_audio_set_volume (player_t *player, int value)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
@@ -4019,7 +4048,7 @@ register_functions_mplayer (void)
   funcs->get_time_pos       = mplayer_get_time_pos;
   funcs->set_framedrop      = mplayer_set_framedrop;
   funcs->set_mouse_pos      = mplayer_set_mouse_pos;
-  funcs->osd_show_text      = NULL;
+  funcs->osd_show_text      = mplayer_osd_show_text;
 
   funcs->pb_start           = mplayer_playback_start;
   funcs->pb_stop            = mplayer_playback_stop;

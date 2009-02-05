@@ -890,8 +890,11 @@ void player_x_window_set_properties (player_t *player,
 /**
  * \brief Show a text on the On-screen Display.
  *
+ * Coordinates are not usable with MPlayer wrapper. The text is always shown
+ * from the top-left corner.
+ *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
