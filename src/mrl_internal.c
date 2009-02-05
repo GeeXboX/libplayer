@@ -654,11 +654,7 @@ mrl_retrieve_properties (player_t *player, mrl_t *mrl)
   mrl->prop = mrl_properties_new ();
 
   /* player specific retrieve_props() */
-  if (player->funcs->mrl_retrieve_props)
-    player->funcs->mrl_retrieve_props (player, mrl);
-  else
-    plog (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "mrl_retrieve_props is unimplemented");
+  PLAYER_FUNCS (mrl_retrieve_props, mrl)
 
   mrl_properties_plog (player, mrl);
 }
@@ -819,11 +815,7 @@ mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   mrl->meta = mrl_metadata_new (mrl->resource);
 
   /* player specific init */
-  if (player->funcs->mrl_retrieve_meta)
-    player->funcs->mrl_retrieve_meta (player, mrl);
-  else
-    plog (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "mrl_retrieve_meta is unimplemented");
+  PLAYER_FUNCS (mrl_retrieve_meta, mrl)
 
   mrl_metadata_plog (player, mrl);
 }
@@ -1493,11 +1485,7 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
     return NULL;
 
   /* ensure player support this resource type */
-  if (player->funcs->mrl_supported_res)
-    support = player->funcs->mrl_supported_res (player, res);
-  else
-    plog (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "mrl_supported_res is unimplemented");
+  PLAYER_FUNCS_RES (mrl_supported_res, support, res)
 
   if (!support)
   {
@@ -1553,9 +1541,5 @@ mrl_sv_video_snapshot (player_t *player, mrl_t *mrl,
     return;
 
   /* player specific mrl_video_snapshot() */
-  if (player->funcs->mrl_video_snapshot)
-    player->funcs->mrl_video_snapshot (player, mrl, pos, t, dst);
-  else
-    plog (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "mrl_video_snapshot is unimplemented");
+  PLAYER_FUNCS (mrl_video_snapshot, mrl, pos, t, dst)
 }

@@ -220,6 +220,21 @@ typedef struct player_funcs_s {
 
 } player_funcs_t;
 
+#define PLAYER_FUNCS_WARN(fct) \
+  plog (player, PLAYER_MSG_WARNING, MODULE_NAME, #fct " is unimplemented")
+
+#define PLAYER_FUNCS(fct, arg...)       \
+  if (player->funcs->fct)               \
+    player->funcs->fct (player, ##arg); \
+  else                                  \
+    PLAYER_FUNCS_WARN (fct);
+
+#define PLAYER_FUNCS_RES(fct, res, arg...)    \
+  if (player->funcs->fct)                     \
+    res = player->funcs->fct (player, ##arg); \
+  else                                        \
+    PLAYER_FUNCS_WARN (fct);
+
 struct player_s {
   player_type_t type;   /* the type of player we'll use */
   player_verbosity_level_t verbosity;
