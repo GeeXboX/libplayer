@@ -52,6 +52,7 @@
   " #   : change playback mode (auto or single)\n" \
   " .   : change loop value and mode\n" \
   " ,   : enable/disable shuffle on the playlist\n" \
+  " %%   : write a text on the OSD\n" \
   " +/- : increase/decrease speed\n" \
   " ]/[ : audio delay +/- 100 ms\n" \
   " 0/9 : increase/decrease volume\n" \
@@ -976,6 +977,13 @@ main (int argc, char **argv)
       printf ("SHUFFLE %s (playback auto must be enabled: key '#')\n",
               shuffle ? "ON" : "OFF");
       break;
+    case '%':
+    {
+      const char *text = "The quick brown fox jumps over the lazy dog.";
+      player_osd_show_text (player, text, 0, 0, 5000);
+      printf ("OSD SHOW TEXT (5s): %s\n", text);
+      break;
+    }
     case '+':
       speed += 0.1;
       if (speed > 100.0)
