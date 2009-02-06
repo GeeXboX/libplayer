@@ -113,14 +113,14 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   if (!player)
     return NULL;
 
-  player->type = type;
+  player->type      = type;
   player->verbosity = verbosity;
-  player->state = PLAYER_STATE_IDLE;
-  player->ao = ao;
-  player->vo = vo;
-  player->winid = winid;
-  player->event_cb = event_cb;
-  player->playlist = playlist_new (0, 0, PLAYER_LOOP_DISABLE);
+  player->state     = PLAYER_STATE_IDLE;
+  player->ao        = ao;
+  player->vo        = vo;
+  player->winid     = winid;
+  player->event_cb  = event_cb;
+  player->playlist  = playlist_new (0, 0, PLAYER_LOOP_DISABLE);
 
   pthread_mutex_init (&player->mutex_verb, NULL);
 
@@ -294,7 +294,7 @@ player_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when)
   if (!player || !mrl)
     return;
 
-  in.mrl = mrl;
+  in.mrl   = mrl;
   in.value = when;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
@@ -394,7 +394,7 @@ player_set_loop (player_t *player, player_loop_t loop, int value)
     return;
 
   in.value = value;
-  in.mode = loop;
+  in.mode  = loop;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_PLAYER_SET_LOOP, &in, NULL);
@@ -452,10 +452,10 @@ player_x_window_set_properties (player_t *player,
   if (!player)
     return;
 
-  in.x = x;
-  in.y = y;
-  in.h = h;
-  in.w = w;
+  in.x     = x;
+  in.y     = y;
+  in.h     = h;
+  in.w     = w;
   in.flags = flags;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
@@ -551,7 +551,7 @@ player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
     return;
 
   in.value = value;
-  in.mode = seek;
+  in.mode  = seek;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_PLAYER_PB_SEEK, &in, NULL);
@@ -568,7 +568,7 @@ player_playback_seek_chapter (player_t *player, int value, int absolute)
     return;
 
   in.value = value;
-  in.mode = absolute;
+  in.mode  = absolute;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_PLAYER_PB_SEEK_CHAPTER, &in, NULL);
@@ -659,7 +659,7 @@ player_audio_set_delay (player_t *player, int value, int absolute)
     return;
 
   in.value = value;
-  in.mode = absolute;
+  in.mode  = absolute;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_PLAYER_AO_SET_DELAY, &in, NULL);
@@ -730,9 +730,9 @@ player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
   if (!player)
     return;
 
-  in.list = aspect;
+  in.list  = aspect;
   in.value = value;
-  in.mode = absolute;
+  in.mode  = absolute;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_PLAYER_VO_SET_ASPECT, &in, NULL);
@@ -748,9 +748,9 @@ player_video_set_panscan (player_t *player, int8_t value, int absolute)
   if (!player)
     return;
 
-  in.list = 0;
+  in.list  = 0;
   in.value = value;
-  in.mode = absolute;
+  in.mode  = absolute;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_PLAYER_VO_SET_PANSCAN, &in, NULL);
@@ -834,7 +834,7 @@ player_subtitle_scale (player_t *player, int value, int absolute)
     return;
 
   in.value = value;
-  in.mode = absolute;
+  in.mode  = absolute;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_PLAYER_SUB_SCALE, &in, NULL);

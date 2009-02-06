@@ -57,7 +57,7 @@ mrl_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
   if (!player)
     return 0;
 
-  in.mrl = mrl;
+  in.mrl   = mrl;
   in.value = p;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
@@ -125,7 +125,7 @@ mrl_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m)
   if (!player)
     return NULL;
 
-  in.mrl = mrl;
+  in.mrl   = mrl;
   in.value = m;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
@@ -146,7 +146,7 @@ mrl_get_metadata_cd_track (player_t *player,
   if (!player)
     return NULL;
 
-  in.mrl = mrl;
+  in.mrl   = mrl;
   in.value = trackid;
 
   memset (&out, 0, sizeof (supervisor_data_out_metadata_cd_t));
@@ -170,7 +170,7 @@ mrl_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
   if (!player)
     return 0;
 
-  in.mrl = mrl;
+  in.mrl   = mrl;
   in.value = m;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
@@ -191,8 +191,8 @@ mrl_get_metadata_dvd_title (player_t *player,
   if (!player)
     return 0;
 
-  in.mrl = mrl;
-  in.id = titleid;
+  in.mrl  = mrl;
+  in.id   = titleid;
   in.type = m;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
@@ -231,7 +231,7 @@ mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
   if (!player)
     return 0;
 
-  in.mrl = mrl;
+  in.mrl   = mrl;
   in.value = pos;
 
   memset (&out, 0, sizeof (supervisor_data_out_metadata_t));
@@ -280,7 +280,7 @@ mrl_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
   if (!player)
     return 0;
 
-  in.mrl = mrl;
+  in.mrl   = mrl;
   in.value = pos;
 
   memset (&out, 0, sizeof (supervisor_data_out_metadata_t));
@@ -376,7 +376,7 @@ mrl_new (player_t *player, mrl_resource_t res, void *args)
   if (!player || !args)
     return NULL;
 
-  in.res = res;
+  in.res  = res;
   in.args = args;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
@@ -396,10 +396,10 @@ mrl_video_snapshot (player_t *player, mrl_t *mrl,
   if (!player)
     return;
 
-  in.mrl = mrl;
-  in.pos = pos;
+  in.mrl  = mrl;
+  in.pos  = pos;
   in.type = t;
-  in.dst = dst;
+  in.dst  = dst;
 
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_MRL_VIDEO_SNAPSHOT, &in, NULL);
