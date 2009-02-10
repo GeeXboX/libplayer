@@ -1496,8 +1496,6 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
   if (!mrl)
     return NULL;
 
-  mrl->subs = NULL;
-
   mrl->resource = res;
   mrl->priv = args;
 
