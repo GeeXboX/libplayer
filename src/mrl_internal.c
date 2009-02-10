@@ -1456,17 +1456,15 @@ get_list_length (void *list)
 void
 mrl_sv_add_subtitle (mrl_t *mrl, char *subtitle)
 {
-  char **subs;
   int n;
 
   if (!mrl || !subtitle)
     return;
 
-  subs = mrl->subs;
-  n = get_list_length (subs) + 1;
-  subs = realloc (subs, (n + 1) * sizeof (*subs));
-  subs[n] = NULL;
-  subs[n - 1] = strdup (subtitle);
+  n = get_list_length (mrl->subs) + 1;
+  mrl->subs = realloc (mrl->subs, (n + 1) * sizeof (*mrl->subs));
+  mrl->subs[n] = NULL;
+  mrl->subs[n - 1] = strdup (subtitle);
 }
 
 mrl_t *
