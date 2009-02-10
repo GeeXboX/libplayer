@@ -309,7 +309,7 @@ int mrl_sv_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
 uint32_t mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl);
 mrl_type_t mrl_sv_get_type (player_t *player, mrl_t *mrl);
 mrl_resource_t mrl_sv_get_resource (player_t *player, mrl_t *mrl);
-void mrl_sv_add_subtitle (mrl_t *mrl, char *subtitle);
+void mrl_sv_add_subtitle (player_t *player, mrl_t *mrl, char *subtitle);
 mrl_t *mrl_sv_new (player_t *player, mrl_resource_t res, void *args);
 void mrl_sv_video_snapshot (player_t *player, mrl_t *mrl,
                             int pos, mrl_snapshot_t t, const char *dst);

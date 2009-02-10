@@ -267,10 +267,10 @@ supervisor_mrl_add_subtitle (player_t *player, void *in, void *out)
 {
   supervisor_data_sub_t *input = in;
 
-  if (!in)
+  if (!player || !in)
     return;
 
-  mrl_sv_add_subtitle (input->mrl, input->sub);
+  mrl_sv_add_subtitle (player, input->mrl, input->sub);
 }
 
 static void

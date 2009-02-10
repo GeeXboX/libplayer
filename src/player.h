@@ -375,7 +375,7 @@ mrl_t *mrl_new (player_t *player, mrl_resource_t res, void *args);
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
- * \param[in] mrl         MRL object.
+ * \param[in] mrl         MRL object, NULL for current.
  * \param[in] subtitle    Location of the subtitle file to be added.
  */
 void mrl_add_subtitle (player_t *player, mrl_t *mrl, char *subtitle);

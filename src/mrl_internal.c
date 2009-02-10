@@ -1454,11 +1454,18 @@ get_list_length (void *list)
 }
 
 void
-mrl_sv_add_subtitle (mrl_t *mrl, char *subtitle)
+mrl_sv_add_subtitle (player_t *player, mrl_t *mrl, char *subtitle)
 {
   int n;
 
-  if (!mrl || !subtitle)
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player || !subtitle)
+    return;
+
+  /* try to use internal mrl? */
+  mrl_use_internal (player, &mrl);
+  if (!mrl)
     return;
 
   n = get_list_length (mrl->subs) + 1;
