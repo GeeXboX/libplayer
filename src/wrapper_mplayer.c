@@ -3299,7 +3299,7 @@ mplayer_playback_start (player_t *player)
     while (*sub)
     {
       slave_cmd_str (player, SLAVE_SUB_LOAD, *sub);
-      (*sub)++;
+      sub++;
     }
     slave_set_property_int (player, PROPERTY_SUB, 0);
   }
