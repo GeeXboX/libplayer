@@ -875,7 +875,7 @@ mrl_sv_free (mrl_t *mrl, int recursive)
     while (*sub)
     {
       free (*sub);
-      (*sub)++;
+      sub++;
     }
     free (mrl->subs);
   }
