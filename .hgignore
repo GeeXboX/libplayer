@@ -8,5 +8,6 @@ config.log
 config.mak
 regtest-libplayer$
 test-player$
+test-vdr$
 ^libplayer.pc
 ^DOCS/doxygen

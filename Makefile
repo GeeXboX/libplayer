@@ -10,6 +10,8 @@ LIBTEST = regtest-libplayer
 LIBTEST_SRCS = regtest-libplayer.c
 TESTPLAYER = test-player
 TESTPLAYER_SRCS = test-player.c
+TESTVDR = test-vdr
+TESTVDR_SRCS = test-vdr.c
 
 CFLAGS += -Isrc
 LDFLAGS += -Lsrc -lplayer -lpthread
@@ -32,6 +34,7 @@ lib:
 test:
 	$(CC) $(LIBTEST_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(LIBTEST)
 	$(CC) $(TESTPLAYER_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTPLAYER)
+	$(CC) $(TESTVDR_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTVDR)
 
 doxygen:
 ifeq (,$(wildcard DOCS/doxygen))
@@ -42,6 +45,7 @@ clean:
 	$(MAKE) -C src clean
 	rm -f $(LIBTEST)
 	rm -f $(TESTPLAYER)
+	rm -f $(TESTVDR)
 
 distclean: clean
 	rm -f config.log
@@ -54,6 +58,7 @@ install: install-pkgconfig
 	$(INSTALL) -d $(bindir)
 	$(INSTALL) -c -m 755 $(LIBTEST) $(bindir)
 	$(INSTALL) -c -m 755 $(TESTPLAYER) $(bindir)
+	$(INSTALL) -c -m 755 $(TESTVDR) $(bindir)
 
 install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
@@ -63,6 +68,7 @@ uninstall:
 	$(MAKE) -C src uninstall
 	rm -f $(bindir)/$(LIBTEST)
 	rm -f $(bindir)/$(TESTPLAYER)
+	rm -f $(bindir)/$(TESTVDR)
 	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
 
 .PHONY: clean distclean
