@@ -1010,3 +1010,27 @@ player_sv_radio_channel_next (player_t *player)
   /* player specific radio_channel_next() */
   PLAYER_FUNCS (radio_channel_next)
 }
+
+/***************************************************************************/
+/*                                                                         */
+/* VDR specific controls                                                   */
+/*                                                                         */
+/***************************************************************************/
+
+void
+player_sv_vdr (player_t *player, player_vdr_t value)
+{
+  mrl_resource_t res;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  res = mrl_sv_get_resource (player, NULL);
+  if (res != MRL_RESOURCE_VDR && res != MRL_RESOURCE_NETVDR)
+    return;
+    
+  /* player specific vdr() */
+  PLAYER_FUNCS (vdr, value)
+}

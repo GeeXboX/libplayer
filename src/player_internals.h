@@ -217,6 +217,9 @@ typedef struct player_funcs_s {
   void (*radio_channel_set) (player_t *player, const char *channel);
   void (*radio_channel_prev) (player_t *player);
   void (*radio_channel_next) (player_t *player);
+  
+  /* VDR */
+  void (*vdr) (player_t *player, player_vdr_t value);
 
 } player_funcs_t;
 
@@ -402,5 +405,8 @@ void player_sv_tv_channel_next (player_t *player);
 void player_sv_radio_channel_select (player_t *player, const char *channel);
 void player_sv_radio_channel_prev (player_t *player);
 void player_sv_radio_channel_next (player_t *player);
+
+/* VDR specific controls */
+void player_sv_vdr (player_t *player, player_vdr_t value);
 
 #endif /* PLAYER_INTERNALS_H */

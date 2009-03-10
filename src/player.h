@@ -236,11 +236,13 @@ typedef enum mrl_resource {
   MRL_RESOURCE_PVR,         /*  NO           NO           NO           NO   */
   MRL_RESOURCE_RADIO,       /*  NO           YES          NO           NO   */
   MRL_RESOURCE_TV,          /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_VDR,         /*  NO           NO           NO           YES  */
 
   /* Network Streams */
   MRL_RESOURCE_FTP,         /*  NO           YES          NO           NO   */
   MRL_RESOURCE_HTTP,        /*  NO           YES          NO           NO   */
   MRL_RESOURCE_MMS,         /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_NETVDR,      /*  NO           NO           NO           YES  */
   MRL_RESOURCE_RTP,         /*  NO           YES          NO           NO   */
   MRL_RESOURCE_RTSP,        /*  NO           YES          NO           NO   */
   MRL_RESOURCE_SMB,         /*  NO           YES          NO           NO   */
@@ -281,8 +283,8 @@ typedef struct mrl_resource_videodisc_args_s {
 
 /** \brief Arguments for radio/tv streams. */
 typedef struct mrl_resource_tv_args_s {
-  char *device;             /*  NO           NO           NO           NO   */
-  char *driver;             /*  NO           NO           NO           NO   */
+  char *device;             /*  NO           NO           NO           YES  */
+  char *driver;             /*  NO           NO           NO           YES  */
   char *channel;            /*  NO           YES          NO           NO   */
   uint8_t input;            /*  NO           YES          NO           NO   */
   int width;                /*  NO           NO           NO           NO   */
@@ -294,7 +296,7 @@ typedef struct mrl_resource_tv_args_s {
 
 /** \brief Arguments for network streams. */
 typedef struct mrl_resource_network_args_s {
-  char *url;                /*  NO           YES          NO           NO   */
+  char *url;                /*  NO           YES          NO           YES  */
   char *username;           /*  NO           YES          NO           NO   */
   char *password;           /*  NO           YES          NO           NO   */
   char *user_agent;         /*  NO           NO           NO           NO   */
@@ -1513,6 +1515,90 @@ void player_tv_channel_prev (player_t *player);
  * \param[in] player      Player controller.
  */
 void player_tv_channel_next (player_t *player);
+
+/**
+ * @}
+ */
+ 
+/***************************************************************************/
+/*                                                                         */
+/* VDR specific controls                                                   */
+/*                                                                         */
+/***************************************************************************/
+/** \brief Player VDR commands. */
+typedef enum player_vdr {
+  PLAYER_VDR_UP,
+  PLAYER_VDR_DOWN,
+  PLAYER_VDR_LEFT,
+  PLAYER_VDR_RIGHT,
+  PLAYER_VDR_OK,
+  PLAYER_VDR_BACK,
+  PLAYER_VDR_CHANNELPLUS,
+  PLAYER_VDR_CHANNELMINUS,
+  PLAYER_VDR_RED,
+  PLAYER_VDR_GREEN,
+  PLAYER_VDR_YELLOW,
+  PLAYER_VDR_BLUE,
+  PLAYER_VDR_PLAY,
+  PLAYER_VDR_PAUSE,
+  PLAYER_VDR_STOP,
+  PLAYER_VDR_RECORD,
+  PLAYER_VDR_FASTFWD,
+  PLAYER_VDR_FASTREW,
+  PLAYER_VDR_POWER,
+  PLAYER_VDR_SCHEDULE,
+  PLAYER_VDR_CHANNELS,
+  PLAYER_VDR_TIMERS,
+  PLAYER_VDR_RECORDINGS,
+  PLAYER_VDR_MENU,
+  PLAYER_VDR_SETUP,
+  PLAYER_VDR_COMMANDS,
+  PLAYER_VDR_0,
+  PLAYER_VDR_1,
+  PLAYER_VDR_2,
+  PLAYER_VDR_3,
+  PLAYER_VDR_4,
+  PLAYER_VDR_5,
+  PLAYER_VDR_6,
+  PLAYER_VDR_7,
+  PLAYER_VDR_8,
+  PLAYER_VDR_9,
+  PLAYER_VDR_USER_1,
+  PLAYER_VDR_USER_2,
+  PLAYER_VDR_USER_3,
+  PLAYER_VDR_USER_4,
+  PLAYER_VDR_USER_5,
+  PLAYER_VDR_USER_6,
+  PLAYER_VDR_USER_7,
+  PLAYER_VDR_USER_8,
+  PLAYER_VDR_USER_9,
+  PLAYER_VDR_VOLPLUS,
+  PLAYER_VDR_VOLMINUS,
+  PLAYER_VDR_MUTE,
+  PLAYER_VDR_AUDIO,
+  PLAYER_VDR_INFO,
+  PLAYER_VDR_CHANNELPREVIOUS,
+  PLAYER_VDR_NEXT,
+  PLAYER_VDR_PREVIOUS,
+  PLAYER_VDR_SUBTITLES,
+} player_vdr_t;
+
+/**
+ * \name VDR specific controls.
+ * @{
+ */
+
+/**
+ * \brief VDR commands.
+ *
+ * Wrappers supported (even partially):
+ *  xine
+ *
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
+ * \param[in] player      Player controller.
+ * \param[in] value       Command to send.
+ */
+void player_vdr (player_t *player, player_vdr_t value);
 
 /**
  * @}

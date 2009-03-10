@@ -4095,6 +4095,8 @@ register_functions_mplayer (void)
   funcs->radio_channel_set  = mplayer_radio_channel_set;
   funcs->radio_channel_prev = mplayer_radio_channel_prev;
   funcs->radio_channel_next = mplayer_radio_channel_next;
+  
+  funcs->vdr                = NULL;
 
   return funcs;
 }

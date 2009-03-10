@@ -121,6 +121,12 @@ xine_resource_get_uri (mrl_t *mrl)
     [MRL_RESOURCE_DVD]      = "dvd:",
     [MRL_RESOURCE_DVDNAV]   = "dvd:",
 
+    /* Radio/Television */
+    [MRL_RESOURCE_VDR]      = "vdr:/",
+    
+    /* Network Streams */
+    [MRL_RESOURCE_NETVDR]   = "netvdr://",
+
     [MRL_RESOURCE_UNKNOWN]  = NULL
   };
 
@@ -177,6 +183,43 @@ xine_resource_get_uri (mrl_t *mrl)
               protocol, args->device ? args->device : "", title_start);
 
     return uri;
+  }
+  
+  case MRL_RESOURCE_VDR: /* vdr:/device#driver */
+  {
+    char *uri;
+    const char *protocol = protocols[mrl->resource];
+    size_t size = strlen (protocol);
+    mrl_resource_tv_args_t *args = mrl->priv;
+    
+    if (!args || !args->device)
+      return strdup (protocol);
+    
+    if (args->driver)
+      size += 1 + strlen (args->driver);
+    
+    size += strlen (args->device) + 1;
+    uri = malloc (size);
+    snprintf (uri, size, "%s%s%s%s", 
+              protocol, args->device, 
+              args->driver ? "#" : "", 
+              args->driver ? args->driver : "");
+
+    return uri;
+  }
+  
+  case MRL_RESOURCE_NETVDR: /* netvdr://host:port */
+  {
+    const char *protocol = protocols[mrl->resource];
+    mrl_resource_network_args_t *args = mrl->priv;
+    
+    if (!args || !args->url)
+      return NULL;
+    
+    if (strncmp (args->url, protocol, strlen (protocol)))
+      return NULL;
+    
+    return strdup (args->url);
   }
 
   default:
@@ -627,6 +670,8 @@ xine_player_mrl_supported_res (player_t *player, mrl_resource_t res)
   case MRL_RESOURCE_FILE:
   case MRL_RESOURCE_DVD:
   case MRL_RESOURCE_DVDNAV:
+  case MRL_RESOURCE_VDR:
+  case MRL_RESOURCE_NETVDR:
     return 1;
 
   default:
@@ -862,6 +907,241 @@ xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
   send_event (player, event);
 }
 
+static void
+xine_player_vdr (player_t *player, player_vdr_t value)
+{
+  int event;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "vdr: %i", value);
+
+  if (!player)
+    return;
+
+  switch (value)
+  {
+  case PLAYER_VDR_UP:
+    event = XINE_EVENT_INPUT_UP;
+    break;
+
+  case PLAYER_VDR_DOWN:
+    event = XINE_EVENT_INPUT_DOWN;
+    break;
+
+  case PLAYER_VDR_LEFT:
+    event = XINE_EVENT_INPUT_LEFT;
+    break;
+
+  case PLAYER_VDR_RIGHT:
+    event = XINE_EVENT_INPUT_RIGHT;
+    break;
+
+  case PLAYER_VDR_OK:
+    event = XINE_EVENT_INPUT_SELECT;
+    break;
+
+  case PLAYER_VDR_BACK:
+    event = XINE_EVENT_VDR_BACK;
+    break;
+
+  case PLAYER_VDR_CHANNELPLUS:
+    event = XINE_EVENT_VDR_CHANNELPLUS;
+    break;
+
+  case PLAYER_VDR_CHANNELMINUS:
+    event = XINE_EVENT_VDR_CHANNELMINUS;
+    break;
+
+  case PLAYER_VDR_RED:
+    event = XINE_EVENT_VDR_RED;
+    break;
+
+  case PLAYER_VDR_GREEN:
+    event = XINE_EVENT_VDR_GREEN;
+    break;
+
+  case PLAYER_VDR_YELLOW:
+    event = XINE_EVENT_VDR_YELLOW;
+    break;
+
+  case PLAYER_VDR_BLUE:
+    event = XINE_EVENT_VDR_BLUE;
+    break;
+
+  case PLAYER_VDR_PLAY:
+    event = XINE_EVENT_VDR_PLAY;
+    break;
+
+  case PLAYER_VDR_PAUSE:
+    event = XINE_EVENT_VDR_PAUSE;
+    break;
+
+  case PLAYER_VDR_STOP:
+    event = XINE_EVENT_VDR_STOP;
+    break;
+
+  case PLAYER_VDR_RECORD:
+    event = XINE_EVENT_VDR_RECORD;
+    break;
+
+  case PLAYER_VDR_FASTFWD:
+    event = XINE_EVENT_VDR_FASTFWD;
+    break;
+
+  case PLAYER_VDR_FASTREW:
+    event = XINE_EVENT_VDR_FASTREW;
+    break;
+
+  case PLAYER_VDR_POWER:
+    event = XINE_EVENT_VDR_POWER;
+    break;
+
+  case PLAYER_VDR_SCHEDULE:
+    event = XINE_EVENT_VDR_SCHEDULE;
+    break;
+
+  case PLAYER_VDR_CHANNELS:
+    event = XINE_EVENT_VDR_CHANNELS;
+    break;
+
+  case PLAYER_VDR_TIMERS:
+    event = XINE_EVENT_VDR_TIMERS;
+    break;
+
+  case PLAYER_VDR_RECORDINGS:
+    event = XINE_EVENT_VDR_RECORDINGS;
+    break;
+
+  case PLAYER_VDR_MENU:
+    event = XINE_EVENT_INPUT_MENU1;
+    break;
+
+  case PLAYER_VDR_SETUP:
+    event = XINE_EVENT_VDR_SETUP;
+    break;
+
+  case PLAYER_VDR_COMMANDS:
+    event = XINE_EVENT_VDR_COMMANDS;
+    break;
+
+  case PLAYER_VDR_0:
+    event = XINE_EVENT_INPUT_NUMBER_0;
+    break;
+
+  case PLAYER_VDR_1:
+    event = XINE_EVENT_INPUT_NUMBER_1;
+    break;
+
+  case PLAYER_VDR_2:
+    event = XINE_EVENT_INPUT_NUMBER_2;
+    break;
+
+  case PLAYER_VDR_3:
+    event = XINE_EVENT_INPUT_NUMBER_3;
+    break;
+
+  case PLAYER_VDR_4:
+    event = XINE_EVENT_INPUT_NUMBER_4;
+    break;
+
+  case PLAYER_VDR_5:
+    event = XINE_EVENT_INPUT_NUMBER_5;
+    break;
+
+  case PLAYER_VDR_6:
+    event = XINE_EVENT_INPUT_NUMBER_6;
+    break;
+
+  case PLAYER_VDR_7:
+    event = XINE_EVENT_INPUT_NUMBER_7;
+    break;
+
+  case PLAYER_VDR_8:
+    event = XINE_EVENT_INPUT_NUMBER_8;
+    break;
+
+  case PLAYER_VDR_9:
+    event = XINE_EVENT_INPUT_NUMBER_9;
+    break;
+
+  case PLAYER_VDR_USER_1:
+    event = XINE_EVENT_VDR_USER1;
+    break;
+
+  case PLAYER_VDR_USER_2:
+    event = XINE_EVENT_VDR_USER2;
+    break;
+
+  case PLAYER_VDR_USER_3:
+    event = XINE_EVENT_VDR_USER3;
+    break;
+
+  case PLAYER_VDR_USER_4:
+    event = XINE_EVENT_VDR_USER4;
+    break;
+
+  case PLAYER_VDR_USER_5:
+    event = XINE_EVENT_VDR_USER5;
+    break;
+
+  case PLAYER_VDR_USER_6:
+    event = XINE_EVENT_VDR_USER6;
+    break;
+
+  case PLAYER_VDR_USER_7:
+    event = XINE_EVENT_VDR_USER7;
+    break;
+
+  case PLAYER_VDR_USER_8:
+    event = XINE_EVENT_VDR_USER8;
+    break;
+
+  case PLAYER_VDR_USER_9:
+    event = XINE_EVENT_VDR_USER9;
+    break;
+
+  case PLAYER_VDR_VOLPLUS:
+    event = XINE_EVENT_VDR_VOLPLUS;
+    break;
+
+  case PLAYER_VDR_VOLMINUS:
+    event = XINE_EVENT_VDR_VOLMINUS;
+    break;
+
+  case PLAYER_VDR_MUTE:
+    event = XINE_EVENT_VDR_MUTE;
+    break;
+
+  case PLAYER_VDR_AUDIO:
+    event = XINE_EVENT_VDR_AUDIO;
+    break;
+
+  case PLAYER_VDR_INFO:
+    event = XINE_EVENT_VDR_INFO;
+    break;
+
+  case PLAYER_VDR_CHANNELPREVIOUS:
+    event = XINE_EVENT_VDR_CHANNELPREVIOUS;
+    break;
+
+  case PLAYER_VDR_NEXT:
+    event = XINE_EVENT_INPUT_NEXT;
+    break;
+
+  case PLAYER_VDR_PREVIOUS:
+    event = XINE_EVENT_INPUT_PREVIOUS;
+    break;
+
+  case PLAYER_VDR_SUBTITLES:
+    event = XINE_EVENT_VDR_SUBTITLES;
+    break;
+
+  default:
+    return;
+  }
+
+  send_event (player, event);
+}
+
 static int
 xine_player_audio_get_volume (player_t *player)
 {
@@ -1060,6 +1340,8 @@ register_functions_xine (void)
   funcs->radio_channel_set  = NULL;
   funcs->radio_channel_prev = NULL;
   funcs->radio_channel_next = NULL;
+  
+  funcs->vdr                = xine_player_vdr;
 
   return funcs;
 }

@@ -1049,3 +1049,21 @@ player_radio_channel_next (player_t *player)
   supervisor_send (player, SV_MODE_WAIT_FOR_END,
                    SV_FUNC_PLAYER_RADIO_CHAN_NEXT, NULL, NULL);
 }
+
+/***************************************************************************/
+/*                                                                         */
+/* VDR specific controls                                                   */
+/*                                                                         */
+/***************************************************************************/
+
+void
+player_vdr (player_t *player, player_vdr_t value)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_PLAYER_VDR, &value, NULL);
+}

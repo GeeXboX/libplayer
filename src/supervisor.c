@@ -920,6 +920,18 @@ supervisor_player_radio_chan_next (player_t *player, void *in, void *out)
   player_sv_radio_channel_next (player);
 }
 
+/************************** VDR specific controls ****************************/
+
+static void
+supervisor_player_vdr (player_t *player, void *in, void *out)
+{
+  player_vdr_t *input = in;
+
+  if (!player || !in)
+    return;
+
+  player_sv_vdr (player, *input);
+}
 
 static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   /* MRL */
@@ -1021,6 +1033,9 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_PLAYER_RADIO_CHAN_SELECT]     = supervisor_player_radio_chan_select,
   [SV_FUNC_PLAYER_RADIO_CHAN_PREV]       = supervisor_player_radio_chan_prev,
   [SV_FUNC_PLAYER_RADIO_CHAN_NEXT]       = supervisor_player_radio_chan_next,
+  
+  /* VDR specific controls */
+  [SV_FUNC_PLAYER_VDR]                   = supervisor_player_vdr,
 
 };
 
