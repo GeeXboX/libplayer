@@ -620,7 +620,7 @@ register_functions_vlc (void)
   funcs->radio_channel_set  = NULL;
   funcs->radio_channel_prev = NULL;
   funcs->radio_channel_next = NULL;
-  
+
   funcs->vdr                = NULL;
 
   return funcs;

@@ -1519,12 +1519,13 @@ void player_tv_channel_next (player_t *player);
 /**
  * @}
  */
- 
+
 /***************************************************************************/
 /*                                                                         */
 /* VDR specific controls                                                   */
 /*                                                                         */
 /***************************************************************************/
+
 /** \brief Player VDR commands. */
 typedef enum player_vdr {
   PLAYER_VDR_UP,

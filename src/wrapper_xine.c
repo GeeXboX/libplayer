@@ -123,7 +123,7 @@ xine_resource_get_uri (mrl_t *mrl)
 
     /* Radio/Television */
     [MRL_RESOURCE_VDR]      = "vdr:/",
-    
+
     /* Network Streams */
     [MRL_RESOURCE_NETVDR]   = "netvdr://",
 
@@ -184,20 +184,20 @@ xine_resource_get_uri (mrl_t *mrl)
 
     return uri;
   }
-  
+
   case MRL_RESOURCE_VDR: /* vdr:/device#driver */
   {
     char *uri;
     const char *protocol = protocols[mrl->resource];
     size_t size = strlen (protocol);
     mrl_resource_tv_args_t *args = mrl->priv;
-    
+
     if (!args || !args->device)
       return strdup (protocol);
-    
+
     if (args->driver)
       size += 1 + strlen (args->driver);
-    
+
     size += strlen (args->device) + 1;
     uri = malloc (size);
     snprintf (uri, size, "%s%s%s%s", 
@@ -207,18 +207,18 @@ xine_resource_get_uri (mrl_t *mrl)
 
     return uri;
   }
-  
+
   case MRL_RESOURCE_NETVDR: /* netvdr://host:port */
   {
     const char *protocol = protocols[mrl->resource];
     mrl_resource_network_args_t *args = mrl->priv;
-    
+
     if (!args || !args->url)
       return NULL;
-    
+
     if (strncmp (args->url, protocol, strlen (protocol)))
       return NULL;
-    
+
     return strdup (args->url);
   }
 
@@ -1340,7 +1340,7 @@ register_functions_xine (void)
   funcs->radio_channel_set  = NULL;
   funcs->radio_channel_prev = NULL;
   funcs->radio_channel_next = NULL;
-  
+
   funcs->vdr                = xine_player_vdr;
 
   return funcs;

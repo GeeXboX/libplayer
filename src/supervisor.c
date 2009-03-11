@@ -1033,7 +1033,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_PLAYER_RADIO_CHAN_SELECT]     = supervisor_player_radio_chan_select,
   [SV_FUNC_PLAYER_RADIO_CHAN_PREV]       = supervisor_player_radio_chan_prev,
   [SV_FUNC_PLAYER_RADIO_CHAN_NEXT]       = supervisor_player_radio_chan_next,
-  
+
   /* VDR specific controls */
   [SV_FUNC_PLAYER_VDR]                   = supervisor_player_vdr,
 
