@@ -19,6 +19,7 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
@@ -437,6 +438,24 @@ xine_frame_output_cb(void *data, int video_width, int video_height,
     *dest_pixel_aspect = video_pixel_aspect;
   }
 }
+
+static void
+xine_lock_display (void *user_data)
+{
+  screeninfo_t *screeninfo = user_data;
+
+  if (screeninfo)
+    pthread_mutex_lock (screeninfo->mutex_display);
+}
+
+static void
+xine_unlock_display (void *user_data)
+{
+  screeninfo_t *screeninfo = user_data;
+
+  if (screeninfo)
+    pthread_mutex_unlock (screeninfo->mutex_display);
+}
 #endif /* HAVE_XINE */
 
 /*
@@ -456,6 +475,9 @@ x11_init (player_t *player)
   Atom XA_NO_BORDER;
   MWMHints mwmhints;
   XSetWindowAttributes atts;
+#ifdef HAVE_XINE
+  pthread_mutexattr_t mutexatts;
+#endif /* HAVE_XINE */
 
   if (!player)
     return 0;
@@ -479,7 +501,15 @@ x11_init (player_t *player)
   if (player->type == PLAYER_TYPE_MPLAYER)
     x11->use_subwin = 1;
 
+#ifdef HAVE_XINE
+  pthread_mutexattr_init (&mutexatts);
+  pthread_mutexattr_settype (&mutexatts, PTHREAD_MUTEX_RECURSIVE);
+  pthread_mutex_init (&x11->mutex_display, &mutexatts);
+  pthread_mutexattr_destroy (&mutexatts);
+#else
   pthread_mutex_init (&x11->mutex_display, NULL);
+#endif /* HAVE_XINE */
+
   screen = XDefaultScreen (x11->display);
 
   pthread_mutex_lock (&x11->mutex_display);
@@ -598,6 +628,8 @@ x11_init (player_t *player)
       vis->d = x11->win_video;
       vis->dest_size_cb = xine_dest_size_cb;
       vis->frame_output_cb = xine_frame_output_cb;
+      vis->lock_display = xine_lock_display;
+      vis->unlock_display = xine_unlock_display;
       vis->user_data = (void *) screeninfo;
     }
 

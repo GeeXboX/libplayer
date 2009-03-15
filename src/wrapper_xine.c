@@ -498,25 +498,25 @@ xine_player_init (player_t *player)
   case PLAYER_VO_X11:
     use_x11 = 1;
     id_vo = "xshm";
-    visual = XINE_VISUAL_TYPE_X11;
+    visual = XINE_VISUAL_TYPE_X11_2;
     break;
 
   case PLAYER_VO_X11_SDL:
     use_x11 = 1;
     id_vo = "sdl";
-    visual = XINE_VISUAL_TYPE_X11;
+    visual = XINE_VISUAL_TYPE_X11_2;
     break;
 
   case PLAYER_VO_XV:
     use_x11 = 1;
     id_vo = "xv";
-    visual = XINE_VISUAL_TYPE_X11;
+    visual = XINE_VISUAL_TYPE_X11_2;
     break;
 
   case PLAYER_VO_GL:
     use_x11 = 1;
     id_vo = "opengl";
-    visual = XINE_VISUAL_TYPE_X11;
+    visual = XINE_VISUAL_TYPE_X11_2;
     break;
 #endif /* USE_X11 */
 
