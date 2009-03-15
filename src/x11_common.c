@@ -501,13 +501,13 @@ x11_init (player_t *player)
   if (player->type == PLAYER_TYPE_XINE)
   {
     pthread_mutexattr_t mutexatts;
-  pthread_mutexattr_init (&mutexatts);
-  pthread_mutexattr_settype (&mutexatts, PTHREAD_MUTEX_RECURSIVE);
-  pthread_mutex_init (&x11->mutex_display, &mutexatts);
-  pthread_mutexattr_destroy (&mutexatts);
+    pthread_mutexattr_init (&mutexatts);
+    pthread_mutexattr_settype (&mutexatts, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init (&x11->mutex_display, &mutexatts);
+    pthread_mutexattr_destroy (&mutexatts);
   }
   else
-  pthread_mutex_init (&x11->mutex_display, NULL);
+    pthread_mutex_init (&x11->mutex_display, NULL);
 
   screen = XDefaultScreen (x11->display);
 
