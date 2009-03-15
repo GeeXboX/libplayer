@@ -241,49 +241,56 @@ xine_identify_metadata (mrl_t *mrl, xine_stream_t *stream)
   meta = mrl->meta;
 
   s = xine_get_meta_info (stream, XINE_META_INFO_TITLE);
-  if (s) {
+  if (s)
+  {
     if (meta->title)
       free (meta->title);
     meta->title = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_ARTIST);
-  if (s) {
+  if (s)
+  {
     if (meta->artist)
       free (meta->artist);
     meta->artist = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_GENRE);
-  if (s) {
+  if (s)
+  {
     if (meta->genre)
       free (meta->genre);
     meta->genre = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_ALBUM);
-  if (s) {
+  if (s)
+  {
     if (meta->album)
       free (meta->album);
     meta->album = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_YEAR);
-  if (s) {
+  if (s)
+  {
     if (meta->year)
       free (meta->year);
     meta->year = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_TRACK_NUMBER);
-  if (s) {
+  if (s)
+  {
     if (meta->track)
       free (meta->track);
     meta->track = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_COMMENT);
-  if (s) {
+  if (s)
+  {
     if (meta->comment)
       free (meta->comment);
     meta->comment = strdup (s);
@@ -308,7 +315,8 @@ xine_identify_audio (mrl_t *mrl, xine_stream_t *stream)
   audio = mrl->prop->audio;
 
   s = xine_get_meta_info (stream, XINE_META_INFO_AUDIOCODEC);
-  if (s) {
+  if (s)
+  {
     if (audio->codec)
       free (audio->codec);
     audio->codec = strdup (s);
@@ -345,7 +353,8 @@ xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
   video = mrl->prop->video;
 
   s = xine_get_meta_info (stream, XINE_META_INFO_VIDEOCODEC);
-  if (s) {
+  if (s)
+  {
     if (video->codec)
       free (video->codec);
     video->codec = strdup (s);
@@ -418,14 +427,16 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
 
   vo = xine_open_video_driver (x->xine, "none", XINE_VISUAL_TYPE_NONE, NULL);
 
-  if (!vo) {
+  if (!vo)
+  {
     xine_close_audio_driver (x->xine, ao);
     return;
   }
 
   stream = xine_stream_new (x->xine, ao, vo);
 
-  if (stream) {
+  if (stream)
+  {
     xine_open (stream, uri);
 
     if (flags & IDENTIFY_VIDEO)
@@ -477,7 +488,8 @@ xine_player_init (player_t *player)
   xine_engine_set_param (x->xine,
                          XINE_ENGINE_PARAM_VERBOSITY, XINE_VERBOSITY_LOG);
 
-  switch (player->vo) {
+  switch (player->vo)
+  {
   case PLAYER_VO_NULL:
     id_vo = "none";
     break;
@@ -520,7 +532,8 @@ xine_player_init (player_t *player)
   }
 
 #ifdef USE_X11
-  if (use_x11 && (!x11_init (player) || !x11_get_data (player->x11))) {
+  if (use_x11 && (!x11_init (player) || !x11_get_data (player->x11)))
+  {
     return PLAYER_INIT_ERROR;
   }
   else if (use_x11)
@@ -528,7 +541,8 @@ xine_player_init (player_t *player)
 #endif /* USE_X11 */
 
   /* init video output driver */
-  if (!(x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data))) {
+  if (!(x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data)))
+  {
     plog (player, PLAYER_MSG_ERROR,
           MODULE_NAME, "Xine can't init '%s' video driver",
           id_vo ? id_vo : "null");
@@ -536,7 +550,8 @@ xine_player_init (player_t *player)
     return PLAYER_INIT_ERROR;
   }
 
-  switch (player->ao) {
+  switch (player->ao)
+  {
   case PLAYER_AO_NULL:
     id_ao = "none";
     break;
@@ -556,7 +571,8 @@ xine_player_init (player_t *player)
   }
 
   /* init audio output driver */
-  if (!(x->ao_port = xine_open_audio_driver (x->xine, id_ao, NULL))) {
+  if (!(x->ao_port = xine_open_audio_driver (x->xine, id_ao, NULL)))
+  {
     plog (player, PLAYER_MSG_ERROR,
           MODULE_NAME, "Xine can't init '%s' audio driver",
           id_ao ? id_ao : "null");
@@ -571,7 +587,8 @@ xine_player_init (player_t *player)
                                      xine_player_event_listener_cb, player);
 
 #ifdef USE_X11
-  if (player->x11 && x11_get_display (player->x11)) {
+  if (player->x11 && x11_get_display (player->x11))
+  {
     xine_port_send_gui_data (x->vo_port, XINE_GUI_SEND_DRAWABLE_CHANGED,
                              (void *) x11_get_window (player->x11));
     xine_port_send_gui_data (x->vo_port, XINE_GUI_SEND_VIDEOWIN_VISIBLE,
@@ -743,7 +760,8 @@ xine_player_playback_start (player_t *player)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "uri: %s", uri);
 
   /* add subtitle to the MRL */
-  if (mrl_c->subs) {
+  if (mrl_c->subs)
+  {
     mrl = malloc (strlen (uri) +
                   strlen (mrl_c->subs[0]) + 11);
 
@@ -842,7 +860,8 @@ xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 
   xine_get_pos_length (x->stream, NULL, &pos_time, &length);
 
-  switch (seek) {
+  switch (seek)
+  {
   default:
   case PLAYER_PB_SEEK_RELATIVE:
     pos_time += value * 1000;
