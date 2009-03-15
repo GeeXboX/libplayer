@@ -475,9 +475,6 @@ x11_init (player_t *player)
   Atom XA_NO_BORDER;
   MWMHints mwmhints;
   XSetWindowAttributes atts;
-#ifdef HAVE_XINE
-  pthread_mutexattr_t mutexatts;
-#endif /* HAVE_XINE */
 
   if (!player)
     return 0;
@@ -501,14 +498,16 @@ x11_init (player_t *player)
   if (player->type == PLAYER_TYPE_MPLAYER)
     x11->use_subwin = 1;
 
-#ifdef HAVE_XINE
+  if (player->type == PLAYER_TYPE_XINE)
+  {
+    pthread_mutexattr_t mutexatts;
   pthread_mutexattr_init (&mutexatts);
   pthread_mutexattr_settype (&mutexatts, PTHREAD_MUTEX_RECURSIVE);
   pthread_mutex_init (&x11->mutex_display, &mutexatts);
   pthread_mutexattr_destroy (&mutexatts);
-#else
+  }
+  else
   pthread_mutex_init (&x11->mutex_display, NULL);
-#endif /* HAVE_XINE */
 
   screen = XDefaultScreen (x11->display);
 
