@@ -1522,6 +1522,59 @@ void player_tv_channel_next (player_t *player);
 
 /***************************************************************************/
 /*                                                                         */
+/* Radio specific controls                                                 */
+/*                                                                         */
+/***************************************************************************/
+
+/**
+ * \name Radio specific controls.
+ * @{
+ */
+
+/**
+ * \brief Select radio channel.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
+ * \param[in] player      Player controller.
+ * \param[in] channel     Channel to select.
+ */
+void player_radio_channel_select (player_t *player, const char *channel);
+
+/**
+ * \brief Select the previous radio channel.
+ *
+ * It stays on the same if no previous channel exists.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
+ * \param[in] player      Player controller.
+ */
+void player_radio_channel_prev (player_t *player);
+
+/**
+ * \brief Select the next radio channel.
+ *
+ * It stays on the same if no next channel exists.
+ *
+ * Wrappers supported (even partially):
+ *  MPlayer
+ *
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
+ * \param[in] player      Player controller.
+ */
+void player_radio_channel_next (player_t *player);
+
+/**
+ * @}
+ */
+
+/***************************************************************************/
+/*                                                                         */
 /* VDR specific controls                                                   */
 /*                                                                         */
 /***************************************************************************/
@@ -1600,59 +1653,6 @@ typedef enum player_vdr {
  * \param[in] value       Command to send.
  */
 void player_vdr (player_t *player, player_vdr_t value);
-
-/**
- * @}
- */
-
-/***************************************************************************/
-/*                                                                         */
-/* Radio specific controls                                                 */
-/*                                                                         */
-/***************************************************************************/
-
-/**
- * \name Radio specific controls.
- * @{
- */
-
-/**
- * \brief Select radio channel.
- *
- * Wrappers supported (even partially):
- *  MPlayer
- *
- * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
- * \param[in] player      Player controller.
- * \param[in] channel     Channel to select.
- */
-void player_radio_channel_select (player_t *player, const char *channel);
-
-/**
- * \brief Select the previous radio channel.
- *
- * It stays on the same if no previous channel exists.
- *
- * Wrappers supported (even partially):
- *  MPlayer
- *
- * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
- * \param[in] player      Player controller.
- */
-void player_radio_channel_prev (player_t *player);
-
-/**
- * \brief Select the next radio channel.
- *
- * It stays on the same if no next channel exists.
- *
- * Wrappers supported (even partially):
- *  MPlayer
- *
- * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
- * \param[in] player      Player controller.
- */
-void player_radio_channel_next (player_t *player);
 
 /**
  * @}
