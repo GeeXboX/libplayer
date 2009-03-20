@@ -200,9 +200,9 @@ xine_resource_get_uri (mrl_t *mrl)
 
     size += strlen (args->device) + 1;
     uri = malloc (size);
-    snprintf (uri, size, "%s%s%s%s", 
-              protocol, args->device, 
-              args->driver ? "#" : "", 
+    snprintf (uri, size, "%s%s%s%s",
+              protocol, args->device,
+              args->driver ? "#" : "",
               args->driver ? args->driver : "");
 
     return uri;

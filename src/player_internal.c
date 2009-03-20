@@ -1030,7 +1030,7 @@ player_sv_vdr (player_t *player, player_vdr_t value)
   res = mrl_sv_get_resource (player, NULL);
   if (res != MRL_RESOURCE_VDR && res != MRL_RESOURCE_NETVDR)
     return;
-    
+
   /* player specific vdr() */
   PLAYER_FUNCS (vdr, value)
 }
