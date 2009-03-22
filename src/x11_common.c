@@ -218,28 +218,28 @@ x11_resize (player_t *player)
 
   if (x11->use_subwin && x11->win_black)
   {
-      changes.x = 0;
-      changes.y = 0;
-      changes.width = player->w;
-      changes.height = player->h;
+    changes.x = 0;
+    changes.y = 0;
+    changes.width = player->w;
+    changes.height = player->h;
 
-      /* fix the size and offset */
-      zoom (player, width, height, player->aspect,
-            &changes.x, &changes.y, &changes.width, &changes.height);
+    /* fix the size and offset */
+    zoom (player, width, height, player->aspect,
+          &changes.x, &changes.y, &changes.width, &changes.height);
 
-      XConfigureWindow (x11->display, x11->win_video,
-                        CWX | CWY | CWWidth | CWHeight, &changes);
+    XConfigureWindow (x11->display, x11->win_video,
+                      CWX | CWY | CWWidth | CWHeight, &changes);
 
-      /* reconfigure black and trans windows */
-      changes.x = x;
-      changes.y = y;
-      changes.width = width;
-      changes.height = height;
-      XConfigureWindow (x11->display, x11->win_black,
-                        CWX | CWY | CWWidth | CWHeight, &changes);
-      if (x11->win_trans)
-        XConfigureWindow (x11->display, x11->win_trans,
-                          CWWidth | CWHeight, &changes);
+    /* reconfigure black and trans windows */
+    changes.x = x;
+    changes.y = y;
+    changes.width = width;
+    changes.height = height;
+    XConfigureWindow (x11->display, x11->win_black,
+                      CWX | CWY | CWWidth | CWHeight, &changes);
+    if (x11->win_trans)
+      XConfigureWindow (x11->display, x11->win_trans,
+                        CWWidth | CWHeight, &changes);
   }
   else
   {
