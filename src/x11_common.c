@@ -184,6 +184,23 @@ x11_get_screeninfo (player_t *player)
 }
 
 void
+x11_get_video_pos (x11_t *x11, int *x, int *y)
+{
+  XWindowAttributes atts;
+
+  if (!x11 || (!x && !y))
+    return;
+
+  pthread_mutex_lock (&x11->mutex_display);
+  XGetWindowAttributes (x11->display, x11->win_video, &atts);
+  if (x)
+    *x = atts.x + x11->x;
+  if (y)
+    *y = atts.y + x11->y;
+  pthread_mutex_unlock (&x11->mutex_display);
+}
+
+void
 x11_resize (player_t *player)
 {
   x11_t *x11 = NULL;

@@ -39,6 +39,7 @@ Display *x11_get_display (x11_t *x11);
 Window x11_get_window (x11_t *x11);
 void *x11_get_data (x11_t *x11);
 
+void x11_get_video_pos (x11_t *x11, int *x, int *y);
 
 typedef enum x11_winprops_flags {
   X11_PROPERTY_X = (1 << 0),

@@ -3535,6 +3535,18 @@ mplayer_set_mouse_pos (player_t *player, int x, int y)
   if (!player)
     return;
 
+#ifdef USE_X11
+  /* absolute to relative */
+  if (player->x11)
+  {
+    int video_x, video_y;
+
+    x11_get_video_pos (player->x11, &video_x, &video_y);
+    x -= video_x;
+    y -= video_y;
+  }
+#endif /* USE_X11 */
+
   slave_cmd_int_opt (player, SLAVE_SET_MOUSE_POS, x, y);
 }
 
