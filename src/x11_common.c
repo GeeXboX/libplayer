@@ -381,9 +381,9 @@ xine_dest_props (x11_t *x11,
 }
 
 static void
-xine_dest_size_cb(void *data, int video_width, int video_height,
-                  double video_pixel_aspect, int *dest_width,
-                  int *dest_height, double *dest_pixel_aspect)
+xine_dest_size_cb (void *data, int video_width, int video_height,
+                   double video_pixel_aspect, int *dest_width,
+                   int *dest_height, double *dest_pixel_aspect)
 {
   x11_t *x11 = data;
 
@@ -393,10 +393,10 @@ xine_dest_size_cb(void *data, int video_width, int video_height,
 }
 
 static void
-xine_frame_output_cb(void *data, int video_width, int video_height,
-                     double video_pixel_aspect, int *dest_x, int *dest_y,
-                     int *dest_width, int *dest_height,
-                     double *dest_pixel_aspect, int *win_x, int *win_y)
+xine_frame_output_cb (void *data, int video_width, int video_height,
+                      double video_pixel_aspect, int *dest_x, int *dest_y,
+                      int *dest_width, int *dest_height,
+                      double *dest_pixel_aspect, int *win_x, int *win_y)
 {
   x11_t *x11 = data;
 
