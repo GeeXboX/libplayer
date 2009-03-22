@@ -775,6 +775,17 @@ xine_player_set_mouse_pos (player_t *player, int x, int y)
 
   xine = player->priv;
 
+#ifdef USE_X11
+  if (player->x11)
+  {
+    int video_x, video_y;
+
+    x11_get_video_pos (player->x11, &video_x, &video_y);
+    x -= video_x;
+    y -= video_y;
+  }
+#endif /* USE_X11 */
+
   rect.x = x;
   rect.y = y;
   rect.w = 0;
