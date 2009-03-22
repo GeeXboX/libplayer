@@ -216,10 +216,8 @@ x11_resize (player_t *player)
   if (x11->h)
     height = x11->h;
 
-  if (x11->use_subwin)
+  if (x11->use_subwin && x11->win_black)
   {
-    if (x11->win_black)
-    {
       changes.x = 0;
       changes.y = 0;
       changes.width = player->w;
@@ -242,7 +240,6 @@ x11_resize (player_t *player)
       if (x11->win_trans)
         XConfigureWindow (x11->display, x11->win_trans,
                           CWWidth | CWHeight, &changes);
-    }
   }
   else
   {
