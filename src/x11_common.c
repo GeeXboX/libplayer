@@ -361,8 +361,16 @@ xine_dest_size_cb(void *data, int video_width, int video_height,
   if (x11)
   {
     pthread_mutex_lock (&x11->mutex_display);
-    *dest_width = x11->width;
-    *dest_height = x11->height;
+    if (x11->w)
+      *dest_width = x11->w;
+    else
+      *dest_width = x11->width;
+
+    if (x11->h)
+      *dest_height = x11->h;
+    else
+      *dest_height = x11->height;
+
     *dest_pixel_aspect = x11->pixel_aspect;
     pthread_mutex_unlock (&x11->mutex_display);
   }
@@ -390,8 +398,16 @@ xine_frame_output_cb(void *data, int video_width, int video_height,
   if (x11)
   {
     pthread_mutex_lock (&x11->mutex_display);
-    *dest_width = x11->width;
-    *dest_height = x11->height;
+    if (x11->w)
+      *dest_width = x11->w;
+    else
+      *dest_width = x11->width;
+
+    if (x11->h)
+      *dest_height = x11->h;
+    else
+      *dest_height = x11->height;
+
     *dest_pixel_aspect = x11->pixel_aspect;
     pthread_mutex_unlock (&x11->mutex_display);
   }
