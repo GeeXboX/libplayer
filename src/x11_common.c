@@ -332,16 +332,16 @@ x11_uninit (player_t *player)
   XUnmapWindow (x11->display, x11->win_video);
   XDestroyWindow (x11->display, x11->win_video);
 
-      if (x11->win_trans)
-      {
-        XUnmapWindow (x11->display, x11->win_trans);
-        XDestroyWindow (x11->display, x11->win_trans);
-      }
-      if (x11->win_black)
-      {
-        XUnmapWindow (x11->display, x11->win_black);
-        XDestroyWindow (x11->display, x11->win_black);
-      }
+  if (x11->win_trans)
+  {
+    XUnmapWindow (x11->display, x11->win_trans);
+    XDestroyWindow (x11->display, x11->win_trans);
+  }
+  if (x11->win_black)
+  {
+    XUnmapWindow (x11->display, x11->win_black);
+    XDestroyWindow (x11->display, x11->win_black);
+  }
 
   pthread_mutex_unlock (&x11->mutex_display);
   XCloseDisplay (x11->display);
@@ -512,12 +512,12 @@ x11_init (player_t *player)
   {
     /* create a window for the black background */
     x11->win_black = XCreateWindow (x11->display,
-                                           win_root,
-                                           0, 0, x11->width, x11->height,
-                                           0, 0,
-                                           InputOutput,
-                                           visual,
-                                           CWOverrideRedirect | CWBackPixel, &atts);
+                                    win_root,
+                                    0, 0, x11->width, x11->height,
+                                    0, 0,
+                                    InputOutput,
+                                    visual,
+                                    CWOverrideRedirect | CWBackPixel, &atts);
 
     XChangeProperty (x11->display,
                      x11->win_black,
@@ -542,12 +542,12 @@ x11_init (player_t *player)
      * events to MPlayer.
      */
     x11->win_trans = XCreateWindow (x11->display,
-                                           x11->win_black,
-                                           0, 0, x11->width, x11->height,
-                                           0, 0,
-                                           InputOnly,
-                                           visual,
-                                           CWOverrideRedirect, &atts);
+                                    x11->win_black,
+                                    0, 0, x11->width, x11->height,
+                                    0, 0,
+                                    InputOnly,
+                                    visual,
+                                    CWOverrideRedirect, &atts);
     XMapRaised (x11->display, x11->win_trans);
   }
   else
