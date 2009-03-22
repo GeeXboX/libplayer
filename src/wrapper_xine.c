@@ -467,9 +467,7 @@ xine_player_init (player_t *player)
 
   char *id_vo = NULL;
   char *id_ao = NULL;
-#ifdef USE_X11
   int use_x11 = 0;
-#endif /* USE_X11 */
   int visual = XINE_VISUAL_TYPE_NONE;
   void *data = NULL;
 
@@ -498,25 +496,21 @@ xine_player_init (player_t *player)
   case PLAYER_VO_X11:
     use_x11 = 1;
     id_vo = "xshm";
-    visual = XINE_VISUAL_TYPE_X11_2;
     break;
 
   case PLAYER_VO_X11_SDL:
     use_x11 = 1;
     id_vo = "sdl";
-    visual = XINE_VISUAL_TYPE_X11_2;
     break;
 
   case PLAYER_VO_XV:
     use_x11 = 1;
     id_vo = "xv";
-    visual = XINE_VISUAL_TYPE_X11_2;
     break;
 
   case PLAYER_VO_GL:
     use_x11 = 1;
     id_vo = "opengl";
-    visual = XINE_VISUAL_TYPE_X11_2;
     break;
 #endif /* USE_X11 */
 
@@ -525,20 +519,42 @@ xine_player_init (player_t *player)
     visual = XINE_VISUAL_TYPE_FB;
     break;
 
+  case PLAYER_VO_AUTO:
+    use_x11 = 1;
+    break;
+
   default:
     plog (player, PLAYER_MSG_WARNING,
           MODULE_NAME, "Unsupported video output type");
     break;
   }
 
-#ifdef USE_X11
-  if (use_x11 && (!x11_init (player) || !x11_get_data (player->x11)))
+  if (use_x11)
   {
+#ifdef USE_X11
+    int ret = x11_init (player);
+    if (!ret && player->vo != PLAYER_VO_AUTO)
+    {
+      plog (player, PLAYER_MSG_ERROR,
+            MODULE_NAME, "initialization for X has failed");
+      return PLAYER_INIT_ERROR;
+    }
+    else if (!ret)
+    {
+      use_x11 = 0;
+      visual = XINE_VISUAL_TYPE_FB;
+    }
+    else
+    {
+      data = x11_get_data (player->x11);
+      visual = XINE_VISUAL_TYPE_X11_2;
+    }
+#else
+    plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
+          "auto-detection for videoout is not enabled without X11 support");
     return PLAYER_INIT_ERROR;
-  }
-  else if (use_x11)
-    data = x11_get_data (player->x11);
 #endif /* USE_X11 */
+  }
 
   /* init video output driver */
   if (!(x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data)))
