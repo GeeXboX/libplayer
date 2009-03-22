@@ -860,7 +860,7 @@ void player_set_framedrop (player_t *player, player_framedrop_t fd);
  * The main goal is to select buttons in DVD menu.
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, xine
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.

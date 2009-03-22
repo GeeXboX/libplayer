@@ -89,7 +89,7 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
 }
 
 static void
-send_event (player_t *player, int event)
+send_event (player_t *player, int event, void *data, int data_size)
 {
   xine_player_t *x = NULL;
   xine_event_t xine_event;
@@ -104,8 +104,8 @@ send_event (player_t *player, int event)
 
   xine_event.type = event;
   xine_event.stream = x->stream;
-  xine_event.data = NULL;
-  xine_event.data_length = 0;
+  xine_event.data = data;
+  xine_event.data_length = data_size;
 
   xine_event_send (x->stream, &xine_event);
 }
@@ -926,7 +926,7 @@ xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
     return;
   }
 
-  send_event (player, event);
+  send_event (player, event, NULL, 0);
 }
 
 static void
@@ -1161,7 +1161,7 @@ xine_player_vdr (player_t *player, player_vdr_t value)
     return;
   }
 
-  send_event (player, event);
+  send_event (player, event, NULL, 0);
 }
 
 static int
@@ -1225,6 +1225,34 @@ xine_player_get_time_pos (player_t *player)
     return -1;
 
   return time_pos;
+}
+
+static void
+xine_player_set_mouse_pos (player_t *player, int x, int y)
+{
+  xine_player_t *xine;
+  xine_input_data_t input;
+  x11_rectangle_t rect;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_mouse_pos: %i %i", x, y);
+
+  if (!player)
+    return;
+
+  xine = player->priv;
+
+  rect.x = x;
+  rect.y = y;
+  rect.w = 0;
+  rect.h = 0;
+  xine_port_send_gui_data (xine->vo_port,
+                           XINE_GUI_SEND_TRANSLATE_GUI_TO_VIDEO, &rect);
+
+  memset (&input, 0, sizeof (input));
+  input.x = rect.x;
+  input.y = rect.y;
+
+  send_event (player, XINE_EVENT_INPUT_MOUSE_MOVE, &input, sizeof (input));
 }
 
 static void
@@ -1314,7 +1342,7 @@ register_functions_xine (void)
 
   funcs->get_time_pos       = xine_player_get_time_pos;
   funcs->set_framedrop      = NULL;
-  funcs->set_mouse_pos      = NULL;
+  funcs->set_mouse_pos      = xine_player_set_mouse_pos;
   funcs->osd_show_text      = NULL;
 
   funcs->pb_start           = xine_player_playback_start;
