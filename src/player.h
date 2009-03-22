@@ -60,6 +60,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <inttypes.h>
+#include <sys/types.h>
 
 #define LIBPLAYER_VERSION_MAJOR 0
 #define LIBPLAYER_VERSION_MINOR 0
