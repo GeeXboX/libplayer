@@ -351,13 +351,11 @@ x11_uninit (player_t *player)
 }
 
 #ifdef HAVE_XINE
-static void
-xine_dest_size_cb(void *data, int video_width, int video_height,
-                  double video_pixel_aspect, int *dest_width,
-                  int *dest_height, double *dest_pixel_aspect)
+static inline void
+xine_dest_props (x11_t *x11,
+                 int video_width, int video_height, double video_pixel_aspect,
+                 int *dest_width, int *dest_height, double *dest_pixel_aspect)
 {
-  x11_t *x11 = data;
-
   if (x11)
   {
     pthread_mutex_lock (&x11->mutex_display);
@@ -383,6 +381,18 @@ xine_dest_size_cb(void *data, int video_width, int video_height,
 }
 
 static void
+xine_dest_size_cb(void *data, int video_width, int video_height,
+                  double video_pixel_aspect, int *dest_width,
+                  int *dest_height, double *dest_pixel_aspect)
+{
+  x11_t *x11 = data;
+
+  xine_dest_props (x11,
+                   video_width, video_height, video_pixel_aspect,
+                   dest_width, dest_height, dest_pixel_aspect);
+}
+
+static void
 xine_frame_output_cb(void *data, int video_width, int video_height,
                      double video_pixel_aspect, int *dest_x, int *dest_y,
                      int *dest_width, int *dest_height,
@@ -395,28 +405,9 @@ xine_frame_output_cb(void *data, int video_width, int video_height,
   *win_x = 0;
   *win_y = 0;
 
-  if (x11)
-  {
-    pthread_mutex_lock (&x11->mutex_display);
-    if (x11->w)
-      *dest_width = x11->w;
-    else
-      *dest_width = x11->width;
-
-    if (x11->h)
-      *dest_height = x11->h;
-    else
-      *dest_height = x11->height;
-
-    *dest_pixel_aspect = x11->pixel_aspect;
-    pthread_mutex_unlock (&x11->mutex_display);
-  }
-  else
-  {
-    *dest_width = video_width;
-    *dest_height = video_height;
-    *dest_pixel_aspect = video_pixel_aspect;
-  }
+  xine_dest_props (x11,
+                   video_width, video_height, video_pixel_aspect,
+                   dest_width, dest_height, dest_pixel_aspect);
 }
 
 static void
