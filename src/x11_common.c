@@ -46,19 +46,13 @@ struct x11_s {
   int use_subwin;
   int x, y;       /* position set by the user */
   int w, h;       /* size set by the user */
-  pthread_mutex_t mutex_display;
-};
-
-typedef struct screeninfo_s {
-  int width;
-  int height;
+  int width;      /* screen width */
+  int height;     /* screen height */
   double pixel_aspect;
   Window win_black; /* black background (use_subwin to 1) */
   Window win_trans; /* InputOnly window to catch events (use_subwin to 1) */
-#ifdef HAVE_XINE
-  pthread_mutex_t *mutex_display; /* pointer on x11_t's mutex for xine cb */
-#endif /* HAVE_XINE */
-} screeninfo_t;
+  pthread_mutex_t mutex_display;
+};
 
 /* for no border with a X window */
 typedef struct {
@@ -163,26 +157,6 @@ x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags)
   pthread_mutex_unlock (&x11->mutex_display);
 }
 
-static screeninfo_t *
-x11_get_screeninfo (player_t *player)
-{
-  if (!player || !player->x11)
-    return NULL;
-
-  if (player->type == PLAYER_TYPE_XINE)
-  {
-#ifdef HAVE_XINE
-    x11_visual_t *vis = player->x11->data;
-    if (vis)
-      return vis->user_data;
-#endif /* HAVE_XINE */
-  }
-  else
-    return player->x11->data;
-
-  return NULL;
-}
-
 void
 x11_get_video_pos (x11_t *x11, int *x, int *y)
 {
@@ -204,7 +178,6 @@ void
 x11_resize (player_t *player)
 {
   x11_t *x11 = NULL;
-  screeninfo_t *screeninfo = NULL;
   XWindowChanges changes;
   int x, y;
   int width, height;
@@ -219,8 +192,6 @@ x11_resize (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
-  screeninfo = x11_get_screeninfo (player);
-
   if (player->winid)
   {
     XWindowAttributes atts;
@@ -228,16 +199,13 @@ x11_resize (player_t *player)
     width = atts.width;
     height = atts.height;
 
-    if (screeninfo)
-    {
-      screeninfo->width = width;
-      screeninfo->height = height;
-    }
+    x11->width = width;
+    x11->height = height;
   }
-  else if (screeninfo)
+  else
   {
-    width = screeninfo->width;
-    height = screeninfo->height;
+    width = x11->width;
+    height = x11->height;
   }
 
   /* window position and size set by the user */
@@ -250,7 +218,7 @@ x11_resize (player_t *player)
 
   if (x11->use_subwin)
   {
-    if (screeninfo && screeninfo->win_black)
+    if (x11->win_black)
     {
       changes.x = 0;
       changes.y = 0;
@@ -269,10 +237,10 @@ x11_resize (player_t *player)
       changes.y = y;
       changes.width = width;
       changes.height = height;
-      XConfigureWindow (x11->display, screeninfo->win_black,
+      XConfigureWindow (x11->display, x11->win_black,
                         CWX | CWY | CWWidth | CWHeight, &changes);
-      if (screeninfo->win_trans)
-        XConfigureWindow (x11->display, screeninfo->win_trans,
+      if (x11->win_trans)
+        XConfigureWindow (x11->display, x11->win_trans,
                           CWWidth | CWHeight, &changes);
     }
   }
@@ -310,12 +278,8 @@ x11_map (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
-  if (x11->use_subwin)
-  {
-    screeninfo_t *screeninfo = x11_get_screeninfo (player);
-    if (screeninfo && screeninfo->win_black)
-      XMapRaised (x11->display, screeninfo->win_black);
-  }
+  if (x11->use_subwin && x11->win_black)
+    XMapRaised (x11->display, x11->win_black);
   else
     XMapRaised (x11->display, x11->win_video);
 
@@ -340,12 +304,8 @@ x11_unmap (player_t *player)
 
   pthread_mutex_lock (&x11->mutex_display);
 
-  if (x11->use_subwin)
-  {
-    screeninfo_t *screeninfo = x11_get_screeninfo (player);
-    if (screeninfo && screeninfo->win_black)
-      XUnmapWindow (x11->display, screeninfo->win_black);
-  }
+  if (x11->use_subwin && x11->win_black)
+    XUnmapWindow (x11->display, x11->win_black);
   else
     XUnmapWindow (x11->display, x11->win_video);
 
@@ -372,24 +332,16 @@ x11_uninit (player_t *player)
   XUnmapWindow (x11->display, x11->win_video);
   XDestroyWindow (x11->display, x11->win_video);
 
-  if (x11->use_subwin)
-  {
-    screeninfo_t *screeninfo = x11_get_screeninfo (player);
-    if (screeninfo)
-    {
-      if (screeninfo->win_trans)
+      if (x11->win_trans)
       {
-        XUnmapWindow (x11->display, screeninfo->win_trans);
-        XDestroyWindow (x11->display, screeninfo->win_trans);
+        XUnmapWindow (x11->display, x11->win_trans);
+        XDestroyWindow (x11->display, x11->win_trans);
       }
-      if (screeninfo->win_black)
+      if (x11->win_black)
       {
-        XUnmapWindow (x11->display, screeninfo->win_black);
-        XDestroyWindow (x11->display, screeninfo->win_black);
+        XUnmapWindow (x11->display, x11->win_black);
+        XDestroyWindow (x11->display, x11->win_black);
       }
-      free (screeninfo);
-    }
-  }
 
   pthread_mutex_unlock (&x11->mutex_display);
   XCloseDisplay (x11->display);
@@ -407,16 +359,15 @@ xine_dest_size_cb(void *data, int video_width, int video_height,
                   double video_pixel_aspect, int *dest_width,
                   int *dest_height, double *dest_pixel_aspect)
 {
-  screeninfo_t *screeninfo;
-  screeninfo = (screeninfo_t *) data;
+  x11_t *x11 = data;
 
-  if (screeninfo)
+  if (x11)
   {
-    pthread_mutex_lock (screeninfo->mutex_display);
-    *dest_width = screeninfo->width;
-    *dest_height = screeninfo->height;
-    *dest_pixel_aspect = screeninfo->pixel_aspect;
-    pthread_mutex_unlock (screeninfo->mutex_display);
+    pthread_mutex_lock (&x11->mutex_display);
+    *dest_width = x11->width;
+    *dest_height = x11->height;
+    *dest_pixel_aspect = x11->pixel_aspect;
+    pthread_mutex_unlock (&x11->mutex_display);
   }
   else
   {
@@ -432,21 +383,20 @@ xine_frame_output_cb(void *data, int video_width, int video_height,
                      int *dest_width, int *dest_height,
                      double *dest_pixel_aspect, int *win_x, int *win_y)
 {
-  screeninfo_t *screeninfo;
-  screeninfo = (screeninfo_t *) data;
+  x11_t *x11 = data;
 
   *dest_x = 0;
   *dest_y = 0;
   *win_x = 0;
   *win_y = 0;
 
-  if (screeninfo)
+  if (x11)
   {
-    pthread_mutex_lock (screeninfo->mutex_display);
-    *dest_width = screeninfo->width;
-    *dest_height = screeninfo->height;
-    *dest_pixel_aspect = screeninfo->pixel_aspect;
-    pthread_mutex_unlock (screeninfo->mutex_display);
+    pthread_mutex_lock (&x11->mutex_display);
+    *dest_width = x11->width;
+    *dest_height = x11->height;
+    *dest_pixel_aspect = x11->pixel_aspect;
+    pthread_mutex_unlock (&x11->mutex_display);
   }
   else
   {
@@ -459,19 +409,19 @@ xine_frame_output_cb(void *data, int video_width, int video_height,
 static void
 xine_lock_display (void *user_data)
 {
-  screeninfo_t *screeninfo = user_data;
+  x11_t *x11 = user_data;
 
-  if (screeninfo)
-    pthread_mutex_lock (screeninfo->mutex_display);
+  if (x11)
+    pthread_mutex_lock (&x11->mutex_display);
 }
 
 static void
 xine_unlock_display (void *user_data)
 {
-  screeninfo_t *screeninfo = user_data;
+  x11_t *x11 = user_data;
 
-  if (screeninfo)
-    pthread_mutex_unlock (screeninfo->mutex_display);
+  if (x11)
+    pthread_mutex_unlock (&x11->mutex_display);
 }
 #endif /* HAVE_XINE */
 
@@ -486,8 +436,7 @@ x11_init (player_t *player)
 {
   x11_t *x11 = NULL;
   Window win_root;
-  screeninfo_t *screeninfo;
-  int screen, width, height;
+  int screen;
   Visual *visual;
   Atom XA_NO_BORDER;
   MWMHints mwmhints;
@@ -500,10 +449,6 @@ x11_init (player_t *player)
   x11 = player->x11;
   if (!x11)
     return 0;
-
-  screeninfo = calloc (1, sizeof (screeninfo_t));
-  if (!screeninfo)
-    goto err_screeninfo;
 
   x11->display = XOpenDisplay (NULL);
   if (!x11->display)
@@ -534,8 +479,8 @@ x11_init (player_t *player)
   if (!win_root)
   {
     /* the video will be in fullscreen */
-    width = XDisplayWidth (x11->display, screen);
-    height = XDisplayHeight (x11->display, screen);
+    x11->width = XDisplayWidth (x11->display, screen);
+    x11->height = XDisplayHeight (x11->display, screen);
     visual = XDefaultVisual (x11->display, screen);
     win_root = XRootWindow (x11->display, screen);
   }
@@ -543,8 +488,8 @@ x11_init (player_t *player)
   {
     XWindowAttributes atts;
     XGetWindowAttributes (x11->display, win_root, &atts);
-    width = atts.width;
-    height = atts.height;
+    x11->width = atts.width;
+    x11->height = atts.height;
     visual = atts.visual;
   }
 
@@ -566,16 +511,16 @@ x11_init (player_t *player)
   if (x11->use_subwin)
   {
     /* create a window for the black background */
-    screeninfo->win_black = XCreateWindow (x11->display,
+    x11->win_black = XCreateWindow (x11->display,
                                            win_root,
-                                           0, 0, width, height,
+                                           0, 0, x11->width, x11->height,
                                            0, 0,
                                            InputOutput,
                                            visual,
                                            CWOverrideRedirect | CWBackPixel, &atts);
 
     XChangeProperty (x11->display,
-                     screeninfo->win_black,
+                     x11->win_black,
                      XA_NO_BORDER, XA_NO_BORDER, 32,
                      PropModeReplace,
                      (unsigned char *) &mwmhints,
@@ -583,8 +528,8 @@ x11_init (player_t *player)
 
     /* create a window for the video out */
     x11->win_video = XCreateWindow (x11->display,
-                                    screeninfo->win_black,
-                                    0, 0, width, height,
+                                    x11->win_black,
+                                    0, 0, x11->width, x11->height,
                                     0, 0,
                                     InputOutput,
                                     visual,
@@ -596,21 +541,21 @@ x11_init (player_t *player)
      * Transparent window to catch all events in order to prevent sending
      * events to MPlayer.
      */
-    screeninfo->win_trans = XCreateWindow (x11->display,
-                                           screeninfo->win_black,
-                                           0, 0, width, height,
+    x11->win_trans = XCreateWindow (x11->display,
+                                           x11->win_black,
+                                           0, 0, x11->width, x11->height,
                                            0, 0,
                                            InputOnly,
                                            visual,
                                            CWOverrideRedirect, &atts);
-    XMapRaised (x11->display, screeninfo->win_trans);
+    XMapRaised (x11->display, x11->win_trans);
   }
   else
   {
     /* create a window for the video out */
     x11->win_video = XCreateWindow (x11->display,
                                     win_root,
-                                    0, 0, width, height,
+                                    0, 0, x11->width, x11->height,
                                     0, 0,
                                     InputOutput,
                                     visual,
@@ -627,6 +572,8 @@ x11_init (player_t *player)
   XSync (x11->display, False);
   pthread_mutex_unlock (&x11->mutex_display);
 
+  x11->pixel_aspect = 1.0;
+
   if (player->type == PLAYER_TYPE_XINE)
   {
 #ifdef HAVE_XINE
@@ -634,11 +581,6 @@ x11_init (player_t *player)
 
     if (vis)
     {
-      screeninfo->width = width;
-      screeninfo->height = height;
-      screeninfo->pixel_aspect = 1.0;
-      screeninfo->mutex_display = &x11->mutex_display;
-
       vis->display = x11->display;
       vis->screen = screen;
       vis->d = x11->win_video;
@@ -646,32 +588,17 @@ x11_init (player_t *player)
       vis->frame_output_cb = xine_frame_output_cb;
       vis->lock_display = xine_lock_display;
       vis->unlock_display = xine_unlock_display;
-      vis->user_data = (void *) screeninfo;
+      vis->user_data = (void *) x11;
     }
 
     x11->data = (void *) vis;
 #endif /* HAVE_XINE */
-  }
-  else if (x11->use_subwin)
-  {
-    screeninfo->width = width;
-    screeninfo->height = height;
-    screeninfo->pixel_aspect = 1.0;
-
-    x11->data = (void *) screeninfo;
-  }
-  else
-  {
-    free (screeninfo);
-    x11->data = NULL;
   }
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
   return 1;
 
  err_display:
-  free (screeninfo);
- err_screeninfo:
   free (x11);
   player->x11 = NULL;
   return 0;
