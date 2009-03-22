@@ -168,9 +168,9 @@ x11_get_video_pos (x11_t *x11, int *x, int *y)
   pthread_mutex_lock (&x11->mutex_display);
   XGetWindowAttributes (x11->display, x11->win_video, &atts);
   if (x)
-    *x = atts.x + x11->x;
+    *x = atts.x + (x11->use_subwin ? x11->x : 0);
   if (y)
-    *y = atts.y + x11->y;
+    *y = atts.y + (x11->use_subwin ? x11->y : 0);
   pthread_mutex_unlock (&x11->mutex_display);
 }
 
