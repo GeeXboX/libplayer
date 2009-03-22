@@ -858,7 +858,9 @@ void player_set_framedrop (player_t *player, player_framedrop_t fd);
 /**
  * \brief Set the mouse position to the player.
  *
- * The main goal is to select buttons in DVD menu.
+ * The main goal is to select buttons in DVD menu. The coordinates are
+ * relative to the top-left corner of the root window. The root window is
+ * \p winid passed with player_init().
  *
  * Wrappers supported (even partially):
  *  MPlayer, xine
