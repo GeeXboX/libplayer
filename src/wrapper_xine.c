@@ -51,6 +51,8 @@ typedef struct xine_player_s {
   xine_event_queue_t *event_queue;
   xine_video_port_t *vo_port;
   xine_audio_port_t *ao_port;
+
+  int mouse_x, mouse_y; /* mouse coord set by xine_player_set_mouse_pos() */
 } xine_player_t;
 
 
@@ -813,6 +815,9 @@ xine_player_set_mouse_pos (player_t *player, int x, int y)
   input.x = rect.x;
   input.y = rect.y;
 
+  xine->mouse_x = rect.x;
+  xine->mouse_y = rect.y;
+
   send_event (player, XINE_EVENT_INPUT_MOUSE_MOVE, &input, sizeof (input));
 }
 
@@ -1073,11 +1078,15 @@ static void
 xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
 {
   int event;
+  xine_player_t *x;
+  xine_input_data_t *input = NULL;
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %i", value);
 
   if (!player)
     return;
+
+  x = player->priv;
 
   switch (value)
   {
@@ -1106,11 +1115,25 @@ xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
     event = XINE_EVENT_INPUT_SELECT;
     break;
 
+  case PLAYER_DVDNAV_MOUSECLICK:
+    event = XINE_EVENT_INPUT_MOUSE_BUTTON;
+    input = calloc (1, sizeof (xine_input_data_t));
+    if (!input)
+      break;
+
+    input->button = 1;
+    input->x = x->mouse_x;
+    input->y = x->mouse_y;
+    break;
+
   default:
     return;
   }
 
-  send_event (player, event, NULL, 0);
+  send_event (player, event, input, input ? sizeof (*input) : 0);
+
+  if (input)
+    free (input);
 }
 
 static void
