@@ -493,7 +493,7 @@ uint32_t mrl_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
  * This function can be slow when the stream is not (fastly) reachable.
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, xine
  *
  * \warning The returned pointer must be freed when no longer used.
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
