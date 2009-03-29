@@ -318,12 +318,8 @@ xine_identify_metadata_clip (mrl_t *mrl, xine_stream_t *stream)
 static void
 xine_identify_metadata (mrl_t *mrl, xine_stream_t *stream)
 {
-  mrl_metadata_t *meta;
-
   if (!mrl || !mrl->meta || !stream)
     return;
-
-  meta = mrl->meta;
 
   switch (mrl->resource)
   {
