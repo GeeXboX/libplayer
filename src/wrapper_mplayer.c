@@ -1256,10 +1256,12 @@ mp_resource_get_uri_local (const char *protocol,
   if (!args || !args->location || !protocol)
     return NULL;
 
-  if (strstr (args->location, "://")
-      && strncmp (args->location, protocol, strlen (protocol)))
+  if (strstr (args->location, "://"))
   {
-    return NULL;
+    if (strncmp (args->location, protocol, strlen (protocol)))
+      return NULL;
+ 
+    return strdup (args->location + strlen (protocol));
   }
 
   return strdup (args->location);
