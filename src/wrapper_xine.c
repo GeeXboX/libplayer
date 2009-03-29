@@ -232,15 +232,31 @@ xine_resource_get_uri (mrl_t *mrl)
 }
 
 static void
-xine_identify_metadata (mrl_t *mrl, xine_stream_t *stream)
+xine_identify_metadata_dvd (mrl_t *mrl, xine_stream_t *stream)
 {
   const char *s;
-  mrl_metadata_t *meta;
+  mrl_metadata_dvd_t *dvd = mrl->meta->priv;
 
-  if (!mrl || !mrl->meta || !stream)
+  if (!dvd)
     return;
 
-  meta = mrl->meta;
+  s = xine_get_meta_info (stream, XINE_META_INFO_TITLE);
+  if (s)
+  {
+    if (dvd->volumeid)
+      free (dvd->volumeid);
+    dvd->volumeid = strdup (s);
+  }
+
+  dvd->titles =
+    (uint8_t) xine_get_stream_info (stream, XINE_STREAM_INFO_DVD_TITLE_COUNT);
+}
+
+static void
+xine_identify_metadata_clip (mrl_t *mrl, xine_stream_t *stream)
+{
+  const char *s;
+  mrl_metadata_t *meta = mrl->meta;
 
   s = xine_get_meta_info (stream, XINE_META_INFO_TITLE);
   if (s)
@@ -296,6 +312,29 @@ xine_identify_metadata (mrl_t *mrl, xine_stream_t *stream)
     if (meta->comment)
       free (meta->comment);
     meta->comment = strdup (s);
+  }
+}
+
+static void
+xine_identify_metadata (mrl_t *mrl, xine_stream_t *stream)
+{
+  mrl_metadata_t *meta;
+
+  if (!mrl || !mrl->meta || !stream)
+    return;
+
+  meta = mrl->meta;
+
+  switch (mrl->resource)
+  {
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
+    xine_identify_metadata_dvd (mrl, stream);
+    break;
+
+  default:
+    xine_identify_metadata_clip (mrl, stream);
+    break;
   }
 }
 
