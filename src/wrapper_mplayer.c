@@ -3191,6 +3191,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
     params[pp++] = "-noar";
     params[pp++] = "-nomouseinput";
     params[pp++] = "-nosound";
+    params[pp++] = "-noautosub";
     params[pp++] = "-osdlevel";
     params[pp++] = "0";
 
