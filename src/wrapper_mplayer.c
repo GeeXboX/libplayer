@@ -1287,7 +1287,7 @@ mp_resource_get_uri_cd (const char *protocol, mrl_resource_cd_args_t *args)
     size += count_nb_dec (args->track_start);
     snprintf (track_start, sizeof (track_start), "%i", args->track_start);
   }
-  if (args->track_end > args->track_start)
+  if (args->track_end >= args->track_start)
   {
     size += 1 + count_nb_dec (args->track_end);
     snprintf (track_end, sizeof (track_end), "-%i", args->track_end);
