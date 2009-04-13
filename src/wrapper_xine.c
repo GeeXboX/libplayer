@@ -507,6 +507,7 @@ xine_player_init (player_t *player)
   int use_x11 = 0;
   int visual = XINE_VISUAL_TYPE_NONE;
   void *data = NULL;
+  char *homedir = getenv ("HOME");
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
@@ -519,6 +520,14 @@ xine_player_init (player_t *player)
     return PLAYER_INIT_ERROR;
 
   x->xine = xine_new ();
+  xine_config_load (x->xine, "/etc/xine/config");
+  if (homedir)
+  {
+    size_t cfgfile_len = strlen (homedir) + strlen (".xine/config") + 2;
+    char *cfgfile = malloc (cfgfile_len);
+    snprintf (cfgfile, cfgfile_len, "%s/.xine/config", homedir);
+    xine_config_load (x->xine, cfgfile);
+  }
   xine_init (x->xine);
   xine_engine_set_param (x->xine,
                          XINE_ENGINE_PARAM_VERBOSITY, XINE_VERBOSITY_LOG);
