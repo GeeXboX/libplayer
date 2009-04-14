@@ -1260,7 +1260,7 @@ mp_resource_get_uri_local (const char *protocol,
   {
     if (strncmp (args->location, protocol, strlen (protocol)))
       return NULL;
- 
+
     return strdup (args->location + strlen (protocol));
   }
 

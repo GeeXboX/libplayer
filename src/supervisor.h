@@ -137,7 +137,7 @@ typedef enum supervisor_ctl {
   SV_FUNC_PLAYER_RADIO_CHAN_SELECT,
   SV_FUNC_PLAYER_RADIO_CHAN_PREV,
   SV_FUNC_PLAYER_RADIO_CHAN_NEXT,
-  
+
   /* VDR specific controls */
   SV_FUNC_PLAYER_VDR,
 
