@@ -527,6 +527,7 @@ xine_player_init (player_t *player)
     char *cfgfile = malloc (cfgfile_len);
     snprintf (cfgfile, cfgfile_len, "%s/.xine/config", homedir);
     xine_config_load (x->xine, cfgfile);
+    free (cfgfile);
   }
   xine_init (x->xine);
   xine_engine_set_param (x->xine,
