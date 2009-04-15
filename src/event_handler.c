@@ -55,7 +55,8 @@ event_handler_sync_catch (event_handler_t *handler)
 
   pthread_mutex_lock (handler->sync_mutex);
   /* someone already running? */
-  if (*handler->sync_job && *handler->sync_job != handler->th_handler)
+  if (*handler->sync_job &&
+      !pthread_equal (*handler->sync_job, handler->th_handler))
     pthread_cond_wait (handler->sync_cond, handler->sync_mutex);
   *handler->sync_job = handler->th_handler;
   pthread_mutex_unlock (handler->sync_mutex);
