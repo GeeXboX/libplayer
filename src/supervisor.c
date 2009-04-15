@@ -1249,7 +1249,7 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
   cb_tid = supervisor->cb_tid;
   pthread_mutex_unlock (&supervisor->mutex_cb);
 
-  if (cb_tid == pthread_self ()
+  if (pthread_equal (cb_tid, pthread_self ())
       && supervisor->use_sync && mode == SV_MODE_WAIT_FOR_END)
   {
     plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
