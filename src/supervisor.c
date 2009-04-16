@@ -48,11 +48,13 @@ struct supervisor_s {
   pthread_mutex_t mutex_sv;
   sem_t sem_ctl;
 
+  int cb_run;
   pthread_t cb_tid;
   pthread_mutex_t mutex_cb;
 
   /* to synchronize with an event handler (for example) */
   int use_sync;
+  int sync_run;
   pthread_t sync_job;
   pthread_cond_t sync_cond;
   pthread_mutex_t sync_mutex;
@@ -1057,10 +1059,11 @@ supervisor_sync_catch (supervisor_t *supervisor)
 
   pthread_mutex_lock (&supervisor->sync_mutex);
   /* someone already running? */
-  if (supervisor->sync_job &&
+  if (supervisor->sync_run &&
       !pthread_equal (supervisor->sync_job, supervisor->th_supervisor))
     pthread_cond_wait (&supervisor->sync_cond, &supervisor->sync_mutex);
   supervisor->sync_job = supervisor->th_supervisor;
+  supervisor->sync_run = 1;
   pthread_mutex_unlock (&supervisor->sync_mutex);
 }
 
@@ -1074,7 +1077,7 @@ supervisor_sync_release (supervisor_t *supervisor)
     return;
 
   pthread_mutex_lock (&supervisor->sync_mutex);
-  supervisor->sync_job = 0;
+  supervisor->sync_run = 0;
   pthread_cond_signal (&supervisor->sync_cond); /* release for "other" */
   pthread_mutex_unlock (&supervisor->sync_mutex);
 }
@@ -1207,6 +1210,7 @@ supervisor_callback_in (player_t *player, pthread_t which)
 
   pthread_mutex_lock (&supervisor->mutex_cb);
   supervisor->cb_tid = which;
+  supervisor->cb_run = 1;
   pthread_mutex_unlock (&supervisor->mutex_cb);
 }
 
@@ -1225,7 +1229,7 @@ supervisor_callback_out (player_t *player)
     return;
 
   pthread_mutex_lock (&supervisor->mutex_cb);
-  supervisor->cb_tid = 0;
+  supervisor->cb_run = 0;
   pthread_mutex_unlock (&supervisor->mutex_cb);
 }
 
@@ -1235,6 +1239,7 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
 {
   supervisor_send_t *data;
   int res;
+  int cb_run;
   pthread_t cb_tid;
   supervisor_t *supervisor;
 
@@ -1246,10 +1251,11 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
     return;
 
   pthread_mutex_lock (&supervisor->mutex_cb);
+  cb_run = supervisor->cb_run;
   cb_tid = supervisor->cb_tid;
   pthread_mutex_unlock (&supervisor->mutex_cb);
 
-  if (pthread_equal (cb_tid, pthread_self ())
+  if (cb_run && pthread_equal (cb_tid, pthread_self ())
       && supervisor->use_sync && mode == SV_MODE_WAIT_FOR_END)
   {
     plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
@@ -1323,7 +1329,7 @@ supervisor_new (void)
 }
 
 supervisor_status_t
-supervisor_init (player_t *player, pthread_t **job,
+supervisor_init (player_t *player, int **run, pthread_t **job,
                  pthread_cond_t **cond, pthread_mutex_t **mutex)
 {
   supervisor_t *supervisor;
@@ -1341,8 +1347,9 @@ supervisor_init (player_t *player, pthread_t **job,
   supervisor->state = SUPERVISOR_STATE_DEAD;
 
   /* can be used for a sync with an other thread (event handler for example) */
-  if (job && cond && mutex)
+  if (run && job && cond && mutex)
   {
+    *run = &supervisor->sync_run;
     *job = &supervisor->sync_job;
     *cond = &supervisor->sync_cond;
     *mutex = &supervisor->sync_mutex;

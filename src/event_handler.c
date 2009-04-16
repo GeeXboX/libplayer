@@ -35,6 +35,7 @@ struct event_handler_s {
   pthread_mutex_t mutex_enable;
 
   /* to synchronize with a supervisor (for example) */
+  int *sync_run;
   pthread_t *sync_job;
   pthread_cond_t *sync_cond;
   pthread_mutex_t *sync_mutex;
@@ -50,15 +51,17 @@ event_handler_sync_catch (event_handler_t *handler)
   if (!handler)
     return;
 
-  if (!handler->sync_job || !handler->sync_cond || !handler->sync_mutex)
+  if (!handler->sync_run
+      || !handler->sync_job || !handler->sync_cond || !handler->sync_mutex)
     return;
 
   pthread_mutex_lock (handler->sync_mutex);
   /* someone already running? */
-  if (*handler->sync_job &&
+  if (*handler->sync_run &&
       !pthread_equal (*handler->sync_job, handler->th_handler))
     pthread_cond_wait (handler->sync_cond, handler->sync_mutex);
   *handler->sync_job = handler->th_handler;
+  *handler->sync_run = 1;
   pthread_mutex_unlock (handler->sync_mutex);
 }
 
@@ -68,11 +71,12 @@ event_handler_sync_release (event_handler_t *handler)
   if (!handler)
     return;
 
-  if (!handler->sync_job || !handler->sync_cond || !handler->sync_mutex)
+  if (!handler->sync_run
+      || !handler->sync_job || !handler->sync_cond || !handler->sync_mutex)
     return;
 
   pthread_mutex_lock (handler->sync_mutex);
-  *handler->sync_job = 0;
+  *handler->sync_run = 0;
   pthread_cond_signal (handler->sync_cond); /* release for "other" */
   pthread_mutex_unlock (handler->sync_mutex);
 }
@@ -142,7 +146,7 @@ event_handler_register (void *data,
 }
 
 int
-event_handler_init (event_handler_t *handler, pthread_t *job,
+event_handler_init (event_handler_t *handler, int *run, pthread_t *job,
                     pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
   int res;
@@ -154,8 +158,9 @@ event_handler_init (event_handler_t *handler, pthread_t *job,
   handler->run = 1;
 
   /* use an external sync? */
-  if (job && cond && mutex)
+  if (run && job && cond && mutex)
   {
+    handler->sync_run = run;
     handler->sync_job = job;
     handler->sync_cond = cond;
     handler->sync_mutex = mutex;
@@ -254,8 +259,5 @@ event_handler_send (event_handler_t *handler, int e, void *data)
 pthread_t
 event_handler_tid (event_handler_t *handler)
 {
-  if (!handler)
-    return 0;
-
   return handler->th_handler;
 }

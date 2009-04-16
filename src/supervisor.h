@@ -218,7 +218,8 @@ typedef struct supervisor_data_osd_s {
 
 
 supervisor_t *supervisor_new (void);
-supervisor_status_t supervisor_init (player_t *player, pthread_t **job,
+supervisor_status_t supervisor_init (player_t *player, int **run,
+                                     pthread_t **job,
                                      pthread_cond_t **cond,
                                      pthread_mutex_t **mutex);
 void supervisor_uninit (player_t *player);

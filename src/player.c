@@ -105,6 +105,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   supervisor_status_t sv_res;
   int ret;
 
+  int *sv_run;
   pthread_t *sv_job;
   pthread_cond_t *sv_cond;
   pthread_mutex_t *sv_mutex;
@@ -174,7 +175,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
     return NULL;
   }
 
-  sv_res = supervisor_init (player, &sv_job, &sv_cond, &sv_mutex);
+  sv_res = supervisor_init (player, &sv_run, &sv_job, &sv_cond, &sv_mutex);
   if (sv_res != SUPERVISOR_STATUS_OK)
   {
     plog (player, PLAYER_MSG_ERROR,
@@ -191,7 +192,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   }
 
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "event_handler_init");
-  ret = event_handler_init (player->event, sv_job, sv_cond, sv_mutex);
+  ret = event_handler_init (player->event, sv_run, sv_job, sv_cond, sv_mutex);
   if (ret)
   {
     plog (player, PLAYER_MSG_ERROR,
