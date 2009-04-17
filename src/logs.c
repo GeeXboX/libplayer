@@ -92,10 +92,10 @@ plog (player_t *player, player_verbosity_level_t level,
   va_start (va, format);
 
 #ifdef USE_LOGCOLOR
-  fprintf (stderr, "[" BOLD "%s" NORMAL "] %s%s" NORMAL ": ",
+  fprintf (stderr, "[" BOLD "libplayer/%s" NORMAL "] %s%s" NORMAL ": ",
            module, c[level], l[level]);
 #else
-  fprintf (stderr, "[%s] %s: ", module, l[level]);
+  fprintf (stderr, "[libplayer/%s] %s: ", module, l[level]);
 #endif /* USE_LOGCOLOR */
 
   vfprintf (stderr, format, va);
