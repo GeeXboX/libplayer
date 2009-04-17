@@ -2643,7 +2643,7 @@ executable_is_available (player_t *player, const char *bin)
 static int
 mp_preinit_vo (player_t *player, unsigned long *winid)
 {
-  int ret = 1;
+  int ret = 0;
 
   /* The video out is sent in our X11 window, winid is used for -wid arg. */
   switch (player->vo)
