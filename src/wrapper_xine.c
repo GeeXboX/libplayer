@@ -824,6 +824,30 @@ xine_player_get_time_pos (player_t *player)
   return time_pos;
 }
 
+static int
+xine_player_get_percent_pos (player_t *player)
+{
+  xine_player_t *x;
+  int percent_pos = 0;
+  int ret;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_percent_pos");
+
+  if (!player)
+    return -1;
+
+  x = player->priv;
+
+  if (!x->stream)
+    return -1;
+
+  ret = xine_get_pos_length (x->stream, &percent_pos, NULL, NULL);
+  if (!ret || percent_pos < 0)
+    return -1;
+
+  return percent_pos * 100 / (1 << 16);
+}
+
 static void
 xine_player_set_mouse_pos (player_t *player, int x, int y)
 {
@@ -1436,7 +1460,7 @@ register_functions_xine (void)
   funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = xine_player_get_time_pos;
-  funcs->get_percent_pos    = NULL;
+  funcs->get_percent_pos    = xine_player_get_percent_pos;
   funcs->set_framedrop      = NULL;
   funcs->set_mouse_pos      = xine_player_set_mouse_pos;
   funcs->osd_show_text      = NULL;

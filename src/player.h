@@ -811,7 +811,7 @@ int player_get_time_pos (player_t *player);
  * \brief Get percent position in the current stream.
  *
  * Wrapper supported (even partially):
- *  MPlayer
+ *  MPlayer, xine
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
