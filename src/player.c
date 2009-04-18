@@ -372,6 +372,22 @@ player_get_time_pos (player_t *player)
   return out;
 }
 
+int
+player_get_percent_pos (player_t *player)
+{
+  int out = -1;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return -1;
+
+  supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                   SV_FUNC_PLAYER_GET_PERCENT_POS, NULL, &out);
+
+  return out;
+}
+
 void
 player_set_playback (player_t *player, player_pb_t pb)
 {

@@ -76,6 +76,7 @@ typedef enum supervisor_ctl {
 
   /* Player tuning & properties */
   SV_FUNC_PLAYER_GET_TIME_POS,
+  SV_FUNC_PLAYER_GET_PERCENT_POS,
   SV_FUNC_PLAYER_SET_PLAYBACK,
   SV_FUNC_PLAYER_SET_LOOP,
   SV_FUNC_PLAYER_SET_SHUFFLE,

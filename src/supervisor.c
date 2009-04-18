@@ -424,6 +424,17 @@ supervisor_player_get_time_pos (player_t *player, void *in, void *out)
 }
 
 static void
+supervisor_player_get_percent_pos (player_t *player, void *in, void *out)
+{
+  int *output = out;
+
+  if (!player || !out)
+    return;
+
+  *output = player_sv_get_percent_pos (player);
+}
+
+static void
 supervisor_player_set_playback (player_t *player, void *in, void *out)
 {
   player_pb_t *input = in;
@@ -974,6 +985,7 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
 
   /* Player tuning & properties */
   [SV_FUNC_PLAYER_GET_TIME_POS]          = supervisor_player_get_time_pos,
+  [SV_FUNC_PLAYER_GET_PERCENT_POS]       = supervisor_player_get_percent_pos,
   [SV_FUNC_PLAYER_SET_PLAYBACK]          = supervisor_player_set_playback,
   [SV_FUNC_PLAYER_SET_LOOP]              = supervisor_player_set_loop,
   [SV_FUNC_PLAYER_SET_SHUFFLE]           = supervisor_player_set_shuffle,

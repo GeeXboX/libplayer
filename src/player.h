@@ -808,6 +808,18 @@ typedef enum player_x_window_flags {
 int player_get_time_pos (player_t *player);
 
 /**
+ * \brief Get percent position in the current stream.
+ *
+ * Wrapper supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
+ * \param[in] player      Player controller.
+ * \return Percent position.
+ */
+int player_get_percent_pos (player_t *player);
+
+/**
  * \brief Set playback mode.
  *
  * If the playback mode is set to PLAYER_PB_AUTO, then loop and shuffle can

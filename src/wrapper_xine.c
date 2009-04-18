@@ -1436,6 +1436,7 @@ register_functions_xine (void)
   funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = xine_player_get_time_pos;
+  funcs->get_percent_pos    = NULL;
   funcs->set_framedrop      = NULL;
   funcs->set_mouse_pos      = xine_player_set_mouse_pos;
   funcs->osd_show_text      = NULL;

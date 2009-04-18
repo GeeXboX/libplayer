@@ -229,6 +229,22 @@ player_sv_get_time_pos (player_t *player)
   return res;
 }
 
+int
+player_sv_get_percent_pos (player_t *player)
+{
+  int res = -1;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return -1;
+
+  /* player specific get_percent_pos() */
+  PLAYER_FUNCS_RES (get_percent_pos, res)
+
+  return res;
+}
+
 void
 player_sv_set_playback (player_t *player, player_pb_t pb)
 {

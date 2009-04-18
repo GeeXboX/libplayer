@@ -571,6 +571,7 @@ register_functions_vlc (void)
   funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = vlc_get_time_pos;
+  funcs->get_percent_pos    = NULL;
   funcs->set_framedrop      = NULL;
   funcs->set_mouse_pos      = NULL;
   funcs->osd_show_text      = NULL;

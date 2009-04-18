@@ -4061,6 +4061,7 @@ register_functions_mplayer (void)
   funcs->mrl_video_snapshot = mplayer_mrl_video_snapshot;
 
   funcs->get_time_pos       = mplayer_get_time_pos;
+  funcs->get_percent_pos    = NULL;
   funcs->set_framedrop      = mplayer_set_framedrop;
   funcs->set_mouse_pos      = mplayer_set_mouse_pos;
   funcs->osd_show_text      = mplayer_osd_show_text;

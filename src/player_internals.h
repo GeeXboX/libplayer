@@ -159,6 +159,7 @@ typedef struct player_funcs_s {
 
   /* Player properties */
   int (*get_time_pos) (player_t *player);
+  int (*get_percent_pos) (player_t *player);
   void (*set_framedrop) (player_t *player, player_framedrop_t fd);
   void (*set_mouse_pos) (player_t *player, int x, int y);
   void (*osd_show_text) (player_t *player,
@@ -338,6 +339,7 @@ void player_sv_mrl_next_play (player_t *player);
 
 /* Player tuning & properties */
 int player_sv_get_time_pos (player_t *player);
+int player_sv_get_percent_pos (player_t *player);
 void player_sv_set_playback (player_t *player, player_pb_t pb);
 void player_sv_set_loop (player_t *player, player_loop_t loop, int value);
 void player_sv_set_shuffle (player_t *player, int value);

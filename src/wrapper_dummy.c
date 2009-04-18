@@ -208,6 +208,7 @@ register_functions_dummy (void)
   funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = NULL;
+  funcs->get_percent_pos    = NULL;
   funcs->set_framedrop      = NULL;
   funcs->set_mouse_pos      = NULL;
   funcs->osd_show_text      = NULL;
