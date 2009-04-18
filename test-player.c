@@ -793,7 +793,7 @@ main (int argc, char **argv)
   uint32_t input;
   int run = 1;
   int volume = 85;
-  int time_pos;
+  int time_pos, percent_pos;
   float speed = 1.0;
   int loop = 0, shuffle = 0;
   int visibility = 0;
@@ -1077,8 +1077,10 @@ main (int argc, char **argv)
       break;
     case 'i':   /* print current time position */
       time_pos = player_get_time_pos (player);
-      printf ("TIME POSITION: %.2f sec\n",
-              time_pos < 0 ? 0.0 : (float) time_pos / 1000.0);
+      percent_pos = player_get_percent_pos (player);
+      printf ("POSITION: %.2f sec (%i%%)\n",
+              time_pos < 0 ? 0.0 : (float) time_pos / 1000.0,
+              percent_pos < 0 ? 0 : percent_pos);
       break;
     case 'j':   /* take a video snapshot */
     {
