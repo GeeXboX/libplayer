@@ -265,6 +265,7 @@ typedef enum slave_property {
   PROPERTY_METADATA_TRACK,
   PROPERTY_METADATA_YEAR,
   PROPERTY_MUTE,
+  PROPERTY_PERCENT_POS,
   PROPERTY_SAMPLERATE,
   PROPERTY_SPEED,
   PROPERTY_SUB,
@@ -299,6 +300,7 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_METADATA_TRACK]   = {"metadata/track",   ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_METADATA_YEAR]    = {"metadata/year",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_MUTE]             = {"mute",             ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_PERCENT_POS]      = {"percent_pos",      ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SAMPLERATE]       = {"samplerate",       ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SPEED]            = {"speed",            ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB]              = {"sub",              ITEM_ON,  ITEM_OFF, NULL},
@@ -3499,6 +3501,24 @@ mplayer_get_time_pos (player_t *player)
   return (int) (time_pos * 1000.0);
 }
 
+static int
+mplayer_get_percent_pos (player_t *player)
+{
+  int percent_pos = 0;
+
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_percent_pos");
+
+  if (!player)
+    return -1;
+
+  percent_pos = slave_get_property_int (player, PROPERTY_PERCENT_POS);
+
+  if (percent_pos < 0)
+    return -1;
+
+  return percent_pos;
+}
+
 static void
 mplayer_set_framedrop (player_t *player, player_framedrop_t fd)
 {
@@ -4061,7 +4081,7 @@ register_functions_mplayer (void)
   funcs->mrl_video_snapshot = mplayer_mrl_video_snapshot;
 
   funcs->get_time_pos       = mplayer_get_time_pos;
-  funcs->get_percent_pos    = NULL;
+  funcs->get_percent_pos    = mplayer_get_percent_pos;
   funcs->set_framedrop      = mplayer_set_framedrop;
   funcs->set_mouse_pos      = mplayer_set_mouse_pos;
   funcs->osd_show_text      = mplayer_osd_show_text;
