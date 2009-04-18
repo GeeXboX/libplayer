@@ -460,15 +460,12 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   ao = xine_open_audio_driver (x->xine, "none", NULL);
 
   if (!ao)
-    return;
+    goto err_ao;
 
   vo = xine_open_video_driver (x->xine, "none", XINE_VISUAL_TYPE_NONE, NULL);
 
   if (!vo)
-  {
-    xine_close_audio_driver (x->xine, ao);
-    return;
-  }
+    goto err_vo;
 
   stream = xine_stream_new (x->xine, ao, vo);
 
@@ -492,9 +489,11 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
     xine_dispose (stream);
   }
 
-  free (uri);
-  xine_close_audio_driver (x->xine, ao);
   xine_close_video_driver (x->xine, vo);
+ err_vo:
+  xine_close_audio_driver (x->xine, ao);
+ err_ao:
+  free (uri);
 }
 
 static init_status_t
