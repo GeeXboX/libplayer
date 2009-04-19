@@ -92,7 +92,7 @@ install-bindings: install-binding-python
 
 install-binding-python:
 ifeq ($(BINDING_PYTHON),yes)
-	cd bindings/python && python setup.py install --prefix=$(PREFIX)
+	cd bindings/python && python setup.py install --prefix=$(DESTDIR)$(PREFIX)
 endif
 
 uninstall:
