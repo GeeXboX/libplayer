@@ -1,0 +1,35 @@
+Source: libplayer
+Section: libs
+Priority: optional
+Maintainer: Benjamin Zores <ben@geexbox.org>
+Standards-Version: 3.8.0
+Vcs-Hg: http://hg.geexbox.org/libplayer
+Vcs-Browser: http://hg.geexbox.org/libplayer/summary
+Homepage: http://libplayer.geexbox.org/
+Build-Depends-Indep: doxygen
+Build-Depends: debhelper (>= 7),
+               libxine-dev
+
+Package: libplayer
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: mplayer
+Description: a multimedia A/V abstraction layer API
+ libplayer is a multimedia A/V abstraction layer API.
+ Its goal is to interact with Enna Media Center.
+ .
+ libplayer provides a generic A/V API that relies on various
+ multimedia player for Linux systems.
+ It currently supports MPlayer and xine.
+
+Package: libplayer-dev
+Section: libdevel
+Architecture: any
+Depends: libplayer (= ${binary:Version}),
+         libxine1-dev (= ${binary:Version})
+Description: development files for libplayer
+ libplayer is a multimedia A/V abstraction layer API.
+ .
+ This package contains the header files and static libraries needed to
+ compile applications or shared objects that use libplayer.

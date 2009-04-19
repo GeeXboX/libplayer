@@ -1,0 +1,28 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/makefile.mk
+
+DEB_DH_INSTALL_SOURCEDIR := debian/tmp
+
+# make targets
+DEB_MAKE_CLEAN_TARGET    := distclean
+DEB_MAKE_BUILD_TARGET    := lib doxygen
+DEB_MAKE_INSTALL_TARGET  := install-pkgconfig install-lib install-doxygen \
+			    DESTDIR=$(DEB_DESTDIR)
+
+# Common configuration flags
+confflags += --prefix=/usr
+confflags += --enable-static
+confflags += --enable-shared
+confflags += --disable-debug
+confflags += --disable-gstreamer
+confflags += --enable-mplayer
+confflags += --disable-vlc
+confflags += --enable-xine
+confflags += --enable-x11
+confflags += --enable-logcolor
+confflags += --enable-doc
+
+configure/libplayer configure/libplayer-dev::
+	[ -f config.mak ] || ./configure $(confflags)
