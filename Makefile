@@ -53,7 +53,7 @@ distclean: clean
 	rm -f $(PKGCONFIG_FILE)
 	rm -rf DOCS/doxygen
 
-install: install-pkgconfig install-lib install-test
+install: install-pkgconfig install-lib install-test install-doxygen
 
 install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
@@ -67,6 +67,12 @@ install-test: test
 	$(INSTALL) -c -m 755 $(LIBTEST) $(bindir)
 	$(INSTALL) -c -m 755 $(TESTPLAYER) $(bindir)
 	$(INSTALL) -c -m 755 $(TESTVDR) $(bindir)
+
+install-doxygen: doxygen
+	if [ -d DOCS/doxygen/html ]; then \
+		$(INSTALL) -d $(docdir)/libplayer; \
+		$(INSTALL) -c -m 755 DOCS/doxygen/html/* $(docdir)/libplayer; \
+	fi
 
 uninstall:
 	$(MAKE) -C src uninstall
