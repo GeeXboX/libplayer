@@ -37,7 +37,7 @@ Mrl_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 Mrl_dealloc (PyObject *self)
 {
-  mrl_free (MRL_SELF->mrl, 1);
+  mrl_free (MRL_SELF->player, MRL_SELF->mrl);
   PyObject_DEL (self);
 }
 
@@ -49,7 +49,7 @@ Mrl_add_sub (PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple (args, "s", &sub))
     return NULL;
 
-  mrl_add_subtitle (MRL_SELF->mrl, sub);
+  mrl_add_subtitle (MRL_SELF->player, MRL_SELF->mrl, sub);
 
   Py_INCREF (Py_None);
   return Py_None;

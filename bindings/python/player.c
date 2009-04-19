@@ -40,7 +40,7 @@ Player_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
   self = PyObject_New (Player, &Player_Type);
 
   Py_BEGIN_ALLOW_THREADS
-    PLAYER_SELF->player = player_init (t, ao, vo, verbosity, NULL);
+    PLAYER_SELF->player = player_init (t, ao, vo, verbosity, 0, NULL);
   Py_END_ALLOW_THREADS
     Py_INCREF (self);
   
