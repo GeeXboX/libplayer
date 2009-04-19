@@ -11,3 +11,17 @@ test-player$
 test-vdr$
 ^libplayer.pc
 ^DOCS/doxygen
+
+^debian/files
+^debian/libplayer-dev$
+^debian/libplayer$
+^debian/tmp
+^debian/stamp-makefile-build$
+^debian/libplayer.debhelper.log$
+^debian/libplayer.postinst.debhelper*
+^debian/libplayer.postrm.debhelper$
+^debian/libplayer.substvars$
+^debian/libplayer-dev.debhelper.log$
+^debian/libplayer-dev.postinst.debhelper*
+^debian/libplayer-dev.postrm.debhelper$
+^debian/libplayer-dev.substvars$
