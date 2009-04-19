@@ -33,13 +33,14 @@ getch (void)
   struct termios oldt, newt;
   uint32_t ch = 0;
   uint32_t val = 0;
+  int n;
 
   tcgetattr (STDIN_FILENO, &oldt);
   newt = oldt;
   newt.c_lflag &= ~(ICANON | ECHO);
   tcsetattr (STDIN_FILENO, TCSANOW, &newt);
 
-  read (STDIN_FILENO, &ch, sizeof (ch));
+  n = read (STDIN_FILENO, &ch, sizeof (ch));
   putchar ('\n');
   while (ch)
   {
