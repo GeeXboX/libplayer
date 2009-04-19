@@ -160,7 +160,7 @@ player_test_thread (void *cookie)
 #ifdef HAVE_XINE
   if (player_id == PLAYER_ID_XINE || player_id == PLAYER_ID_ALL)
   {
-    printf ("\n--- Xine ---\n");
+    printf ("\n--- xine ---\n");
     player_run_test (PLAYER_TYPE_XINE);
   }
 #endif /* HAVE_XINE */

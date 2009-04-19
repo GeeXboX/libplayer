@@ -606,7 +606,7 @@ xine_player_init (player_t *player)
   if (!(x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data)))
   {
     plog (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "Xine can't init '%s' video driver",
+          MODULE_NAME, "xine can't init '%s' video driver",
           id_vo ? id_vo : "null");
 
     return PLAYER_INIT_ERROR;
@@ -639,7 +639,7 @@ xine_player_init (player_t *player)
   if (!(x->ao_port = xine_open_audio_driver (x->xine, id_ao, NULL)))
   {
     plog (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "Xine can't init '%s' audio driver",
+          MODULE_NAME, "xine can't init '%s' audio driver",
           id_ao ? id_ao : "null");
 
     return PLAYER_INIT_ERROR;

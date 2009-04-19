@@ -211,7 +211,7 @@ typedef enum mrl_type {
 /*
  * Support by wrappers
  *
- *                           GStreamer     MPlayer        VLC         Xine
+ *                           GStreamer     MPlayer        VLC         xine
  *                         ------------ ------------ ------------ ------------
  */
 /** \brief MRL resources. */

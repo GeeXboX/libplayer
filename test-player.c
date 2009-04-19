@@ -866,7 +866,7 @@ main (int argc, char **argv)
 #ifdef HAVE_XINE
         type = PLAYER_TYPE_XINE;
 #else
-        printf ("Xine not supported, dummy player used instead!\n");
+        printf ("xine not supported, dummy player used instead!\n");
 #endif /* HAVE_XINE */
       if (!strcmp (optarg, "vlc"))
 #ifdef HAVE_VLC
