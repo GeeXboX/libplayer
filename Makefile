@@ -26,7 +26,7 @@ ifeq ($(DOC),yes)
   DOXYGEN = doxygen
 endif
 
-all: lib test $(DOXYGEN)
+all: lib test $(DOXYGEN) bindings
 
 lib:
 	$(MAKE) -C src
@@ -44,14 +44,18 @@ endif
 bindings: binding-python
 
 binding-python:
+ifeq ($(BINDING_PYTHON),yes)
 	cd bindings/python && python setup.py build
+endif
 
 bindings-clean: binding-python-clean
 
 binding-python-clean:
+ifeq ($(BINDING_PYTHON),yes)
 	cd bindings/python && python setup.py clean && rm -rf build
+endif
 
-clean:
+clean: bindings-clean
 	$(MAKE) -C src clean
 	rm -f $(LIBTEST)
 	rm -f $(TESTPLAYER)

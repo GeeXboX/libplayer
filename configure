@@ -48,6 +48,9 @@ show_help(){
   echo "  --enable-xine               build xine wrapper"
   echo "  --disable-xine              do not build xine wrapper"
   echo ""
+  echo "Optional features:"
+  echo "  --enable-binding-python     build Python bindings"
+  echo ""
   echo "Search paths:"
   echo "  --with-gstreamer-dir=DIR    check for libgstreamer installed in DIR"
   echo "  --with-vlc-dir=DIR          check for libvlc installed in DIR"
@@ -368,6 +371,7 @@ wrapper_xine="auto"
 wrapper_mplayer="auto"
 wrapper_vlc="auto"
 wrapper_gstreamer="auto"
+binding_python="auto"
 x11="auto"
 INSTALL="install"
 libplayer_version=`grep '#define LIBPLAYER_VERSION[[:space:]]' src/player.h | sed 's/[^0-9\.]//g'`
@@ -475,6 +479,10 @@ for opt do
   --enable-xine) wrapper_xine="yes";
   ;;
   --disable-xine) wrapper_xine="no";
+  ;;
+  --enable-binding-python) binding_python="yes";
+  ;;
+  --disable-binding-python) binding_python="no";
   ;;
   --with-xine-dir=*) libxinedir="$optval";
   ;;
@@ -792,6 +800,18 @@ if test "$x11" = "auto" -o "$x11" = "yes"; then
 fi
 
 #################################################
+#   check for Python
+#################################################
+if test "$binding_python" = "auto" -o "$binding_python" = "yes"; then
+  binding_python="no"
+  echolog "Checking for Python ..."
+  check_cflags `python-config --cflags`
+  check_ldflags `python-config --libs`
+  check_lib Python.h PyObject_New -lpython
+  binding_python="yes"
+fi
+
+#################################################
 #   Miscellaneous
 #################################################
 if enabled logcolor; then
@@ -834,6 +854,9 @@ echolog "  GStreamer:         $wrapper_gstreamer"
 echolog "  MPlayer:           $wrapper_mplayer"
 echolog "  VLC:               $wrapper_vlc"
 echolog "  Xine:              $wrapper_xine"
+echolog ""
+echolog "Bindings:"
+echolog "  Python:            $binding_python"
 echolog ""
 echolog "Miscellaneous:"
 echolog "  X11 support:       $x11"
@@ -883,6 +906,7 @@ append_config "WRAPPER_XINE=$wrapper_xine"
 append_config "WRAPPER_MPLAYER=$wrapper_mplayer"
 append_config "WRAPPER_VLC=$wrapper_vlc"
 append_config "WRAPPER_GSTREAMER=$wrapper_gstreamer"
+append_config "BINDING_PYTHON=$binding_python"
 append_config "X11=$x11"
 append_config "DOC=$doc"
 
