@@ -2,7 +2,7 @@ COMMON
 ~~~~~~
 
 GeeXboX libplayer is a multimedia A/V abstraction layer API.
-Its goal is to interact with GeeXboX Open Media Center (OMC).
+Its goal is to interact with Enna Media Center.
 
 libplayer provides a generic A/V API that relies on various
 multimedia player for Linux systems.
