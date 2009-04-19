@@ -41,6 +41,16 @@ ifeq (,$(wildcard DOCS/doxygen))
 	PROJECT_NUMBER="$(LIBPLAYER_VERSION)" doxygen DOCS/Doxyfile
 endif
 
+bindings: binding-python
+
+binding-python:
+	cd bindings/python && python setup.py build
+
+bindings-clean: binding-python-clean
+
+binding-python-clean:
+	cd bindings/python && python setup.py clean && rm -rf build
+
 clean:
 	$(MAKE) -C src clean
 	rm -f $(LIBTEST)
