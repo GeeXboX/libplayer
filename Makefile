@@ -53,16 +53,20 @@ distclean: clean
 	rm -f $(PKGCONFIG_FILE)
 	rm -rf DOCS/doxygen
 
-install: install-pkgconfig
-	$(MAKE) -C src install
-	$(INSTALL) -d $(bindir)
-	$(INSTALL) -c -m 755 $(LIBTEST) $(bindir)
-	$(INSTALL) -c -m 755 $(TESTPLAYER) $(bindir)
-	$(INSTALL) -c -m 755 $(TESTVDR) $(bindir)
+install: install-pkgconfig install-lib install-test
 
 install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
 	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
+
+install-lib: lib
+	$(MAKE) -C src install
+
+install-test: test
+	$(INSTALL) -d $(bindir)
+	$(INSTALL) -c -m 755 $(LIBTEST) $(bindir)
+	$(INSTALL) -c -m 755 $(TESTPLAYER) $(bindir)
+	$(INSTALL) -c -m 755 $(TESTVDR) $(bindir)
 
 uninstall:
 	$(MAKE) -C src uninstall
