@@ -32,6 +32,11 @@ NEVER include other headers in .h files, always do so in .c files.
 NEVER use printf(), always use plog().
 Check your code for warnings before commits.
 
+PACKAGERS
+~~~~~~~~~
+
+Debian/Ubuntu: debuild -us -uc
+
 AUTHORS
 ~~~~~~~
 
