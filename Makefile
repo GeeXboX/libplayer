@@ -67,7 +67,7 @@ distclean: clean
 	rm -f $(PKGCONFIG_FILE)
 	rm -rf DOCS/doxygen
 
-install: install-pkgconfig install-lib install-test install-doxygen
+install: install-pkgconfig install-lib install-test install-doxygen install-bindings
 
 install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
@@ -87,6 +87,13 @@ install-doxygen: doxygen
 		$(INSTALL) -d $(docdir)/libplayer; \
 		$(INSTALL) -c -m 755 DOCS/doxygen/html/* $(docdir)/libplayer; \
 	fi
+
+install-bindings: install-binding-python
+
+install-binding-python:
+ifeq ($(BINDING_PYTHON),yes)
+	cd bindings/python && python setup.py install --prefix=$(PREFIX)
+endif
 
 uninstall:
 	$(MAKE) -C src uninstall
