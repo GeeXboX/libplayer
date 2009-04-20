@@ -41,7 +41,7 @@ bindings: binding-python
 
 binding-python:
 ifeq ($(BINDING_PYTHON),yes)
-	cd bindings/python && python setup.py build
+	cd bindings/python && PKG_CONFIG_PATH="../../" python setup.py build
 endif
 
 bindings-clean: binding-python-clean
