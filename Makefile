@@ -109,6 +109,4 @@ uninstall-doxygen:
 
 uninstall: uninstall-pkgconfig uninstall-lib uninstall-test uninstall-doxygen
 
-.PHONY: clean distclean
-.PHONY: install install-pkgconfig uninstall
-.PHONY: doxygen
+.PHONY: *clean *install* doxygen binding*
