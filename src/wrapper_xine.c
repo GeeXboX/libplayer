@@ -1022,7 +1022,7 @@ xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
     pos_time += value * 1000;
     break;
   case PLAYER_PB_SEEK_PERCENT:
-    pos_time = length / 100 * value;
+    pos_time = length * value / 100;
     break;
   case PLAYER_PB_SEEK_ABSOLUTE:
     pos_time = value * 1000;
