@@ -93,12 +93,18 @@ ifeq ($(BINDING_PYTHON),yes)
 	cd bindings/python && python setup.py install --prefix=$(DESTDIR)$(PREFIX)
 endif
 
-uninstall:
+uninstall-pkgconfig:
+	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
+
+uninstall-lib:
 	$(MAKE) -C src uninstall
+
+uninstall-test:
 	rm -f $(bindir)/$(LIBTEST)
 	rm -f $(bindir)/$(TESTPLAYER)
 	rm -f $(bindir)/$(TESTVDR)
-	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
+
+uninstall: uninstall-pkgconfig uninstall-lib uninstall-test
 
 .PHONY: clean distclean
 .PHONY: install install-pkgconfig uninstall
