@@ -32,9 +32,9 @@ test: lib
 
 doxygen:
 ifeq ($(DOC),yes)
-ifeq (,$(wildcard DOCS/doxygen))
+  ifeq (,$(wildcard DOCS/doxygen))
 	PROJECT_NUMBER="$(LIBPLAYER_VERSION)" doxygen DOCS/Doxyfile
-endif
+  endif
 endif
 
 bindings: binding-python
