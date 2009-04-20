@@ -50,7 +50,7 @@ source_files = [ 'player_module.c' ]
 playerlocal = Extension('player',
 		sources = [ os.path.join( srcdir, f ) for f in source_files ],
 		include_dirs = [ top_builddir,
-			      os.path.join( srcdir, '..', '..', 'include' ),
+			      os.path.join( srcdir, '..', '..', 'src' ),
 			      srcdir,
 			      '/usr/win32/include' ],
 		extra_objects = [ ],
