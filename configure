@@ -860,6 +860,7 @@ echolog "  Python:            $binding_python"
 echolog ""
 echolog "Miscellaneous:"
 echolog "  X11 support:       $x11"
+echolog "  Documentation:     $doc"
 echolog ""
 
 #################################################
