@@ -104,7 +104,10 @@ uninstall-test:
 	rm -f $(bindir)/$(TESTPLAYER)
 	rm -f $(bindir)/$(TESTVDR)
 
-uninstall: uninstall-pkgconfig uninstall-lib uninstall-test
+uninstall-doxygen:
+	rm -rf $(docdir)/libplayer
+
+uninstall: uninstall-pkgconfig uninstall-lib uninstall-test uninstall-doxygen
 
 .PHONY: clean distclean
 .PHONY: install install-pkgconfig uninstall
