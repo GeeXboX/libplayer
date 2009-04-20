@@ -39,7 +39,7 @@ endif
 
 bindings: binding-python
 
-binding-python:
+binding-python: lib
 ifeq ($(BINDING_PYTHON),yes)
 	cd bindings/python && PKG_CONFIG_PATH="../../" python setup.py build
 endif
