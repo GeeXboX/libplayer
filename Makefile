@@ -20,13 +20,7 @@ ifeq ($(BUILD_STATIC),yes)
   LDFLAGS += $(EXTRALIBS)
 endif
 
-DOXYGEN =
-
-ifeq ($(DOC),yes)
-  DOXYGEN = doxygen
-endif
-
-all: lib test $(DOXYGEN) bindings
+all: lib test doxygen bindings
 
 lib:
 	$(MAKE) -C src
@@ -37,8 +31,10 @@ test: lib
 	$(CC) $(TESTVDR_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTVDR)
 
 doxygen:
+ifeq ($(DOC),yes)
 ifeq (,$(wildcard DOCS/doxygen))
 	PROJECT_NUMBER="$(LIBPLAYER_VERSION)" doxygen DOCS/Doxyfile
+endif
 endif
 
 bindings: binding-python
@@ -83,10 +79,12 @@ install-test: test
 	$(INSTALL) -c -m 755 $(TESTVDR) $(bindir)
 
 install-doxygen: doxygen
+ifeq ($(DOC),yes)
 	if [ -d DOCS/doxygen/html ]; then \
 		$(INSTALL) -d $(docdir)/libplayer; \
 		$(INSTALL) -c -m 755 DOCS/doxygen/html/* $(docdir)/libplayer; \
 	fi
+endif
 
 install-bindings: install-binding-python
 
