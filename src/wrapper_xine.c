@@ -1000,7 +1000,7 @@ static void
 xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
   xine_player_t *x = NULL;
-  int pos_time = 0, length = 0;
+  int pos_time = 0, pos_percent = 0, length = 0;
 
   plog (player, PLAYER_MSG_INFO,
         MODULE_NAME, "playback_seek: %d %d", value, seek);
@@ -1022,7 +1022,8 @@ xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
     pos_time += value * 1000;
     break;
   case PLAYER_PB_SEEK_PERCENT:
-    pos_time = length * value / 100;
+    pos_percent = (1 << 16) * value / 100;
+    pos_time = 0;
     break;
   case PLAYER_PB_SEEK_ABSOLUTE:
     pos_time = value * 1000;
@@ -1034,7 +1035,7 @@ xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   if (pos_time > length)
     pos_time = length;
 
-  xine_play (x->stream, 0, pos_time);
+  xine_play (x->stream, pos_percent, pos_time);
 }
 
 static int
