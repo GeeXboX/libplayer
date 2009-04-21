@@ -3038,34 +3038,6 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
   }
 }
 
-int
-supported_resources_mplayer (mrl_resource_t res)
-{
-  switch (res)
-  {
-  case MRL_RESOURCE_FILE:
-  case MRL_RESOURCE_CDDA:
-  case MRL_RESOURCE_CDDB:
-  case MRL_RESOURCE_DVD:
-  case MRL_RESOURCE_DVDNAV:
-  case MRL_RESOURCE_VCD:
-  case MRL_RESOURCE_RADIO:
-  case MRL_RESOURCE_TV:
-  case MRL_RESOURCE_FTP:
-  case MRL_RESOURCE_HTTP:
-  case MRL_RESOURCE_MMS:
-  case MRL_RESOURCE_RTP:
-  case MRL_RESOURCE_RTSP:
-  case MRL_RESOURCE_SMB:
-  case MRL_RESOURCE_UDP:
-  case MRL_RESOURCE_UNSV:
-    return 1;
-
-  default:
-    return 0;
-  }
-}
-
 /*
  * NOTE: mplayer -identify returns always all informations (properties and
  *       metadata).
@@ -4056,6 +4028,34 @@ mplayer_radio_channel_next (player_t *player)
 /*****************************************************************************/
 /*                           Public Wrapper API                              */
 /*****************************************************************************/
+
+int
+supported_resources_mplayer (mrl_resource_t res)
+{
+  switch (res)
+  {
+  case MRL_RESOURCE_FILE:
+  case MRL_RESOURCE_CDDA:
+  case MRL_RESOURCE_CDDB:
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
+  case MRL_RESOURCE_VCD:
+  case MRL_RESOURCE_RADIO:
+  case MRL_RESOURCE_TV:
+  case MRL_RESOURCE_FTP:
+  case MRL_RESOURCE_HTTP:
+  case MRL_RESOURCE_MMS:
+  case MRL_RESOURCE_RTP:
+  case MRL_RESOURCE_RTSP:
+  case MRL_RESOURCE_SMB:
+  case MRL_RESOURCE_UDP:
+  case MRL_RESOURCE_UNSV:
+    return 1;
+
+  default:
+    return 0;
+  }
+}
 
 player_funcs_t *
 register_functions_mplayer (void)
