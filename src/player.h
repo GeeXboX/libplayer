@@ -1681,6 +1681,7 @@ void player_vdr (player_t *player, player_vdr_t value);
 
 /**
  * \name Global libplayer functions.
+ * @{
  */
 
 /**
