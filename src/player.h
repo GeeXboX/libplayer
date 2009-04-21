@@ -1673,6 +1673,29 @@ void player_vdr (player_t *player, player_vdr_t value);
  * @}
  */
 
+/***************************************************************************/
+/*                                                                         */
+/* Global libplayer functions                                              */
+/*                                                                         */
+/***************************************************************************/
+
+/**
+ * \name Global libplayer functions.
+ */
+
+/**
+ * \brief Test if a wrapper is enabled.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] type        Player type.
+ * \return 1 if enabled, 0 otherwise.
+ */
+int libplayer_wrapper_enabled (player_type_t type);
+
+/**
+ * @}
+ */
+
 #ifdef __cplusplus
 #if 0 /* avoid EMACS indent */
 {
