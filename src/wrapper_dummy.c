@@ -189,6 +189,12 @@ dummy_sub_set_delay (player_t *player, int value)
 }
 
 /* public API */
+int
+supported_resources_dummy (mrl_resource_t mrl)
+{
+  return 1;
+}
+
 player_funcs_t *
 register_functions_dummy (void)
 {
@@ -202,7 +208,6 @@ register_functions_dummy (void)
   funcs->uninit             = dummy_uninit;
   funcs->set_verbosity      = NULL;
 
-  funcs->mrl_supported_res  = NULL;
   funcs->mrl_retrieve_props = dummy_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = dummy_mrl_retrieve_metadata;
   funcs->mrl_video_snapshot = NULL;

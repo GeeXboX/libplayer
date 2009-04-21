@@ -22,6 +22,7 @@
 #ifndef WRAPPER_DUMMY_H
 #define WRAPPER_DUMMY_H
 
+int supported_resources_dummy (mrl_resource_t mrl);
 player_funcs_t * register_functions_dummy (void);
 void *register_private_dummy (void);
 

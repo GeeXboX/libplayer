@@ -739,28 +739,6 @@ xine_player_set_verbosity (player_t *player, player_verbosity_level_t level)
     xine_engine_set_param (x->xine, XINE_ENGINE_PARAM_VERBOSITY, verbosity);
 }
 
-static int
-xine_player_mrl_supported_res (player_t *player, mrl_resource_t res)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_supported_res");
-
-  if (!player)
-    return 0;
-
-  switch (res)
-  {
-  case MRL_RESOURCE_FILE:
-  case MRL_RESOURCE_DVD:
-  case MRL_RESOURCE_DVDNAV:
-  case MRL_RESOURCE_VDR:
-  case MRL_RESOURCE_NETVDR:
-    return 1;
-
-  default:
-    return 0;
-  }
-}
-
 static void
 xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
@@ -1441,6 +1419,23 @@ xine_player_vdr (player_t *player, player_vdr_t value)
 }
 
 /* public API */
+int
+supported_resources_xine (mrl_resource_t res)
+{
+  switch (res)
+  {
+  case MRL_RESOURCE_FILE:
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
+  case MRL_RESOURCE_VDR:
+  case MRL_RESOURCE_NETVDR:
+    return 1;
+
+  default:
+    return 0;
+  }
+}
+
 player_funcs_t *
 register_functions_xine (void)
 {
@@ -1454,7 +1449,6 @@ register_functions_xine (void)
   funcs->uninit             = xine_player_uninit;
   funcs->set_verbosity      = xine_player_set_verbosity;
 
-  funcs->mrl_supported_res  = xine_player_mrl_supported_res;
   funcs->mrl_retrieve_props = xine_player_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = xine_player_mrl_retrieve_metadata;
   funcs->mrl_video_snapshot = NULL;

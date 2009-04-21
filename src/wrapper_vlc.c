@@ -188,24 +188,6 @@ vlc_set_verbosity (player_t *player, player_verbosity_level_t level)
     libvlc_set_log_verbosity (vlc->core, verbosity, &vlc->ex);
 }
 
-static int
-vlc_mrl_supported_res (player_t *player, mrl_resource_t res)
-{
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_supported_res");
-
-  if (!player)
-    return 0;
-
-  switch (res)
-  {
-  case MRL_RESOURCE_FILE:
-    return 1;
-
-  default:
-    return 0;
-  }
-}
-
 static char *
 vlc_resource_get_uri (mrl_t *mrl)
 {
@@ -552,6 +534,19 @@ vlc_audio_set_mute (player_t *player, player_mute_t value)
 }
 
 /* public API */
+int
+supported_resources_vlc (mrl_resource_t res)
+{
+  switch (res)
+  {
+  case MRL_RESOURCE_FILE:
+    return 1;
+
+  default:
+    return 0;
+  }
+}
+
 player_funcs_t *
 register_functions_vlc (void)
 {
@@ -565,7 +560,6 @@ register_functions_vlc (void)
   funcs->uninit             = vlc_uninit;
   funcs->set_verbosity      = vlc_set_verbosity;
 
-  funcs->mrl_supported_res  = vlc_mrl_supported_res;
   funcs->mrl_retrieve_props = vlc_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = vlc_mrl_retrieve_metadata;
   funcs->mrl_video_snapshot = NULL;

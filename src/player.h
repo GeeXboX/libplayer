@@ -1693,6 +1693,16 @@ void player_vdr (player_t *player, player_vdr_t value);
 int libplayer_wrapper_enabled (player_type_t type);
 
 /**
+ * \brief Test if a resource is supported by a wrapper.
+ *
+ * \warning MT-Safe in multithreaded applications.
+ * \param[in] type        Player type.
+ * \param[in] res         Resource type.
+ * \return 1 if supported, 0 otherwise.
+ */
+int libplayer_wrapper_supported_res (player_type_t type, mrl_resource_t res);
+
+/**
  * @}
  */
 

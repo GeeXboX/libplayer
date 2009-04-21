@@ -151,7 +151,6 @@ typedef struct player_funcs_s {
   void (*set_verbosity) (player_t *player, player_verbosity_level_t level);
 
   /* MRLs */
-  int (*mrl_supported_res) (player_t *player, mrl_resource_t res);
   void (*mrl_retrieve_props) (player_t *player, mrl_t *mrl);
   void (*mrl_retrieve_meta) (player_t *player, mrl_t *mrl);
   void (*mrl_video_snapshot) (player_t *player, mrl_t *mrl,

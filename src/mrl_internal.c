@@ -1492,7 +1492,7 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
     return NULL;
 
   /* ensure player support this resource type */
-  PLAYER_FUNCS_RES (mrl_supported_res, support, res)
+  support = libplayer_wrapper_supported_res (player->type, res);
 
   if (!support)
   {
