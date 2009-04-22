@@ -1129,23 +1129,23 @@ libplayer_wrapper_supported_res (player_type_t type, mrl_resource_t res)
 {
   switch (type)
   {
-  case PLAYER_TYPE_XINE:
 #ifdef HAVE_XINE
+  case PLAYER_TYPE_XINE:
     return supported_resources_xine (res);
 #endif /* HAVE_XINE */
 
-  case PLAYER_TYPE_MPLAYER:
 #ifdef HAVE_MPLAYER
+  case PLAYER_TYPE_MPLAYER:
     return supported_resources_mplayer (res);
 #endif /* HAVE_MPLAYER */
 
-  case PLAYER_TYPE_VLC:
 #ifdef HAVE_VLC
+  case PLAYER_TYPE_VLC:
     return supported_resources_vlc (res);
 #endif /* HAVE_VLC */
 
-  case PLAYER_TYPE_GSTREAMER:
 #ifdef HAVE_GSTREAMER
+  case PLAYER_TYPE_GSTREAMER:
     return supported_resources_gstreamer (res);
 #endif /* HAVE_GSTREAMER */
 
