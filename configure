@@ -808,7 +808,7 @@ if test "$binding_python" = "auto" -o "$binding_python" = "yes"; then
   check_cflags `python-config --cflags`
   check_ldflags `python-config --libs`
   check_lib Python.h PyObject_New -lpython
-  binding_python="yes"
+  [ "$?" = 0 ] && binding_python="yes"
 fi
 
 #################################################
