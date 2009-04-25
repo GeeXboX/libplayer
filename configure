@@ -296,6 +296,28 @@ check_libconfig(){
     return $err
 }
 
+check_libconfig_exists(){
+    local config func ccflags clibs err
+    log check_libconfig_exists "$@"
+    config="$1"
+    func="$2"
+    ccflags="${3:---cflags}"
+    clibs="${4:---libs}"
+    err=1
+    if `which "$config" 1>/dev/null 2>&1`; then
+      cflags=`$config $ccflags`
+      [ -n "$cflags" ] && temp_cflags "$cflags"
+      libs=`$config $clibs`
+      if [ -n "$libs" ]; then
+        temp_extralibs "$libs"
+        check_func $func
+        err=$?
+        restore_flags
+      fi
+    fi
+    return $err
+}
+
 append_config(){
     echo "$@" >> $CONFIGFILE
 }
@@ -805,9 +827,7 @@ fi
 if test "$binding_python" = "auto" -o "$binding_python" = "yes"; then
   binding_python="no"
   echolog "Checking for Python ..."
-  check_cflags `python-config --cflags`
-  check_ldflags `python-config --libs`
-  check_lib Python.h _PyObject_New -lpython
+  check_libconfig_exists python-config _PyObject_New
   [ "$?" = 0 ] && binding_python="yes"
 fi
 
