@@ -807,7 +807,7 @@ if test "$binding_python" = "auto" -o "$binding_python" = "yes"; then
   echolog "Checking for Python ..."
   check_cflags `python-config --cflags`
   check_ldflags `python-config --libs`
-  check_lib Python.h PyObject_New -lpython
+  check_lib Python.h _PyObject_New -lpython
   [ "$?" = 0 ] && binding_python="yes"
 fi
 
