@@ -1129,7 +1129,7 @@ supervisor_sync_recatch (player_t *player, pthread_t which)
 
   supervisor_sync_catch (supervisor);
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "recatch");
+  plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "recatch");
 }
 
 static void *
@@ -1172,7 +1172,7 @@ thread_supervisor (void *arg)
 
     supervisor_sync_catch (supervisor);
 
-    plog (player, PLAYER_MSG_INFO, MODULE_NAME, "run job: %i (%s)",
+    plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "run job: %i (%s)",
           ctl, mode == SV_MODE_WAIT_FOR_END ? "wait for end" : "no wait");
 
     switch (ctl)
@@ -1188,7 +1188,8 @@ thread_supervisor (void *arg)
       if (ctl > 0 && ctl < g_supervisor_funcs_nb && g_supervisor_funcs[ctl])
       {
         g_supervisor_funcs[ctl] (player, in, out);
-        plog (player, PLAYER_MSG_INFO, MODULE_NAME, "job: %i (completed)", ctl);
+        plog (player, PLAYER_MSG_VERBOSE,
+              MODULE_NAME, "job: %i (completed)", ctl);
       }
       break;
     }
