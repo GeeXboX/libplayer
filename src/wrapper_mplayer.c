@@ -541,7 +541,7 @@ thread_fifo (void *arg)
 {
   player_verbosity_level_t level = PLAYER_MSG_VERBOSE;
   unsigned int skip_msg = 0;
-  int start_ok = 1, check_lang = 1, verbosity = 0;
+  int start_ok = 1, check_init = 1, verbosity = 0;
   mplayer_eof_t wait_uninit = MPLAYER_EOF_NO;
   char buffer[FIFO_BUFFER];
   char *it;
@@ -796,7 +796,7 @@ thread_fifo (void *arg)
      * then MPlayer is in english. But if --language is found, then the
      * first language must be 'en' or 'all'.
      */
-    else if (check_lang)
+    else if (check_init)
     {
       const char *it;
 
@@ -814,7 +814,7 @@ thread_fifo (void *arg)
         mplayer->start_ok = start_ok;
         pthread_cond_signal (&mplayer->cond_start);
         pthread_mutex_unlock (&mplayer->mutex_start);
-        check_lang = 0;
+        check_init = 0;
       }
     }
   }
@@ -829,7 +829,7 @@ thread_fifo (void *arg)
   pthread_mutex_unlock (&mplayer->mutex_status);
 
   /* Unexpected error at the initialization. */
-  if (check_lang)
+  if (check_init)
     pthread_cond_signal (&mplayer->cond_start);
 
   pthread_exit (NULL);
