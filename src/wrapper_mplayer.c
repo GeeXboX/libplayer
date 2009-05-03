@@ -828,6 +828,10 @@ thread_fifo (void *arg)
   mplayer->status = MPLAYER_IS_DEAD;
   pthread_mutex_unlock (&mplayer->mutex_status);
 
+  /* Unexpected error at the initialization. */
+  if (check_lang)
+    pthread_cond_signal (&mplayer->cond_start);
+
   pthread_exit (NULL);
 }
 
