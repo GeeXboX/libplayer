@@ -806,6 +806,8 @@ thread_fifo (void *arg)
             strncmp (it + 11, "all", 3))
         {
           start_ok = 0;
+          plog (player, PLAYER_MSG_ERROR,
+                MODULE_NAME, "only english version of MPlayer is supported");
         }
       }
       else if (strstr (buffer, "-slave") && strstr (buffer, "-idle"))
@@ -2928,7 +2930,7 @@ mplayer_init (player_t *player)
       if (!start_ok)
       {
         plog (player, PLAYER_MSG_ERROR,
-              MODULE_NAME, "only english version of MPlayer is supported");
+              MODULE_NAME, "error during MPlayer initialization");
         return PLAYER_INIT_ERROR;
       }
 
