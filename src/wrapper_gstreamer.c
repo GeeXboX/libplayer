@@ -272,7 +272,10 @@ gstreamer_player_playback_stop (player_t *player)
   g_main_loop_quit (g->loop);
 }
 
-/* public API */
+/*****************************************************************************/
+/*                            Public Wrapper API                             */
+/*****************************************************************************/
+
 int
 supported_resources_gstreamer (mrl_resource_t res)
 {

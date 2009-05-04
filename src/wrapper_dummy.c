@@ -188,7 +188,10 @@ dummy_sub_set_delay (player_t *player, int value)
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_delay: %i", value);
 }
 
-/* public API */
+/*****************************************************************************/
+/*                            Public Wrapper API                             */
+/*****************************************************************************/
+
 int
 supported_resources_dummy (mrl_resource_t mrl)
 {

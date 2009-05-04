@@ -533,7 +533,10 @@ vlc_audio_set_mute (player_t *player, player_mute_t value)
   libvlc_audio_set_mute (vlc->core, mute , &vlc->ex);
 }
 
-/* public API */
+/*****************************************************************************/
+/*                            Public Wrapper API                             */
+/*****************************************************************************/
+
 int
 supported_resources_vlc (mrl_resource_t res)
 {

@@ -231,6 +231,10 @@ xine_resource_get_uri (mrl_t *mrl)
   return NULL;
 }
 
+/*****************************************************************************/
+/*                              xine -identify                               */
+/*****************************************************************************/
+
 static void
 xine_identify_metadata_dvd (mrl_t *mrl, xine_stream_t *stream)
 {
@@ -495,6 +499,10 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
  err_ao:
   free (uri);
 }
+
+/*****************************************************************************/
+/*                           Private Wrapper funcs                           */
+/*****************************************************************************/
 
 static init_status_t
 xine_player_init (player_t *player)
@@ -1418,7 +1426,10 @@ xine_player_vdr (player_t *player, player_vdr_t value)
   send_event (player, event, NULL, 0);
 }
 
-/* public API */
+/*****************************************************************************/
+/*                            Public Wrapper API                             */
+/*****************************************************************************/
+
 int
 supported_resources_xine (mrl_resource_t res)
 {
