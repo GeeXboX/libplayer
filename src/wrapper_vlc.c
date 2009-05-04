@@ -66,7 +66,7 @@ vlc_init (player_t *player)
   vlc_argv[vlc_argc++] = "--no-stats";
   vlc_argv[vlc_argc++] = "--intf";
   vlc_argv[vlc_argc++] = "dummy";
-  
+
   /* select the video output */
   switch (player->vo)
   {
@@ -74,22 +74,22 @@ vlc_init (player_t *player)
     vlc_argv[vlc_argc++] = "--vout";
     vlc_argv[vlc_argc++] = "dummy";
     break;
-    
+
   case PLAYER_VO_X11:
     vlc_argv[vlc_argc++] = "--vout";
     vlc_argv[vlc_argc++] = "x11,dummy";
     break;
-    
+
   case PLAYER_VO_XV:
     vlc_argv[vlc_argc++] = "--vout";
     vlc_argv[vlc_argc++] = "xvideo,dummy";
     break;
-    
+
   case PLAYER_VO_GL:
     vlc_argv[vlc_argc++] = "--vout";
     vlc_argv[vlc_argc++] = "glx,dummy";
     break;
-    
+
   default:
     break;
   }
@@ -100,12 +100,12 @@ vlc_init (player_t *player)
   case PLAYER_AO_NULL:
     vlc_argv[vlc_argc++] = "--no-audio";
     break;
-    
+
   case PLAYER_AO_ALSA:
     vlc_argv[vlc_argc++] = "--aout";
     vlc_argv[vlc_argc++] = "alsa,dummy";
     break;
-    
+
   case PLAYER_AO_OSS:
     vlc_argv[vlc_argc++] = "--aout";
     vlc_argv[vlc_argc++] = "oss,dummy";
@@ -114,7 +114,7 @@ vlc_init (player_t *player)
   default:
     break;
   }
-  
+
   vlc = (vlc_t *) player->priv;
   libvlc_exception_init (&vlc->ex);
   vlc->core = libvlc_new (vlc_argc, vlc_argv, &vlc->ex);
@@ -226,14 +226,14 @@ vlc_identify_video (libvlc_media_player_t *mp,
 {
   mrl_properties_video_t *video;
   float val;
-  
+
   if (!mp || !ex || !mrl || !mrl->prop)
     return;
 
   /* check if MRL actually has video stream */
   if (!libvlc_media_player_has_vout (mp, ex))
     return;
-  
+
   if (!mrl->prop->video)
     mrl->prop->video = mrl_properties_video_new ();
 
@@ -257,17 +257,17 @@ vlc_identify_properties (libvlc_media_player_t *mp,
 
   if (!mp || !ex || !mrl || !mrl->prop)
     return;
-  
+
   if (mrl->resource == MRL_RESOURCE_FILE)
   {
     mrl_resource_local_args_t *args = mrl->priv;
     if (args && args->location)
     {
       const char *location = args->location;
-      
+
       if (strstr (location, "file://") == location)
         location += 7;
-      
+
       mrl->prop->size = file_size (location);
     }
   }
@@ -283,13 +283,13 @@ vlc_identify_metadata (libvlc_media_player_t *mp,
 {
   mrl_metadata_t *meta;
   libvlc_media_t *media;
-  
+
   if (!mp || !ex || !mrl || !mrl->meta)
     return;
 
   media = libvlc_media_player_get_media (mp, ex);
   meta = mrl->meta;
-  
+
   meta->title = libvlc_media_get_meta (media, libvlc_meta_Title, ex);
   meta->artist = libvlc_media_get_meta (media, libvlc_meta_Artist, ex);
   meta->genre = libvlc_media_get_meta (media, libvlc_meta_Genre, ex);
@@ -331,7 +331,7 @@ vlc_identify (mrl_t *mrl)
 
   mp = libvlc_media_player_new_from_media (media, &ex);
   libvlc_media_player_play (mp, &ex);
-  
+
   vlc_identify_properties (mp, &ex, mrl);
   vlc_identify_video (mp, &ex, mrl);
   vlc_identify_audio (mp, &ex, mrl);
@@ -370,7 +370,7 @@ vlc_get_time_pos (player_t *player)
 {
   float time_pos = 0.0;
   vlc_t *vlc;
-  
+
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
 
   if (!player)
@@ -417,11 +417,11 @@ vlc_playback_start (player_t *player)
 
   if (!media)
     return PLAYER_PB_ERROR;
-  
+
   vlc->mp = libvlc_media_player_new_from_media (media, &vlc->ex);
   libvlc_media_release (media);
   libvlc_media_player_play (vlc->mp, &vlc->ex);
-  
+
   return PLAYER_PB_OK;
 }
 
@@ -446,14 +446,14 @@ static playback_status_t
 vlc_playback_pause (player_t *player)
 {
   vlc_t *vlc;
-  
+
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
 
   if (!player)
     return PLAYER_PB_FATAL;
 
   vlc = (vlc_t *) player->priv;
-  
+
   libvlc_media_player_pause (vlc->mp, &vlc->ex);
 
   return PLAYER_PB_OK;
@@ -483,7 +483,7 @@ static void
 vlc_audio_set_volume (player_t *player, int value)
 {
   vlc_t *vlc;
-  
+
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
 
   if (!player)
