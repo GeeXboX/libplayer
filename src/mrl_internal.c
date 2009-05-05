@@ -1337,7 +1337,7 @@ mrl_sv_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl)
   if (!meta)
     return 0;
 
-  RETURN_NB_ELEMENTS (meta->subs);
+  RETURN_NB_ELEMENTS (meta->subs)
 }
 
 int
@@ -1404,7 +1404,7 @@ mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
   if (!meta)
     return 0;
 
-  RETURN_NB_ELEMENTS (meta->audio_streams);
+  RETURN_NB_ELEMENTS (meta->audio_streams)
 }
 
 mrl_type_t
