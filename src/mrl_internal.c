@@ -1025,8 +1025,6 @@ mrl_sv_get_video_codec (player_t *player, mrl_t *mrl)
 off_t
 mrl_sv_get_size (player_t *player, mrl_t *mrl)
 {
-  mrl_properties_t *prop;
-
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
@@ -1040,11 +1038,7 @@ mrl_sv_get_size (player_t *player, mrl_t *mrl)
   if (!mrl->prop)
     mrl_retrieve_properties (player, mrl);
 
-  prop = mrl->prop;
-  if (!prop)
-    return 0;
-
-  return prop->size;
+  return mrl->prop ? mrl->prop->size : 0;
 }
 
 char *
