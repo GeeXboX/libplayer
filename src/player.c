@@ -1098,24 +1098,16 @@ libplayer_wrapper_enabled (player_type_t type)
   {
 #ifdef HAVE_XINE
   case PLAYER_TYPE_XINE:
-    return 1;
 #endif /* HAVE_XINE */
-
 #ifdef HAVE_MPLAYER
   case PLAYER_TYPE_MPLAYER:
-    return 1;
 #endif /* HAVE_MPLAYER */
-
 #ifdef HAVE_VLC
   case PLAYER_TYPE_VLC:
-    return 1;
 #endif /* HAVE_VLC */
-
 #ifdef HAVE_GSTREAMER
   case PLAYER_TYPE_GSTREAMER:
-    return 1;
 #endif /* HAVE_GSTREAMER */
-
   case PLAYER_TYPE_DUMMY:
     return 1;
 
