@@ -272,6 +272,7 @@ typedef enum slave_property {
   PROPERTY_SUB_ALIGNMENT,
   PROPERTY_SUB_DELAY,
   PROPERTY_SUB_POS,
+  PROPERTY_SUB_SCALE,
   PROPERTY_SUB_VISIBILITY,
   PROPERTY_SWITCH_AUDIO,
   PROPERTY_TIME_POS,
@@ -308,6 +309,7 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_POS]          = {"sub_pos",          ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_SUB_SCALE]        = {"sub_scale",        ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_VISIBILITY]   = {"sub_visibility",   ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SWITCH_AUDIO]     = {"switch_audio",     ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_TIME_POS]         = {"time_pos",         ITEM_ON,  ITEM_OFF, NULL},
@@ -3783,6 +3785,18 @@ mplayer_sub_set_visibility (player_t *player, int value)
 }
 
 static void
+mplayer_sub_scale (player_t *player, int value, int absolute)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME,
+        "sub_scale: %i [%d]", value, absolute);
+
+  if (!player)
+    return;
+
+  slave_cmd_int_opt (player, PROPERTY_SUB_SCALE, value, absolute);
+}
+
+static void
 mplayer_sub_select (player_t *player, int value)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_select: %i", value);
@@ -4123,7 +4137,7 @@ register_functions_mplayer (void)
   funcs->sub_set_alignment  = mplayer_sub_set_alignment;
   funcs->sub_set_pos        = mplayer_sub_set_pos;
   funcs->sub_set_visibility = mplayer_sub_set_visibility;
-  funcs->sub_scale          = NULL;
+  funcs->sub_scale          = mplayer_sub_scale;
   funcs->sub_select         = mplayer_sub_select;
   funcs->sub_prev           = mplayer_sub_prev;
   funcs->sub_next           = mplayer_sub_next;
