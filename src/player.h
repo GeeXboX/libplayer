@@ -1292,7 +1292,7 @@ void player_subtitle_set_alignment (player_t *player,
  * \brief Set subtitle position.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1316,7 +1316,7 @@ void player_subtitle_set_visibility (player_t *player, int value);
  * \brief Set subtitle scale.
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
