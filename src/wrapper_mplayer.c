@@ -271,6 +271,7 @@ typedef enum slave_property {
   PROPERTY_SUB,
   PROPERTY_SUB_ALIGNMENT,
   PROPERTY_SUB_DELAY,
+  PROPERTY_SUB_POS,
   PROPERTY_SUB_VISIBILITY,
   PROPERTY_SWITCH_AUDIO,
   PROPERTY_TIME_POS,
@@ -306,6 +307,7 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_SUB]              = {"sub",              ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_SUB_POS]          = {"sub_pos",          ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_VISIBILITY]   = {"sub_visibility",   ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SWITCH_AUDIO]     = {"switch_audio",     ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_TIME_POS]         = {"time_pos",         ITEM_ON,  ITEM_OFF, NULL},
@@ -3759,6 +3761,17 @@ mplayer_sub_set_alignment (player_t *player, player_sub_alignment_t a)
 }
 
 static void
+mplayer_sub_set_pos (player_t *player, int value)
+{
+  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_pos: %i", value);
+
+  if (!player)
+    return;
+
+  slave_set_property_int (player, PROPERTY_SUB_POS, value);
+}
+
+static void
 mplayer_sub_set_visibility (player_t *player, int value)
 {
   plog (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_visibility: %i", value);
@@ -4108,7 +4121,7 @@ register_functions_mplayer (void)
 
   funcs->sub_set_delay      = mplayer_sub_set_delay;
   funcs->sub_set_alignment  = mplayer_sub_set_alignment;
-  funcs->sub_set_pos        = NULL;
+  funcs->sub_set_pos        = mplayer_sub_set_pos;
   funcs->sub_set_visibility = mplayer_sub_set_visibility;
   funcs->sub_scale          = NULL;
   funcs->sub_select         = mplayer_sub_select;
