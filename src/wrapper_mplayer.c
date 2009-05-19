@@ -204,6 +204,8 @@ typedef enum slave_cmd {
   SLAVE_SET_PROPERTY,       /* set_property string string */
   SLAVE_STOP,               /* stop */
   SLAVE_SUB_LOAD,           /* sub_load string */
+  SLAVE_SUB_POS,            /* sub_pos int */
+  SLAVE_SUB_SCALE,          /* sub_scale int [int] */
   SLAVE_SWITCH_RATIO,       /* switch_ratio float */
   SLAVE_SWITCH_TITLE,       /* switch_title [int] */
   SLAVE_TV_SET_CHANNEL,     /* tv_set_channel string */
@@ -226,6 +228,8 @@ static const item_list_t g_slave_cmds[] = {
   [SLAVE_SET_PROPERTY]       = {"set_property",       ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_STOP]               = {"stop",               ITEM_ON | ITEM_HACK, ITEM_OFF, NULL},
   [SLAVE_SUB_LOAD]           = {"sub_load",           ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SUB_POS]            = {"sub_pos",            ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_SUB_SCALE]          = {"sub_scale",          ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SWITCH_RATIO]       = {"switch_ratio",       ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_SWITCH_TITLE]       = {"switch_title",       ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_TV_SET_CHANNEL]     = {"tv_set_channel",     ITEM_ON,             ITEM_OFF, NULL},
@@ -271,8 +275,6 @@ typedef enum slave_property {
   PROPERTY_SUB,
   PROPERTY_SUB_ALIGNMENT,
   PROPERTY_SUB_DELAY,
-  PROPERTY_SUB_POS,
-  PROPERTY_SUB_SCALE,
   PROPERTY_SUB_VISIBILITY,
   PROPERTY_SWITCH_AUDIO,
   PROPERTY_TIME_POS,
@@ -308,8 +310,6 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_SUB]              = {"sub",              ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_SUB_POS]          = {"sub_pos",          ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_SUB_SCALE]        = {"sub_scale",        ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SUB_VISIBILITY]   = {"sub_visibility",   ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SWITCH_AUDIO]     = {"switch_audio",     ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_TIME_POS]         = {"time_pos",         ITEM_ON,  ITEM_OFF, NULL},
@@ -1142,6 +1142,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   case SLAVE_SEEK:
   case SLAVE_SEEK_CHAPTER:
   case SLAVE_SET_MOUSE_POS:
+  case SLAVE_SUB_SCALE:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player,
                      SLAVE_CMD_PREFIX "%s %i %i", command, value->i_val, opt);
@@ -1175,6 +1176,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_DVDNAV:
   case SLAVE_RADIO_STEP_CHANNEL:
+  case SLAVE_SUB_POS:
   case SLAVE_SWITCH_TITLE:
   case SLAVE_TV_STEP_CHANNEL:
     if (state_cmd == ITEM_ON && value)
@@ -3770,7 +3772,7 @@ mplayer_sub_set_pos (player_t *player, int value)
   if (!player)
     return;
 
-  slave_set_property_int (player, PROPERTY_SUB_POS, value);
+  slave_cmd_int (player, SLAVE_SUB_POS, value);
 }
 
 static void
@@ -3793,7 +3795,7 @@ mplayer_sub_scale (player_t *player, int value, int absolute)
   if (!player)
     return;
 
-  slave_cmd_int_opt (player, PROPERTY_SUB_SCALE, value, absolute);
+  slave_cmd_int_opt (player, SLAVE_SUB_SCALE, value, absolute);
 }
 
 static void
