@@ -176,11 +176,6 @@ typedef struct mplayer_s {
 /*
  * Paused mode is lost without using pausing_keep. But this causes the media
  * to advance a bit.
- *
- * NOTE: Only used with get/set_property, dvdnav, seek, seek_chapter,
- *       switch_ratio, switch_title, tv_set_norm, tv_step_channel,
- *       tv_set_channel, radio_step_channel, radio_set_channel
- *       osd_show_text and set_mouse_pos.
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
