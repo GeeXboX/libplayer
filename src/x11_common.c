@@ -343,6 +343,9 @@ x11_uninit (player_t *player)
   pthread_mutex_unlock (&x11->mutex_display);
   XCloseDisplay (x11->display);
 
+  if (x11->data)
+    free (x11->data);
+
   pthread_mutex_destroy (&x11->mutex_display);
   free (x11);
   player->x11 = NULL;
