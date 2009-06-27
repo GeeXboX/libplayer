@@ -2205,7 +2205,6 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
     close (mp_pipe[1]);
 
     params[pp++] = MPLAYER_NAME;
-    params[pp++] = "-nocache";
     params[pp++] = "-quiet";
     params[pp++] = "-vo";
     params[pp++] = "null";
