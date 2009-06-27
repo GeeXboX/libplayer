@@ -206,6 +206,7 @@ typedef enum slave_cmd {
   SLAVE_TV_SET_CHANNEL,     /* tv_set_channel string */
   SLAVE_TV_SET_NORM,        /* tv_set_norm string */
   SLAVE_TV_STEP_CHANNEL,    /* tv_step_channel int */
+  SLAVE_VOLUME,             /* volume int [int] */
 } slave_cmd_t;
 
 static const item_list_t g_slave_cmds[] = {
@@ -230,6 +231,7 @@ static const item_list_t g_slave_cmds[] = {
   [SLAVE_TV_SET_CHANNEL]     = {"tv_set_channel",     ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_TV_SET_NORM]        = {"tv_set_norm",        ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_TV_STEP_CHANNEL]    = {"tv_step_channel",    ITEM_ON,             ITEM_OFF, NULL},
+  [SLAVE_VOLUME]             = {"volume",             ITEM_ON,             ITEM_OFF, NULL},
   [SLAVE_UNKNOWN]            = {NULL,                 ITEM_OFF,            ITEM_OFF, NULL}
 };
 /*                                    ^                        ^              ^       ^
@@ -1140,6 +1142,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   case SLAVE_SEEK_CHAPTER:
   case SLAVE_SET_MOUSE_POS:
   case SLAVE_SUB_SCALE:
+  case SLAVE_VOLUME:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player,
                      SLAVE_CMD_PREFIX "%s %i %i", command, value->i_val, opt);
@@ -3580,7 +3583,7 @@ mplayer_audio_set_volume (player_t *player, int value)
   if (!check_range (player, PROPERTY_VOLUME, &value, 0))
     return;
 
-  slave_set_property_int (player, PROPERTY_VOLUME, value);
+  slave_cmd_int_opt (player, SLAVE_VOLUME, value, 1);
 }
 
 static void
