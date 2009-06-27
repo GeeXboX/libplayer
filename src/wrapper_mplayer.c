@@ -794,15 +794,17 @@ thread_fifo (void *arg)
      * is sent to the init as fast as possible. If --language is not found,
      * then MPlayer is in english. But if --language is found, then the
      * first language must be 'en' or 'all'.
+     * --language-msg is provided by MPlayer >= r29363.
      */
     else if (check_init)
     {
       const char *it;
-
-      if ((it = my_strrstr (buffer, "--language=")))
+      if (   (it = my_strrstr (buffer, "--language-msg="))
+          || (it = my_strrstr (buffer, "--language=")))
       {
-        if (strncmp (it + 11, "en", 2) &&
-            strncmp (it + 11, "all", 3))
+        it = strchr (it, '=') + 1;
+        if (strncmp (it, "en", 2) &&
+            strncmp (it, "all", 3))
         {
           start_ok = 0;
           plog (player, PLAYER_MSG_ERROR,
