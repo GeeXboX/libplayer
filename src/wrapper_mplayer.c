@@ -742,14 +742,14 @@ thread_fifo (void *arg)
     /*
      * This test is useful when MPlayer can't execute a slave command because
      * the buffer is full. It happens for example with 'loadfile', when the
-     * location of the file is very long (max 256 chars).
+     * location of the file is very long (256 or 4096 with MPlayer >= r29403).
      */
     else if (strstr (buffer,
                      "Command buffer of file descriptor 0 is full") == buffer)
     {
-      plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
-            "MPlayer slave buffer is full. It happens when a command is "
-            "larger than 256 chars.");
+      plog (player, PLAYER_MSG_ERROR,
+            MODULE_NAME, "MPlayer slave buffer is full. "
+                         "It happens when a slave command is too large.");
 
       pthread_mutex_lock (&mplayer->mutex_status);
       if (mplayer->status == MPLAYER_IS_LOADING)
