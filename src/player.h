@@ -1190,7 +1190,7 @@ typedef enum player_video_aspect {
  * use winid parameter in player_init().
  *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
