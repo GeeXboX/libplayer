@@ -25,5 +25,6 @@
 char *trim_whitespaces (char *str);
 int count_nb_dec (int dec);
 char *my_strrstr (const char *buf, const char *str);
+double my_atof (const char *nptr);
 
 #endif /* PARSE_UTILS_H */

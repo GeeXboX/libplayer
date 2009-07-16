@@ -19,6 +19,9 @@
  * Foundation, Inc, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#define _GNU_SOURCE
+#include <stdlib.h>
+#include <locale.h>
 #include <string.h>
 
 #include "parse_utils.h"
@@ -66,6 +69,21 @@ my_strrstr (const char *buf, const char *str)
     res = ptr;
     buf = ptr + strlen (str);
   }
+
+  return res;
+}
+
+double
+my_atof (const char *nptr)
+{
+  double res;
+  locale_t new_locale, prev_locale;
+
+  new_locale = newlocale (LC_NUMERIC_MASK, "C", NULL);
+  prev_locale = uselocale (new_locale);
+  res = atof (nptr);
+  uselocale (prev_locale);
+  freelocale (new_locale);
 
   return res;
 }

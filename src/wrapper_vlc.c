@@ -31,6 +31,7 @@
 #include "logs.h"
 #include "playlist.h"
 #include "fs_utils.h"
+#include "parse_utils.h"
 #include "wrapper_vlc.h"
 
 #define MODULE_NAME "vlc"
@@ -241,7 +242,7 @@ vlc_identify_video (libvlc_media_player_t *mp,
 
   video->width = libvlc_video_get_width (mp, ex);
   video->height = libvlc_video_get_height (mp, ex);
-  video->aspect = (uint32_t) (atof (libvlc_video_get_aspect_ratio (mp, ex))
+  video->aspect = (uint32_t) (my_atof (libvlc_video_get_aspect_ratio (mp, ex))
                               * PLAYER_VIDEO_ASPECT_RATIO_MULT);
 
   val = libvlc_media_player_get_fps (mp, ex);

@@ -971,7 +971,7 @@ slave_get_property_int (player_t *player, slave_property_t property)
 
   if (result)
   {
-    value = (int) rintf (atof (result));
+    value = (int) rintf (my_atof (result));
     free (result);
   }
 
@@ -988,7 +988,7 @@ slave_get_property_float (player_t *player, slave_property_t property)
 
   if (result)
   {
-    value = atof (result);
+    value = my_atof (result);
     free (result);
   }
 
@@ -1854,7 +1854,7 @@ mp_identify_metadata_dvd (mrl_t *mrl, const char *buffer)
     else if (strstr (val, "ANGLES") == val)
       title->angles = atoi (parse_field (val));
     else if (strstr (val, "LENGTH") == val)
-      title->length = (uint32_t) (atof (parse_field (val)) * 1000.0);
+      title->length = (uint32_t) (my_atof (parse_field (val)) * 1000.0);
     return 1;
   }
 
@@ -2085,7 +2085,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_VIDEO_ASPECT=");
   if (it == buffer)
   {
-    video->aspect = (uint32_t) (atof (parse_field (it))
+    video->aspect = (uint32_t) (my_atof (parse_field (it))
                                 * PLAYER_VIDEO_ASPECT_RATIO_MULT);
     return 1;
   }
@@ -2093,7 +2093,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_VIDEO_FPS=");
   if (it == buffer)
   {
-    val = atof (parse_field (it));
+    val = my_atof (parse_field (it));
     video->frameduration =
       (uint32_t) (val ? PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV / val : 0);
     return 1;
@@ -2146,7 +2146,7 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
     it = strstr (buffer, "ID_DVD_TITLE_");
     if (it == buffer && strstr (buffer, "_LENGTH="))
     {
-      mrl->prop->length += (uint32_t) (atof (parse_field (it)) * 1000.0);
+      mrl->prop->length += (uint32_t) (my_atof (parse_field (it)) * 1000.0);
       return 1;
     }
     break;
@@ -2155,7 +2155,7 @@ mp_identify_properties (mrl_t *mrl, const char *buffer)
     it = strstr (buffer, "ID_LENGTH=");
     if (it == buffer)
     {
-      mrl->prop->length = (uint32_t) (atof (parse_field (it)) * 1000.0);
+      mrl->prop->length = (uint32_t) (my_atof (parse_field (it)) * 1000.0);
       return 1;
     }
     break;
