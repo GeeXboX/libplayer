@@ -2670,6 +2670,7 @@ mp_preinit_vo (player_t *player, unsigned long *winid)
   case PLAYER_VO_X11:
   case PLAYER_VO_XV:
   case PLAYER_VO_GL:
+  case PLAYER_VO_VDPAU:
 #ifndef USE_X11
     plog (player, PLAYER_MSG_ERROR,
           MODULE_NAME, "libplayer is not compiled with X11 support");
@@ -2857,6 +2858,13 @@ mplayer_init (player_t *player)
     case PLAYER_VO_FB:
       params[pp++] = "-vo";
       params[pp++] = "fbdev";
+      break;
+
+    case PLAYER_VO_VDPAU:
+      params[pp++] = "-vo";
+      params[pp++] = "vdpau,xv,x11";
+      params[pp++] = "-vc";
+      params[pp++] = "ffh264vdpau,ffmpeg12vdpau,ffvc1vdpau,ffwmv3vdpau,";
       break;
 
     case PLAYER_VO_AUTO:
