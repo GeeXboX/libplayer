@@ -1,5 +1,3 @@
-usr/include/player.h
+usr/include/*.h
+usr/lib/pkgconfig/*.pc
 usr/lib/libplayer.a
-usr/lib/libplayer.so*
-usr/lib/pkgconfig/libplayer.pc
-usr/share/doc/libplayer

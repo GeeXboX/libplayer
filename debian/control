@@ -7,13 +7,13 @@ Vcs-Hg: http://hg.geexbox.org/libplayer
 Vcs-Browser: http://hg.geexbox.org/libplayer/summary
 Homepage: http://libplayer.geexbox.org/
 Build-Depends-Indep: doxygen
-Build-Depends: debhelper (>= 7),
+Build-Depends: debhelper (>= 4),
                libxine-dev
 
 Package: libplayer
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, mplayer, libxine1
 Suggests: mplayer
 Description: a multimedia A/V abstraction layer API
  libplayer is a multimedia A/V abstraction layer API.
@@ -27,9 +27,19 @@ Package: libplayer-dev
 Section: libdevel
 Architecture: any
 Depends: libplayer (= ${binary:Version}),
-         libxine1-dev (= ${binary:Version})
+         libxine-dev
 Description: development files for libplayer
  libplayer is a multimedia A/V abstraction layer API.
  .
  This package contains the header files and static libraries needed to
  compile applications or shared objects that use libplayer.
+
+Package: libplayer-doc
+Section: libdoc
+Architecture: any
+Depends: libplayer-dev (= ${binary:Version})
+Description: documentation files for libplayer
+ libplayer is a multimedia A/V abstraction layer API.
+ .
+ This package contains development documentation files of libplayer.
+
