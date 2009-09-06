@@ -58,35 +58,37 @@ static int
 event_cb (player_event_t e, void *data)
 {
   printf ("Received event (%i): ", e);
-  
-  switch(e) {
-    case PLAYER_EVENT_UNKNOWN:
-      printf("unknown event\n");
-      break;
-    case PLAYER_EVENT_PLAYBACK_START:
-      printf("playback started\n");
-      break;
-    case PLAYER_EVENT_PLAYBACK_STOP:
-      printf("playback stopped\n");
-      break;
-    case PLAYER_EVENT_PLAYBACK_FINISHED:
-      printf("playback finished\n");
-      break;
-    case PLAYER_EVENT_PLAYLIST_FINISHED:
-      printf("playlist finished\n");
-      break;
-    case PLAYER_EVENT_PLAYBACK_PAUSE:
-      printf("playback paused\n");
-      break;
-    case PLAYER_EVENT_PLAYBACK_UNPAUSE:
-      printf("playback unpaused\n");
-      break;
+
+  switch (e)
+  {
+  case PLAYER_EVENT_UNKNOWN:
+    printf ("unknown event\n");
+    break;
+  case PLAYER_EVENT_PLAYBACK_START:
+    printf ("playback started\n");
+    break;
+  case PLAYER_EVENT_PLAYBACK_STOP:
+    printf ("playback stopped\n");
+    break;
+  case PLAYER_EVENT_PLAYBACK_FINISHED:
+    printf ("playback finished\n");
+    break;
+  case PLAYER_EVENT_PLAYLIST_FINISHED:
+    printf ("playlist finished\n");
+    break;
+  case PLAYER_EVENT_PLAYBACK_PAUSE:
+    printf ("playback paused\n");
+    break;
+  case PLAYER_EVENT_PLAYBACK_UNPAUSE:
+    printf ("playback unpaused\n");
+    break;
   }
 
   return 0;
 }
 
-int main(int argc, char **argv)
+int
+main (int argc, char **argv)
 {
   player_t *player;
   player_type_t type = PLAYER_TYPE_XINE;
@@ -96,111 +98,112 @@ int main(int argc, char **argv)
   mrl_t *mrl = NULL;
   mrl_resource_tv_args_t *args;
   uint32_t input;
-  
+
   player = player_init (type, ao, vo, verbosity, 0, event_cb);
-  
+
   args = calloc (1, sizeof (mrl_resource_tv_args_t));
   args->device = strdup ("/tmp/vdr-xine/stream");
   args->driver = strdup ("demux:mpeg_pes");
   mrl = mrl_new (player, MRL_RESOURCE_VDR, args);
   player_mrl_set (player, mrl);
   player_playback_start (player);
-  
-  for(;;) {
-    input = getch();
-    switch (input) {
-        case 0x1B5B41: /* UP */
-          player_vdr (player, PLAYER_VDR_UP);
-          printf ("UP\n");
-          break;
-        case 0x1B5B42: /* DOWN */
-          player_vdr (player, PLAYER_VDR_DOWN);
-          printf ("DOWN\n");
-          break;
-       case 0x1B5B44: /* LEFT */
-          player_vdr (player, PLAYER_VDR_LEFT);
-          printf ("LEFT\n");
-          break;
-       case 0x1B5B43: /* RIGHT */
-          player_vdr (player, PLAYER_VDR_RIGHT);
-          printf ("RIGHT\n");
-          break;
-       case 0xA: /* ENTER */
-          player_vdr (player, PLAYER_VDR_OK);
-          printf ("OK\n");
-          break;
-       case 0x20: /* SPACE */
-          player_vdr (player, PLAYER_VDR_MENU);
-          printf ("MENU\n");
-          break;
-       case 0x7F: /* BACKSPACE */
-          player_vdr (player, PLAYER_VDR_BACK);
-          printf ("BACK\n");
-          break;
-       case 0x30: /* 0 */
-          player_vdr (player, PLAYER_VDR_0);
-          printf ("0\n");
-          break;
-       case 0x31: /* 1 */
-          player_vdr (player, PLAYER_VDR_1);
-          printf ("1\n");
-          break;
-        case 0x32: /* 2 */
-          player_vdr (player, PLAYER_VDR_2);
-          printf ("1\n");
-          break;
-       case 0x33: /* 3 */
-          player_vdr (player, PLAYER_VDR_3);
-          printf ("1\n");
-          break;
-       case 0x34: /* 4 */
-          player_vdr (player, PLAYER_VDR_4);
-          printf ("1\n");
-          break;
-        case 0x35: /* 5 */
-          player_vdr (player, PLAYER_VDR_5);
-          printf ("1\n");
-          break;
-       case 0x36: /* 6 */
-          player_vdr (player, PLAYER_VDR_6);
-          printf ("1\n");
-          break;
-       case 0x37: /* 7 */
-          player_vdr (player, PLAYER_VDR_7);
-          printf ("1\n");
-          break;
-        case 0x38: /* 8 */
-          player_vdr (player, PLAYER_VDR_8);
-          printf ("1\n");
-          break;
-       case 0x39: /* 9 */
-          player_vdr (player, PLAYER_VDR_9);
-          printf ("1\n");
-          break;
-       case 0x71: /* Q */
-          player_vdr (player, PLAYER_VDR_RED);
-          printf ("Q\n");
-          break;
-       case 0x77: /* W */
-          player_vdr (player, PLAYER_VDR_GREEN);
-          printf ("W\n");
-          break;
-       case 0x65: /* E */
-          player_vdr (player, PLAYER_VDR_YELLOW);
-          printf ("E\n");
-          break;
-       case 0x72: /* R */
-          player_vdr (player, PLAYER_VDR_BLUE);
-          printf ("R\n");
-          break;
-       case 0x1B: /* ESC */
-          printf ("QUIT\n");
-          player_playback_stop (player);
-          player_uninit(player);
-          return EXIT_SUCCESS;
-       default:
-          fprintf (stderr, "ERROR: Command unknown %x\n", input);
+
+  for (;;)
+  {
+    input = getch ();
+    switch (input)
+    {
+    case 0x1B5B41: /* UP */
+      player_vdr (player, PLAYER_VDR_UP);
+      printf ("UP\n");
+      break;
+    case 0x1B5B42: /* DOWN */
+      player_vdr (player, PLAYER_VDR_DOWN);
+      printf ("DOWN\n");
+      break;
+    case 0x1B5B44: /* LEFT */
+      player_vdr (player, PLAYER_VDR_LEFT);
+      printf ("LEFT\n");
+      break;
+    case 0x1B5B43: /* RIGHT */
+      player_vdr (player, PLAYER_VDR_RIGHT);
+      printf ("RIGHT\n");
+      break;
+    case 0xA: /* ENTER */
+      player_vdr (player, PLAYER_VDR_OK);
+      printf ("OK\n");
+      break;
+    case 0x20: /* SPACE */
+      player_vdr (player, PLAYER_VDR_MENU);
+      printf ("MENU\n");
+      break;
+    case 0x7F: /* BACKSPACE */
+      player_vdr (player, PLAYER_VDR_BACK);
+      printf ("BACK\n");
+      break;
+    case 0x30: /* 0 */
+      player_vdr (player, PLAYER_VDR_0);
+      printf ("0\n");
+      break;
+    case 0x31: /* 1 */
+      player_vdr (player, PLAYER_VDR_1);
+      printf ("1\n");
+      break;
+    case 0x32: /* 2 */
+      player_vdr (player, PLAYER_VDR_2);
+      printf ("1\n");
+      break;
+    case 0x33: /* 3 */
+      player_vdr (player, PLAYER_VDR_3);
+      printf ("1\n");
+      break;
+    case 0x34: /* 4 */
+      player_vdr (player, PLAYER_VDR_4);
+      printf ("1\n");
+      break;
+    case 0x35: /* 5 */
+      player_vdr (player, PLAYER_VDR_5);
+      printf ("1\n");
+      break;
+    case 0x36: /* 6 */
+      player_vdr (player, PLAYER_VDR_6);
+      printf ("1\n");
+      break;
+    case 0x37: /* 7 */
+      player_vdr (player, PLAYER_VDR_7);
+      printf ("1\n");
+      break;
+    case 0x38: /* 8 */
+      player_vdr (player, PLAYER_VDR_8);
+      printf ("1\n");
+      break;
+    case 0x39: /* 9 */
+      player_vdr (player, PLAYER_VDR_9);
+      printf ("1\n");
+      break;
+    case 0x71: /* Q */
+      player_vdr (player, PLAYER_VDR_RED);
+      printf ("Q\n");
+      break;
+    case 0x77: /* W */
+      player_vdr (player, PLAYER_VDR_GREEN);
+      printf ("W\n");
+      break;
+    case 0x65: /* E */
+      player_vdr (player, PLAYER_VDR_YELLOW);
+      printf ("E\n");
+      break;
+    case 0x72: /* R */
+      player_vdr (player, PLAYER_VDR_BLUE);
+      printf ("R\n");
+      break;
+    case 0x1B: /* ESC */
+      printf ("QUIT\n");
+      player_playback_stop (player);
+      player_uninit (player);
+      return EXIT_SUCCESS;
+    default:
+      fprintf (stderr, "ERROR: Command unknown %x\n", input);
     }
   }
 }
-
