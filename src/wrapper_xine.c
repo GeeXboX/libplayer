@@ -71,7 +71,7 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
   case XINE_EVENT_UI_PLAYBACK_FINISHED:
   {
     plog (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Playback of stream has ended"); 
+          MODULE_NAME, "Playback of stream has ended");
     player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
 #ifdef USE_X11

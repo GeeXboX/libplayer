@@ -914,7 +914,7 @@ mrl_sv_free (mrl_t *mrl, int recursive)
       mrl_resource_tv_free (mrl->priv);
       break;
 
-    case MRL_RESOURCE_FTP: 
+    case MRL_RESOURCE_FTP:
     case MRL_RESOURCE_HTTP:
     case MRL_RESOURCE_MMS:
     case MRL_RESOURCE_NETVDR:

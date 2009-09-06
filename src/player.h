@@ -37,7 +37,7 @@
  *
  * libplayer provides a generic A/V API that relies on various multimedia
  * player for Linux systems. It currently supports
- * <a href="http://www.mplayerhq.hu">MPlayer</a> (through slave-mode), <a 
+ * <a href="http://www.mplayerhq.hu">MPlayer</a> (through slave-mode), <a
  * href="http://www.xinehq.de">xine</a>, <a href="http://www.videolan.org">
  * VLC</a> and <a href="http://www.gstreamer.org">GStreamer</a>.
  *
@@ -48,7 +48,7 @@
  * \section mtlevel MT-Level
  * Most functions in this API are indicated as being MT-Safe in multithreaded
  * applications. That is right <b>only</b> if the functions are used
- * concurrently with the same (#player_t) controller. Else, unexpected 
+ * concurrently with the same (#player_t) controller. Else, unexpected
  * behaviours can appear.
  */
 
