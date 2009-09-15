@@ -40,7 +40,7 @@ struct playlist_s {
 
 
 playlist_t *
-playlist_new (int shuffle, int loop, player_loop_t loop_mode)
+pl_playlist_new (int shuffle, int loop, player_loop_t loop_mode)
 {
   playlist_t *playlist;
 
@@ -48,14 +48,14 @@ playlist_new (int shuffle, int loop, player_loop_t loop_mode)
   if (!playlist)
     return NULL;
 
-  playlist_set_shuffle (playlist, shuffle);
-  playlist_set_loop (playlist, loop, loop_mode);
+  pl_playlist_set_shuffle (playlist, shuffle);
+  pl_playlist_set_loop (playlist, loop, loop_mode);
 
   return playlist;
 }
 
 void
-playlist_free (playlist_t *playlist)
+pl_playlist_free (playlist_t *playlist)
 {
   if (!playlist)
     return;
@@ -70,7 +70,7 @@ playlist_free (playlist_t *playlist)
 }
 
 void
-playlist_set_loop (playlist_t *playlist, int loop, player_loop_t mode)
+pl_playlist_set_loop (playlist_t *playlist, int loop, player_loop_t mode)
 {
   if (!playlist)
     return;
@@ -86,9 +86,9 @@ playlist_goto_mrl (playlist_t *playlist, int value)
   if (!playlist)
     return;
 
-  playlist_first_mrl (playlist);
-  while (playlist_next_mrl_available (playlist) && value--)
-    playlist_next_mrl (playlist);
+  pl_playlist_first_mrl (playlist);
+  while (pl_playlist_next_mrl_available (playlist) && value--)
+    pl_playlist_next_mrl (playlist);
 }
 
 static void
@@ -106,7 +106,7 @@ playlist_shuffle_init (playlist_t *playlist)
     srnd = 1;
   }
 
-  playlist->shuffle_cnt = playlist_count_mrl (playlist);
+  playlist->shuffle_cnt = pl_playlist_count_mrl (playlist);
 
   if (playlist->shuffle_list)
     free (playlist->shuffle_list);
@@ -134,7 +134,7 @@ playlist_shuffle_init (playlist_t *playlist)
 }
 
 void
-playlist_set_shuffle (playlist_t *playlist, int shuffle)
+pl_playlist_set_shuffle (playlist_t *playlist, int shuffle)
 {
   if (!playlist)
     return;
@@ -180,7 +180,7 @@ playlist_reset_counter (playlist_t *playlist, player_loop_t mode)
 }
 
 int
-playlist_next_play (playlist_t *playlist)
+pl_playlist_next_play (playlist_t *playlist)
 {
   if (!playlist)
     return 0;
@@ -212,7 +212,7 @@ playlist_next_play (playlist_t *playlist)
       if (playlist_shuffle_next_available (playlist))
         break; /* next mrl */
     }
-    else if (playlist_next_mrl_available (playlist))
+    else if (pl_playlist_next_mrl_available (playlist))
       break; /* next mrl */
 
     if (!playlist->loop_cnt)
@@ -229,7 +229,7 @@ playlist_next_play (playlist_t *playlist)
     if (playlist->shuffle)
       playlist_shuffle_init (playlist);
     else
-      playlist_first_mrl (playlist);
+      pl_playlist_first_mrl (playlist);
     return 1; /* first mrl */
 
   case PLAYER_LOOP_DISABLE:
@@ -245,18 +245,18 @@ playlist_next_play (playlist_t *playlist)
       return 0;
     }
   }
-  else if (!playlist_next_mrl_available (playlist))
+  else if (!pl_playlist_next_mrl_available (playlist))
     return 0;
 
   if (playlist->shuffle)
     playlist_shuffle_next (playlist);
   else
-    playlist_next_mrl (playlist);
+    pl_playlist_next_mrl (playlist);
   return 1;
 }
 
 int
-playlist_count_mrl (playlist_t *playlist)
+pl_playlist_count_mrl (playlist_t *playlist)
 {
   int cnt = 1;
   mrl_t *mrl;
@@ -278,7 +278,7 @@ playlist_count_mrl (playlist_t *playlist)
 }
 
 mrl_t *
-playlist_get_mrl (playlist_t *playlist)
+pl_playlist_get_mrl (playlist_t *playlist)
 {
   mrl_t *mrl;
 
@@ -291,7 +291,7 @@ playlist_get_mrl (playlist_t *playlist)
 }
 
 void
-playlist_set_mrl (playlist_t *playlist, mrl_t *mrl)
+pl_playlist_set_mrl (playlist_t *playlist, mrl_t *mrl)
 {
   mrl_t *mrl_list;
 
@@ -313,7 +313,7 @@ playlist_set_mrl (playlist_t *playlist, mrl_t *mrl)
 }
 
 void
-playlist_append_mrl (playlist_t *playlist, mrl_t *mrl)
+pl_playlist_append_mrl (playlist_t *playlist, mrl_t *mrl)
 {
   mrl_t *mrl_list;
 
@@ -337,7 +337,7 @@ playlist_append_mrl (playlist_t *playlist, mrl_t *mrl)
 }
 
 int
-playlist_next_mrl_available (playlist_t *playlist)
+pl_playlist_next_mrl_available (playlist_t *playlist)
 {
   int res = 0;
 
@@ -351,7 +351,7 @@ playlist_next_mrl_available (playlist_t *playlist)
 }
 
 void
-playlist_next_mrl (playlist_t *playlist)
+pl_playlist_next_mrl (playlist_t *playlist)
 {
   if (!playlist)
     return;
@@ -364,7 +364,7 @@ playlist_next_mrl (playlist_t *playlist)
 }
 
 int
-playlist_previous_mrl_available (playlist_t *playlist)
+pl_playlist_previous_mrl_available (playlist_t *playlist)
 {
   int res = 0;
 
@@ -378,7 +378,7 @@ playlist_previous_mrl_available (playlist_t *playlist)
 }
 
 void
-playlist_previous_mrl (playlist_t *playlist)
+pl_playlist_previous_mrl (playlist_t *playlist)
 {
   if (!playlist)
     return;
@@ -391,7 +391,7 @@ playlist_previous_mrl (playlist_t *playlist)
 }
 
 void
-playlist_first_mrl (playlist_t *playlist)
+pl_playlist_first_mrl (playlist_t *playlist)
 {
   mrl_t *mrl;
 
@@ -407,7 +407,7 @@ playlist_first_mrl (playlist_t *playlist)
 }
 
 void
-playlist_last_mrl (playlist_t *playlist)
+pl_playlist_last_mrl (playlist_t *playlist)
 {
   mrl_t *mrl;
 
@@ -423,7 +423,7 @@ playlist_last_mrl (playlist_t *playlist)
 }
 
 void
-playlist_remove_mrl (playlist_t *playlist)
+pl_playlist_remove_mrl (playlist_t *playlist)
 {
   mrl_t *mrl, *mrl_p, *mrl_n;
 
@@ -459,7 +459,7 @@ playlist_remove_mrl (playlist_t *playlist)
 }
 
 void
-playlist_empty (playlist_t *playlist)
+pl_playlist_empty (playlist_t *playlist)
 {
   if (!playlist)
     return;

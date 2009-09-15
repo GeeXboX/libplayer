@@ -39,7 +39,7 @@ struct fifo_queue_s {
 
 
 fifo_queue_t *
-fifo_queue_new (void)
+pl_fifo_queue_new (void)
 {
   fifo_queue_t *queue;
 
@@ -54,7 +54,7 @@ fifo_queue_new (void)
 }
 
 void
-fifo_queue_free (fifo_queue_t *queue)
+pl_fifo_queue_free (fifo_queue_t *queue)
 {
   fifo_queue_item_t *item, *next;
 
@@ -76,7 +76,7 @@ fifo_queue_free (fifo_queue_t *queue)
 }
 
 int
-fifo_queue_push (fifo_queue_t *queue, int id, void *data)
+pl_fifo_queue_push (fifo_queue_t *queue, int id, void *data)
 {
   fifo_queue_item_t *item;
 
@@ -117,7 +117,7 @@ fifo_queue_push (fifo_queue_t *queue, int id, void *data)
 }
 
 int
-fifo_queue_pop (fifo_queue_t *queue, int *id, void **data)
+pl_fifo_queue_pop (fifo_queue_t *queue, int *id, void **data)
 {
   fifo_queue_item_t *item, *next;
 

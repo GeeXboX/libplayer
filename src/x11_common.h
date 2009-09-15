@@ -28,18 +28,18 @@
 typedef struct x11_s x11_t;
 
 
-int x11_init (player_t *player);
-void x11_uninit (player_t *player);
+int pl_x11_init (player_t *player);
+void pl_x11_uninit (player_t *player);
 
-void x11_map (player_t *player);
-void x11_unmap (player_t *player);
-void x11_resize (player_t *player);
+void pl_x11_map (player_t *player);
+void pl_x11_unmap (player_t *player);
+void pl_x11_resize (player_t *player);
 
-Display *x11_get_display (x11_t *x11);
-Window x11_get_window (x11_t *x11);
-void *x11_get_data (x11_t *x11);
+Display *pl_x11_get_display (x11_t *x11);
+Window pl_x11_get_window (x11_t *x11);
+void *pl_x11_get_data (x11_t *x11);
 
-void x11_get_video_pos (x11_t *x11, int *x, int *y);
+void pl_x11_get_video_pos (x11_t *x11, int *x, int *y);
 
 typedef enum x11_winprops_flags {
   X11_PROPERTY_X = (1 << 0),
@@ -48,6 +48,6 @@ typedef enum x11_winprops_flags {
   X11_PROPERTY_H = (1 << 3),
 } x11_winprops_flags_t;
 
-void x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags);
+void pl_x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags);
 
 #endif /* X11_COMMON_H */

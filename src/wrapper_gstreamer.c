@@ -62,7 +62,7 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
   {
   case GST_MESSAGE_EOS:
   {
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Playback of stream has ended"); 
 
     /* properly shutdown playback engine */
@@ -82,7 +82,7 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
     gst_message_parse_error (msg, &err, &debug);
     g_free (debug);
 
-    plog (player, PLAYER_MSG_ERROR,
+    pl_log (player, PLAYER_MSG_ERROR,
           MODULE_NAME, "Error: %s", err->message);
     g_error_free (err);
 
@@ -104,7 +104,7 @@ gstreamer_player_init (player_t *player)
   gstreamer_player_t *g = NULL;
   GError *error;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
   if (!player)
     return PLAYER_INIT_ERROR;
@@ -173,7 +173,7 @@ gstreamer_player_uninit (player_t *player)
 {
   gstreamer_player_t *g = NULL;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "uninit");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "uninit");
 
   if (!player)
     return;
@@ -212,7 +212,7 @@ gstreamer_player_playback_start (player_t *player)
   pthread_attr_t attr;
   pthread_t th;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -261,7 +261,7 @@ gstreamer_player_playback_stop (player_t *player)
 {
   gstreamer_player_t *g = NULL;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
 
   if (!player)
     return;
@@ -277,7 +277,7 @@ gstreamer_player_playback_stop (player_t *player)
 /*****************************************************************************/
 
 int
-supported_resources_gstreamer (mrl_resource_t res)
+pl_supported_resources_gstreamer (mrl_resource_t res)
 {
   switch (res)
   {
@@ -290,7 +290,7 @@ supported_resources_gstreamer (mrl_resource_t res)
 }
 
 player_funcs_t *
-register_functions_gstreamer (void)
+pl_register_functions_gstreamer (void)
 {
   player_funcs_t *funcs = NULL;
 
@@ -364,7 +364,7 @@ register_functions_gstreamer (void)
 }
 
 void *
-register_private_gstreamer (void)
+pl_register_private_gstreamer (void)
 {
   gstreamer_player_t *g = NULL;
 

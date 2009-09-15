@@ -224,7 +224,7 @@ typedef struct player_funcs_s {
 } player_funcs_t;
 
 #define PLAYER_FUNCS_WARN(fct) \
-  plog (player, PLAYER_MSG_WARNING, MODULE_NAME, #fct " is unimplemented")
+  pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, #fct " is unimplemented")
 
 #define PLAYER_FUNCS(fct, arg...)       \
   if (player->funcs->fct)               \

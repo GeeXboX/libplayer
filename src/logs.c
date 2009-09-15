@@ -40,7 +40,7 @@
 #endif /* USE_LOGCOLOR */
 
 int
-plog_test (player_t *player, player_verbosity_level_t level)
+pl_log_test (player_t *player, player_verbosity_level_t level)
 {
   int verbosity;
 
@@ -62,7 +62,7 @@ plog_test (player_t *player, player_verbosity_level_t level)
 }
 
 void
-plog (player_t *player, player_verbosity_level_t level,
+pl_log (player_t *player, player_verbosity_level_t level,
       const char *module, const char *format, ...)
 {
 #ifdef USE_LOGCOLOR
@@ -86,7 +86,7 @@ plog (player_t *player, player_verbosity_level_t level,
   if (!player || !format)
     return;
 
-  if (!plog_test (player, level))
+  if (!pl_log_test (player, level))
     return;
 
   va_start (va, format);

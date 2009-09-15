@@ -22,8 +22,8 @@
 #ifndef WRAPPER_MPLAYER_H
 #define WRAPPER_MPLAYER_H
 
-int supported_resources_mplayer (mrl_resource_t res);
-player_funcs_t *register_functions_mplayer (void);
-void *register_private_mplayer (void);
+int pl_supported_resources_mplayer (mrl_resource_t res);
+player_funcs_t *pl_register_functions_mplayer (void);
+void *pl_register_private_mplayer (void);
 
 #endif /* WRAPPER_MPLAYER_H */

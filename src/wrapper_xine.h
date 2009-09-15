@@ -22,8 +22,8 @@
 #ifndef WRAPPER_XINE_H
 #define WRAPPER_XINE_H
 
-int supported_resources_xine (mrl_resource_t res);
-player_funcs_t *register_functions_xine (void);
-void *register_private_xine (void);
+int pl_supported_resources_xine (mrl_resource_t res);
+player_funcs_t *pl_register_functions_xine (void);
+void *pl_register_private_xine (void);
 
 #endif /* WRAPPER_XINE_H */

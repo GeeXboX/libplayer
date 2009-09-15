@@ -46,7 +46,7 @@ struct event_handler_s {
 
 
 static void
-event_handler_sync_catch (event_handler_t *handler)
+pl_event_handler_sync_catch (event_handler_t *handler)
 {
   if (!handler)
     return;
@@ -66,7 +66,7 @@ event_handler_sync_catch (event_handler_t *handler)
 }
 
 void
-event_handler_sync_release (event_handler_t *handler)
+pl_event_handler_sync_release (event_handler_t *handler)
 {
   if (!handler)
     return;
@@ -96,7 +96,7 @@ thread_handler (void *arg)
     void *data = NULL;
     int res;
 
-    res = fifo_queue_pop (handler->queue, &e, &data);
+    res = pl_fifo_queue_pop (handler->queue, &e, &data);
 
     /* stay alive? */
     pthread_mutex_lock (&handler->mutex_run);
@@ -109,7 +109,7 @@ thread_handler (void *arg)
     if (res) /* error? retry */
       continue;
 
-    event_handler_sync_catch (handler);
+    pl_event_handler_sync_catch (handler);
 
     handler->event_cb (handler->data, e, data);
   }
@@ -118,7 +118,7 @@ thread_handler (void *arg)
 }
 
 event_handler_t *
-event_handler_register (void *data,
+pl_event_handler_register (void *data,
                         int (*event_cb) (void *data, int e, void *data_cb))
 {
   event_handler_t *handler;
@@ -130,7 +130,7 @@ event_handler_register (void *data,
   if (!handler)
     return NULL;
 
-  handler->queue = fifo_queue_new ();
+  handler->queue = pl_fifo_queue_new ();
   if (!handler->queue)
   {
     free (handler);
@@ -146,7 +146,7 @@ event_handler_register (void *data,
 }
 
 int
-event_handler_init (event_handler_t *handler, int *run, pthread_t *job,
+pl_event_handler_init (event_handler_t *handler, int *run, pthread_t *job,
                     pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
   int res;
@@ -183,7 +183,7 @@ event_handler_init (event_handler_t *handler, int *run, pthread_t *job,
 }
 
 void
-event_handler_uninit (event_handler_t *handler)
+pl_event_handler_uninit (event_handler_t *handler)
 {
   void *ret;
 
@@ -194,12 +194,12 @@ event_handler_uninit (event_handler_t *handler)
   handler->run = 0;
   pthread_mutex_unlock (&handler->mutex_run);
 
-  event_handler_enable (handler);
-  event_handler_send (handler, 0, NULL);
+  pl_event_handler_enable (handler);
+  pl_event_handler_send (handler, 0, NULL);
   pthread_join (handler->th_handler, &ret);
 
   if (handler->queue)
-    fifo_queue_free (handler->queue);
+    pl_fifo_queue_free (handler->queue);
 
   pthread_mutex_destroy (&handler->mutex_enable);
   pthread_mutex_destroy (&handler->mutex_run);
@@ -208,7 +208,7 @@ event_handler_uninit (event_handler_t *handler)
 }
 
 int
-event_handler_enable (event_handler_t *handler)
+pl_event_handler_enable (event_handler_t *handler)
 {
   if (!handler)
     return EVENT_HANDLER_ERROR_HANDLER;
@@ -221,7 +221,7 @@ event_handler_enable (event_handler_t *handler)
 }
 
 int
-event_handler_disable (event_handler_t *handler)
+pl_event_handler_disable (event_handler_t *handler)
 {
   if (!handler)
     return EVENT_HANDLER_ERROR_HANDLER;
@@ -234,7 +234,7 @@ event_handler_disable (event_handler_t *handler)
 }
 
 int
-event_handler_send (event_handler_t *handler, int e, void *data)
+pl_event_handler_send (event_handler_t *handler, int e, void *data)
 {
   int res;
   int enable;
@@ -249,7 +249,7 @@ event_handler_send (event_handler_t *handler, int e, void *data)
   if (!enable)
     return EVENT_HANDLER_ERROR_DISABLE;
 
-  res = fifo_queue_push (handler->queue, e, data);
+  res = pl_fifo_queue_push (handler->queue, e, data);
   if (res)
     return EVENT_HANDLER_ERROR_SEND;
 
@@ -257,7 +257,7 @@ event_handler_send (event_handler_t *handler, int e, void *data)
 }
 
 pthread_t
-event_handler_tid (event_handler_t *handler)
+pl_event_handler_tid (event_handler_t *handler)
 {
   return handler->th_handler;
 }

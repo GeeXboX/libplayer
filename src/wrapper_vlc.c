@@ -51,7 +51,7 @@ vlc_init (player_t *player)
   const char *vlc_argv[32] = { "vlc" };
   int vlc_argc = 1;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
   if (!player)
     return PLAYER_INIT_ERROR;
@@ -124,7 +124,7 @@ vlc_init (player_t *player)
 
   if (libvlc_exception_raised (&vlc->ex))
   {
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, libvlc_exception_get_message (&vlc->ex));
     libvlc_exception_clear (&vlc->ex);
   }
@@ -137,7 +137,7 @@ vlc_uninit (player_t *player)
 {
   vlc_t *vlc = NULL;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "uninit");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "uninit");
 
   if (!player)
     return;
@@ -159,7 +159,7 @@ vlc_set_verbosity (player_t *player, player_verbosity_level_t level)
   vlc_t *vlc;
   int verbosity = -1;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "set_verbosity");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "set_verbosity");
 
   if (!player)
     return;
@@ -242,7 +242,7 @@ vlc_identify_video (libvlc_media_player_t *mp,
 
   video->width = libvlc_video_get_width (mp, ex);
   video->height = libvlc_video_get_height (mp, ex);
-  video->aspect = (uint32_t) (my_atof (libvlc_video_get_aspect_ratio (mp, ex))
+  video->aspect = (uint32_t) (pl_atof (libvlc_video_get_aspect_ratio (mp, ex))
                               * PLAYER_VIDEO_ASPECT_RATIO_MULT);
 
   val = libvlc_media_player_get_fps (mp, ex);
@@ -269,7 +269,7 @@ vlc_identify_properties (libvlc_media_player_t *mp,
       if (strstr (location, "file://") == location)
         location += 7;
 
-      mrl->prop->size = file_size (location);
+      mrl->prop->size = pl_file_size (location);
     }
   }
 
@@ -347,7 +347,7 @@ vlc_identify (mrl_t *mrl)
 static void
 vlc_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
 
   if (!player || !mrl || !mrl->prop)
     return;
@@ -358,7 +358,7 @@ vlc_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 static void
 vlc_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
 
   if (!player || !mrl || !mrl->meta)
     return;
@@ -372,7 +372,7 @@ vlc_get_time_pos (player_t *player)
   float time_pos = 0.0;
   vlc_t *vlc;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
 
   if (!player)
     return -1;
@@ -394,7 +394,7 @@ vlc_playback_start (player_t *player)
   char *uri = NULL;
   libvlc_media_t *media = NULL;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -404,7 +404,7 @@ vlc_playback_start (player_t *player)
   if (!vlc->core)
     return PLAYER_PB_ERROR;
 
-  mrl = playlist_get_mrl (player->playlist);
+  mrl = pl_playlist_get_mrl (player->playlist);
   if (!mrl)
     return PLAYER_PB_ERROR;
 
@@ -412,7 +412,7 @@ vlc_playback_start (player_t *player)
   if (!uri)
     return PLAYER_PB_ERROR;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "uri: %s", uri);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "uri: %s", uri);
   media = libvlc_media_new (vlc->core, uri, &vlc->ex);
   free (uri);
 
@@ -431,7 +431,7 @@ vlc_playback_stop (player_t *player)
 {
   vlc_t *vlc;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
 
   if (!player)
     return;
@@ -448,7 +448,7 @@ vlc_playback_pause (player_t *player)
 {
   vlc_t *vlc;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -466,7 +466,7 @@ vlc_audio_get_volume (player_t *player)
   vlc_t *vlc;
   int volume = -1;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_volume");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_volume");
 
   if (!player)
     return volume;
@@ -485,7 +485,7 @@ vlc_audio_set_volume (player_t *player, int value)
 {
   vlc_t *vlc;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
 
   if (!player)
     return;
@@ -500,7 +500,7 @@ vlc_audio_get_mute (player_t *player)
   player_mute_t mute = PLAYER_MUTE_UNKNOWN;
   vlc_t *vlc;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_mute");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_mute");
 
   if (!player)
     return mute;
@@ -524,7 +524,7 @@ vlc_audio_set_mute (player_t *player, player_mute_t value)
   if (value == PLAYER_MUTE_ON)
     mute = 1;
 
-  plog (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_INFO,
         MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
 
   if (!player)
@@ -539,7 +539,7 @@ vlc_audio_set_mute (player_t *player, player_mute_t value)
 /*****************************************************************************/
 
 int
-supported_resources_vlc (mrl_resource_t res)
+pl_supported_resources_vlc (mrl_resource_t res)
 {
   switch (res)
   {
@@ -552,7 +552,7 @@ supported_resources_vlc (mrl_resource_t res)
 }
 
 player_funcs_t *
-register_functions_vlc (void)
+pl_register_functions_vlc (void)
 {
   player_funcs_t *funcs = NULL;
 
@@ -626,7 +626,7 @@ register_functions_vlc (void)
 }
 
 void *
-register_private_vlc (void)
+pl_register_private_vlc (void)
 {
   vlc_t *vlc = NULL;
 

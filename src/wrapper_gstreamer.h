@@ -22,8 +22,8 @@
 #ifndef WRAPPER_GSTREAMER_H
 #define WRAPPER_GSTREAMER_H
 
-int supported_resources_gstreamer (mrl_resource_t mrl);
-player_funcs_t *register_functions_gstreamer (void);
-void *register_private_gstreamer (void);
+int pl_supported_resources_gstreamer (mrl_resource_t mrl);
+player_funcs_t *pl_register_functions_gstreamer (void);
+void *pl_register_private_gstreamer (void);
 
 #endif /* WRAPPER_GSTREAMER_H */

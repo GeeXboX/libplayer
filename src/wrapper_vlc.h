@@ -22,8 +22,8 @@
 #ifndef WRAPPER_VLC_H
 #define WRAPPER_VLC_H
 
-int supported_resources_vlc (mrl_resource_t mrl);
-player_funcs_t *register_functions_vlc (void);
-void *register_private_vlc (void);
+int pl_supported_resources_vlc (mrl_resource_t mrl);
+player_funcs_t *pl_register_functions_vlc (void);
+void *pl_register_private_vlc (void);
 
 #endif /* WRAPPER_VLC_H */

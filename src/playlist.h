@@ -24,22 +24,22 @@
 
 typedef struct playlist_s playlist_t;
 
-playlist_t *playlist_new (int shuffle, int loop, player_loop_t loop_mode);
-void playlist_free (playlist_t *playlist);
-void playlist_set_loop (playlist_t *playlist, int loop, player_loop_t mode);
-void playlist_set_shuffle (playlist_t *playlist, int shuffle);
-int playlist_next_play (playlist_t *playlist);
-int playlist_count_mrl (playlist_t *playlist);
-mrl_t *playlist_get_mrl (playlist_t *playlist);
-void playlist_set_mrl (playlist_t *playlist, mrl_t *mrl);
-void playlist_append_mrl (playlist_t *playlist, mrl_t *mrl);
-int playlist_next_mrl_available (playlist_t *playlist);
-void playlist_next_mrl (playlist_t *playlist);
-int playlist_previous_mrl_available (playlist_t *playlist);
-void playlist_previous_mrl (playlist_t *playlist);
-void playlist_first_mrl (playlist_t *playlist);
-void playlist_last_mrl (playlist_t *playlist);
-void playlist_remove_mrl (playlist_t *playlist);
-void playlist_empty (playlist_t *playlist);
+playlist_t *pl_playlist_new (int shuffle, int loop, player_loop_t loop_mode);
+void pl_playlist_free (playlist_t *playlist);
+void pl_playlist_set_loop (playlist_t *playlist, int loop, player_loop_t mode);
+void pl_playlist_set_shuffle (playlist_t *playlist, int shuffle);
+int pl_playlist_next_play (playlist_t *playlist);
+int pl_playlist_count_mrl (playlist_t *playlist);
+mrl_t *pl_playlist_get_mrl (playlist_t *playlist);
+void pl_playlist_set_mrl (playlist_t *playlist, mrl_t *mrl);
+void pl_playlist_append_mrl (playlist_t *playlist, mrl_t *mrl);
+int pl_playlist_next_mrl_available (playlist_t *playlist);
+void pl_playlist_next_mrl (playlist_t *playlist);
+int pl_playlist_previous_mrl_available (playlist_t *playlist);
+void pl_playlist_previous_mrl (playlist_t *playlist);
+void pl_playlist_first_mrl (playlist_t *playlist);
+void pl_playlist_last_mrl (playlist_t *playlist);
+void pl_playlist_remove_mrl (playlist_t *playlist);
+void pl_playlist_empty (playlist_t *playlist);
 
 #endif /* PLAYLIST_H */

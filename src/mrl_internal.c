@@ -560,7 +560,7 @@ mrl_use_internal (player_t *player, mrl_t **mrl)
   if (!mrl || *mrl)
     return;
 
-  *mrl = playlist_get_mrl (player->playlist);
+  *mrl = pl_playlist_get_mrl (player->playlist);
 }
 
 static void
@@ -573,7 +573,7 @@ mrl_properties_plog (player_t *player, mrl_t *mrl)
   if (!player || !mrl)
     return;
 
-  if (!plog_test (player, PLAYER_MSG_INFO))
+  if (!pl_log_test (player, PLAYER_MSG_INFO))
     return;
 
   prop = mrl->prop;
@@ -583,59 +583,59 @@ mrl_properties_plog (player_t *player, mrl_t *mrl)
   audio = mrl->prop->audio;
   video = mrl->prop->video;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "File Size: %.2f MB",
         (float) mrl->prop->size / 1024 / 1024);
 
-  plog (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_INFO,
         MODULE_NAME, "Seekable: %i", mrl->prop->seekable);
 
-  plog (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_INFO,
         MODULE_NAME, "Length: %i ms", mrl->prop->length);
 
   if (audio)
   {
     if (audio->codec)
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Audio Codec: %s", audio->codec);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Audio Bitrate: %i kbps", audio->bitrate / 1000);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Audio Bits: %i bps", audio->bits);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Audio Channels: %i", audio->channels);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Audio Sample Rate: %i Hz", audio->samplerate);
   }
 
   if (video)
   {
     if (video->codec)
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Video Codec: %s", video->codec);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Video Bitrate: %i kbps", video->bitrate / 1000);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Video Width: %i", video->width);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Video Height: %i", video->height);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Video Aspect: %i", video->aspect);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Video Channels: %i", video->channels);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Video Streams: %i", video->streams);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Video Framerate: %i", video->frameduration);
   }
 }
@@ -643,7 +643,7 @@ mrl_properties_plog (player_t *player, mrl_t *mrl)
 void
 mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player || !mrl)
     return;
@@ -669,7 +669,7 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
   if (!player || !mrl)
     return;
 
-  if (!plog_test (player, PLAYER_MSG_INFO))
+  if (!pl_log_test (player, PLAYER_MSG_INFO))
     return;
 
   meta = mrl->meta;
@@ -677,42 +677,42 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
     return;
 
   if (meta->title)
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Title: %s", meta->title);
 
   if (meta->artist)
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Artist: %s", meta->artist);
 
   if (meta->genre)
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Genre: %s", meta->genre);
 
   if (meta->album)
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Album: %s", meta->album);
 
   if (meta->year)
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Year: %s", meta->year);
 
   if (meta->track)
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Track: %s", meta->track);
 
   if (meta->comment)
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta Comment: %s", meta->comment);
 
   sub = meta->subs;
   while (sub)
   {
     if (sub->name)
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Subtitle %u Name: %s", sub->id, sub->name);
 
     if (sub->lang)
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Subtitle %u Language: %s", sub->id, sub->lang);
 
     sub = sub->next;
@@ -722,11 +722,11 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
   while (audio)
   {
     if (audio->name)
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Audio Stream %u Name: %s", audio->id, audio->name);
 
     if (audio->lang)
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Audio Stream %u Language: %s", audio->id, audio->lang);
 
     audio = audio->next;
@@ -744,19 +744,19 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
     mrl_metadata_cd_t *cd = meta->priv;
     mrl_metadata_cd_track_t *track = cd->track;
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta CD DiscID: %08lx", cd->discid);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta CD Tracks: %i", cd->tracks);
 
     while (track)
     {
       if (track->name)
-        plog (player, PLAYER_MSG_INFO,
+        pl_log (player, PLAYER_MSG_INFO,
               MODULE_NAME, "Meta CD Track %i Name: %s", cnt, track->name);
 
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Meta CD Track %i Length: %i ms", cnt, track->length);
 
       cnt++;
@@ -773,21 +773,21 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
     mrl_metadata_dvd_title_t *title = dvd->title;
 
     if (dvd->volumeid)
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Meta DVD VolumeID: %s", dvd->volumeid);
 
-    plog (player, PLAYER_MSG_INFO,
+    pl_log (player, PLAYER_MSG_INFO,
           MODULE_NAME, "Meta DVD Titles: %i", dvd->titles);
 
     while (title)
     {
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Meta DVD Title %i Chapters: %i", cnt, title->chapters);
 
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Meta DVD Title %i Angles: %i", cnt, title->angles);
 
-      plog (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Meta DVD Title %i Length: %i ms", cnt, title->length);
 
       cnt++;
@@ -804,7 +804,7 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
 void
 mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player || !mrl)
     return;
@@ -944,7 +944,7 @@ mrl_sv_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
 {
   mrl_properties_t *prop;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1009,7 +1009,7 @@ mrl_sv_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
 char *
 mrl_sv_get_audio_codec (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   return mrl_get_codec (player, mrl, MRL_TYPE_AUDIO);
 }
@@ -1017,7 +1017,7 @@ mrl_sv_get_audio_codec (player_t *player, mrl_t *mrl)
 char *
 mrl_sv_get_video_codec (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   return mrl_get_codec (player, mrl, MRL_TYPE_VIDEO);
 }
@@ -1025,7 +1025,7 @@ mrl_sv_get_video_codec (player_t *player, mrl_t *mrl)
 off_t
 mrl_sv_get_size (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1046,7 +1046,7 @@ mrl_sv_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m)
 {
   mrl_metadata_t *meta;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return NULL;
@@ -1099,7 +1099,7 @@ mrl_sv_get_metadata_cd_track (player_t *player,
   mrl_metadata_cd_t *cd;
   mrl_metadata_cd_track_t *track;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return NULL;
@@ -1143,7 +1143,7 @@ mrl_sv_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
   mrl_metadata_t *meta;
   mrl_metadata_cd_t *cd;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1189,7 +1189,7 @@ mrl_sv_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
   mrl_metadata_dvd_t *dvd;
   mrl_metadata_dvd_title_t *title;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1243,7 +1243,7 @@ mrl_sv_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles)
   mrl_metadata_t *meta;
   mrl_metadata_dvd_t *dvd;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return NULL;
@@ -1281,7 +1281,7 @@ mrl_sv_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
   mrl_metadata_t *meta;
   mrl_metadata_sub_t *sub;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1320,7 +1320,7 @@ mrl_sv_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1348,7 +1348,7 @@ mrl_sv_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
   mrl_metadata_t *meta;
   mrl_metadata_audio_t *audio;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1387,7 +1387,7 @@ mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1410,7 +1410,7 @@ mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
 mrl_type_t
 mrl_sv_get_type (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return MRL_TYPE_UNKNOWN;
@@ -1426,7 +1426,7 @@ mrl_sv_get_type (player_t *player, mrl_t *mrl)
 mrl_resource_t
 mrl_sv_get_resource (player_t *player, mrl_t *mrl)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return MRL_RESOURCE_UNKNOWN;
@@ -1454,7 +1454,7 @@ mrl_sv_add_subtitle (player_t *player, mrl_t *mrl, char *subtitle)
 {
   int n;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player || !subtitle)
     return;
@@ -1476,7 +1476,7 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
   mrl_t *mrl = NULL;
   int support = 0;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player || !args)
     return NULL;
@@ -1490,7 +1490,7 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
 
   if (!support)
   {
-    plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
           "Unsupported resource type (%d)", res);
     return NULL;
   }
@@ -1513,7 +1513,7 @@ void
 mrl_sv_video_snapshot (player_t *player, mrl_t *mrl,
                        int pos, mrl_snapshot_t t, const char *dst)
 {
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1525,7 +1525,7 @@ mrl_sv_video_snapshot (player_t *player, mrl_t *mrl,
     it = strrchr (dst, '/');
     if (it && *(it + 1) == '\0')
     {
-      plog (player, PLAYER_MSG_ERROR,
+      pl_log (player, PLAYER_MSG_ERROR,
             MODULE_NAME, "the destination (%s) must be a file", dst);
       return;
     }

@@ -22,9 +22,9 @@
 #ifndef PARSE_UTILS_H
 #define PARSE_UTILS_H
 
-char *trim_whitespaces (char *str);
-int count_nb_dec (int dec);
-char *my_strrstr (const char *buf, const char *str);
-double my_atof (const char *nptr);
+char *pl_trim_whitespaces (char *str);
+int pl_count_nb_dec (int dec);
+char *pl_strrstr (const char *buf, const char *str);
+double pl_atof (const char *nptr);
 
 #endif /* PARSE_UTILS_H */

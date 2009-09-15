@@ -108,12 +108,12 @@ zoom (player_t *player, int parentwidth, int parentheight, float aspect,
     *y = parentheight / 2 - *height / 2;
   }
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME,
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
         "[zoom] x:%i y:%i w:%i h:%i r:%.2f", *x, *y, *width, *height, convert);
 }
 
 Display *
-x11_get_display (x11_t *x11)
+pl_x11_get_display (x11_t *x11)
 {
   if (!x11)
     return NULL;
@@ -122,7 +122,7 @@ x11_get_display (x11_t *x11)
 }
 
 Window
-x11_get_window (x11_t *x11)
+pl_x11_get_window (x11_t *x11)
 {
   if (!x11)
     return 0;
@@ -131,7 +131,7 @@ x11_get_window (x11_t *x11)
 }
 
 void *
-x11_get_data (x11_t *x11)
+pl_x11_get_data (x11_t *x11)
 {
   if (!x11)
     return NULL;
@@ -140,7 +140,7 @@ x11_get_data (x11_t *x11)
 }
 
 void
-x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags)
+pl_x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags)
 {
   if (!x11)
     return;
@@ -158,7 +158,7 @@ x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags)
 }
 
 void
-x11_get_video_pos (x11_t *x11, int *x, int *y)
+pl_x11_get_video_pos (x11_t *x11, int *x, int *y)
 {
   XWindowAttributes atts;
 
@@ -175,7 +175,7 @@ x11_get_video_pos (x11_t *x11, int *x, int *y)
 }
 
 void
-x11_resize (player_t *player)
+pl_x11_resize (player_t *player)
 {
   x11_t *x11 = NULL;
   XWindowChanges changes;
@@ -255,11 +255,11 @@ x11_resize (player_t *player)
   XSync (x11->display, False);
   pthread_mutex_unlock (&x11->mutex_display);
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window resized");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window resized");
 }
 
 void
-x11_map (player_t *player)
+pl_x11_map (player_t *player)
 {
   x11_t *x11 = NULL;
 
@@ -271,7 +271,7 @@ x11_map (player_t *player)
   if (!x11->display)
     return;
 
-  x11_resize (player);
+  pl_x11_resize (player);
 
   pthread_mutex_lock (&x11->mutex_display);
 
@@ -283,11 +283,11 @@ x11_map (player_t *player)
   XSync (x11->display, False);
   pthread_mutex_unlock (&x11->mutex_display);
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window mapped");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window mapped");
 }
 
 void
-x11_unmap (player_t *player)
+pl_x11_unmap (player_t *player)
 {
   x11_t *x11 = NULL;
 
@@ -309,11 +309,11 @@ x11_unmap (player_t *player)
   XSync (x11->display, False);
   pthread_mutex_unlock (&x11->mutex_display);
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window unmapped");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window unmapped");
 }
 
 void
-x11_uninit (player_t *player)
+pl_x11_uninit (player_t *player)
 {
   x11_t *x11 = NULL;
 
@@ -350,7 +350,7 @@ x11_uninit (player_t *player)
   free (x11);
   player->x11 = NULL;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window destroyed");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window destroyed");
 }
 
 #ifdef HAVE_XINE
@@ -439,7 +439,7 @@ xine_unlock_display (void *user_data)
  * is attached to an other (see player_init(), winid parameter).
  */
 int
-x11_init (player_t *player)
+pl_x11_init (player_t *player)
 {
   x11_t *x11 = NULL;
   Window win_root;
@@ -460,7 +460,7 @@ x11_init (player_t *player)
   x11->display = XOpenDisplay (NULL);
   if (!x11->display)
   {
-    plog (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
     goto err_display;
   }
 
@@ -602,7 +602,7 @@ x11_init (player_t *player)
 #endif /* HAVE_XINE */
   }
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
   return 1;
 
  err_display:

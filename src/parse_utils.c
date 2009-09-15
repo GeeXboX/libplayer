@@ -28,7 +28,7 @@
 
 
 char *
-trim_whitespaces (char *str)
+pl_trim_whitespaces (char *str)
 {
   char *its, *ite;
 
@@ -49,7 +49,7 @@ trim_whitespaces (char *str)
 }
 
 int
-count_nb_dec (int dec)
+pl_count_nb_dec (int dec)
 {
   int size = 1;
 
@@ -60,7 +60,7 @@ count_nb_dec (int dec)
 }
 
 char *
-my_strrstr (const char *buf, const char *str)
+pl_strrstr (const char *buf, const char *str)
 {
   char *ptr, *res = NULL;
 
@@ -74,7 +74,7 @@ my_strrstr (const char *buf, const char *str)
 }
 
 double
-my_atof (const char *nptr)
+pl_atof (const char *nptr)
 {
   double res;
   locale_t new_locale;

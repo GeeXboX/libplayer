@@ -1095,7 +1095,7 @@ supervisor_sync_release (supervisor_t *supervisor)
 }
 
 void
-supervisor_sync_recatch (player_t *player, pthread_t which)
+pl_supervisor_sync_recatch (player_t *player, pthread_t which)
 {
   supervisor_t *supervisor;
   int useless = 0;
@@ -1109,7 +1109,7 @@ supervisor_sync_recatch (player_t *player, pthread_t which)
 
   if (pthread_equal (supervisor->th_supervisor, which))
   {
-    plog (player, PLAYER_MSG_ERROR, MODULE_NAME, "recatch for own identity?");
+    pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME, "recatch for own identity?");
     return;
   }
 
@@ -1129,7 +1129,7 @@ supervisor_sync_recatch (player_t *player, pthread_t which)
 
   supervisor_sync_catch (supervisor);
 
-  plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "recatch");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "recatch");
 }
 
 static void *
@@ -1157,10 +1157,10 @@ thread_supervisor (void *arg)
     void *in, *out;
 
     /* wait for job */
-    res = fifo_queue_pop (supervisor->queue, &ctl, (void *) &data);
+    res = pl_fifo_queue_pop (supervisor->queue, &ctl, (void *) &data);
     if (res)
     {
-      plog (player, PLAYER_MSG_ERROR,
+      pl_log (player, PLAYER_MSG_ERROR,
             MODULE_NAME, "error on queue? no sense :(");
       continue; /* retry */
     }
@@ -1172,7 +1172,7 @@ thread_supervisor (void *arg)
 
     supervisor_sync_catch (supervisor);
 
-    plog (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "run job: %i (%s)",
+    pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "run job: %i (%s)",
           ctl, mode == SV_MODE_WAIT_FOR_END ? "wait for end" : "no wait");
 
     switch (ctl)
@@ -1188,7 +1188,7 @@ thread_supervisor (void *arg)
       if (ctl > 0 && ctl < g_supervisor_funcs_nb && g_supervisor_funcs[ctl])
       {
         g_supervisor_funcs[ctl] (player, in, out);
-        plog (player, PLAYER_MSG_VERBOSE,
+        pl_log (player, PLAYER_MSG_VERBOSE,
               MODULE_NAME, "job: %i (completed)", ctl);
       }
       break;
@@ -1208,11 +1208,11 @@ thread_supervisor (void *arg)
 /*****************************************************************************/
 
 void
-supervisor_callback_in (player_t *player, pthread_t which)
+pl_supervisor_callback_in (player_t *player, pthread_t which)
 {
   supervisor_t *supervisor;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1228,11 +1228,11 @@ supervisor_callback_in (player_t *player, pthread_t which)
 }
 
 void
-supervisor_callback_out (player_t *player)
+pl_supervisor_callback_out (player_t *player)
 {
   supervisor_t *supervisor;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1247,7 +1247,7 @@ supervisor_callback_out (player_t *player)
 }
 
 void
-supervisor_send (player_t *player, supervisor_mode_t mode,
+pl_supervisor_send (player_t *player, supervisor_mode_t mode,
                  supervisor_ctl_t ctl, void *in, void *out)
 {
   supervisor_send_t *data;
@@ -1271,7 +1271,7 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
   if (cb_run && pthread_equal (cb_tid, pthread_self ())
       && supervisor->use_sync && mode == SV_MODE_WAIT_FOR_END)
   {
-    plog (player, PLAYER_MSG_WARNING, MODULE_NAME,
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
           "change mode to (no wait) because this control (%i) comes "
           "from the public callback", ctl);
     mode = SV_MODE_NO_WAIT;
@@ -1279,7 +1279,7 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
 
   if (mode == SV_MODE_NO_WAIT && (in || out))
   {
-    plog (player, PLAYER_MSG_ERROR, MODULE_NAME,
+    pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
           "never use no_wait when the function (%i) needs input "
           "and (or) output values", ctl);
     return;
@@ -1301,13 +1301,13 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
   if (mode == SV_MODE_WAIT_FOR_END)
     pthread_mutex_lock (&supervisor->mutex_sv);
 
-  res = fifo_queue_push (supervisor->queue, ctl, data);
+  res = pl_fifo_queue_push (supervisor->queue, ctl, data);
   if (!res && mode == SV_MODE_WAIT_FOR_END)
     sem_wait (&supervisor->sem_ctl);
   else if (res)
   {
     free (data);
-    plog (player, PLAYER_MSG_ERROR, MODULE_NAME, "error on queue? no sense :(");
+    pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME, "error on queue? no sense :(");
   }
 
   if (mode == SV_MODE_WAIT_FOR_END)
@@ -1315,7 +1315,7 @@ supervisor_send (player_t *player, supervisor_mode_t mode,
 }
 
 supervisor_t *
-supervisor_new (void)
+pl_supervisor_new (void)
 {
   supervisor_t *supervisor;
 
@@ -1323,7 +1323,7 @@ supervisor_new (void)
   if (!supervisor)
     return NULL;
 
-  supervisor->queue = fifo_queue_new ();
+  supervisor->queue = pl_fifo_queue_new ();
   if (!supervisor->queue)
   {
     free (supervisor);
@@ -1342,13 +1342,13 @@ supervisor_new (void)
 }
 
 supervisor_status_t
-supervisor_init (player_t *player, int **run, pthread_t **job,
+pl_supervisor_init (player_t *player, int **run, pthread_t **job,
                  pthread_cond_t **cond, pthread_mutex_t **mutex)
 {
   supervisor_t *supervisor;
   pthread_attr_t attr;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return SUPERVISOR_STATUS_ERROR;
@@ -1384,12 +1384,12 @@ supervisor_init (player_t *player, int **run, pthread_t **job,
 }
 
 void
-supervisor_uninit (player_t *player)
+pl_supervisor_uninit (player_t *player)
 {
   supervisor_t *supervisor;
   void *ret;
 
-  plog (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1398,11 +1398,11 @@ supervisor_uninit (player_t *player)
   if (!supervisor)
     return;
 
-  supervisor_send (player, SV_MODE_NO_WAIT,
+  pl_supervisor_send (player, SV_MODE_NO_WAIT,
                    SV_FUNC_KILL, NULL, NULL);
   pthread_join (supervisor->th_supervisor, &ret);
 
-  fifo_queue_free (supervisor->queue);
+  pl_fifo_queue_free (supervisor->queue);
 
   pthread_mutex_destroy (&supervisor->mutex_sv);
   sem_destroy (&supervisor->sem_ctl);

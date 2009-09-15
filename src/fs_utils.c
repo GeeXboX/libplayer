@@ -30,7 +30,7 @@
 
 
 int
-copy_file (const char *src, const char *dst)
+pl_copy_file (const char *src, const char *dst)
 {
   char buf[BUFFER_SIZE];
   int infile, outfile, size;
@@ -71,7 +71,7 @@ copy_file (const char *src, const char *dst)
 }
 
 int
-file_exists (const char *file)
+pl_file_exists (const char *file)
 {
   struct stat st;
 
@@ -81,7 +81,7 @@ file_exists (const char *file)
 }
 
 off_t
-file_size (const char *file)
+pl_file_size (const char *file)
 {
   struct stat st;
 
