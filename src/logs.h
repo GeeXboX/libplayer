@@ -24,6 +24,6 @@
 
 int pl_log_test (player_t *player, player_verbosity_level_t level);
 void pl_log (player_t *player, player_verbosity_level_t level,
-           const char *module, const char *format, ...);
+             const char *module, const char *format, ...);
 
 #endif /* PLAYER_LOGS_H */

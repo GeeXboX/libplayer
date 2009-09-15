@@ -84,7 +84,7 @@ player_event_cb (void *data, int e, void *data_cb)
   /* go to the next MRL */
   if (pb_mode == PLAYER_PB_AUTO)
     pl_supervisor_send (player, SV_MODE_NO_WAIT,
-                     SV_FUNC_PLAYER_MRL_NEXT_PLAY, NULL, NULL);
+                        SV_FUNC_PLAYER_MRL_NEXT_PLAY, NULL, NULL);
 
   return res;
 }
@@ -130,30 +130,30 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
 #ifdef HAVE_XINE
   case PLAYER_TYPE_XINE:
     player->funcs = pl_register_functions_xine ();
-    player->priv = pl_register_private_xine ();
+    player->priv  = pl_register_private_xine ();
     break;
 #endif /* HAVE_XINE */
 #ifdef HAVE_MPLAYER
   case PLAYER_TYPE_MPLAYER:
     player->funcs = pl_register_functions_mplayer ();
-    player->priv = pl_register_private_mplayer ();
+    player->priv  = pl_register_private_mplayer ();
     break;
 #endif /* HAVE_MPLAYER */
 #ifdef HAVE_VLC
   case PLAYER_TYPE_VLC:
     player->funcs = pl_register_functions_vlc ();
-    player->priv = pl_register_private_vlc ();
+    player->priv  = pl_register_private_vlc ();
     break;
 #endif /* HAVE_VLC */
 #ifdef HAVE_GSTREAMER
   case PLAYER_TYPE_GSTREAMER:
     player->funcs = pl_register_functions_gstreamer ();
-    player->priv = pl_register_private_gstreamer ();
+    player->priv  = pl_register_private_gstreamer ();
     break;
 #endif /* HAVE_GSTREAMER */
   case PLAYER_TYPE_DUMMY:
     player->funcs = pl_register_functions_dummy ();
-    player->priv = pl_register_private_dummy ();
+    player->priv  = pl_register_private_dummy ();
     break;
   default:
     break;
@@ -179,7 +179,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   if (sv_res != SUPERVISOR_STATUS_OK)
   {
     pl_log (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "failed to init supervisor");
+            MODULE_NAME, "failed to init supervisor");
     player_uninit (player);
     return NULL;
   }
@@ -196,7 +196,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   if (ret)
   {
     pl_log (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "failed to init event handler");
+            MODULE_NAME, "failed to init event handler");
     player_uninit (player);
     return NULL;
   }
@@ -206,7 +206,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   player_set_verbosity (player, verbosity);
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_INIT, NULL, &res);
+                      SV_FUNC_PLAYER_INIT, NULL, &res);
   if (res != PLAYER_INIT_OK)
   {
     player_uninit (player);
@@ -225,7 +225,7 @@ player_uninit (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_UNINIT, NULL, NULL);
+                      SV_FUNC_PLAYER_UNINIT, NULL, NULL);
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "pl_event_handler_uninit");
   pl_event_handler_disable (player->event);
@@ -248,7 +248,7 @@ player_set_verbosity (player_t *player, player_verbosity_level_t level)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SET_VERBOSITY, &level, NULL);
+                      SV_FUNC_PLAYER_SET_VERBOSITY, &level, NULL);
 }
 
 /***************************************************************************/
@@ -268,7 +268,7 @@ player_mrl_get_current (player_t *player)
     return NULL;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_MRL_GET_CURRENT, NULL, &out);
+                      SV_FUNC_PLAYER_MRL_GET_CURRENT, NULL, &out);
 
   return out;
 }
@@ -282,7 +282,7 @@ player_mrl_set (player_t *player, mrl_t *mrl)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_MRL_SET, mrl, NULL);
+                      SV_FUNC_PLAYER_MRL_SET, mrl, NULL);
 }
 
 void
@@ -299,7 +299,7 @@ player_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when)
   in.value = when;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_MRL_APPEND, &in, NULL);
+                      SV_FUNC_PLAYER_MRL_APPEND, &in, NULL);
 }
 
 void
@@ -311,7 +311,7 @@ player_mrl_remove (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_MRL_REMOVE, NULL, NULL);
+                      SV_FUNC_PLAYER_MRL_REMOVE, NULL, NULL);
 }
 
 void
@@ -323,7 +323,7 @@ player_mrl_remove_all (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_MRL_REMOVE_ALL, NULL, NULL);
+                      SV_FUNC_PLAYER_MRL_REMOVE_ALL, NULL, NULL);
 }
 
 void
@@ -335,7 +335,7 @@ player_mrl_previous (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_MRL_PREVIOUS, NULL, NULL);
+                      SV_FUNC_PLAYER_MRL_PREVIOUS, NULL, NULL);
 }
 
 void
@@ -347,7 +347,7 @@ player_mrl_next (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_MRL_NEXT, NULL, NULL);
+                      SV_FUNC_PLAYER_MRL_NEXT, NULL, NULL);
 }
 
 /***************************************************************************/
@@ -367,7 +367,7 @@ player_get_time_pos (player_t *player)
     return -1;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_GET_TIME_POS, NULL, &out);
+                      SV_FUNC_PLAYER_GET_TIME_POS, NULL, &out);
 
   return out;
 }
@@ -383,7 +383,7 @@ player_get_percent_pos (player_t *player)
     return -1;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_GET_PERCENT_POS, NULL, &out);
+                      SV_FUNC_PLAYER_GET_PERCENT_POS, NULL, &out);
 
   return out;
 }
@@ -397,7 +397,7 @@ player_set_playback (player_t *player, player_pb_t pb)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SET_PLAYBACK, &pb, NULL);
+                      SV_FUNC_PLAYER_SET_PLAYBACK, &pb, NULL);
 }
 
 void
@@ -414,7 +414,7 @@ player_set_loop (player_t *player, player_loop_t loop, int value)
   in.mode  = loop;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SET_LOOP, &in, NULL);
+                      SV_FUNC_PLAYER_SET_LOOP, &in, NULL);
 }
 
 void
@@ -426,7 +426,7 @@ player_set_shuffle (player_t *player, int value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SET_SHUFFLE, &value, NULL);
+                      SV_FUNC_PLAYER_SET_SHUFFLE, &value, NULL);
 }
 
 void
@@ -438,7 +438,7 @@ player_set_framedrop (player_t *player, player_framedrop_t fd)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SET_FRAMEDROP, &fd, NULL);
+                      SV_FUNC_PLAYER_SET_FRAMEDROP, &fd, NULL);
 }
 
 void
@@ -455,7 +455,7 @@ player_set_mouse_position (player_t *player, int x, int y)
   in.y = y;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SET_MOUSE_POS, &in, NULL);
+                      SV_FUNC_PLAYER_SET_MOUSE_POS, &in, NULL);
 }
 
 void
@@ -476,7 +476,7 @@ player_x_window_set_properties (player_t *player,
   in.flags = flags;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_X_WINDOW_SET_PROPS, &in, NULL);
+                      SV_FUNC_PLAYER_X_WINDOW_SET_PROPS, &in, NULL);
 }
 
 void
@@ -496,7 +496,7 @@ player_osd_show_text (player_t *player,
   in.duration = duration;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_OSD_SHOW_TEXT, &in, NULL);
+                      SV_FUNC_PLAYER_OSD_SHOW_TEXT, &in, NULL);
 }
 
 /***************************************************************************/
@@ -516,7 +516,7 @@ player_playback_get_state (player_t *player)
     return out;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_PB_GET_STATE, NULL, &out);
+                      SV_FUNC_PLAYER_PB_GET_STATE, NULL, &out);
 
   return out;
 }
@@ -530,7 +530,7 @@ player_playback_start (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_PB_START, NULL, NULL);
+                      SV_FUNC_PLAYER_PB_START, NULL, NULL);
 }
 
 void
@@ -542,7 +542,7 @@ player_playback_stop (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_PB_STOP, NULL, NULL);
+                      SV_FUNC_PLAYER_PB_STOP, NULL, NULL);
 }
 
 void
@@ -554,7 +554,7 @@ player_playback_pause (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_PB_PAUSE, NULL, NULL);
+                      SV_FUNC_PLAYER_PB_PAUSE, NULL, NULL);
 }
 
 void
@@ -571,7 +571,7 @@ player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   in.mode  = seek;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_PB_SEEK, &in, NULL);
+                      SV_FUNC_PLAYER_PB_SEEK, &in, NULL);
 }
 
 void
@@ -588,7 +588,7 @@ player_playback_seek_chapter (player_t *player, int value, int absolute)
   in.mode  = absolute;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_PB_SEEK_CHAPTER, &in, NULL);
+                      SV_FUNC_PLAYER_PB_SEEK_CHAPTER, &in, NULL);
 }
 
 void
@@ -600,7 +600,7 @@ player_playback_speed (player_t *player, float value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_PB_SPEED, &value, NULL);
+                      SV_FUNC_PLAYER_PB_SPEED, &value, NULL);
 }
 
 /***************************************************************************/
@@ -620,7 +620,7 @@ player_audio_volume_get (player_t *player)
     return -1;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_VOLUME_GET, NULL, &out);
+                      SV_FUNC_PLAYER_AO_VOLUME_GET, NULL, &out);
 
   return out;
 }
@@ -634,7 +634,7 @@ player_audio_volume_set (player_t *player, int value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_VOLUME_SET, &value, NULL);
+                      SV_FUNC_PLAYER_AO_VOLUME_SET, &value, NULL);
 }
 
 player_mute_t
@@ -648,7 +648,7 @@ player_audio_mute_get (player_t *player)
     return out;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_MUTE_GET, NULL, &out);
+                      SV_FUNC_PLAYER_AO_MUTE_GET, NULL, &out);
 
   return out;
 }
@@ -662,7 +662,7 @@ player_audio_mute_set (player_t *player, player_mute_t value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_MUTE_SET, &value, NULL);
+                      SV_FUNC_PLAYER_AO_MUTE_SET, &value, NULL);
 }
 
 void
@@ -679,7 +679,7 @@ player_audio_set_delay (player_t *player, int value, int absolute)
   in.mode  = absolute;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_SET_DELAY, &in, NULL);
+                      SV_FUNC_PLAYER_AO_SET_DELAY, &in, NULL);
 }
 
 void
@@ -691,7 +691,7 @@ player_audio_select (player_t *player, int audio_id)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_SELECT, &audio_id, NULL);
+                      SV_FUNC_PLAYER_AO_SELECT, &audio_id, NULL);
 }
 
 void
@@ -703,7 +703,7 @@ player_audio_prev (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_PREV, NULL, NULL);
+                      SV_FUNC_PLAYER_AO_PREV, NULL, NULL);
 }
 
 void
@@ -715,7 +715,7 @@ player_audio_next (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_AO_NEXT, NULL, NULL);
+                      SV_FUNC_PLAYER_AO_NEXT, NULL, NULL);
 }
 
 /***************************************************************************/
@@ -733,7 +733,7 @@ player_video_set_fullscreen (player_t *player, int value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_VO_SET_FS, &value, NULL);
+                      SV_FUNC_PLAYER_VO_SET_FS, &value, NULL);
 }
 
 void
@@ -752,7 +752,7 @@ player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
   in.mode  = absolute;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_VO_SET_ASPECT, &in, NULL);
+                      SV_FUNC_PLAYER_VO_SET_ASPECT, &in, NULL);
 }
 
 void
@@ -770,7 +770,7 @@ player_video_set_panscan (player_t *player, int8_t value, int absolute)
   in.mode  = absolute;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_VO_SET_PANSCAN, &in, NULL);
+                      SV_FUNC_PLAYER_VO_SET_PANSCAN, &in, NULL);
 }
 
 void
@@ -782,7 +782,7 @@ player_video_set_aspect_ratio (player_t *player, float value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_VO_SET_AR, &value, NULL);
+                      SV_FUNC_PLAYER_VO_SET_AR, &value, NULL);
 }
 
 /***************************************************************************/
@@ -800,7 +800,7 @@ player_subtitle_set_delay (player_t *player, int value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SUB_SET_DELAY, &value, NULL);
+                      SV_FUNC_PLAYER_SUB_SET_DELAY, &value, NULL);
 }
 
 void
@@ -813,7 +813,7 @@ player_subtitle_set_alignment (player_t *player,
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SUB_SET_ALIGN, &a, NULL);
+                      SV_FUNC_PLAYER_SUB_SET_ALIGN, &a, NULL);
 }
 
 void
@@ -825,7 +825,7 @@ player_subtitle_set_position (player_t *player, int value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SUB_SET_POS, &value, NULL);
+                      SV_FUNC_PLAYER_SUB_SET_POS, &value, NULL);
 }
 
 void
@@ -837,7 +837,7 @@ player_subtitle_set_visibility (player_t *player, int value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SUB_SET_VIS, &value, NULL);
+                      SV_FUNC_PLAYER_SUB_SET_VIS, &value, NULL);
 }
 
 void
@@ -854,7 +854,7 @@ player_subtitle_scale (player_t *player, int value, int absolute)
   in.mode  = absolute;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SUB_SCALE, &in, NULL);
+                      SV_FUNC_PLAYER_SUB_SCALE, &in, NULL);
 }
 
 void
@@ -866,7 +866,7 @@ player_subtitle_select (player_t *player, int sub_id)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SUB_SELECT, &sub_id, NULL);
+                      SV_FUNC_PLAYER_SUB_SELECT, &sub_id, NULL);
 }
 
 void
@@ -878,7 +878,7 @@ player_subtitle_prev (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SUB_PREV, NULL, NULL);
+                      SV_FUNC_PLAYER_SUB_PREV, NULL, NULL);
 }
 
 void
@@ -890,7 +890,7 @@ player_subtitle_next (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_SUB_NEXT, NULL, NULL);
+                      SV_FUNC_PLAYER_SUB_NEXT, NULL, NULL);
 }
 
 /***************************************************************************/
@@ -908,7 +908,7 @@ player_dvd_nav (player_t *player, player_dvdnav_t value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_DVD_NAV, &value, NULL);
+                      SV_FUNC_PLAYER_DVD_NAV, &value, NULL);
 }
 
 void
@@ -920,7 +920,7 @@ player_dvd_angle_select (player_t *player, int angle)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_DVD_ANGLE_SELECT, &angle, NULL);
+                      SV_FUNC_PLAYER_DVD_ANGLE_SELECT, &angle, NULL);
 }
 
 void
@@ -932,7 +932,7 @@ player_dvd_angle_prev (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_DVD_ANGLE_PREV, NULL, NULL);
+                      SV_FUNC_PLAYER_DVD_ANGLE_PREV, NULL, NULL);
 }
 
 void
@@ -944,7 +944,7 @@ player_dvd_angle_next (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_DVD_ANGLE_NEXT, NULL, NULL);
+                      SV_FUNC_PLAYER_DVD_ANGLE_NEXT, NULL, NULL);
 }
 
 void
@@ -956,7 +956,7 @@ player_dvd_title_select (player_t *player, int title)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_DVD_ANGLE_SELECT, &title, NULL);
+                      SV_FUNC_PLAYER_DVD_ANGLE_SELECT, &title, NULL);
 }
 
 void
@@ -968,7 +968,7 @@ player_dvd_title_prev (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_DVD_TITLE_PREV, NULL, NULL);
+                      SV_FUNC_PLAYER_DVD_TITLE_PREV, NULL, NULL);
 }
 
 void
@@ -980,7 +980,7 @@ player_dvd_title_next (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_DVD_TITLE_NEXT, NULL, NULL);
+                      SV_FUNC_PLAYER_DVD_TITLE_NEXT, NULL, NULL);
 }
 
 /***************************************************************************/
@@ -998,7 +998,7 @@ player_tv_channel_select (player_t *player, const char *channel)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_TV_CHAN_SELECT, (void *) channel, NULL);
+                      SV_FUNC_PLAYER_TV_CHAN_SELECT, (void *) channel, NULL);
 }
 
 void
@@ -1010,7 +1010,7 @@ player_tv_channel_prev (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_TV_CHAN_PREV, NULL, NULL);
+                      SV_FUNC_PLAYER_TV_CHAN_PREV, NULL, NULL);
 }
 
 void
@@ -1022,7 +1022,7 @@ player_tv_channel_next (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_TV_CHAN_NEXT, NULL, NULL);
+                      SV_FUNC_PLAYER_TV_CHAN_NEXT, NULL, NULL);
 }
 
 /***************************************************************************/
@@ -1040,7 +1040,7 @@ player_radio_channel_select (player_t *player, const char *channel)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_RADIO_CHAN_SELECT, (void *) channel, NULL);
+                      SV_FUNC_PLAYER_RADIO_CHAN_SELECT, (void *) channel, NULL);
 }
 
 void
@@ -1052,7 +1052,7 @@ player_radio_channel_prev (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_RADIO_CHAN_PREV, NULL, NULL);
+                      SV_FUNC_PLAYER_RADIO_CHAN_PREV, NULL, NULL);
 }
 
 void
@@ -1064,7 +1064,7 @@ player_radio_channel_next (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_RADIO_CHAN_NEXT, NULL, NULL);
+                      SV_FUNC_PLAYER_RADIO_CHAN_NEXT, NULL, NULL);
 }
 
 /***************************************************************************/
@@ -1082,7 +1082,7 @@ player_vdr (player_t *player, player_vdr_t value)
     return;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_PLAYER_VDR, &value, NULL);
+                      SV_FUNC_PLAYER_VDR, &value, NULL);
 }
 
 /***************************************************************************/

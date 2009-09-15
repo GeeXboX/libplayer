@@ -108,8 +108,9 @@ zoom (player_t *player, int parentwidth, int parentheight, float aspect,
     *y = parentheight / 2 - *height / 2;
   }
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
-        "[zoom] x:%i y:%i w:%i h:%i r:%.2f", *x, *y, *width, *height, convert);
+  pl_log (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "[zoom] x:%i y:%i w:%i h:%i r:%.2f",
+                       *x, *y, *width, *height, convert);
 }
 
 Display *

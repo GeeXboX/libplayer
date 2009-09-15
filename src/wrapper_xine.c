@@ -71,7 +71,7 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
   case XINE_EVENT_UI_PLAYBACK_FINISHED:
   {
     pl_log (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Playback of stream has ended");
+            MODULE_NAME, "Playback of stream has ended");
     player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
 #ifdef USE_X11
@@ -84,7 +84,7 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
   {
     xine_progress_data_t *pevent = (xine_progress_data_t *) event->data;
     pl_log (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "%s [%d%%]", pevent->description, pevent->percent);
+            MODULE_NAME, "%s [%d%%]", pevent->description, pevent->percent);
     break;
   }
   }
@@ -579,7 +579,7 @@ xine_player_init (player_t *player)
 
   default:
     pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "Unsupported video output type");
+            MODULE_NAME, "Unsupported video output type");
     break;
   }
 
@@ -590,7 +590,7 @@ xine_player_init (player_t *player)
     if (!ret && player->vo != PLAYER_VO_AUTO)
     {
       pl_log (player, PLAYER_MSG_ERROR,
-            MODULE_NAME, "initialization for X has failed");
+              MODULE_NAME, "initialization for X has failed");
       return PLAYER_INIT_ERROR;
     }
     else if (!ret)
@@ -605,7 +605,7 @@ xine_player_init (player_t *player)
     }
 #else
     pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
-          "auto-detection for videoout is not enabled without X11 support");
+            "auto-detection for videoout is not enabled without X11 support");
     return PLAYER_INIT_ERROR;
 #endif /* USE_X11 */
   }
@@ -614,8 +614,8 @@ xine_player_init (player_t *player)
   if (!(x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data)))
   {
     pl_log (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "xine can't init '%s' video driver",
-          id_vo ? id_vo : "null");
+            MODULE_NAME, "xine can't init '%s' video driver",
+            id_vo ? id_vo : "null");
 
     return PLAYER_INIT_ERROR;
   }
@@ -639,7 +639,7 @@ xine_player_init (player_t *player)
 
   default:
     pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "Unsupported audio output type");
+            MODULE_NAME, "Unsupported audio output type");
     break;
   }
 
@@ -647,8 +647,8 @@ xine_player_init (player_t *player)
   if (!(x->ao_port = xine_open_audio_driver (x->xine, id_ao, NULL)))
   {
     pl_log (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "xine can't init '%s' audio driver",
-          id_ao ? id_ao : "null");
+            MODULE_NAME, "xine can't init '%s' audio driver",
+            id_ao ? id_ao : "null");
 
     return PLAYER_INIT_ERROR;
   }
@@ -989,7 +989,7 @@ xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   int pos_time = 0, pos_percent = 0, length = 0;
 
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "playback_seek: %d %d", value, seek);
+          MODULE_NAME, "playback_seek: %d %d", value, seek);
 
   if (!player)
     return;
@@ -1094,7 +1094,7 @@ xine_player_audio_set_mute (player_t *player, player_mute_t value)
     mute = 1;
 
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
+          MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
 
   if (!player)
     return;

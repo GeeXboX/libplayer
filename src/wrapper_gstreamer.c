@@ -63,7 +63,7 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
   case GST_MESSAGE_EOS:
   {
     pl_log (player, PLAYER_MSG_INFO,
-          MODULE_NAME, "Playback of stream has ended"); 
+            MODULE_NAME, "Playback of stream has ended");
 
     /* properly shutdown playback engine */
     g_main_loop_quit (loop);
@@ -83,12 +83,12 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
     g_free (debug);
 
     pl_log (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "Error: %s", err->message);
+            MODULE_NAME, "Error: %s", err->message);
     g_error_free (err);
 
     /* properly shutdown playback engine */
     g_main_loop_quit (loop);
-    gst_element_set_state (g->bin, GST_STATE_NULL); 
+    gst_element_set_state (g->bin, GST_STATE_NULL);
     break;
   }
   default:

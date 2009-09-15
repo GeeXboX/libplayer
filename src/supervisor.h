@@ -220,13 +220,13 @@ typedef struct supervisor_data_osd_s {
 
 supervisor_t *pl_supervisor_new (void);
 supervisor_status_t pl_supervisor_init (player_t *player, int **run,
-                                     pthread_t **job,
-                                     pthread_cond_t **cond,
-                                     pthread_mutex_t **mutex);
+                                        pthread_t **job,
+                                        pthread_cond_t **cond,
+                                        pthread_mutex_t **mutex);
 void pl_supervisor_uninit (player_t *player);
 
 void pl_supervisor_send (player_t *player, supervisor_mode_t mode,
-                      supervisor_ctl_t ctl, void *in, void *out);
+                         supervisor_ctl_t ctl, void *in, void *out);
 void pl_supervisor_sync_recatch (player_t *player, pthread_t which);
 void pl_supervisor_callback_in (player_t *player, pthread_t which);
 void pl_supervisor_callback_out (player_t *player);

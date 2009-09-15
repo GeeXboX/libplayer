@@ -476,12 +476,13 @@ check_range (player_t *player,
     if (update)
     {
       pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
-            "fix value for property '%s', %i -> %i", p ? p : "?", *value, new);
+              "fix value for property '%s', %i -> %i",
+              p ? p : "?", *value, new);
       *value = new;
     }
     else
       pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
-            "bad value (%i) for property '%s'", *value, p ? p : "?");
+              "bad value (%i) for property '%s'", *value, p ? p : "?");
 
     return 0;
   }
@@ -599,7 +600,7 @@ thread_fifo (void *arg)
       if (skip_msg)
       {
         pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME,
-              "libplayer has ignored %u msg from MPlayer", skip_msg);
+                "libplayer has ignored %u msg from MPlayer", skip_msg);
         skip_msg = 0;
       }
 
@@ -607,7 +608,7 @@ thread_fifo (void *arg)
 
       if (strstr (buffer, "No stream found to handle url") == buffer)
         pl_log (player, PLAYER_MSG_WARNING,
-              MODULE_NAME, "%s with this version of MPlayer", buffer);
+                MODULE_NAME, "%s with this version of MPlayer", buffer);
     }
 
     /*
@@ -681,7 +682,7 @@ thread_fifo (void *arg)
         pthread_mutex_unlock (&mplayer->mutex_status);
 
         pl_log (player, PLAYER_MSG_INFO,
-              MODULE_NAME, "Playback of stream has ended");
+                MODULE_NAME, "Playback of stream has ended");
 
         player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
@@ -704,7 +705,7 @@ thread_fifo (void *arg)
         if (state == ITEM_ON)
         {
           pl_log (player, PLAYER_MSG_WARNING,
-                MODULE_NAME, "'stop' unexpected detected");
+                  MODULE_NAME, "'stop' unexpected detected");
           wait_uninit = MPLAYER_EOF_STOP;
         }
       }
@@ -752,8 +753,8 @@ thread_fifo (void *arg)
                      "Command buffer of file descriptor 0 is full") == buffer)
     {
       pl_log (player, PLAYER_MSG_ERROR,
-            MODULE_NAME, "MPlayer slave buffer is full. "
-                         "It happens when a slave command is too large.");
+              MODULE_NAME, "MPlayer slave buffer is full. "
+                           "It happens when a slave command is too large.");
 
       pthread_mutex_lock (&mplayer->mutex_status);
       if (mplayer->status == MPLAYER_IS_LOADING)
@@ -812,7 +813,7 @@ thread_fifo (void *arg)
         {
           start_ok = 0;
           pl_log (player, PLAYER_MSG_ERROR,
-                MODULE_NAME, "only english version of MPlayer is supported");
+                  MODULE_NAME, "only english version of MPlayer is supported");
         }
       }
       else if (strstr (buffer, "-slave") && strstr (buffer, "-idle"))
@@ -863,7 +864,7 @@ send_to_slave (player_t *player, const char *format, ...)
   if (!mplayer->fifo_in)
   {
     pl_log (player, PLAYER_MSG_CRITICAL, MODULE_NAME,
-          "the command can not be sent to slave, stdin unavailable");
+            "the command can not be sent to slave, stdin unavailable");
     return;
   }
 
@@ -888,8 +889,8 @@ slave_get_property (player_t *player, slave_property_t property)
   if (!prop || state != ITEM_ON)
   {
     pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "property (%i) unsupported by this version of MPlayer. "
-                       "Please upgrade to a newest build", property);
+            MODULE_NAME, "property (%i) unsupported by this version of MPlayer."
+                         " Please upgrade to a newest build", property);
     return;
   }
 
@@ -1020,8 +1021,8 @@ slave_set_property (player_t *player, slave_property_t property,
   if (!prop || state != ITEM_ON)
   {
     pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "property (%i) unsupported by this version of MPlayer. "
-                       "Please upgrade to a newest build", property);
+            MODULE_NAME, "property (%i) unsupported by this version of MPlayer."
+                         " Please upgrade to a newest build", property);
     return;
   }
 
@@ -1054,7 +1055,7 @@ slave_set_property (player_t *player, slave_property_t property,
 
   default:
     pl_log (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "the property %i can not be set", property);
+            MODULE_NAME, "the property %i can not be set", property);
     break;
   }
 }
@@ -1107,14 +1108,14 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   if (!command || state_cmd == ITEM_OFF)
   {
     pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "command (%i) unsupported by this version of MPlayer. "
-                       "Please upgrade to a newest build", cmd);
+            MODULE_NAME, "command (%i) unsupported by this version of MPlayer. "
+                         "Please upgrade to a newest build", cmd);
     return;
   }
 
   if (state_cmd == ITEM_HACK)
     pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "[hack] slave command '%s'", command);
+            MODULE_NAME, "[hack] slave command '%s'", command);
 
   switch (cmd)
   {
@@ -1188,7 +1189,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   default:
     pl_log (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "what to do with the slave command '%s'?", command);
+            MODULE_NAME, "what to do with the slave command '%s'?", command);
     break;
   }
 }
@@ -2458,40 +2459,41 @@ mp_check_list (player_t *player, checklist_t check)
     if (state_libplayer == ITEM_ON && *state_mp == ITEM_OFF)
     {
       pl_log (player, PLAYER_MSG_WARNING,
-            MODULE_NAME, "slave %s '%s' is needed and not supported by your "
-                         "version of MPlayer, all actions with this item will "
-                         "be ignored", what, str);
+              MODULE_NAME, "slave %s '%s' is needed and not supported by your "
+                           "version of MPlayer, all actions with this item "
+                           "will be ignored", what, str);
     }
     else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_OFF)
     {
       pl_log (player, PLAYER_MSG_WARNING,
-            MODULE_NAME, "slave %s '%s' is needed and not supported by your "
-                         "version of MPlayer and libplayer, then a hack is "
-                         "used", what, str);
+              MODULE_NAME, "slave %s '%s' is needed and not supported by your "
+                           "version of MPlayer and libplayer, then a hack is "
+                           "used", what, str);
     }
     else if (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_OFF)
     {
       pl_log (player, PLAYER_MSG_WARNING,
-            MODULE_NAME, "slave %s '%s' is needed and not supported by your "
-                         "version of MPlayer, then a hack is used", what, str);
+              MODULE_NAME, "slave %s '%s' is needed and not supported by your "
+                           "version of MPlayer, then a hack is used",
+                           what, str);
     }
     else if (state_libplayer == ITEM_HACK && *state_mp == ITEM_ON)
     {
       pl_log (player, PLAYER_MSG_WARNING,
-            MODULE_NAME, "slave %s '%s' is supported by your version of "
-                         "MPlayer but not by libplayer, then a hack is "
-                         "used", what, str);
+              MODULE_NAME, "slave %s '%s' is supported by your version of "
+                           "MPlayer but not by libplayer, then a hack is "
+                           "used", what, str);
     }
     else if ((state_libplayer == ITEM_ON && *state_mp == ITEM_ON) ||
              (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_ON))
     {
       pl_log (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "slave %s '%s' is supported by your version of "
-                         "MPlayer", what, str);
+              MODULE_NAME, "slave %s '%s' is supported by your version of "
+                           "MPlayer", what, str);
 
       if (opt)
         pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME,
-              " *** conf:%i min:%i max:%i", opt->conf, opt->min, opt->max);
+                " *** conf:%i min:%i max:%i", opt->conf, opt->min, opt->max);
     }
   }
 }
@@ -2649,7 +2651,7 @@ executable_is_available (player_t *player, const char *bin)
   }
 
   pl_log (player, PLAYER_MSG_ERROR,
-        MODULE_NAME, "%s executable not found in the PATH", bin);
+          MODULE_NAME, "%s executable not found in the PATH", bin);
 
   free (fp);
   return 0;
@@ -2673,7 +2675,7 @@ mp_preinit_vo (player_t *player, unsigned long *winid)
   case PLAYER_VO_VDPAU:
 #ifndef USE_X11
     pl_log (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "libplayer is not compiled with X11 support");
+            MODULE_NAME, "libplayer is not compiled with X11 support");
     return -1;
 #endif /* USE_X11 */
 
@@ -2683,20 +2685,20 @@ mp_preinit_vo (player_t *player, unsigned long *winid)
     if (player->vo != PLAYER_VO_AUTO && !ret)
     {
       pl_log (player, PLAYER_MSG_ERROR,
-            MODULE_NAME, "initialization for X has failed");
+              MODULE_NAME, "initialization for X has failed");
       return -1;
     }
     *winid = pl_x11_get_window (player->x11);
     break;
 #else
     pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
-          "auto-detection for videoout is not enabled without X11 support");
+            "auto-detection for videoout is not enabled without X11 support");
     return -1;
 #endif /* USE_X11 */
 
   default:
     pl_log (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "unsupported video out (%i)", player->vo);
+            MODULE_NAME, "unsupported video out (%i)", player->vo);
     return -1;
   }
 
@@ -2945,7 +2947,7 @@ mplayer_init (player_t *player)
       if (!start_ok)
       {
         pl_log (player, PLAYER_MSG_ERROR,
-              MODULE_NAME, "error during MPlayer initialization");
+                MODULE_NAME, "error during MPlayer initialization");
         return PLAYER_INIT_ERROR;
       }
 
@@ -3134,7 +3136,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
 
   default:
     pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "unsupported snapshot type (%i)", t);
+            MODULE_NAME, "unsupported snapshot type (%i)", t);
     free (uri);
     return;
   }
@@ -3142,7 +3144,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
   if (!mkdtemp (tmp))
   {
     pl_log (player, PLAYER_MSG_ERROR,
-          MODULE_NAME, "unable to create temporary directory (%s)", tmp);
+            MODULE_NAME, "unable to create temporary directory (%s)", tmp);
     free (uri);
     return;
   }
@@ -3151,7 +3153,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
   snprintf (file, sizeof (file), "%s/%s", tmp, name);
 
   pl_log (player, PLAYER_MSG_VERBOSE,
-        MODULE_NAME, "temporary directory for snapshot: %s", tmp);
+          MODULE_NAME, "temporary directory for snapshot: %s", tmp);
 
   pid = fork ();
 
@@ -3225,18 +3227,18 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
         int res = pl_copy_file (file, dst);
         if (!res)
           pl_log (player, PLAYER_MSG_INFO,
-                MODULE_NAME, "move %s to %s", file, dst);
+                  MODULE_NAME, "move %s to %s", file, dst);
         else
           pl_log (player, PLAYER_MSG_ERROR,
-                MODULE_NAME, "unable to move %s to %s", file, dst);
+                  MODULE_NAME, "unable to move %s to %s", file, dst);
       }
 
       unlink (file);
     }
     else
       pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
-            "image file (%s) is unavailable, maybe MPlayer can't seek in "
-            "this video", file);
+              "image file (%s) is unavailable, maybe MPlayer can't seek in "
+              "this video", file);
 
     rmdir (tmp);
   }
@@ -3391,7 +3393,7 @@ static void
 mplayer_playback_seek_chapter (player_t *player, int value, int absolute)
 {
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "playback_seek_chapter: %i %i", value, absolute);
+          MODULE_NAME, "playback_seek_chapter: %i %i", value, absolute);
 
   if (!player)
     return;
@@ -3408,7 +3410,8 @@ mplayer_playback_set_speed (player_t *player, float value)
 {
   int speed;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_set_speed %.2f", value);
+  pl_log (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "playback_set_speed %.2f", value);
 
   if (!player)
     return;
@@ -3566,7 +3569,7 @@ mplayer_osd_show_text (player_t *player,
                        const char *text, int x, int y, int duration)
 {
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "osd_show_text: %s %i %i %i", text, x, y, duration);
+          MODULE_NAME, "osd_show_text: %s %i %i %i", text, x, y, duration);
 
   if (!player || !text)
     return;
@@ -3575,7 +3578,7 @@ mplayer_osd_show_text (player_t *player,
   if (strchr (text, '"') || strchr (text, '\n') || strchr (text, '\r'))
   {
     pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "'\"' '\\r' and '\\n' are prohibited in the string");
+            MODULE_NAME, "'\"' '\\r' and '\\n' are prohibited in the string");
     return;
   }
 
@@ -3608,7 +3611,7 @@ mplayer_audio_set_mute (player_t *player, player_mute_t value)
     mute = 1;
 
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
+          MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
 
   if (!player)
     return;
@@ -3623,7 +3626,7 @@ mplayer_audio_set_delay (player_t *player, int value, int absolute)
   int val;
 
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "audio_set_delay: %i %i", value, absolute);
+          MODULE_NAME, "audio_set_delay: %i %i", value, absolute);
 
   if (!player)
     return;
@@ -3698,7 +3701,7 @@ static void
 mplayer_video_set_fullscreen (player_t *player, int value)
 {
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "video_set_fullscreen: %s", value ? "on" : "off");
+          MODULE_NAME, "video_set_fullscreen: %s", value ? "on" : "off");
 
   if (!player)
     return;
@@ -3812,7 +3815,7 @@ static void
 mplayer_sub_scale (player_t *player, int value, int absolute)
 {
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
-        "sub_scale: %i [%d]", value, absolute);
+          "sub_scale: %i [%d]", value, absolute);
 
   if (!player)
     return;
@@ -4001,7 +4004,7 @@ mplayer_tv_channel_set (player_t *player, const char *channel)
   mrl_resource_t res;
 
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "tv_channel_set: %s", channel ? channel : "?");
+          MODULE_NAME, "tv_channel_set: %s", channel ? channel : "?");
 
   if (!player || !channel)
     return;
@@ -4051,7 +4054,7 @@ static void
 mplayer_radio_channel_set (player_t *player, const char *channel)
 {
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "radio_channel_set: %s", channel ? channel : "?");
+          MODULE_NAME, "radio_channel_set: %s", channel ? channel : "?");
 
   if (!player || !channel)
     return;

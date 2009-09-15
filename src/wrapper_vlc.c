@@ -125,7 +125,7 @@ vlc_init (player_t *player)
   if (libvlc_exception_raised (&vlc->ex))
   {
     pl_log (player, PLAYER_MSG_INFO,
-          MODULE_NAME, libvlc_exception_get_message (&vlc->ex));
+            MODULE_NAME, libvlc_exception_get_message (&vlc->ex));
     libvlc_exception_clear (&vlc->ex);
   }
 
@@ -525,7 +525,7 @@ vlc_audio_set_mute (player_t *player, player_mute_t value)
     mute = 1;
 
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
+          MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
 
   if (!player)
     return;

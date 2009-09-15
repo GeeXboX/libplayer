@@ -266,7 +266,7 @@ player_sv_set_loop (player_t *player, player_loop_t loop, int value)
 
   if (player->pb_mode != PLAYER_PB_AUTO && loop != PLAYER_LOOP_DISABLE)
     pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "loop is only activated with PLAYBACK_AUTO mode");
+            MODULE_NAME, "loop is only activated with PLAYBACK_AUTO mode");
 
   pl_playlist_set_loop (player->playlist, value, loop);
 }
@@ -281,7 +281,7 @@ player_sv_set_shuffle (player_t *player, int value)
 
   if (player->pb_mode != PLAYER_PB_AUTO && value)
     pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, "shuffle is only activated with PLAYBACK_AUTO mode");
+            MODULE_NAME, "shuffle is only activated with PLAYBACK_AUTO mode");
 
   pl_playlist_set_shuffle (player->playlist, value);
 }

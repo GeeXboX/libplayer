@@ -43,7 +43,8 @@ mrl_free (player_t *player, mrl_t *mrl)
   if (!player || !mrl)
     return;
 
-  pl_supervisor_send (player, SV_MODE_WAIT_FOR_END, SV_FUNC_MRL_FREE, mrl, NULL);
+  pl_supervisor_send (player,
+                      SV_MODE_WAIT_FOR_END, SV_FUNC_MRL_FREE, mrl, NULL);
 }
 
 uint32_t
@@ -61,7 +62,7 @@ mrl_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
   in.value = p;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_PROPERTY, &in, &out);
+                      SV_FUNC_MRL_GET_PROPERTY, &in, &out);
 
   return out;
 }
@@ -77,7 +78,7 @@ mrl_get_audio_codec (player_t *player, mrl_t *mrl)
     return NULL;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_AO_CODEC, mrl, &out);
+                      SV_FUNC_MRL_GET_AO_CODEC, mrl, &out);
 
   return out;
 }
@@ -93,7 +94,7 @@ mrl_get_video_codec (player_t *player, mrl_t *mrl)
     return NULL;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_VO_CODEC, mrl, &out);
+                      SV_FUNC_MRL_GET_VO_CODEC, mrl, &out);
 
   return out;
 }
@@ -109,7 +110,7 @@ mrl_get_size (player_t *player, mrl_t *mrl)
     return 0;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_SIZE, mrl, &out);
+                      SV_FUNC_MRL_GET_SIZE, mrl, &out);
 
   return out;
 }
@@ -129,7 +130,7 @@ mrl_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m)
   in.value = m;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_METADATA, &in, &out);
+                      SV_FUNC_MRL_GET_METADATA, &in, &out);
 
   return out;
 }
@@ -151,7 +152,7 @@ mrl_get_metadata_cd_track (player_t *player,
 
   memset (&out, 0, sizeof (supervisor_data_out_metadata_cd_t));
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_METADATA_CD_TRACK, &in, &out);
+                      SV_FUNC_MRL_GET_METADATA_CD_TRACK, &in, &out);
 
   if (length)
     *length = out.length;
@@ -174,7 +175,7 @@ mrl_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
   in.value = m;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_METADATA_CD, &in, &out);
+                      SV_FUNC_MRL_GET_METADATA_CD, &in, &out);
 
   return out;
 }
@@ -196,7 +197,7 @@ mrl_get_metadata_dvd_title (player_t *player,
   in.type = m;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_METADATA_DVD_TITLE, &in, &out);
+                      SV_FUNC_MRL_GET_METADATA_DVD_TITLE, &in, &out);
 
   return out;
 }
@@ -213,7 +214,7 @@ mrl_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles)
 
   memset (&out, 0, sizeof (supervisor_data_out_metadata_dvd_t));
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_METADATA_DVD, mrl, &out);
+                      SV_FUNC_MRL_GET_METADATA_DVD, mrl, &out);
 
   if (titles)
     *titles = out.titles;
@@ -236,7 +237,7 @@ mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
 
   memset (&out, 0, sizeof (supervisor_data_out_metadata_t));
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_METADATA_SUBTITLE, &in, &out);
+                      SV_FUNC_MRL_GET_METADATA_SUBTITLE, &in, &out);
 
   if (id)
     *id = out.id;
@@ -265,7 +266,7 @@ mrl_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl)
     return 0;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_METADATA_SUBTITLE_NB, mrl, &out);
+                      SV_FUNC_MRL_GET_METADATA_SUBTITLE_NB, mrl, &out);
 
   return out;
 }
@@ -285,7 +286,7 @@ mrl_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
 
   memset (&out, 0, sizeof (supervisor_data_out_metadata_t));
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_METADATA_AUDIO, &in, &out);
+                      SV_FUNC_MRL_GET_METADATA_AUDIO, &in, &out);
 
   if (id)
     *id = out.id;
@@ -314,7 +315,7 @@ mrl_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
     return 0;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_METADATA_AUDIO_NB, mrl, &out);
+                      SV_FUNC_MRL_GET_METADATA_AUDIO_NB, mrl, &out);
 
   return out;
 }
@@ -330,7 +331,7 @@ mrl_get_type (player_t *player, mrl_t *mrl)
     return MRL_TYPE_UNKNOWN;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_TYPE, mrl, &out);
+                      SV_FUNC_MRL_GET_TYPE, mrl, &out);
 
   return out;
 }
@@ -346,7 +347,7 @@ mrl_get_resource (player_t *player, mrl_t *mrl)
     return MRL_RESOURCE_UNKNOWN;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_GET_RESOURCE, mrl, &out);
+                      SV_FUNC_MRL_GET_RESOURCE, mrl, &out);
 
   return out;
 }
@@ -362,7 +363,7 @@ mrl_add_subtitle (player_t *player, mrl_t *mrl, char *subtitle)
   in.sub = subtitle;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_ADD_SUBTITLE, &in, NULL);
+                      SV_FUNC_MRL_ADD_SUBTITLE, &in, NULL);
 }
 
 mrl_t *
@@ -380,7 +381,7 @@ mrl_new (player_t *player, mrl_resource_t res, void *args)
   in.args = args;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_NEW, &in, &out);
+                      SV_FUNC_MRL_NEW, &in, &out);
 
   return out;
 }
@@ -402,5 +403,5 @@ mrl_video_snapshot (player_t *player, mrl_t *mrl,
   in.dst  = dst;
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                   SV_FUNC_MRL_VIDEO_SNAPSHOT, &in, NULL);
+                      SV_FUNC_MRL_VIDEO_SNAPSHOT, &in, NULL);
 }

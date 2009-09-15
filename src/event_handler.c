@@ -119,7 +119,7 @@ thread_handler (void *arg)
 
 event_handler_t *
 pl_event_handler_register (void *data,
-                        int (*event_cb) (void *data, int e, void *data_cb))
+                           int (*event_cb) (void *data, int e, void *data_cb))
 {
   event_handler_t *handler;
 
@@ -147,7 +147,7 @@ pl_event_handler_register (void *data,
 
 int
 pl_event_handler_init (event_handler_t *handler, int *run, pthread_t *job,
-                    pthread_cond_t *cond, pthread_mutex_t *mutex)
+                       pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
   int res;
   pthread_attr_t attr;

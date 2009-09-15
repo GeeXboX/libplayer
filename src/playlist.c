@@ -75,8 +75,8 @@ pl_playlist_set_loop (playlist_t *playlist, int loop, player_loop_t mode)
   if (!playlist)
     return;
 
-  playlist->loop = loop > 0 ? --loop : loop;
-  playlist->loop_cnt = loop;
+  playlist->loop      = loop > 0 ? --loop : loop;
+  playlist->loop_cnt  = loop;
   playlist->loop_mode = mode;
 }
 

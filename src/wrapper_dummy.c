@@ -106,7 +106,7 @@ static void
 dummy_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
   pl_log (player, PLAYER_MSG_INFO,
-        MODULE_NAME, "playback_seek: %d %d", value, seek);
+          MODULE_NAME, "playback_seek: %d %d", value, seek);
 }
 
 static void
@@ -179,7 +179,7 @@ dummy_audio_set_mute (player_t *player, player_mute_t value)
     return;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
-        "audio_set_mute: %s", value == PLAYER_MUTE_ON ? "on" : "off");
+          "audio_set_mute: %s", value == PLAYER_MUTE_ON ? "on" : "off");
 }
 
 static void

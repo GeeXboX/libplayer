@@ -1161,7 +1161,7 @@ thread_supervisor (void *arg)
     if (res)
     {
       pl_log (player, PLAYER_MSG_ERROR,
-            MODULE_NAME, "error on queue? no sense :(");
+              MODULE_NAME, "error on queue? no sense :(");
       continue; /* retry */
     }
 
@@ -1173,7 +1173,7 @@ thread_supervisor (void *arg)
     supervisor_sync_catch (supervisor);
 
     pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "run job: %i (%s)",
-          ctl, mode == SV_MODE_WAIT_FOR_END ? "wait for end" : "no wait");
+            ctl, mode == SV_MODE_WAIT_FOR_END ? "wait for end" : "no wait");
 
     switch (ctl)
     {
@@ -1189,7 +1189,7 @@ thread_supervisor (void *arg)
       {
         g_supervisor_funcs[ctl] (player, in, out);
         pl_log (player, PLAYER_MSG_VERBOSE,
-              MODULE_NAME, "job: %i (completed)", ctl);
+                MODULE_NAME, "job: %i (completed)", ctl);
       }
       break;
     }
@@ -1272,16 +1272,16 @@ pl_supervisor_send (player_t *player, supervisor_mode_t mode,
       && supervisor->use_sync && mode == SV_MODE_WAIT_FOR_END)
   {
     pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
-          "change mode to (no wait) because this control (%i) comes "
-          "from the public callback", ctl);
+            "change mode to (no wait) because this control (%i) comes "
+            "from the public callback", ctl);
     mode = SV_MODE_NO_WAIT;
   }
 
   if (mode == SV_MODE_NO_WAIT && (in || out))
   {
     pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
-          "never use no_wait when the function (%i) needs input "
-          "and (or) output values", ctl);
+            "never use no_wait when the function (%i) needs input "
+            "and (or) output values", ctl);
     return;
   }
 
@@ -1343,7 +1343,7 @@ pl_supervisor_new (void)
 
 supervisor_status_t
 pl_supervisor_init (player_t *player, int **run, pthread_t **job,
-                 pthread_cond_t **cond, pthread_mutex_t **mutex)
+                    pthread_cond_t **cond, pthread_mutex_t **mutex)
 {
   supervisor_t *supervisor;
   pthread_attr_t attr;
@@ -1399,7 +1399,7 @@ pl_supervisor_uninit (player_t *player)
     return;
 
   pl_supervisor_send (player, SV_MODE_NO_WAIT,
-                   SV_FUNC_KILL, NULL, NULL);
+                      SV_FUNC_KILL, NULL, NULL);
   pthread_join (supervisor->th_supervisor, &ret);
 
   pl_fifo_queue_free (supervisor->queue);
