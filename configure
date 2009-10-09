@@ -488,9 +488,15 @@ for opt do
   ;;
   --disable-shared) shared="no"
   ;;
+  --enable-debug) debug="yes"
+  ;;
   --disable-debug) debug="no"
   ;;
+  --enable-strip) dostrip="yes"
+  ;;
   --disable-strip) dostrip="no"
+  ;;
+  --enable-optimize) optimize="yes"
   ;;
   --disable-optimize) optimize="no"
   ;;
