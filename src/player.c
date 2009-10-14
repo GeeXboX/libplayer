@@ -192,7 +192,8 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   }
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "pl_event_handler_init");
-  ret = pl_event_handler_init (player->event, sv_run, sv_job, sv_cond, sv_mutex);
+  ret = pl_event_handler_init (player->event,
+                               sv_run, sv_job, sv_cond, sv_mutex);
   if (ret)
   {
     pl_log (player, PLAYER_MSG_ERROR,

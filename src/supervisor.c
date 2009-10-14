@@ -1248,7 +1248,7 @@ pl_supervisor_callback_out (player_t *player)
 
 void
 pl_supervisor_send (player_t *player, supervisor_mode_t mode,
-                 supervisor_ctl_t ctl, void *in, void *out)
+                    supervisor_ctl_t ctl, void *in, void *out)
 {
   supervisor_send_t *data;
   int res;
@@ -1307,7 +1307,8 @@ pl_supervisor_send (player_t *player, supervisor_mode_t mode,
   else if (res)
   {
     free (data);
-    pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME, "error on queue? no sense :(");
+    pl_log (player, PLAYER_MSG_ERROR,
+            MODULE_NAME, "error on queue? no sense :(");
   }
 
   if (mode == SV_MODE_WAIT_FOR_END)
