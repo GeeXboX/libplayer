@@ -115,7 +115,7 @@ send_event (player_t *player, int event, void *data, int data_size)
 static char *
 xine_resource_get_uri (mrl_t *mrl)
 {
-  static const char const *protocols[] = {
+  static const char *const protocols[] = {
     /* Local Streams */
     [MRL_RESOURCE_FILE]     = "file:",
 

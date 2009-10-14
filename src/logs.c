@@ -66,7 +66,7 @@ pl_log (player_t *player, player_verbosity_level_t level,
         const char *module, const char *format, ...)
 {
 #ifdef USE_LOGCOLOR
-  static const char const *c[] = {
+  static const char *const c[] = {
     [PLAYER_MSG_VERBOSE]  = F_BLUE,
     [PLAYER_MSG_INFO]     = F_GREEN,
     [PLAYER_MSG_WARNING]  = F_YELLOW,
@@ -74,7 +74,7 @@ pl_log (player_t *player, player_verbosity_level_t level,
     [PLAYER_MSG_CRITICAL] = B_RED,
   };
 #endif /* USE_LOGCOLOR */
-  static const char const *l[] = {
+  static const char *const l[] = {
     [PLAYER_MSG_VERBOSE]  = "Verb",
     [PLAYER_MSG_INFO]     = "Info",
     [PLAYER_MSG_WARNING]  = "Warn",

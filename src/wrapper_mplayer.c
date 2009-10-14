@@ -1496,7 +1496,7 @@ mp_resource_get_uri_network (const char *protocol,
 static char *
 mp_resource_get_uri (mrl_t *mrl)
 {
-  static const char const *protocols[] = {
+  static const char *const protocols[] = {
     /* Local Streams */
     [MRL_RESOURCE_FILE]     = "file://",
 
