@@ -106,6 +106,7 @@ vlc_init (player_t *player)
     vlc_argv[vlc_argc++] = "dummy";
     break;
 
+#ifdef USE_X11
   case PLAYER_VO_X11:
     vlc_argv[vlc_argc++] = "--vout";
     vlc_argv[vlc_argc++] = "x11,dummy";
@@ -120,6 +121,7 @@ vlc_init (player_t *player)
     vlc_argv[vlc_argc++] = "--vout";
     vlc_argv[vlc_argc++] = "glx,dummy";
     break;
+#endif
 
   default:
     break;
