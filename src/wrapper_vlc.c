@@ -43,6 +43,26 @@ typedef struct vlc_s {
   libvlc_exception_t ex;
 } vlc_t;
 
+static void
+vlc_check_exception (player_t *player)
+{
+  vlc_t *vlc;
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc)
+    return;
+
+  if (!libvlc_exception_raised (&vlc->ex))
+    return;
+
+  pl_log (player, PLAYER_MSG_WARNING,
+          MODULE_NAME, libvlc_exception_get_message (&vlc->ex));
+  libvlc_exception_clear (&vlc->ex);
+}
+
 /* private functions */
 static init_status_t
 vlc_init (player_t *player)
@@ -122,12 +142,7 @@ vlc_init (player_t *player)
   if (!vlc->core)
     return PLAYER_INIT_ERROR;
 
-  if (libvlc_exception_raised (&vlc->ex))
-  {
-    pl_log (player, PLAYER_MSG_INFO,
-            MODULE_NAME, libvlc_exception_get_message (&vlc->ex));
-    libvlc_exception_clear (&vlc->ex);
-  }
+  vlc_check_exception (player);
 
   return PLAYER_INIT_OK;
 }
