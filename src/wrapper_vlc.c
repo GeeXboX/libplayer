@@ -287,6 +287,7 @@ vlc_identify_properties (libvlc_media_player_t *mp,
                          libvlc_exception_t *ex, mrl_t *mrl)
 {
   libvlc_media_t *media;
+  libvlc_time_t t;
 
   if (!mp || !ex || !mrl || !mrl->prop)
     return;
@@ -307,7 +308,8 @@ vlc_identify_properties (libvlc_media_player_t *mp,
 
   media = libvlc_media_player_get_media (mp, ex);
   mrl->prop->seekable = libvlc_media_player_is_seekable (mp, ex);
-  mrl->prop->length = libvlc_media_get_duration (media, ex);
+  t = libvlc_media_get_duration (media, ex);
+  mrl->prop->length = (uint32_t) (t / 1000);
 }
 
 static void
