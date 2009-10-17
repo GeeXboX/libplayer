@@ -241,16 +241,16 @@ typedef enum mrl_resource {
   MRL_RESOURCE_VDR,         /*  NO           NO           NO           YES  */
 
   /* Network Streams */
-  MRL_RESOURCE_FTP,         /*  NO           YES          NO           NO   */
-  MRL_RESOURCE_HTTP,        /*  NO           YES          NO           NO   */
-  MRL_RESOURCE_MMS,         /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_FTP,         /*  NO           YES          YES          NO   */
+  MRL_RESOURCE_HTTP,        /*  NO           YES          YES          NO   */
+  MRL_RESOURCE_MMS,         /*  NO           YES          YES          NO   */
   MRL_RESOURCE_NETVDR,      /*  NO           NO           NO           YES  */
-  MRL_RESOURCE_RTP,         /*  NO           YES          NO           NO   */
-  MRL_RESOURCE_RTSP,        /*  NO           YES          NO           NO   */
-  MRL_RESOURCE_SMB,         /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_RTP,         /*  NO           YES          YES          NO   */
+  MRL_RESOURCE_RTSP,        /*  NO           YES          YES          NO   */
+  MRL_RESOURCE_SMB,         /*  NO           YES          YES          NO   */
   MRL_RESOURCE_TCP,         /*  NO           NO           NO           NO   */
-  MRL_RESOURCE_UDP,         /*  NO           YES          NO           NO   */
-  MRL_RESOURCE_UNSV,        /*  NO           YES          NO           NO   */
+  MRL_RESOURCE_UDP,         /*  NO           YES          YES          NO   */
+  MRL_RESOURCE_UNSV,        /*  NO           YES          YES          NO   */
 } mrl_resource_t;
 
 /** \brief Arguments for local streams. */

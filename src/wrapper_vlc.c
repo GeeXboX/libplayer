@@ -224,8 +224,79 @@ vlc_set_verbosity (player_t *player, player_verbosity_level_t level)
 }
 
 static char *
+vlc_resource_get_uri_network (const char *protocol,
+                              mrl_resource_network_args_t *args)
+{
+  char *uri, *host_file;
+  char at[256] = "";
+  size_t size, offset;
+
+  if (!args || !args->url || !protocol)
+    return NULL;
+
+  size      = strlen (protocol);
+  offset    = (strstr (args->url, protocol) == args->url) ? size : 0;
+  host_file = strdup (args->url + offset);
+
+  if (!host_file)
+    return NULL;
+
+  if (args->username)
+  {
+    size += 1 + strlen (args->username);
+    if (args->password)
+    {
+      size += 1 + strlen (args->password);
+      snprintf (at, sizeof (at), "%s:%s@", args->username, args->password);
+    }
+    else
+      snprintf (at, sizeof (at), "%s@", args->username);
+  }
+  size += strlen (host_file);
+
+  size++;
+  uri = malloc (size);
+  if (uri)
+    snprintf (uri, size, "%s%s%s", protocol, at, host_file);
+
+  free (host_file);
+
+  return uri;
+}
+
+static char *
 vlc_resource_get_uri (mrl_t *mrl)
 {
+  static const char *const protocols[] = {
+    /* Local Streams */
+    [MRL_RESOURCE_FILE]     = "file://",
+
+    /* Audio CD */
+    [MRL_RESOURCE_CDDA]     = "cdda://",
+    [MRL_RESOURCE_CDDB]     = "cddb://",
+
+    /* Video discs */
+    [MRL_RESOURCE_DVD]      = "dvd://",
+    [MRL_RESOURCE_DVDNAV]   = "dvdnav://",
+    [MRL_RESOURCE_VCD]      = "vcd://",
+
+    /* Radio/Television */
+    [MRL_RESOURCE_RADIO]    = "radio://",
+    [MRL_RESOURCE_TV]       = "tv://",
+
+    /* Network Streams */
+    [MRL_RESOURCE_FTP]      = "ftp://",
+    [MRL_RESOURCE_HTTP]     = "http://",
+    [MRL_RESOURCE_MMS]      = "mms://",
+    [MRL_RESOURCE_RTP]      = "rtp://",
+    [MRL_RESOURCE_RTSP]     = "rtsp://",
+    [MRL_RESOURCE_SMB]      = "smb://",
+    [MRL_RESOURCE_UDP]      = "udp://",
+    [MRL_RESOURCE_UNSV]     = "unsv://",
+
+    [MRL_RESOURCE_UNKNOWN]  = NULL
+  };
+
   if (!mrl)
     return NULL;
 
@@ -240,6 +311,16 @@ vlc_resource_get_uri (mrl_t *mrl)
 
     return strdup (args->location);
   }
+
+  case MRL_RESOURCE_FTP:  /* ftp://username:password@url   */
+  case MRL_RESOURCE_HTTP: /* http://username:password@url  */
+  case MRL_RESOURCE_MMS:  /* mms://username:password@url   */
+  case MRL_RESOURCE_RTP:  /* rtp://username:password@url   */
+  case MRL_RESOURCE_RTSP: /* rtsp://username:password@url  */
+  case MRL_RESOURCE_SMB:  /* smb://username:password@url   */
+  case MRL_RESOURCE_UDP:  /* udp://username:password@url   */
+  case MRL_RESOURCE_UNSV: /* unsv://username:password@url  */
+    return vlc_resource_get_uri_network (protocols[mrl->resource], mrl->priv);
 
   default:
     break;
@@ -588,6 +669,14 @@ pl_supported_resources_vlc (mrl_resource_t res)
   switch (res)
   {
   case MRL_RESOURCE_FILE:
+  case MRL_RESOURCE_FTP:
+  case MRL_RESOURCE_HTTP:
+  case MRL_RESOURCE_MMS:
+  case MRL_RESOURCE_RTP:
+  case MRL_RESOURCE_RTSP:
+  case MRL_RESOURCE_SMB:
+  case MRL_RESOURCE_UDP:
+  case MRL_RESOURCE_UNSV:
     return 1;
 
   default:
