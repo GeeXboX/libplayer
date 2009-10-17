@@ -154,6 +154,10 @@ vlc_init (player_t *player)
   if (!vlc->core)
     return PLAYER_INIT_ERROR;
 
+  vlc->mp = libvlc_media_player_new (vlc->core, &vlc->ex);
+  if (!vlc->mp)
+    return PLAYER_INIT_ERROR;
+
   return PLAYER_INIT_OK;
 }
 
@@ -175,6 +179,9 @@ vlc_uninit (player_t *player)
   libvlc_exception_clear (&vlc->ex);
   if (vlc->core)
     libvlc_release (vlc->core);
+  if (vlc->mp)
+    libvlc_media_player_release (vlc->mp);
+
   free (vlc);
 }
 
@@ -455,8 +462,7 @@ vlc_playback_start (player_t *player)
   if (!media)
     return PLAYER_PB_ERROR;
 
-  vlc->mp = libvlc_media_player_new_from_media (media, &vlc->ex);
-  libvlc_media_release (media);
+  libvlc_media_player_set_media (vlc->mp, media, &vlc->ex);
   libvlc_media_player_play (vlc->mp, &vlc->ex);
 
   return PLAYER_PB_OK;
@@ -475,8 +481,6 @@ vlc_playback_stop (player_t *player)
   vlc = (vlc_t *) player->priv;
 
   libvlc_media_player_stop (vlc->mp, &vlc->ex);
-  libvlc_media_player_release (vlc->mp);
-  vlc->mp = NULL;
 }
 
 static playback_status_t
