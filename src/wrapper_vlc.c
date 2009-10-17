@@ -397,7 +397,7 @@ vlc_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
   if (!player || !mrl || !mrl->prop)
     return;
 
-  vlc_identify (mrl);
+  //vlc_identify (mrl);
 }
 
 static void
@@ -408,7 +408,7 @@ vlc_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   if (!player || !mrl || !mrl->meta)
     return;
 
-  vlc_identify (mrl);
+  //vlc_identify (mrl);
 }
 
 static int
