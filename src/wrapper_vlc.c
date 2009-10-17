@@ -217,7 +217,7 @@ vlc_set_verbosity (player_t *player, player_verbosity_level_t level)
     break;
   }
 
-  if (verbosity != -1)
+  if (vlc->core && verbosity != -1)
     libvlc_set_log_verbosity (vlc->core, verbosity, &vlc->ex);
 }
 
