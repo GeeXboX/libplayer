@@ -139,10 +139,10 @@ vlc_init (player_t *player)
   vlc = (vlc_t *) player->priv;
   libvlc_exception_init (&vlc->ex);
   vlc->core = libvlc_new (vlc_argc, vlc_argv, &vlc->ex);
+  vlc_check_exception (player);
+
   if (!vlc->core)
     return PLAYER_INIT_ERROR;
-
-  vlc_check_exception (player);
 
   return PLAYER_INIT_OK;
 }
