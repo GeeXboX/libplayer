@@ -87,6 +87,16 @@ vlc_init (player_t *player)
   vlc_argv[vlc_argc++] = "--no-stats";
   vlc_argv[vlc_argc++] = "--intf";
   vlc_argv[vlc_argc++] = "dummy";
+  vlc_argv[vlc_argc++] = "--verbose";
+  vlc_argv[vlc_argc++] = "0";
+  vlc_argv[vlc_argc++] = "--extraintf";
+  vlc_argv[vlc_argc++] = "logger";
+  vlc_argv[vlc_argc++] = "--ignore-config";
+  vlc_argv[vlc_argc++] = "--reset-plugins-cache";
+  vlc_argv[vlc_argc++] = "--no-media-library";
+  vlc_argv[vlc_argc++] = "--no-one-instance";
+  vlc_argv[vlc_argc++] = "--no-osd";
+  vlc_argv[vlc_argc++] = "--no-video-title-show" ;
 
   /* select the video output */
   switch (player->vo)
@@ -333,6 +343,17 @@ vlc_identify (mrl_t *mrl)
   if (!uri)
     return;
 
+  vlc_argv[vlc_argc++] = "--no-stats";
+  vlc_argv[vlc_argc++] = "--verbose";
+  vlc_argv[vlc_argc++] = "0";
+  vlc_argv[vlc_argc++] = "--extraintf";
+  vlc_argv[vlc_argc++] = "logger";
+  vlc_argv[vlc_argc++] = "--ignore-config";
+  vlc_argv[vlc_argc++] = "--reset-plugins-cache";
+  vlc_argv[vlc_argc++] = "--no-media-library";
+  vlc_argv[vlc_argc++] = "--no-one-instance";
+  vlc_argv[vlc_argc++] = "--no-osd";
+  vlc_argv[vlc_argc++] = "--no-video-title-show" ;
   vlc_argv[vlc_argc++] = "--intf";
   vlc_argv[vlc_argc++] = "dummy";
   vlc_argv[vlc_argc++] = "--vout";
