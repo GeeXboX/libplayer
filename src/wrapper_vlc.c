@@ -621,8 +621,11 @@ vlc_playback_pause (player_t *player)
 
   vlc = (vlc_t *) player->priv;
 
-  if (libvlc_media_player_can_pause (vlc->mp, &vlc->ex))
+  if (libvlc_media_player_is_playing (vlc->mp, &vlc->ex) &&
+      libvlc_media_player_can_pause (vlc->mp, &vlc->ex))
     libvlc_media_player_pause (vlc->mp, &vlc->ex);
+  else
+    libvlc_media_player_play (vlc->mp, &vlc->ex);
 
   return PLAYER_PB_OK;
 }
