@@ -884,6 +884,39 @@ vlc_video_set_fullscreen (player_t *player, int value)
 }
 
 static void
+vlc_video_set_ar (player_t *player, float value)
+{
+  vlc_t *vlc;
+  char *ar;
+
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "video_set_ar: %.2f", value);
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
+
+  if (value >= (221.0 / 100.0))
+    ar = "221:100";
+  else if (value >= (16.0 / 9.0))
+    ar = "16:9";
+  else if (value >= (16.0 / 10.0))
+    ar = "16:10";
+  else if (value >= (4.0 / 3.0))
+    ar = "4:3";
+  else if (value >= (5.0 / 4.0))
+    ar = "5:4";
+  else if (value >= 1.0)
+    ar = "1:1";
+  else
+    return;
+
+  libvlc_video_set_aspect_ratio (vlc->mp, ar, &vlc->ex);
+}
+
+static void
 vlc_dvd_title_set (player_t *player, int value)
 {
   vlc_t *vlc;
@@ -1011,7 +1044,7 @@ pl_register_functions_vlc (void)
   funcs->video_set_fs       = vlc_video_set_fullscreen;
   funcs->video_set_aspect   = NULL;
   funcs->video_set_panscan  = NULL;
-  funcs->video_set_ar       = NULL;
+  funcs->video_set_ar       = vlc_video_set_ar;
 
   funcs->sub_set_delay      = NULL;
   funcs->sub_set_alignment  = NULL;
