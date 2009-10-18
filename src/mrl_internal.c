@@ -140,7 +140,7 @@ mrl_metadata_cd_track_new (void)
 mrl_metadata_cd_track_t *
 mrl_metadata_cd_get_track (mrl_metadata_cd_t *cd, uint32_t id)
 {
-  int i;
+  unsigned int i;
   mrl_metadata_cd_track_t *track = NULL;
 
   if (!cd)
@@ -188,7 +188,7 @@ mrl_metadata_dvd_title_new (void)
 mrl_metadata_dvd_title_t *
 mrl_metadata_dvd_get_title (mrl_metadata_dvd_t *dvd, uint32_t id)
 {
-  int i;
+  unsigned int i;
   mrl_metadata_dvd_title_t *title = NULL;
 
   if (!dvd)
