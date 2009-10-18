@@ -847,6 +847,67 @@ vlc_audio_set_mute (player_t *player, player_mute_t value)
   libvlc_audio_set_mute (vlc->core, mute , &vlc->ex);
 }
 
+static void
+vlc_dvd_title_set (player_t *player, int value)
+{
+  vlc_t *vlc;
+
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_title_set: %i", value);
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
+
+  if (value < 1 || value > 99)
+    return;
+
+  if (value > libvlc_media_player_get_title_count (vlc->mp, &vlc->ex))
+    return;
+
+  libvlc_media_player_set_title (vlc->mp, value, &vlc->ex);
+}
+
+static void
+vlc_dvd_title_prev (player_t *player)
+{
+  vlc_t *vlc;
+  int value;
+
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_title_prev");
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
+
+  value = libvlc_media_player_get_title_count (vlc->mp, &vlc->ex) - 1;
+  vlc_dvd_title_set (player, value);
+}
+
+static void
+vlc_dvd_title_next (player_t *player)
+{
+  vlc_t *vlc;
+  int value;
+
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_title_next");
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
+
+  value = libvlc_media_player_get_title_count (vlc->mp, &vlc->ex) + 1;
+  vlc_dvd_title_set (player, value);
+}
+
 /*****************************************************************************/
 /*                            Public Wrapper API                             */
 /*****************************************************************************/
@@ -929,9 +990,9 @@ pl_register_functions_vlc (void)
   funcs->dvd_angle_set      = NULL;
   funcs->dvd_angle_prev     = NULL;
   funcs->dvd_angle_next     = NULL;
-  funcs->dvd_title_set      = NULL;
-  funcs->dvd_title_prev     = NULL;
-  funcs->dvd_title_next     = NULL;
+  funcs->dvd_title_set      = vlc_dvd_title_set;
+  funcs->dvd_title_prev     = vlc_dvd_title_prev;
+  funcs->dvd_title_next     = vlc_dvd_title_next;
 
   funcs->tv_channel_set     = NULL;
   funcs->tv_channel_prev    = NULL;
