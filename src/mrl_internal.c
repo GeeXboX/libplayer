@@ -138,7 +138,7 @@ mrl_metadata_cd_track_new (void)
 }
 
 mrl_metadata_cd_track_t *
-mrl_metadata_cd_get_track (mrl_metadata_cd_t *cd, int id)
+mrl_metadata_cd_get_track (mrl_metadata_cd_t *cd, uint32_t id)
 {
   int i;
   mrl_metadata_cd_track_t *track = NULL;
@@ -186,7 +186,7 @@ mrl_metadata_dvd_title_new (void)
 }
 
 mrl_metadata_dvd_title_t *
-mrl_metadata_dvd_get_title (mrl_metadata_dvd_t *dvd, int id)
+mrl_metadata_dvd_get_title (mrl_metadata_dvd_t *dvd, uint32_t id)
 {
   int i;
   mrl_metadata_dvd_title_t *title = NULL;
@@ -234,7 +234,7 @@ mrl_metadata_sub_new (void)
 }
 
 mrl_metadata_sub_t *
-mrl_metadata_sub_get (mrl_metadata_sub_t **sub, int id)
+mrl_metadata_sub_get (mrl_metadata_sub_t **sub, uint32_t id)
 {
   mrl_metadata_sub_t *subtitle, *subtitle_p;
 
@@ -250,7 +250,7 @@ mrl_metadata_sub_get (mrl_metadata_sub_t **sub, int id)
   subtitle = *sub;
   while (subtitle)
   {
-    if (subtitle->id == (unsigned int) id)
+    if (subtitle->id == id)
       return subtitle;
     subtitle_p = subtitle;
     subtitle = subtitle->next;
@@ -272,7 +272,7 @@ mrl_metadata_audio_new (void)
 }
 
 mrl_metadata_audio_t *
-mrl_metadata_audio_get (mrl_metadata_audio_t **audio, int id)
+mrl_metadata_audio_get (mrl_metadata_audio_t **audio, uint32_t id)
 {
   mrl_metadata_audio_t *a, *a_p;
 
@@ -288,7 +288,7 @@ mrl_metadata_audio_get (mrl_metadata_audio_t **audio, int id)
   a = *audio;
   while (a)
   {
-    if (a->id == (unsigned int) id)
+    if (a->id == id)
       return a;
     a_p = a;
     a = a->next;

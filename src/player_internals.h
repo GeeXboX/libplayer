@@ -274,14 +274,14 @@ void mrl_properties_free (mrl_properties_t *prop);
 mrl_metadata_t *mrl_metadata_new (mrl_resource_t res);
 void mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res);
 mrl_metadata_cd_track_t *mrl_metadata_cd_get_track (mrl_metadata_cd_t *cd,
-                                                    int id);
+                                                    uint32_t id);
 mrl_metadata_cd_track_t *mrl_metadata_cd_track_new (void);
 mrl_metadata_dvd_title_t *mrl_metadata_dvd_get_title (mrl_metadata_dvd_t *dvd,
-                                                      int id);
+                                                      uint32_t id);
 mrl_metadata_dvd_title_t *mrl_metadata_dvd_title_new (void);
-mrl_metadata_sub_t *mrl_metadata_sub_get (mrl_metadata_sub_t **sub, int id);
+mrl_metadata_sub_t *mrl_metadata_sub_get (mrl_metadata_sub_t **sub, uint32_t id);
 mrl_metadata_audio_t *mrl_metadata_audio_get (mrl_metadata_audio_t **audio,
-                                              int id);
+                                              uint32_t id);
 void mrl_list_free (mrl_t *mrl);
 int mrl_uses_vo (mrl_t *mrl);
 int mrl_uses_ao (mrl_t *mrl);
