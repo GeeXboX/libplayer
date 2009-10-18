@@ -418,8 +418,7 @@ vlc_init (player_t *player)
   switch (player->vo)
   {
   case PLAYER_VO_NULL:
-    vlc_argv[vlc_argc++] = "--vout";
-    vlc_argv[vlc_argc++] = "dummy";
+    vlc_argv[vlc_argc++] = "--no-video";
     break;
 
 #ifdef USE_X11
