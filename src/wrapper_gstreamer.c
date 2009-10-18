@@ -52,7 +52,7 @@ typedef struct gstreamer_player_s {
 } gstreamer_player_t;
 
 static gboolean
-bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
+bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 {
   player_t *player = (player_t *) data;
   gstreamer_player_t *g = (gstreamer_player_t *) player->priv;

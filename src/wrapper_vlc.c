@@ -261,8 +261,8 @@ vlc_identify_metadata (mrl_t *mrl, libvlc_media_player_t *mp,
 }
 
 static void
-vlc_identify_audio (mrl_t *mrl, libvlc_media_player_t *mp,
-                    libvlc_exception_t *ex)
+vlc_identify_audio (pl_unused mrl_t *mrl, pl_unused libvlc_media_player_t *mp,
+                    pl_unused libvlc_exception_t *ex)
 {
   /* VLC API is not yet complete enough to retrieve these info */
 }
@@ -586,8 +586,8 @@ vlc_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 }
 
 static void
-vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl,
-                        int pos, mrl_snapshot_t t, const char *dst)
+vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
+                        pl_unused mrl_snapshot_t t, const char *dst)
 {
   vlc_t *vlc;
   unsigned int width, height;

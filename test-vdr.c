@@ -55,7 +55,7 @@ getch (void)
 }
 
 static int
-event_cb (player_event_t e, void *data)
+event_cb (player_event_t e, pl_unused void *data)
 {
   printf ("Received event (%i): ", e);
 
@@ -88,7 +88,7 @@ event_cb (player_event_t e, void *data)
 }
 
 int
-main (int argc, char **argv)
+main (pl_unused int argc, pl_unused char **argv)
 {
   player_t *player;
   player_type_t type = PLAYER_TYPE_XINE;

@@ -77,7 +77,7 @@ struct supervisor_s {
 /*********************************** MRL *************************************/
 
 static void
-supervisor_mrl_free (player_t *player, void *in, void *out)
+supervisor_mrl_free (pl_unused player_t *player, void *in, pl_unused void *out)
 {
   if (!in)
     return;
@@ -265,7 +265,7 @@ supervisor_mrl_get_resource (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_mrl_add_subtitle (player_t *player, void *in, void *out)
+supervisor_mrl_add_subtitle (player_t *player, void *in, pl_unused void *out)
 {
   supervisor_data_sub_t *input = in;
 
@@ -288,7 +288,7 @@ supervisor_mrl_new (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_mrl_video_snapshot (player_t *player, void *in, void *out)
+supervisor_mrl_video_snapshot (player_t *player, void *in, pl_unused void *out)
 {
   supervisor_data_snapshot_t *input = in;
 
@@ -302,7 +302,7 @@ supervisor_mrl_video_snapshot (player_t *player, void *in, void *out)
 /************************* Player (Un)Initialization *************************/
 
 static void
-supervisor_player_init (player_t *player, void *in, void *out)
+supervisor_player_init (player_t *player, pl_unused void *in, void *out)
 {
   init_status_t *output = out;
 
@@ -313,7 +313,8 @@ supervisor_player_init (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_uninit (player_t *player, void *in, void *out)
+supervisor_player_uninit (player_t *player,
+                          pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -322,7 +323,8 @@ supervisor_player_uninit (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_set_verbosity (player_t *player, void *in, void *out)
+supervisor_player_set_verbosity (player_t *player,
+                                 void *in, pl_unused void *out)
 {
   player_verbosity_level_t *input = in;
 
@@ -335,7 +337,8 @@ supervisor_player_set_verbosity (player_t *player, void *in, void *out)
 /************************* Player to MRL connection **************************/
 
 static void
-supervisor_player_mrl_get_current (player_t *player, void *in, void *out)
+supervisor_player_mrl_get_current (player_t *player,
+                                   pl_unused void *in, void *out)
 {
   mrl_t **output = out;
 
@@ -346,7 +349,8 @@ supervisor_player_mrl_get_current (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_mrl_set (player_t *player, void *in, void *out)
+supervisor_player_mrl_set (player_t *player,
+                           void *in, pl_unused void *out)
 {
   if (!player || !in)
     return;
@@ -355,7 +359,8 @@ supervisor_player_mrl_set (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_mrl_append (player_t *player, void *in, void *out)
+supervisor_player_mrl_append (player_t *player,
+                              void *in, pl_unused void *out)
 {
   supervisor_data_mrl_t *input = in;
 
@@ -366,7 +371,8 @@ supervisor_player_mrl_append (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_mrl_remove (player_t *player, void *in, void *out)
+supervisor_player_mrl_remove (player_t *player,
+                              pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -375,7 +381,8 @@ supervisor_player_mrl_remove (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_mrl_remove_all (player_t *player, void *in, void *out)
+supervisor_player_mrl_remove_all (player_t *player,
+                                  pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -384,7 +391,8 @@ supervisor_player_mrl_remove_all (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_mrl_previous (player_t *player, void *in, void *out)
+supervisor_player_mrl_previous (player_t *player,
+                                pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -393,7 +401,8 @@ supervisor_player_mrl_previous (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_mrl_next (player_t *player, void *in, void *out)
+supervisor_player_mrl_next (player_t *player,
+                            pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -402,7 +411,8 @@ supervisor_player_mrl_next (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_mrl_next_play (player_t *player, void *in, void *out)
+supervisor_player_mrl_next_play (player_t *player,
+                                 pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -413,7 +423,8 @@ supervisor_player_mrl_next_play (player_t *player, void *in, void *out)
 /************************ Player tuning & properties *************************/
 
 static void
-supervisor_player_get_time_pos (player_t *player, void *in, void *out)
+supervisor_player_get_time_pos (player_t *player,
+                                pl_unused void *in, void *out)
 {
   int *output = out;
 
@@ -424,7 +435,8 @@ supervisor_player_get_time_pos (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_get_percent_pos (player_t *player, void *in, void *out)
+supervisor_player_get_percent_pos (player_t *player,
+                                   pl_unused void *in, void *out)
 {
   int *output = out;
 
@@ -435,7 +447,8 @@ supervisor_player_get_percent_pos (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_set_playback (player_t *player, void *in, void *out)
+supervisor_player_set_playback (player_t *player,
+                                void *in, pl_unused void *out)
 {
   player_pb_t *input = in;
 
@@ -446,7 +459,8 @@ supervisor_player_set_playback (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_set_loop (player_t *player, void *in, void *out)
+supervisor_player_set_loop (player_t *player,
+                            void *in, pl_unused void *out)
 {
   supervisor_data_mode_t *input = in;
 
@@ -457,7 +471,8 @@ supervisor_player_set_loop (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_set_shuffle (player_t *player, void *in, void *out)
+supervisor_player_set_shuffle (player_t *player,
+                               void *in, pl_unused void *out)
 {
   int *input = in;
 
@@ -468,7 +483,8 @@ supervisor_player_set_shuffle (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_set_framedrop (player_t *player, void *in, void *out)
+supervisor_player_set_framedrop (player_t *player,
+                                 void *in, pl_unused void *out)
 {
   player_framedrop_t *input = in;
 
@@ -479,7 +495,8 @@ supervisor_player_set_framedrop (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_set_mouse_pos (player_t *player, void *in, void *out)
+supervisor_player_set_mouse_pos (player_t *player,
+                                 void *in, pl_unused void *out)
 {
   supervisor_data_coord_t *input = in;
 
@@ -490,7 +507,8 @@ supervisor_player_set_mouse_pos (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_x_window_set_props (player_t *player, void *in, void *out)
+supervisor_player_x_window_set_props (player_t *player,
+                                      void *in, pl_unused void *out)
 {
   supervisor_data_window_t *input = in;
 
@@ -502,7 +520,8 @@ supervisor_player_x_window_set_props (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_osd_show_text (player_t *player, void *in, void *out)
+supervisor_player_osd_show_text (player_t *player,
+                                 void *in, pl_unused void *out)
 {
   supervisor_data_osd_t *input = in;
 
@@ -516,7 +535,8 @@ supervisor_player_osd_show_text (player_t *player, void *in, void *out)
 /************************ Playback related controls **************************/
 
 static void
-supervisor_player_pb_get_state (player_t *player, void *in, void *out)
+supervisor_player_pb_get_state (player_t *player,
+                                pl_unused void *in, void *out)
 {
   player_pb_state_t *output = out;
 
@@ -527,7 +547,8 @@ supervisor_player_pb_get_state (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_pb_start (player_t *player, void *in, void *out)
+supervisor_player_pb_start (player_t *player,
+                            pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -536,7 +557,8 @@ supervisor_player_pb_start (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_pb_stop (player_t *player, void *in, void *out)
+supervisor_player_pb_stop (player_t *player,
+                           pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -545,7 +567,8 @@ supervisor_player_pb_stop (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_pb_pause (player_t *player, void *in, void *out)
+supervisor_player_pb_pause (player_t *player,
+                            pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -554,7 +577,8 @@ supervisor_player_pb_pause (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_pb_seek (player_t *player, void *in, void *out)
+supervisor_player_pb_seek (player_t *player,
+                           void *in, pl_unused void *out)
 {
   supervisor_data_mode_t *input = in;
 
@@ -565,7 +589,8 @@ supervisor_player_pb_seek (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_pb_seek_chapter (player_t *player, void *in, void *out)
+supervisor_player_pb_seek_chapter (player_t *player,
+                                   void *in, pl_unused void *out)
 {
   supervisor_data_mode_t *input = in;
 
@@ -576,7 +601,8 @@ supervisor_player_pb_seek_chapter (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_pb_speed (player_t *player, void *in, void *out)
+supervisor_player_pb_speed (player_t *player,
+                            void *in, pl_unused void *out)
 {
   float *input = in;
 
@@ -589,7 +615,8 @@ supervisor_player_pb_speed (player_t *player, void *in, void *out)
 /************************** Audio related controls ***************************/
 
 static void
-supervisor_player_ao_volume_get (player_t *player, void *in, void *out)
+supervisor_player_ao_volume_get (player_t *player,
+                                 pl_unused void *in, void *out)
 {
   int *output = out;
 
@@ -600,7 +627,8 @@ supervisor_player_ao_volume_get (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_ao_volume_set (player_t *player, void *in, void *out)
+supervisor_player_ao_volume_set (player_t *player,
+                                 void *in, pl_unused void *out)
 {
   int *input = in;
 
@@ -611,7 +639,8 @@ supervisor_player_ao_volume_set (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_ao_mute_get (player_t *player, void *in, void *out)
+supervisor_player_ao_mute_get (player_t *player,
+                               pl_unused void *in, void *out)
 {
   player_mute_t *output = out;
 
@@ -622,7 +651,8 @@ supervisor_player_ao_mute_get (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_ao_mute_set (player_t *player, void *in, void *out)
+supervisor_player_ao_mute_set (player_t *player,
+                               void *in, pl_unused void *out)
 {
   player_mute_t *input = in;
 
@@ -633,7 +663,8 @@ supervisor_player_ao_mute_set (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_ao_set_delay (player_t *player, void *in, void *out)
+supervisor_player_ao_set_delay (player_t *player,
+                                void *in, pl_unused void *out)
 {
   supervisor_data_mode_t *input = in;
 
@@ -644,7 +675,8 @@ supervisor_player_ao_set_delay (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_ao_select (player_t *player, void *in, void *out)
+supervisor_player_ao_select (player_t *player,
+                             void *in, pl_unused void *out)
 {
   int *input = in;
 
@@ -655,7 +687,8 @@ supervisor_player_ao_select (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_ao_prev (player_t *player, void *in, void *out)
+supervisor_player_ao_prev (player_t *player,
+                           pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -664,7 +697,8 @@ supervisor_player_ao_prev (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_ao_next (player_t *player, void *in, void *out)
+supervisor_player_ao_next (player_t *player,
+                           pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -675,7 +709,8 @@ supervisor_player_ao_next (player_t *player, void *in, void *out)
 /************************** Video related controls ***************************/
 
 static void
-supervisor_player_vo_set_fs (player_t *player, void *in, void *out)
+supervisor_player_vo_set_fs (player_t *player,
+                             void *in, pl_unused void *out)
 {
   int *input = in;
 
@@ -686,7 +721,8 @@ supervisor_player_vo_set_fs (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_vo_set_aspect (player_t *player, void *in, void *out)
+supervisor_player_vo_set_aspect (player_t *player,
+                                 void *in, pl_unused void *out)
 {
   supervisor_data_vo_t *input = in;
 
@@ -697,7 +733,8 @@ supervisor_player_vo_set_aspect (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_vo_set_panscan (player_t *player, void *in, void *out)
+supervisor_player_vo_set_panscan (player_t *player,
+                                  void *in, pl_unused void *out)
 {
   supervisor_data_vo_t *input = in;
 
@@ -708,7 +745,8 @@ supervisor_player_vo_set_panscan (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_vo_set_ar (player_t *player, void *in, void *out)
+supervisor_player_vo_set_ar (player_t *player,
+                             void *in, pl_unused void *out)
 {
   float *input = in;
 
@@ -721,7 +759,8 @@ supervisor_player_vo_set_ar (player_t *player, void *in, void *out)
 /************************ Subtitles related controls *************************/
 
 static void
-supervisor_player_sub_set_delay (player_t *player, void *in, void *out)
+supervisor_player_sub_set_delay (player_t *player,
+                                 void *in, pl_unused void *out)
 {
   int *input = in;
 
@@ -732,7 +771,8 @@ supervisor_player_sub_set_delay (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_sub_set_align (player_t *player, void *in, void *out)
+supervisor_player_sub_set_align (player_t *player,
+                                 void *in, pl_unused void *out)
 {
   player_sub_alignment_t *input = in;
 
@@ -743,7 +783,8 @@ supervisor_player_sub_set_align (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_sub_set_pos (player_t *player, void *in, void *out)
+supervisor_player_sub_set_pos (player_t *player,
+                               void *in, pl_unused void *out)
 {
   int *input = in;
 
@@ -754,7 +795,8 @@ supervisor_player_sub_set_pos (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_sub_set_vis (player_t *player, void *in, void *out)
+supervisor_player_sub_set_vis (player_t *player,
+                               void *in, pl_unused void *out)
 {
   int *input = in;
 
@@ -765,7 +807,8 @@ supervisor_player_sub_set_vis (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_sub_scale (player_t *player, void *in, void *out)
+supervisor_player_sub_scale (player_t *player,
+                             void *in, pl_unused void *out)
 {
   supervisor_data_mode_t *input = in;
 
@@ -776,7 +819,8 @@ supervisor_player_sub_scale (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_sub_select (player_t *player, void *in, void *out)
+supervisor_player_sub_select (player_t *player,
+                              void *in, pl_unused void *out)
 {
   int *input = in;
 
@@ -787,7 +831,8 @@ supervisor_player_sub_select (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_sub_prev (player_t *player, void *in, void *out)
+supervisor_player_sub_prev (player_t *player,
+                            pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -796,7 +841,8 @@ supervisor_player_sub_prev (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_sub_next (player_t *player, void *in, void *out)
+supervisor_player_sub_next (player_t *player,
+                            pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -807,7 +853,8 @@ supervisor_player_sub_next (player_t *player, void *in, void *out)
 /************************** DVD specific controls ****************************/
 
 static void
-supervisor_player_dvd_nav (player_t *player, void *in, void *out)
+supervisor_player_dvd_nav (player_t *player,
+                           void *in, pl_unused void *out)
 {
   player_dvdnav_t *input = in;
 
@@ -818,7 +865,8 @@ supervisor_player_dvd_nav (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_dvd_angle_select (player_t *player, void *in, void *out)
+supervisor_player_dvd_angle_select (player_t *player,
+                                    void *in, pl_unused void *out)
 {
   int *input = in;
 
@@ -829,7 +877,8 @@ supervisor_player_dvd_angle_select (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_dvd_angle_prev (player_t *player, void *in, void *out)
+supervisor_player_dvd_angle_prev (player_t *player,
+                                  pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -838,7 +887,8 @@ supervisor_player_dvd_angle_prev (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_dvd_angle_next (player_t *player, void *in, void *out)
+supervisor_player_dvd_angle_next (player_t *player,
+                                  pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -847,7 +897,8 @@ supervisor_player_dvd_angle_next (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_dvd_title_select (player_t *player, void *in, void *out)
+supervisor_player_dvd_title_select (player_t *player,
+                                    void *in, pl_unused void *out)
 {
   int *input = in;
 
@@ -858,7 +909,8 @@ supervisor_player_dvd_title_select (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_dvd_title_prev (player_t *player, void *in, void *out)
+supervisor_player_dvd_title_prev (player_t *player,
+                                  pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -867,7 +919,8 @@ supervisor_player_dvd_title_prev (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_dvd_title_next (player_t *player, void *in, void *out)
+supervisor_player_dvd_title_next (player_t *player,
+                                  pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -878,7 +931,8 @@ supervisor_player_dvd_title_next (player_t *player, void *in, void *out)
 /************************* TV/DVB specific controls **************************/
 
 static void
-supervisor_player_tv_chan_select (player_t *player, void *in, void *out)
+supervisor_player_tv_chan_select (player_t *player,
+                                  void *in, pl_unused void *out)
 {
   if (!player || !in)
     return;
@@ -887,7 +941,8 @@ supervisor_player_tv_chan_select (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_tv_chan_prev (player_t *player, void *in, void *out)
+supervisor_player_tv_chan_prev (player_t *player,
+                                pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -896,7 +951,8 @@ supervisor_player_tv_chan_prev (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_tv_chan_next (player_t *player, void *in, void *out)
+supervisor_player_tv_chan_next (player_t *player,
+                                pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -907,7 +963,8 @@ supervisor_player_tv_chan_next (player_t *player, void *in, void *out)
 /************************* Radio specific controls ***************************/
 
 static void
-supervisor_player_radio_chan_select (player_t *player, void *in, void *out)
+supervisor_player_radio_chan_select (player_t *player,
+                                     void *in, pl_unused void *out)
 {
   if (!player || !in)
     return;
@@ -916,7 +973,8 @@ supervisor_player_radio_chan_select (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_radio_chan_prev (player_t *player, void *in, void *out)
+supervisor_player_radio_chan_prev (player_t *player,
+                                   pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -925,7 +983,8 @@ supervisor_player_radio_chan_prev (player_t *player, void *in, void *out)
 }
 
 static void
-supervisor_player_radio_chan_next (player_t *player, void *in, void *out)
+supervisor_player_radio_chan_next (player_t *player,
+                                   pl_unused void *in, pl_unused void *out)
 {
   if (!player)
     return;
@@ -936,7 +995,7 @@ supervisor_player_radio_chan_next (player_t *player, void *in, void *out)
 /************************** VDR specific controls ****************************/
 
 static void
-supervisor_player_vdr (player_t *player, void *in, void *out)
+supervisor_player_vdr (player_t *player, void *in, pl_unused void *out)
 {
   player_vdr_t *input = in;
 

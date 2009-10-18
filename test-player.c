@@ -89,7 +89,7 @@
 #define TESTPLAYER_HELP TESTPLAYER_OPTIONS TESTPLAYER_COMMANDS
 
 static int
-event_cb (player_event_t e, void *data)
+event_cb (player_event_t e, pl_unused void *data)
 {
   printf ("Received event (%i)\n", e);
 

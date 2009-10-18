@@ -42,7 +42,7 @@ typedef enum player_id {
 static player_id_t player_id = PLAYER_ID_ALL;
 
 static int
-frontend_event_cb (player_event_t e, void *data)
+frontend_event_cb (player_event_t e, pl_unused void *data)
 {
   printf ("Received event type %d from player\n", e);
   return 0;
@@ -149,7 +149,7 @@ player_run_test (player_type_t player_type)
 }
 
 static void *
-player_test_thread (void *cookie)
+player_test_thread (pl_unused void *cookie)
 {
   if (player_id == PLAYER_ID_DUMMY || player_id == PLAYER_ID_ALL)
   {

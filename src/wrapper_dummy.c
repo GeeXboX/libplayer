@@ -71,13 +71,13 @@ dummy_uninit (player_t *player)
 }
 
 static void
-dummy_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
+dummy_mrl_retrieve_properties (player_t *player, pl_unused mrl_t *mrl)
 {
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
 }
 
 static void
-dummy_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
+dummy_mrl_retrieve_metadata (player_t *player, pl_unused mrl_t *mrl)
 {
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
 }
@@ -193,7 +193,7 @@ dummy_sub_set_delay (player_t *player, int value)
 /*****************************************************************************/
 
 int
-pl_supported_resources_dummy (mrl_resource_t mrl)
+pl_supported_resources_dummy (pl_unused mrl_resource_t mrl)
 {
   return 1;
 }
