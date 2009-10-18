@@ -917,6 +917,82 @@ vlc_video_set_ar (player_t *player, float value)
 }
 
 static void
+vlc_sub_select (player_t *player, int value)
+{
+  vlc_t *vlc;
+  int max;
+
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_select: %i", value);
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
+
+  max = libvlc_video_get_spu_count (vlc->mp, &vlc->ex);
+  if (value < 0)
+    value = 0;
+  if (value > max)
+    value = max;
+
+  libvlc_video_set_spu (vlc->mp, value, &vlc->ex);
+}
+
+static void
+vlc_sub_prev (player_t *player)
+{
+  vlc_t *vlc;
+  int cur, max, val;
+
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_prev");
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
+
+  cur = libvlc_video_get_spu (vlc->mp, &vlc->ex);
+  max = libvlc_video_get_spu_count (vlc->mp, &vlc->ex);
+  val = cur - 1;
+
+  /* if current is first one, just cycle */
+  if (val < 0)
+    val = max;
+
+  libvlc_video_set_spu (vlc->mp, val, &vlc->ex);
+}
+
+static void
+vlc_sub_next (player_t *player)
+{
+  vlc_t *vlc;
+  int cur, max, val;
+
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_next");
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
+
+  cur = libvlc_video_get_spu (vlc->mp, &vlc->ex);
+  max = libvlc_video_get_spu_count (vlc->mp, &vlc->ex);
+  val = cur + 1;
+
+  /* if current is last one, just cycle */
+  if (val > max)
+    val = 0;
+
+  libvlc_video_set_spu (vlc->mp, val, &vlc->ex);
+}
+
+static void
 vlc_dvd_title_set (player_t *player, int value)
 {
   vlc_t *vlc;
@@ -1051,9 +1127,9 @@ pl_register_functions_vlc (void)
   funcs->sub_set_pos        = NULL;
   funcs->sub_set_visibility = NULL;
   funcs->sub_scale          = NULL;
-  funcs->sub_select         = NULL;
-  funcs->sub_prev           = NULL;
-  funcs->sub_next           = NULL;
+  funcs->sub_select         = vlc_sub_select;
+  funcs->sub_prev           = vlc_sub_prev;
+  funcs->sub_next           = vlc_sub_next;
 
   funcs->dvd_nav            = NULL;
   funcs->dvd_angle_set      = NULL;
