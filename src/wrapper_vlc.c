@@ -605,6 +605,30 @@ vlc_get_time_pos (player_t *player)
   return (int) (time_pos * 1000.0);
 }
 
+static int
+vlc_get_percent_pos (player_t *player)
+{
+  float pos = 0.0;
+  vlc_t *vlc;
+
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "get_percent_pos");
+
+  if (!player)
+    return -1;
+
+  vlc = (vlc_t *) player->priv;
+  pos = libvlc_media_player_get_position (vlc->mp, &vlc->ex);
+
+  /* special hack for EOF */
+  if (libvlc_media_player_get_state (vlc->mp, &vlc->ex) == libvlc_Ended)
+    pos = 1.0;
+
+  if (pos < 0.0)
+    return -1;
+
+  return (int) (pos * 100.0);
+}
+
 static playback_status_t
 vlc_playback_start (player_t *player)
 {
@@ -797,7 +821,7 @@ pl_register_functions_vlc (void)
   funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = vlc_get_time_pos;
-  funcs->get_percent_pos    = NULL;
+  funcs->get_percent_pos    = vlc_get_percent_pos;
   funcs->set_framedrop      = NULL;
   funcs->set_mouse_pos      = NULL;
   funcs->osd_show_text      = NULL;
