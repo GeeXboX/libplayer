@@ -258,15 +258,12 @@ static void
 vlc_identify_properties (mrl_t *mrl, libvlc_media_player_t *mp,
                          libvlc_exception_t *ex)
 {
-  libvlc_time_t t;
-
   if (!mrl || !mrl->prop || !mp || !ex)
     return;
 
   mrl->prop->seekable = libvlc_media_player_is_seekable (mp, ex);
 
-  t = libvlc_media_player_get_length (mp, ex);
-  mrl->prop->length = (uint32_t) (t / 1000);
+  mrl->prop->length = (uint32_t) libvlc_media_player_get_length (mp, ex);
 }
 
 static void
