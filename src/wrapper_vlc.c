@@ -644,10 +644,7 @@ vlc_audio_get_volume (player_t *player)
   vlc = (vlc_t *) player->priv;
   volume = libvlc_audio_get_volume (vlc->core, &vlc->ex);
 
-  if (volume < 0)
-    return -1;
-
-  return volume;
+  return (volume < 0) ? -1 : volume;
 }
 
 static void
