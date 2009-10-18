@@ -751,6 +751,28 @@ vlc_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   }
 }
 
+static void
+vlc_playback_seek_chapter (player_t *player, int value, int absolute)
+{
+  vlc_t *vlc;
+  int chapter;
+
+  pl_log (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "playback_seek_chapter: %i %i", value, absolute);
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
+
+  chapter = absolute ? value :
+    libvlc_media_player_get_chapter (vlc->mp, &vlc->ex) + value;
+
+  libvlc_media_player_set_chapter (vlc->mp, chapter, &vlc->ex);
+}
+
 static int
 vlc_audio_get_volume (player_t *player)
 {
@@ -874,7 +896,7 @@ pl_register_functions_vlc (void)
   funcs->pb_stop            = vlc_playback_stop;
   funcs->pb_pause           = vlc_playback_pause;
   funcs->pb_seek            = vlc_playback_seek;
-  funcs->pb_seek_chapter    = NULL;
+  funcs->pb_seek_chapter    = vlc_playback_seek_chapter;
   funcs->pb_set_speed       = NULL;
 
   funcs->audio_get_volume   = vlc_audio_get_volume;
