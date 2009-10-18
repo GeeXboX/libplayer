@@ -59,6 +59,14 @@ extern "C" {
 #endif /* 0 */
 #endif /* __cplusplus */
 
+#ifndef pl_unused
+#if defined(__GNUC__)
+#  define pl_unused __attribute__((unused))
+#else
+#  define pl_unused
+#endif
+#endif
+
 #include <inttypes.h>
 #include <sys/types.h>
 
