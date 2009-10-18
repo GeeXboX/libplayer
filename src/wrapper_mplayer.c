@@ -2345,7 +2345,7 @@ item_list_free (item_list_t *list, int nb)
 }
 
 static item_opt_t *
-mp_prop_get_option (char *buffer, char *it_min, char *it_max)
+mp_prop_get_option (char *it_min, char *it_max)
 {
   item_opt_t *opt;
   opt_conf_t opt_min = OPT_MIN;
@@ -2605,7 +2605,7 @@ mp_check_compatibility (player_t *player, checklist_t check)
 
           /* only for properties, no range with 'cmdlist' */
           if (it_min && it_max)
-            list[i].opt = mp_prop_get_option (buffer, it_min, it_max);
+            list[i].opt = mp_prop_get_option (it_min, it_max);
           break;
         }
       }
