@@ -414,8 +414,6 @@ vlc_init (player_t *player)
   vlc_argv[vlc_argc++] = "dummy";
   vlc_argv[vlc_argc++] = "--verbose";
   vlc_argv[vlc_argc++] = "0";
-  vlc_argv[vlc_argc++] = "--extraintf";
-  vlc_argv[vlc_argc++] = "logger";
   vlc_argv[vlc_argc++] = "--ignore-config";
   vlc_argv[vlc_argc++] = "--reset-plugins-cache";
   vlc_argv[vlc_argc++] = "--no-media-library";
