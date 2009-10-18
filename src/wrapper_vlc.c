@@ -597,6 +597,9 @@ vlc_get_time_pos (player_t *player)
     return -1;
 
   vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return -1;
+
   time_pos = libvlc_media_player_get_time (vlc->mp, &vlc->ex);
 
   return (time_pos < 0.0) ? -1: (int) time_pos;
@@ -614,6 +617,9 @@ vlc_get_percent_pos (player_t *player)
     return -1;
 
   vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return -1;
+
   pos = libvlc_media_player_get_position (vlc->mp, &vlc->ex);
 
   /* special hack for EOF */
@@ -640,6 +646,8 @@ vlc_playback_start (player_t *player)
     return PLAYER_PB_FATAL;
 
   vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return PLAYER_PB_ERROR;
 
   if (!vlc->core)
     return PLAYER_PB_ERROR;
@@ -677,6 +685,8 @@ vlc_playback_stop (player_t *player)
     return;
 
   vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
 
   media = libvlc_media_player_get_media (vlc->mp, &vlc->ex);
   libvlc_media_player_stop (vlc->mp, &vlc->ex);
@@ -694,6 +704,8 @@ vlc_playback_pause (player_t *player)
     return PLAYER_PB_FATAL;
 
   vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return PLAYER_PB_FATAL;
 
   if (libvlc_media_player_is_playing (vlc->mp, &vlc->ex) &&
       libvlc_media_player_can_pause (vlc->mp, &vlc->ex))
