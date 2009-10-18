@@ -585,6 +585,31 @@ vlc_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
   vlc_identify (player, mrl, IDENTIFY_METADATA);
 }
 
+static void
+vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl,
+                        int pos, mrl_snapshot_t t, const char *dst)
+{
+  vlc_t *vlc;
+  unsigned int width, height;
+
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_video_snapshot");
+
+  if (!player || !mrl || !mrl->meta)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
+
+  if (!libvlc_media_player_has_vout (vlc->mp, &vlc->ex))
+    return;
+
+  width  = libvlc_video_get_width  (vlc->mp, &vlc->ex);
+  height = libvlc_video_get_height (vlc->mp, &vlc->ex);
+
+  libvlc_video_take_snapshot (vlc->mp, dst, width, height, &vlc->ex);
+}
+
 static int
 vlc_get_time_pos (player_t *player)
 {
@@ -1093,7 +1118,7 @@ pl_register_functions_vlc (void)
 
   funcs->mrl_retrieve_props = vlc_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = vlc_mrl_retrieve_metadata;
-  funcs->mrl_video_snapshot = NULL;
+  funcs->mrl_video_snapshot = vlc_mrl_video_snapshot;
 
   funcs->get_time_pos       = vlc_get_time_pos;
   funcs->get_percent_pos    = vlc_get_percent_pos;
