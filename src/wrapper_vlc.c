@@ -43,6 +43,10 @@ typedef struct vlc_s {
   libvlc_exception_t ex;
 } vlc_t;
 
+/*****************************************************************************/
+/*                            common routines                                */
+/*****************************************************************************/
+
 static void
 vlc_check_exception (player_t *player)
 {
@@ -63,7 +67,263 @@ vlc_check_exception (player_t *player)
   libvlc_exception_clear (&vlc->ex);
 }
 
-/* private functions */
+static char *
+vlc_resource_get_uri_network (const char *protocol,
+                              mrl_resource_network_args_t *args)
+{
+  char *uri, *host_file;
+  char at[256] = "";
+  size_t size, offset;
+
+  if (!args || !args->url || !protocol)
+    return NULL;
+
+  size      = strlen (protocol);
+  offset    = (strstr (args->url, protocol) == args->url) ? size : 0;
+  host_file = strdup (args->url + offset);
+
+  if (!host_file)
+    return NULL;
+
+  if (args->username)
+  {
+    size += 1 + strlen (args->username);
+    if (args->password)
+    {
+      size += 1 + strlen (args->password);
+      snprintf (at, sizeof (at), "%s:%s@", args->username, args->password);
+    }
+    else
+      snprintf (at, sizeof (at), "%s@", args->username);
+  }
+  size += strlen (host_file);
+
+  size++;
+  uri = malloc (size);
+  if (uri)
+    snprintf (uri, size, "%s%s%s", protocol, at, host_file);
+
+  free (host_file);
+
+  return uri;
+}
+
+static char *
+vlc_resource_get_uri (mrl_t *mrl)
+{
+  static const char *const protocols[] = {
+    /* Local Streams */
+    [MRL_RESOURCE_FILE]     = "file://",
+
+    /* Audio CD */
+    [MRL_RESOURCE_CDDA]     = "cdda://",
+    [MRL_RESOURCE_CDDB]     = "cddb://",
+
+    /* Video discs */
+    [MRL_RESOURCE_DVD]      = "dvd://",
+    [MRL_RESOURCE_DVDNAV]   = "dvdnav://",
+    [MRL_RESOURCE_VCD]      = "vcd://",
+
+    /* Radio/Television */
+    [MRL_RESOURCE_RADIO]    = "radio://",
+    [MRL_RESOURCE_TV]       = "tv://",
+
+    /* Network Streams */
+    [MRL_RESOURCE_FTP]      = "ftp://",
+    [MRL_RESOURCE_HTTP]     = "http://",
+    [MRL_RESOURCE_MMS]      = "mms://",
+    [MRL_RESOURCE_RTP]      = "rtp://",
+    [MRL_RESOURCE_RTSP]     = "rtsp://",
+    [MRL_RESOURCE_SMB]      = "smb://",
+    [MRL_RESOURCE_UDP]      = "udp://",
+    [MRL_RESOURCE_UNSV]     = "unsv://",
+
+    [MRL_RESOURCE_UNKNOWN]  = NULL
+  };
+
+  if (!mrl)
+    return NULL;
+
+  switch (mrl->resource)
+  {
+  case MRL_RESOURCE_FILE:
+  {
+    mrl_resource_local_args_t *args = mrl->priv;
+
+    if (!args || !args->location)
+      return NULL;
+
+    return strdup (args->location);
+  }
+
+  case MRL_RESOURCE_FTP:  /* ftp://username:password@url   */
+  case MRL_RESOURCE_HTTP: /* http://username:password@url  */
+  case MRL_RESOURCE_MMS:  /* mms://username:password@url   */
+  case MRL_RESOURCE_RTP:  /* rtp://username:password@url   */
+  case MRL_RESOURCE_RTSP: /* rtsp://username:password@url  */
+  case MRL_RESOURCE_SMB:  /* smb://username:password@url   */
+  case MRL_RESOURCE_UDP:  /* udp://username:password@url   */
+  case MRL_RESOURCE_UNSV: /* unsv://username:password@url  */
+    return vlc_resource_get_uri_network (protocols[mrl->resource], mrl->priv);
+
+  default:
+    break;
+  }
+
+  return NULL;
+}
+
+/*****************************************************************************/
+/*                              vlc -identify                                */
+/*****************************************************************************/
+
+static void
+vlc_identify_audio (libvlc_media_player_t *mp,
+                    libvlc_exception_t *ex, mrl_t *mrl)
+{
+  /* VLC API is not yet complete enough to retrieve these info */
+}
+
+static void
+vlc_identify_video (libvlc_media_player_t *mp,
+                    libvlc_exception_t *ex, mrl_t *mrl)
+{
+  mrl_properties_video_t *video;
+  float val;
+
+  if (!mp || !ex || !mrl || !mrl->prop)
+    return;
+
+  /* check if MRL actually has video stream */
+  if (!libvlc_media_player_has_vout (mp, ex))
+    return;
+
+  if (!mrl->prop->video)
+    mrl->prop->video = mrl_properties_video_new ();
+
+  video = mrl->prop->video;
+
+  video->width = libvlc_video_get_width (mp, ex);
+  video->height = libvlc_video_get_height (mp, ex);
+  video->aspect = (uint32_t) (pl_atof (libvlc_video_get_aspect_ratio (mp, ex))
+                              * PLAYER_VIDEO_ASPECT_RATIO_MULT);
+
+  val = libvlc_media_player_get_fps (mp, ex);
+  video->frameduration =
+    (uint32_t) (val ? PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV / val : 0);
+}
+
+static void
+vlc_identify_properties (libvlc_media_player_t *mp,
+                         libvlc_exception_t *ex, mrl_t *mrl)
+{
+  libvlc_media_t *media;
+  libvlc_time_t t;
+
+  if (!mp || !ex || !mrl || !mrl->prop)
+    return;
+
+  if (mrl->resource == MRL_RESOURCE_FILE)
+  {
+    mrl_resource_local_args_t *args = mrl->priv;
+    if (args && args->location)
+    {
+      const char *location = args->location;
+
+      if (strstr (location, "file://") == location)
+        location += 7;
+
+      mrl->prop->size = pl_file_size (location);
+    }
+  }
+
+  media = libvlc_media_player_get_media (mp, ex);
+  mrl->prop->seekable = libvlc_media_player_is_seekable (mp, ex);
+  t = libvlc_media_get_duration (media, ex);
+  mrl->prop->length = (uint32_t) (t / 1000);
+}
+
+static void
+vlc_identify_metadata (libvlc_media_player_t *mp,
+                       libvlc_exception_t *ex, mrl_t *mrl)
+{
+  mrl_metadata_t *meta;
+  libvlc_media_t *media;
+
+  if (!mp || !ex || !mrl || !mrl->meta)
+    return;
+
+  media = libvlc_media_player_get_media (mp, ex);
+  meta = mrl->meta;
+
+  meta->title = libvlc_media_get_meta (media, libvlc_meta_Title, ex);
+  meta->artist = libvlc_media_get_meta (media, libvlc_meta_Artist, ex);
+  meta->genre = libvlc_media_get_meta (media, libvlc_meta_Genre, ex);
+  meta->album = libvlc_media_get_meta (media, libvlc_meta_Album, ex);
+  meta->year = libvlc_media_get_meta (media, libvlc_meta_Date, ex);
+  meta->track = libvlc_media_get_meta (media, libvlc_meta_TrackNumber, ex);
+  meta->comment = libvlc_media_get_meta (media, libvlc_meta_Description, ex);
+}
+
+static void
+vlc_identify (mrl_t *mrl)
+{
+  const char *vlc_argv[32] = { "vlc" };
+  int vlc_argc = 1;
+  libvlc_instance_t *core;
+  libvlc_media_player_t *mp;
+  libvlc_media_t *media;
+  libvlc_exception_t ex;
+  char *uri = NULL;
+
+  if (!mrl)
+    return;
+
+  uri = vlc_resource_get_uri (mrl);
+  if (!uri)
+    return;
+
+  vlc_argv[vlc_argc++] = "--no-stats";
+  vlc_argv[vlc_argc++] = "--verbose";
+  vlc_argv[vlc_argc++] = "0";
+  vlc_argv[vlc_argc++] = "--extraintf";
+  vlc_argv[vlc_argc++] = "logger";
+  vlc_argv[vlc_argc++] = "--ignore-config";
+  vlc_argv[vlc_argc++] = "--reset-plugins-cache";
+  vlc_argv[vlc_argc++] = "--no-media-library";
+  vlc_argv[vlc_argc++] = "--no-one-instance";
+  vlc_argv[vlc_argc++] = "--no-osd";
+  vlc_argv[vlc_argc++] = "--no-video-title-show" ;
+  vlc_argv[vlc_argc++] = "--intf";
+  vlc_argv[vlc_argc++] = "dummy";
+  vlc_argv[vlc_argc++] = "--vout";
+  vlc_argv[vlc_argc++] = "dummy";
+  vlc_argv[vlc_argc++] = "--aout";
+  vlc_argv[vlc_argc++] = "dummy";
+
+  libvlc_exception_init (&ex);
+  core = libvlc_new (vlc_argc, vlc_argv, &ex);
+  media = libvlc_media_new (core, uri, &ex);
+  free (uri);
+
+  mp = libvlc_media_player_new_from_media (media, &ex);
+  libvlc_media_player_play (mp, &ex);
+
+  vlc_identify_properties (mp, &ex, mrl);
+  vlc_identify_video (mp, &ex, mrl);
+  vlc_identify_audio (mp, &ex, mrl);
+  vlc_identify_metadata (mp, &ex, mrl);
+
+  libvlc_media_release (media);
+  libvlc_media_player_stop (mp, &ex );
+  libvlc_media_player_release (mp);
+  libvlc_release (core);
+}
+
+/*****************************************************************************/
+/*                         vlc private functions                             */
+/*****************************************************************************/
+
 static init_status_t
 vlc_init (player_t *player)
 {
@@ -221,255 +481,6 @@ vlc_set_verbosity (player_t *player, player_verbosity_level_t level)
 
   if (vlc->core && verbosity != -1)
     libvlc_set_log_verbosity (vlc->core, verbosity, &vlc->ex);
-}
-
-static char *
-vlc_resource_get_uri_network (const char *protocol,
-                              mrl_resource_network_args_t *args)
-{
-  char *uri, *host_file;
-  char at[256] = "";
-  size_t size, offset;
-
-  if (!args || !args->url || !protocol)
-    return NULL;
-
-  size      = strlen (protocol);
-  offset    = (strstr (args->url, protocol) == args->url) ? size : 0;
-  host_file = strdup (args->url + offset);
-
-  if (!host_file)
-    return NULL;
-
-  if (args->username)
-  {
-    size += 1 + strlen (args->username);
-    if (args->password)
-    {
-      size += 1 + strlen (args->password);
-      snprintf (at, sizeof (at), "%s:%s@", args->username, args->password);
-    }
-    else
-      snprintf (at, sizeof (at), "%s@", args->username);
-  }
-  size += strlen (host_file);
-
-  size++;
-  uri = malloc (size);
-  if (uri)
-    snprintf (uri, size, "%s%s%s", protocol, at, host_file);
-
-  free (host_file);
-
-  return uri;
-}
-
-static char *
-vlc_resource_get_uri (mrl_t *mrl)
-{
-  static const char *const protocols[] = {
-    /* Local Streams */
-    [MRL_RESOURCE_FILE]     = "file://",
-
-    /* Audio CD */
-    [MRL_RESOURCE_CDDA]     = "cdda://",
-    [MRL_RESOURCE_CDDB]     = "cddb://",
-
-    /* Video discs */
-    [MRL_RESOURCE_DVD]      = "dvd://",
-    [MRL_RESOURCE_DVDNAV]   = "dvdnav://",
-    [MRL_RESOURCE_VCD]      = "vcd://",
-
-    /* Radio/Television */
-    [MRL_RESOURCE_RADIO]    = "radio://",
-    [MRL_RESOURCE_TV]       = "tv://",
-
-    /* Network Streams */
-    [MRL_RESOURCE_FTP]      = "ftp://",
-    [MRL_RESOURCE_HTTP]     = "http://",
-    [MRL_RESOURCE_MMS]      = "mms://",
-    [MRL_RESOURCE_RTP]      = "rtp://",
-    [MRL_RESOURCE_RTSP]     = "rtsp://",
-    [MRL_RESOURCE_SMB]      = "smb://",
-    [MRL_RESOURCE_UDP]      = "udp://",
-    [MRL_RESOURCE_UNSV]     = "unsv://",
-
-    [MRL_RESOURCE_UNKNOWN]  = NULL
-  };
-
-  if (!mrl)
-    return NULL;
-
-  switch (mrl->resource)
-  {
-  case MRL_RESOURCE_FILE:
-  {
-    mrl_resource_local_args_t *args = mrl->priv;
-
-    if (!args || !args->location)
-      return NULL;
-
-    return strdup (args->location);
-  }
-
-  case MRL_RESOURCE_FTP:  /* ftp://username:password@url   */
-  case MRL_RESOURCE_HTTP: /* http://username:password@url  */
-  case MRL_RESOURCE_MMS:  /* mms://username:password@url   */
-  case MRL_RESOURCE_RTP:  /* rtp://username:password@url   */
-  case MRL_RESOURCE_RTSP: /* rtsp://username:password@url  */
-  case MRL_RESOURCE_SMB:  /* smb://username:password@url   */
-  case MRL_RESOURCE_UDP:  /* udp://username:password@url   */
-  case MRL_RESOURCE_UNSV: /* unsv://username:password@url  */
-    return vlc_resource_get_uri_network (protocols[mrl->resource], mrl->priv);
-
-  default:
-    break;
-  }
-
-  return NULL;
-}
-
-static void
-vlc_identify_audio (libvlc_media_player_t *mp,
-                    libvlc_exception_t *ex, mrl_t *mrl)
-{
-  /* VLC API is not yet complete enough to retrieve these info */
-}
-
-static void
-vlc_identify_video (libvlc_media_player_t *mp,
-                    libvlc_exception_t *ex, mrl_t *mrl)
-{
-  mrl_properties_video_t *video;
-  float val;
-
-  if (!mp || !ex || !mrl || !mrl->prop)
-    return;
-
-  /* check if MRL actually has video stream */
-  if (!libvlc_media_player_has_vout (mp, ex))
-    return;
-
-  if (!mrl->prop->video)
-    mrl->prop->video = mrl_properties_video_new ();
-
-  video = mrl->prop->video;
-
-  video->width = libvlc_video_get_width (mp, ex);
-  video->height = libvlc_video_get_height (mp, ex);
-  video->aspect = (uint32_t) (pl_atof (libvlc_video_get_aspect_ratio (mp, ex))
-                              * PLAYER_VIDEO_ASPECT_RATIO_MULT);
-
-  val = libvlc_media_player_get_fps (mp, ex);
-  video->frameduration =
-    (uint32_t) (val ? PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV / val : 0);
-}
-
-static void
-vlc_identify_properties (libvlc_media_player_t *mp,
-                         libvlc_exception_t *ex, mrl_t *mrl)
-{
-  libvlc_media_t *media;
-  libvlc_time_t t;
-
-  if (!mp || !ex || !mrl || !mrl->prop)
-    return;
-
-  if (mrl->resource == MRL_RESOURCE_FILE)
-  {
-    mrl_resource_local_args_t *args = mrl->priv;
-    if (args && args->location)
-    {
-      const char *location = args->location;
-
-      if (strstr (location, "file://") == location)
-        location += 7;
-
-      mrl->prop->size = pl_file_size (location);
-    }
-  }
-
-  media = libvlc_media_player_get_media (mp, ex);
-  mrl->prop->seekable = libvlc_media_player_is_seekable (mp, ex);
-  t = libvlc_media_get_duration (media, ex);
-  mrl->prop->length = (uint32_t) (t / 1000);
-}
-
-static void
-vlc_identify_metadata (libvlc_media_player_t *mp,
-                       libvlc_exception_t *ex, mrl_t *mrl)
-{
-  mrl_metadata_t *meta;
-  libvlc_media_t *media;
-
-  if (!mp || !ex || !mrl || !mrl->meta)
-    return;
-
-  media = libvlc_media_player_get_media (mp, ex);
-  meta = mrl->meta;
-
-  meta->title = libvlc_media_get_meta (media, libvlc_meta_Title, ex);
-  meta->artist = libvlc_media_get_meta (media, libvlc_meta_Artist, ex);
-  meta->genre = libvlc_media_get_meta (media, libvlc_meta_Genre, ex);
-  meta->album = libvlc_media_get_meta (media, libvlc_meta_Album, ex);
-  meta->year = libvlc_media_get_meta (media, libvlc_meta_Date, ex);
-  meta->track = libvlc_media_get_meta (media, libvlc_meta_TrackNumber, ex);
-  meta->comment = libvlc_media_get_meta (media, libvlc_meta_Description, ex);
-}
-
-static void
-vlc_identify (mrl_t *mrl)
-{
-  const char *vlc_argv[32] = { "vlc" };
-  int vlc_argc = 1;
-  libvlc_instance_t *core;
-  libvlc_media_player_t *mp;
-  libvlc_media_t *media;
-  libvlc_exception_t ex;
-  char *uri = NULL;
-
-  if (!mrl)
-    return;
-
-  uri = vlc_resource_get_uri (mrl);
-  if (!uri)
-    return;
-
-  vlc_argv[vlc_argc++] = "--no-stats";
-  vlc_argv[vlc_argc++] = "--verbose";
-  vlc_argv[vlc_argc++] = "0";
-  vlc_argv[vlc_argc++] = "--extraintf";
-  vlc_argv[vlc_argc++] = "logger";
-  vlc_argv[vlc_argc++] = "--ignore-config";
-  vlc_argv[vlc_argc++] = "--reset-plugins-cache";
-  vlc_argv[vlc_argc++] = "--no-media-library";
-  vlc_argv[vlc_argc++] = "--no-one-instance";
-  vlc_argv[vlc_argc++] = "--no-osd";
-  vlc_argv[vlc_argc++] = "--no-video-title-show" ;
-  vlc_argv[vlc_argc++] = "--intf";
-  vlc_argv[vlc_argc++] = "dummy";
-  vlc_argv[vlc_argc++] = "--vout";
-  vlc_argv[vlc_argc++] = "dummy";
-  vlc_argv[vlc_argc++] = "--aout";
-  vlc_argv[vlc_argc++] = "dummy";
-
-  libvlc_exception_init (&ex);
-  core = libvlc_new (vlc_argc, vlc_argv, &ex);
-  media = libvlc_media_new (core, uri, &ex);
-  free (uri);
-
-  mp = libvlc_media_player_new_from_media (media, &ex);
-  libvlc_media_player_play (mp, &ex);
-
-  vlc_identify_properties (mp, &ex, mrl);
-  vlc_identify_video (mp, &ex, mrl);
-  vlc_identify_audio (mp, &ex, mrl);
-  vlc_identify_metadata (mp, &ex, mrl);
-
-  libvlc_media_release (media);
-  libvlc_media_player_stop (mp, &ex );
-  libvlc_media_player_release (mp);
-  libvlc_release (core);
 }
 
 static void
