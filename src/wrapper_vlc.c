@@ -36,6 +36,9 @@
 
 #define MODULE_NAME "vlc"
 
+#define WAIT_PERIOD    1000 /* in micro-seconds */
+#define WAIT_MAX    5000000 /* in micro-seconds */
+
 /* player specific structure */
 typedef struct vlc_s {
   libvlc_instance_t *core;
@@ -274,6 +277,8 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   char *uri = NULL;
   vlc_t *vlc;
   const char *options[32] = { "--vout", "dummy", "--aout", "dummy" };
+  libvlc_state_t st = libvlc_NothingSpecial;
+  int wait = 0;
 
   if (!player || !mrl)
     return;
@@ -298,6 +303,15 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
 
   libvlc_media_player_set_media (mp, media, &vlc->ex);
   libvlc_media_player_play (mp, &vlc->ex);
+
+  while (st <= libvlc_Buffering)
+  {
+    st = libvlc_media_player_get_state (mp, &vlc->ex);
+    usleep (WAIT_PERIOD);
+    wait += WAIT_PERIOD;
+    if (wait >= WAIT_MAX)
+      break;
+  }
 
   if (flags & IDENTIFY_VIDEO)
     vlc_identify_video (mrl, mp, &vlc->ex);
