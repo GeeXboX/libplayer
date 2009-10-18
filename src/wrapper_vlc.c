@@ -770,6 +770,9 @@ vlc_playback_seek_chapter (player_t *player, int value, int absolute)
   chapter = absolute ? value :
     libvlc_media_player_get_chapter (vlc->mp, &vlc->ex) + value;
 
+  if (chapter > libvlc_media_player_get_chapter_count (vlc->mp, &vlc->ex))
+    return;
+
   libvlc_media_player_set_chapter (vlc->mp, chapter, &vlc->ex);
 }
 
