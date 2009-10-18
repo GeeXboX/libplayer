@@ -621,11 +621,6 @@ vlc_get_percent_pos (player_t *player)
     return -1;
 
   pos = libvlc_media_player_get_position (vlc->mp, &vlc->ex);
-
-  /* special hack for EOF */
-  if (libvlc_media_player_get_state (vlc->mp, &vlc->ex) == libvlc_Ended)
-    pos = 1.0;
-
   if (pos < 0.0)
     return -1;
 
