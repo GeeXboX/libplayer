@@ -621,10 +621,7 @@ vlc_get_percent_pos (player_t *player)
     return -1;
 
   pos = libvlc_media_player_get_position (vlc->mp, &vlc->ex);
-  if (pos < 0.0)
-    return -1;
-
-  return (int) (pos * 100.0);
+  return (pos < 0.0) ? -1 : (int) (pos * 100.0);
 }
 
 static playback_status_t
