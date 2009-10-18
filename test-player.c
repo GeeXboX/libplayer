@@ -541,7 +541,8 @@ show_resource (player_t *player, mrl_t *mrl)
     [MRL_RESOURCE_UDP]     = "User Datagram Protocol",
     [MRL_RESOURCE_VCD]     = "Video Compact Disc",
   };
-  const int resource_size = sizeof (resource_desc) / sizeof (resource_desc[0]);
+  const unsigned int resource_size =
+    sizeof (resource_desc) / sizeof (resource_desc[0]);
   mrl_resource_t resource = mrl_get_resource (player, mrl);
 
   if (resource > resource_size || resource < 0)
@@ -553,7 +554,7 @@ show_resource (player_t *player, mrl_t *mrl)
 static void
 show_info (player_t *player, mrl_t *mrl)
 {
-  int i;
+  unsigned int i;
   char *meta;
   char *codec;
   uint32_t prop;
@@ -745,7 +746,7 @@ show_info (player_t *player, mrl_t *mrl)
   prop = mrl_get_metadata_cd (player, mrl, MRL_METADATA_CD_TRACKS);
   if (prop)
   {
-    int i;
+    unsigned int i;
 
     printf (" Meta CD Tracks: %i\n", prop);
 
@@ -775,7 +776,7 @@ show_info (player_t *player, mrl_t *mrl)
 
   if (prop)
   {
-    int i;
+    unsigned int i;
 
     printf (" Meta DVD Titles: %i\n", prop);
 

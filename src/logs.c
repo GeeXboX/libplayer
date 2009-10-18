@@ -42,7 +42,7 @@
 int
 pl_log_test (player_t *player, player_verbosity_level_t level)
 {
-  int verbosity;
+  unsigned int verbosity;
 
   if (!player)
     return 0;

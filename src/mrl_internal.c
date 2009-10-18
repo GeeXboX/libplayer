@@ -250,7 +250,7 @@ mrl_metadata_sub_get (mrl_metadata_sub_t **sub, int id)
   subtitle = *sub;
   while (subtitle)
   {
-    if (subtitle->id == id)
+    if (subtitle->id == (unsigned int) id)
       return subtitle;
     subtitle_p = subtitle;
     subtitle = subtitle->next;
@@ -288,7 +288,7 @@ mrl_metadata_audio_get (mrl_metadata_audio_t **audio, int id)
   a = *audio;
   while (a)
   {
-    if (a->id == id)
+    if (a->id == (unsigned int) id)
       return a;
     a_p = a;
     a = a->next;

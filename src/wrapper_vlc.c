@@ -394,7 +394,8 @@ vlc_init (player_t *player)
   vlc_t *vlc = NULL;
   const char *vlc_argv[32] = { "vlc" };
   libvlc_event_manager_t *ev;
-  int i, vlc_argc = 1;
+  int vlc_argc = 1;
+  unsigned int i;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
