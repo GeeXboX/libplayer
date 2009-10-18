@@ -716,6 +716,49 @@ vlc_playback_pause (player_t *player)
   return PLAYER_PB_OK;
 }
 
+static void
+vlc_playback_seek (player_t *player, int value, player_pb_seek_t seek)
+{
+  vlc_t *vlc;
+
+  pl_log (player, PLAYER_MSG_INFO,
+          MODULE_NAME, "playback_seek: %d %d", value, seek);
+
+  if (!player)
+    return;
+
+  vlc = (vlc_t *) player->priv;
+  if (!vlc || !vlc->mp)
+    return;
+
+  switch (seek)
+  {
+  default:
+  case PLAYER_PB_SEEK_RELATIVE:
+  {
+    libvlc_time_t pos_time, length;
+
+    length = libvlc_media_player_get_length (vlc->mp, &vlc->ex);
+    pos_time = libvlc_media_player_get_time (vlc->mp, &vlc->ex);
+    pos_time += value * 1000;
+
+    if (pos_time < 0)
+      pos_time = 0;
+    if (pos_time > length)
+      break;
+
+    libvlc_media_player_set_time (vlc->mp, pos_time, &vlc->ex);
+    break;
+  }
+  case PLAYER_PB_SEEK_PERCENT:
+    libvlc_media_player_set_position (vlc->mp, value, &vlc->ex);
+    break;
+  case PLAYER_PB_SEEK_ABSOLUTE:
+    libvlc_media_player_set_time (vlc->mp, (value * 1000), &vlc->ex);
+    break;
+  }
+}
+
 static int
 vlc_audio_get_volume (player_t *player)
 {
@@ -838,7 +881,7 @@ pl_register_functions_vlc (void)
   funcs->pb_start           = vlc_playback_start;
   funcs->pb_stop            = vlc_playback_stop;
   funcs->pb_pause           = vlc_playback_pause;
-  funcs->pb_seek            = NULL;
+  funcs->pb_seek            = vlc_playback_seek;
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = NULL;
 
