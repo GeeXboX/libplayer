@@ -401,13 +401,6 @@ vlc_init (player_t *player)
   if (!player)
     return PLAYER_INIT_ERROR;
 
-  /* only X11 video out is supported right now */
-  if (player->vo != PLAYER_VO_NULL &&
-      player->vo != PLAYER_VO_X11 &&
-      player->vo != PLAYER_VO_XV &&
-      player->vo != PLAYER_VO_GL)
-    return PLAYER_INIT_ERROR;
-
   //vlc_argv[vlc_argc++] = "-vv";
   vlc_argv[vlc_argc++] = "--no-stats";
   vlc_argv[vlc_argc++] = "--intf";
@@ -447,7 +440,7 @@ vlc_init (player_t *player)
 #endif
 
   default:
-    break;
+    return PLAYER_INIT_ERROR;
   }
 
   /* select the audio output */
