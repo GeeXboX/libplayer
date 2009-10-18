@@ -30,6 +30,7 @@
 #include "player_internals.h"
 #include "logs.h"
 #include "playlist.h"
+#include "event.h"
 #include "fs_utils.h"
 #include "parse_utils.h"
 #include "wrapper_vlc.h"
@@ -46,9 +47,61 @@ typedef struct vlc_s {
   libvlc_exception_t ex;
 } vlc_t;
 
+static const libvlc_event_type_t mp_events[] = {
+  libvlc_MediaPlayerPlaying,
+  libvlc_MediaPlayerPaused,
+  libvlc_MediaPlayerEndReached,
+  libvlc_MediaPlayerStopped,
+};
+
 /*****************************************************************************/
 /*                            common routines                                */
 /*****************************************************************************/
+
+static void
+vlc_event_callback (const libvlc_event_t *ev, void *data)
+{
+  player_t *player = NULL;
+  libvlc_event_type_t type;
+
+  player = (player_t *) data;
+  if (!ev || !player)
+    return;
+
+  type = ev->type;
+  switch (type)
+  {
+  case libvlc_MediaPlayerPlaying:
+    pl_log (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Playback of stream has started");
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_START, NULL);
+    break;
+
+  case libvlc_MediaPlayerPaused:
+    pl_log (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Playback of stream has been paused");
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_PAUSE, NULL);
+    break;
+
+  case libvlc_MediaPlayerEndReached:
+    pl_log (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Playback of stream has ended");
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+    break;
+
+  case libvlc_MediaPlayerStopped:
+    pl_log (player, PLAYER_MSG_INFO,
+            MODULE_NAME, "Playback of stream has stopped");
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_STOP, NULL);
+    break;
+
+  default:
+    pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
+            "Unknown event received: %s", libvlc_event_type_name (type));
+    player_event_send (player, PLAYER_EVENT_UNKNOWN, NULL);
+    break;
+  }
+}
 
 static void
 vlc_check_exception (player_t *player)
@@ -340,7 +393,8 @@ vlc_init (player_t *player)
 {
   vlc_t *vlc = NULL;
   const char *vlc_argv[32] = { "vlc" };
-  int vlc_argc = 1;
+  libvlc_event_manager_t *ev;
+  int i, vlc_argc = 1;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
@@ -430,6 +484,15 @@ vlc_init (player_t *player)
   vlc->mp = libvlc_media_player_new (vlc->core, &vlc->ex);
   if (!vlc->mp)
     return PLAYER_INIT_ERROR;
+
+  /* register the event manager */
+  ev = libvlc_media_player_event_manager (vlc->mp, &vlc->ex);
+  if (!ev)
+    return PLAYER_INIT_ERROR;
+
+  for (i = 0; i < (sizeof (mp_events) / sizeof (*mp_events)); i++)
+    libvlc_event_attach (ev, mp_events[i],
+                         vlc_event_callback, player, &vlc->ex);
 
   return PLAYER_INIT_OK;
 }
