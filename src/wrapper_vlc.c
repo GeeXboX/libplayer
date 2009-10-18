@@ -597,12 +597,9 @@ vlc_get_time_pos (player_t *player)
     return -1;
 
   vlc = (vlc_t *) player->priv;
-  time_pos = libvlc_media_player_get_position (vlc->mp, &vlc->ex);
+  time_pos = libvlc_media_player_get_time (vlc->mp, &vlc->ex);
 
-  if (time_pos < 0.0)
-    return -1;
-
-  return (int) (time_pos * 1000.0);
+  return (time_pos < 0.0) ? -1: (int) time_pos;
 }
 
 static int
