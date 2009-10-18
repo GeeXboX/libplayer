@@ -545,7 +545,7 @@ show_resource (player_t *player, mrl_t *mrl)
     sizeof (resource_desc) / sizeof (resource_desc[0]);
   mrl_resource_t resource = mrl_get_resource (player, mrl);
 
-  if (resource > resource_size || resource < 0)
+  if (resource > resource_size)
     resource = MRL_RESOURCE_UNKNOWN;
 
   printf (" Resource: %s\n", resource_desc[resource]);

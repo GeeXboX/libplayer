@@ -373,7 +373,7 @@ get_cmd (player_t *player, slave_cmd_t cmd, item_state_t *state)
   if (!mplayer || !mplayer->slave_cmds)
     return NULL;
 
-  if (cmd < g_slave_cmds_nb && cmd >= 0)
+  if (cmd < g_slave_cmds_nb)
     command = cmd;
 
   if (state)
@@ -396,7 +396,7 @@ get_prop (player_t *player, slave_property_t property, item_state_t *state)
   if (!mplayer || !mplayer->slave_props)
     return NULL;
 
-  if (property < g_slave_props_nb && property >= 0)
+  if (property < g_slave_props_nb)
     prop = property;
 
   if (state)
@@ -420,7 +420,7 @@ get_prop_range (player_t *player, slave_property_t property, int *min, int *max)
   if (!mplayer || !mplayer->slave_props)
     return OPT_OFF;
 
-  if (property < g_slave_props_nb && property >= 0)
+  if (property < g_slave_props_nb)
     prop = property;
 
   opt = mplayer->slave_props[prop].opt;
