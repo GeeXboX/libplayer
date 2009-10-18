@@ -595,6 +595,7 @@ static void
 vlc_playback_stop (player_t *player)
 {
   vlc_t *vlc;
+  libvlc_media_t *media;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
 
@@ -603,7 +604,9 @@ vlc_playback_stop (player_t *player)
 
   vlc = (vlc_t *) player->priv;
 
+  media = libvlc_media_player_get_media (vlc->mp, &vlc->ex);
   libvlc_media_player_stop (vlc->mp, &vlc->ex);
+  libvlc_media_release (media);
 }
 
 static playback_status_t
