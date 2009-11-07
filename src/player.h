@@ -655,7 +655,7 @@ off_t mrl_get_size (player_t *player, mrl_t *mrl);
  * One frame at the \p pos (in second) is saved to \p dst.
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -820,7 +820,7 @@ int player_get_time_pos (player_t *player);
  * \brief Get percent position in the current stream.
  *
  * Wrapper supported (even partially):
- *  MPlayer, xine
+ *  MPlayer, VLC, xine
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1009,7 +1009,7 @@ void player_playback_pause (player_t *player);
  * \brief Seek in the stream.
  *
  * Wrappers supported (even partially):
- *  MPlayer, xine
+ *  MPlayer, VLC, xine
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1022,7 +1022,7 @@ void player_playback_seek (player_t *player, int value, player_pb_seek_t seek);
  * \brief Seek chapter in the stream.
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1037,7 +1037,7 @@ void player_playback_seek_chapter (player_t *player, int value, int absolute);
  * This function can't be used to play in backward.
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1199,7 +1199,7 @@ typedef enum player_video_aspect {
  * use winid parameter in player_init().
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1239,7 +1239,7 @@ void player_video_set_panscan (player_t *player, int8_t value, int absolute);
  * \brief Set video aspect ratio.
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1338,7 +1338,7 @@ void player_subtitle_scale (player_t *player, int value, int absolute);
  * \brief Select subtitle ID.
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1352,7 +1352,7 @@ void player_subtitle_select (player_t *player, int sub_id);
  * It stays on the same subtitle ID if no previous subtitle exists.
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1365,7 +1365,7 @@ void player_subtitle_prev (player_t *player);
  * It stays on the same subtitle ID if no next subtitle exists.
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1453,7 +1453,7 @@ void player_dvd_angle_next (player_t *player);
  * \brief Select DVD title.
  *
  * Wrappers supported (even partially):
- *  MPlayer
+ *  MPlayer, VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1467,7 +1467,7 @@ void player_dvd_title_select (player_t *player, int title);
  * It stays on the same if no previous title exists.
  *
  * Wrappers supported (even partially):
- *  none
+ *  VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
@@ -1480,7 +1480,7 @@ void player_dvd_title_prev (player_t *player);
  * It stays on the same if no next title exists.
  *
  * Wrappers supported (even partially):
- *  none
+ *  VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
