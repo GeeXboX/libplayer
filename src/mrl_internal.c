@@ -643,7 +643,7 @@ mrl_properties_plog (player_t *player, mrl_t *mrl)
 void
 mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player || !mrl)
     return;
@@ -808,7 +808,7 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
 void
 mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player || !mrl)
     return;
@@ -948,7 +948,7 @@ mrl_sv_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
 {
   mrl_properties_t *prop;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1013,7 +1013,7 @@ mrl_sv_get_property (player_t *player, mrl_t *mrl, mrl_properties_type_t p)
 char *
 mrl_sv_get_audio_codec (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   return mrl_get_codec (player, mrl, MRL_TYPE_AUDIO);
 }
@@ -1021,7 +1021,7 @@ mrl_sv_get_audio_codec (player_t *player, mrl_t *mrl)
 char *
 mrl_sv_get_video_codec (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   return mrl_get_codec (player, mrl, MRL_TYPE_VIDEO);
 }
@@ -1029,7 +1029,7 @@ mrl_sv_get_video_codec (player_t *player, mrl_t *mrl)
 off_t
 mrl_sv_get_size (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1050,7 +1050,7 @@ mrl_sv_get_metadata (player_t *player, mrl_t *mrl, mrl_metadata_type_t m)
 {
   mrl_metadata_t *meta;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return NULL;
@@ -1103,7 +1103,7 @@ mrl_sv_get_metadata_cd_track (player_t *player,
   mrl_metadata_cd_t *cd;
   mrl_metadata_cd_track_t *track;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return NULL;
@@ -1147,7 +1147,7 @@ mrl_sv_get_metadata_cd (player_t *player, mrl_t *mrl, mrl_metadata_cd_type_t m)
   mrl_metadata_t *meta;
   mrl_metadata_cd_t *cd;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1193,7 +1193,7 @@ mrl_sv_get_metadata_dvd_title (player_t *player, mrl_t *mrl,
   mrl_metadata_dvd_t *dvd;
   mrl_metadata_dvd_title_t *title;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1247,7 +1247,7 @@ mrl_sv_get_metadata_dvd (player_t *player, mrl_t *mrl, uint8_t *titles)
   mrl_metadata_t *meta;
   mrl_metadata_dvd_t *dvd;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return NULL;
@@ -1285,7 +1285,7 @@ mrl_sv_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
   mrl_metadata_t *meta;
   mrl_metadata_sub_t *sub;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1324,7 +1324,7 @@ mrl_sv_get_metadata_subtitle_nb (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1352,7 +1352,7 @@ mrl_sv_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
   mrl_metadata_t *meta;
   mrl_metadata_audio_t *audio;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1391,7 +1391,7 @@ mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
 {
   mrl_metadata_t *meta;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return 0;
@@ -1414,7 +1414,7 @@ mrl_sv_get_metadata_audio_nb (player_t *player, mrl_t *mrl)
 mrl_type_t
 mrl_sv_get_type (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return MRL_TYPE_UNKNOWN;
@@ -1430,7 +1430,7 @@ mrl_sv_get_type (player_t *player, mrl_t *mrl)
 mrl_resource_t
 mrl_sv_get_resource (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return MRL_RESOURCE_UNKNOWN;
@@ -1458,7 +1458,7 @@ mrl_sv_add_subtitle (player_t *player, mrl_t *mrl, char *subtitle)
 {
   int n;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player || !subtitle)
     return;
@@ -1480,7 +1480,7 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
   mrl_t *mrl = NULL;
   int support = 0;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player || !args)
     return NULL;
@@ -1517,7 +1517,7 @@ void
 mrl_sv_video_snapshot (player_t *player, mrl_t *mrl,
                        int pos, mrl_snapshot_t t, const char *dst)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;

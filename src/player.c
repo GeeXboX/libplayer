@@ -159,7 +159,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
     break;
   }
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player->funcs || !player->priv)
   {
@@ -220,7 +220,7 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
 void
 player_uninit (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -243,7 +243,7 @@ player_uninit (player_t *player)
 void
 player_set_verbosity (player_t *player, player_verbosity_level_t level)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -263,7 +263,7 @@ player_mrl_get_current (player_t *player)
 {
   mrl_t *out = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return NULL;
@@ -277,7 +277,7 @@ player_mrl_get_current (player_t *player)
 void
 player_mrl_set (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player || !mrl)
     return;
@@ -291,7 +291,7 @@ player_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when)
 {
   supervisor_data_mrl_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player || !mrl)
     return;
@@ -306,7 +306,7 @@ player_mrl_append (player_t *player, mrl_t *mrl, player_mrl_add_t when)
 void
 player_mrl_remove (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -318,7 +318,7 @@ player_mrl_remove (player_t *player)
 void
 player_mrl_remove_all (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -330,7 +330,7 @@ player_mrl_remove_all (player_t *player)
 void
 player_mrl_previous (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -342,7 +342,7 @@ player_mrl_previous (player_t *player)
 void
 player_mrl_next (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -362,7 +362,7 @@ player_get_time_pos (player_t *player)
 {
   int out = -1;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return -1;
@@ -378,7 +378,7 @@ player_get_percent_pos (player_t *player)
 {
   int out = -1;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return -1;
@@ -392,7 +392,7 @@ player_get_percent_pos (player_t *player)
 void
 player_set_playback (player_t *player, player_pb_t pb)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -406,7 +406,7 @@ player_set_loop (player_t *player, player_loop_t loop, int value)
 {
   supervisor_data_mode_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -421,7 +421,7 @@ player_set_loop (player_t *player, player_loop_t loop, int value)
 void
 player_set_shuffle (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -433,7 +433,7 @@ player_set_shuffle (player_t *player, int value)
 void
 player_set_framedrop (player_t *player, player_framedrop_t fd)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -447,7 +447,7 @@ player_set_mouse_position (player_t *player, int x, int y)
 {
   supervisor_data_coord_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -465,7 +465,7 @@ player_x_window_set_properties (player_t *player,
 {
   supervisor_data_window_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -486,7 +486,7 @@ player_osd_show_text (player_t *player,
 {
   supervisor_data_osd_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -511,7 +511,7 @@ player_playback_get_state (player_t *player)
 {
   player_pb_state_t out = PLAYER_PB_STATE_IDLE;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return out;
@@ -525,7 +525,7 @@ player_playback_get_state (player_t *player)
 void
 player_playback_start (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -537,7 +537,7 @@ player_playback_start (player_t *player)
 void
 player_playback_stop (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -549,7 +549,7 @@ player_playback_stop (player_t *player)
 void
 player_playback_pause (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -563,7 +563,7 @@ player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
   supervisor_data_mode_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -580,7 +580,7 @@ player_playback_seek_chapter (player_t *player, int value, int absolute)
 {
   supervisor_data_mode_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -595,7 +595,7 @@ player_playback_seek_chapter (player_t *player, int value, int absolute)
 void
 player_playback_speed (player_t *player, float value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -615,7 +615,7 @@ player_audio_volume_get (player_t *player)
 {
   int out = -1;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return -1;
@@ -629,7 +629,7 @@ player_audio_volume_get (player_t *player)
 void
 player_audio_volume_set (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -643,7 +643,7 @@ player_audio_mute_get (player_t *player)
 {
   player_mute_t out = PLAYER_MUTE_UNKNOWN;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return out;
@@ -657,7 +657,7 @@ player_audio_mute_get (player_t *player)
 void
 player_audio_mute_set (player_t *player, player_mute_t value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -671,7 +671,7 @@ player_audio_set_delay (player_t *player, int value, int absolute)
 {
   supervisor_data_mode_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -686,7 +686,7 @@ player_audio_set_delay (player_t *player, int value, int absolute)
 void
 player_audio_select (player_t *player, int audio_id)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -698,7 +698,7 @@ player_audio_select (player_t *player, int audio_id)
 void
 player_audio_prev (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -710,7 +710,7 @@ player_audio_prev (player_t *player)
 void
 player_audio_next (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -728,7 +728,7 @@ player_audio_next (player_t *player)
 void
 player_video_set_fullscreen (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -743,7 +743,7 @@ player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
 {
   supervisor_data_vo_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -761,7 +761,7 @@ player_video_set_panscan (player_t *player, int8_t value, int absolute)
 {
   supervisor_data_vo_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -777,7 +777,7 @@ player_video_set_panscan (player_t *player, int8_t value, int absolute)
 void
 player_video_set_aspect_ratio (player_t *player, float value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -795,7 +795,7 @@ player_video_set_aspect_ratio (player_t *player, float value)
 void
 player_subtitle_set_delay (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -808,7 +808,7 @@ void
 player_subtitle_set_alignment (player_t *player,
                                player_sub_alignment_t a)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -820,7 +820,7 @@ player_subtitle_set_alignment (player_t *player,
 void
 player_subtitle_set_position (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -832,7 +832,7 @@ player_subtitle_set_position (player_t *player, int value)
 void
 player_subtitle_set_visibility (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -846,7 +846,7 @@ player_subtitle_scale (player_t *player, int value, int absolute)
 {
   supervisor_data_mode_t in;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -861,7 +861,7 @@ player_subtitle_scale (player_t *player, int value, int absolute)
 void
 player_subtitle_select (player_t *player, int sub_id)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -873,7 +873,7 @@ player_subtitle_select (player_t *player, int sub_id)
 void
 player_subtitle_prev (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -885,7 +885,7 @@ player_subtitle_prev (player_t *player)
 void
 player_subtitle_next (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -903,7 +903,7 @@ player_subtitle_next (player_t *player)
 void
 player_dvd_nav (player_t *player, player_dvdnav_t value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -915,7 +915,7 @@ player_dvd_nav (player_t *player, player_dvdnav_t value)
 void
 player_dvd_angle_select (player_t *player, int angle)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -927,7 +927,7 @@ player_dvd_angle_select (player_t *player, int angle)
 void
 player_dvd_angle_prev (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -939,7 +939,7 @@ player_dvd_angle_prev (player_t *player)
 void
 player_dvd_angle_next (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -951,7 +951,7 @@ player_dvd_angle_next (player_t *player)
 void
 player_dvd_title_select (player_t *player, int title)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -963,7 +963,7 @@ player_dvd_title_select (player_t *player, int title)
 void
 player_dvd_title_prev (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -975,7 +975,7 @@ player_dvd_title_prev (player_t *player)
 void
 player_dvd_title_next (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -993,7 +993,7 @@ player_dvd_title_next (player_t *player)
 void
 player_tv_channel_select (player_t *player, const char *channel)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1005,7 +1005,7 @@ player_tv_channel_select (player_t *player, const char *channel)
 void
 player_tv_channel_prev (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1017,7 +1017,7 @@ player_tv_channel_prev (player_t *player)
 void
 player_tv_channel_next (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1035,7 +1035,7 @@ player_tv_channel_next (player_t *player)
 void
 player_radio_channel_select (player_t *player, const char *channel)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1047,7 +1047,7 @@ player_radio_channel_select (player_t *player, const char *channel)
 void
 player_radio_channel_prev (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1059,7 +1059,7 @@ player_radio_channel_prev (player_t *player)
 void
 player_radio_channel_next (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1077,7 +1077,7 @@ player_radio_channel_next (player_t *player)
 void
 player_vdr (player_t *player, player_vdr_t value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;

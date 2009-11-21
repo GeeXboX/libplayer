@@ -1271,7 +1271,7 @@ pl_supervisor_callback_in (player_t *player, pthread_t which)
 {
   supervisor_t *supervisor;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1291,7 +1291,7 @@ pl_supervisor_callback_out (player_t *player)
 {
   supervisor_t *supervisor;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
@@ -1408,7 +1408,7 @@ pl_supervisor_init (player_t *player, int **run, pthread_t **job,
   supervisor_t *supervisor;
   pthread_attr_t attr;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return SUPERVISOR_STATUS_ERROR;
@@ -1449,7 +1449,7 @@ pl_supervisor_uninit (player_t *player)
   supervisor_t *supervisor;
   void *ret;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player)
     return;
