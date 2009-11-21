@@ -73,39 +73,39 @@ dummy_uninit (player_t *player)
 static void
 dummy_mrl_retrieve_properties (player_t *player, pl_unused mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_properties");
 }
 
 static void
 dummy_mrl_retrieve_metadata (player_t *player, pl_unused mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_metadata");
 }
 
 static playback_status_t
 dummy_playback_start (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_start");
   return PLAYER_PB_OK;
 }
 
 static void
 dummy_playback_stop (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_stop");
 }
 
 static playback_status_t
 dummy_playback_pause (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_pause");
   return PLAYER_PB_OK;
 }
 
 static void
 dummy_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "playback_seek: %d %d", value, seek);
 }
 
@@ -149,27 +149,28 @@ dummy_dvd_nav (player_t *player, player_dvdnav_t value)
     break;
   }
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %s", log);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "dvd_nav: %s", log);
 }
 
 static int
 dummy_audio_get_volume (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_volume");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_get_volume");
   return 0;
 }
 
 static player_mute_t
 dummy_audio_get_mute (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_mute");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_get_mute");
   return PLAYER_MUTE_OFF;
 }
 
 static void
 dummy_audio_set_volume (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "audio_set_volume: %d", value);
 }
 
 static void
@@ -178,14 +179,14 @@ dummy_audio_set_mute (player_t *player, player_mute_t value)
   if (value == PLAYER_MUTE_UNKNOWN)
     return;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME,
           "audio_set_mute: %s", value == PLAYER_MUTE_ON ? "on" : "off");
 }
 
 static void
 dummy_sub_set_delay (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_delay: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_set_delay: %i", value);
 }
 
 /*****************************************************************************/

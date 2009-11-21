@@ -518,7 +518,7 @@ vlc_set_verbosity (player_t *player, player_verbosity_level_t level)
   vlc_t *vlc;
   int verbosity = -1;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "set_verbosity");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "set_verbosity");
 
   if (!player)
     return;
@@ -551,7 +551,7 @@ vlc_set_verbosity (player_t *player, player_verbosity_level_t level)
 static void
 vlc_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_properties");
 
   if (!player || !mrl || !mrl->prop)
     return;
@@ -578,7 +578,7 @@ vlc_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 static void
 vlc_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_metadata");
 
   if (!player || !mrl || !mrl->meta)
     return;
@@ -593,7 +593,7 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
   vlc_t *vlc;
   unsigned int width, height;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_video_snapshot");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_video_snapshot");
 
   if (!player || !mrl || !mrl->meta)
     return;
@@ -617,7 +617,7 @@ vlc_get_time_pos (player_t *player)
   float time_pos = 0.0;
   vlc_t *vlc;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "get_time_pos");
 
   if (!player)
     return -1;
@@ -637,7 +637,7 @@ vlc_get_percent_pos (player_t *player)
   float pos = 0.0;
   vlc_t *vlc;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "get_percent_pos");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "get_percent_pos");
 
   if (!player)
     return -1;
@@ -658,7 +658,7 @@ vlc_playback_start (player_t *player)
   char *uri = NULL;
   libvlc_media_t *media = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -697,7 +697,7 @@ vlc_playback_stop (player_t *player)
   vlc_t *vlc;
   libvlc_media_t *media;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_stop");
 
   if (!player)
     return;
@@ -716,7 +716,7 @@ vlc_playback_pause (player_t *player)
 {
   vlc_t *vlc;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_pause");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -739,7 +739,7 @@ vlc_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
   vlc_t *vlc;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "playback_seek: %d %d", value, seek);
 
   if (!player)
@@ -783,7 +783,7 @@ vlc_playback_seek_chapter (player_t *player, int value, int absolute)
   vlc_t *vlc;
   int chapter;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "playback_seek_chapter: %i %i", value, absolute);
 
   if (!player)
@@ -807,7 +807,7 @@ vlc_playback_set_speed (player_t *player, float value)
 {
   vlc_t *vlc;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "playback_set_speed %.2f", value);
 
   if (!player)
@@ -826,7 +826,7 @@ vlc_audio_get_volume (player_t *player)
   vlc_t *vlc;
   int volume = -1;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_volume");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_get_volume");
 
   if (!player)
     return volume;
@@ -842,7 +842,8 @@ vlc_audio_set_volume (player_t *player, int value)
 {
   vlc_t *vlc;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "audio_set_volume: %d", value);
 
   if (!player)
     return;
@@ -857,7 +858,7 @@ vlc_audio_get_mute (player_t *player)
   player_mute_t mute = PLAYER_MUTE_UNKNOWN;
   vlc_t *vlc;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_mute");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_get_mute");
 
   if (!player)
     return mute;
@@ -881,7 +882,7 @@ vlc_audio_set_mute (player_t *player, player_mute_t value)
   if (value == PLAYER_MUTE_ON)
     mute = 1;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
 
   if (!player)
@@ -896,7 +897,7 @@ vlc_video_set_fullscreen (player_t *player, int value)
 {
   vlc_t *vlc;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "video_set_fullscreen: %s", value ? "on" : "off");
 
   if (!player)
@@ -915,7 +916,8 @@ vlc_video_set_ar (player_t *player, float value)
   vlc_t *vlc;
   char *ar;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "video_set_ar: %.2f", value);
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "video_set_ar: %.2f", value);
 
   if (!player)
     return;
@@ -948,7 +950,7 @@ vlc_sub_select (player_t *player, int value)
   vlc_t *vlc;
   int max;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_select: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_select: %i", value);
 
   if (!player)
     return;
@@ -972,7 +974,7 @@ vlc_sub_prev (player_t *player)
   vlc_t *vlc;
   int cur, max, val;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_prev");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_prev");
 
   if (!player)
     return;
@@ -998,7 +1000,7 @@ vlc_sub_next (player_t *player)
   vlc_t *vlc;
   int cur, max, val;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_next");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_next");
 
   if (!player)
     return;
@@ -1023,7 +1025,7 @@ vlc_dvd_title_set (player_t *player, int value)
 {
   vlc_t *vlc;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_title_set: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "dvd_title_set: %i", value);
 
   if (!player)
     return;
@@ -1047,7 +1049,7 @@ vlc_dvd_title_prev (player_t *player)
   vlc_t *vlc;
   int value;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_title_prev");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "dvd_title_prev");
 
   if (!player)
     return;
@@ -1066,7 +1068,7 @@ vlc_dvd_title_next (player_t *player)
   vlc_t *vlc;
   int value;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_title_next");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "dvd_title_next");
 
   if (!player)
     return;

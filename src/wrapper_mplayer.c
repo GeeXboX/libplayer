@@ -2487,7 +2487,7 @@ mp_check_list (player_t *player, checklist_t check)
     else if ((state_libplayer == ITEM_ON && *state_mp == ITEM_ON) ||
              (state_libplayer == ALL_ITEM_STATES && *state_mp == ITEM_ON))
     {
-      pl_log (player, PLAYER_MSG_INFO,
+      pl_log (player, PLAYER_MSG_VERBOSE,
               MODULE_NAME, "slave %s '%s' is supported by your version of "
                            "MPlayer", what, str);
 
@@ -3025,7 +3025,7 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
   mplayer_t *mplayer;
   int verbosity = -1;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "set_verbosity");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "set_verbosity");
 
   if (!player)
     return;
@@ -3073,7 +3073,7 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
 static void
 mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_properties");
 
   if (!player || !mrl || !mrl->prop)
     return;
@@ -3087,7 +3087,7 @@ mplayer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 static void
 mplayer_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_metadata");
 
   if (!player || !mrl || !mrl->meta)
     return;
@@ -3108,7 +3108,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
   char tmp[] = SNAPSHOT_TMP;
   char vo[PATH_BUFFER], file[PATH_BUFFER];
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_video_snapshot");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_video_snapshot");
 
   if (!player || !mrl)
     return;
@@ -3252,7 +3252,7 @@ mplayer_playback_start (player_t *player)
   char *uri = NULL;
   mrl_t *mrl;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -3315,7 +3315,7 @@ mplayer_playback_stop (player_t *player)
   mrl_t *mrl;
 #endif /* USE_X11 */
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_stop");
 
   if (!player)
     return;
@@ -3347,7 +3347,7 @@ mplayer_playback_stop (player_t *player)
 static playback_status_t
 mplayer_playback_pause (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_pause");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -3362,7 +3362,7 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
   mplayer_seek_t opt;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
         MODULE_NAME, "playback_seek: %d %d", value, seek);
 
   if (!player)
@@ -3392,7 +3392,7 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 static void
 mplayer_playback_seek_chapter (player_t *player, int value, int absolute)
 {
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "playback_seek_chapter: %i %i", value, absolute);
 
   if (!player)
@@ -3410,7 +3410,7 @@ mplayer_playback_set_speed (player_t *player, float value)
 {
   int speed;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "playback_set_speed %.2f", value);
 
   if (!player)
@@ -3435,7 +3435,7 @@ mplayer_audio_get_volume (player_t *player)
 {
   int volume = -1;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_volume");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_get_volume");
 
   if (!player)
     return volume;
@@ -3454,7 +3454,7 @@ mplayer_audio_get_mute (player_t *player)
   player_mute_t mute = PLAYER_MUTE_UNKNOWN;
   char *buffer;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_mute");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_get_mute");
 
   if (!player)
     return mute;
@@ -3479,7 +3479,7 @@ mplayer_get_time_pos (player_t *player)
 {
   float time_pos = 0.0;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "get_time_pos");
 
   if (!player)
     return -1;
@@ -3497,7 +3497,7 @@ mplayer_get_percent_pos (player_t *player)
 {
   int percent_pos = 0;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "get_percent_pos");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "get_percent_pos");
 
   if (!player)
     return -1;
@@ -3515,7 +3515,7 @@ mplayer_set_framedrop (player_t *player, player_framedrop_t fd)
 {
   mplayer_framedropping_t framedrop;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "set_framedrop: %i", fd);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "set_framedrop: %i", fd);
 
   if (!player)
     return;
@@ -3544,7 +3544,8 @@ mplayer_set_framedrop (player_t *player, player_framedrop_t fd)
 static void
 mplayer_set_mouse_pos (player_t *player, int x, int y)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "set_mouse_pos: %i %i", x, y);
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "set_mouse_pos: %i %i", x, y);
 
   if (!player)
     return;
@@ -3568,7 +3569,7 @@ static void
 mplayer_osd_show_text (player_t *player,
                        const char *text, int x, int y, int duration)
 {
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "osd_show_text: %s %i %i %i", text, x, y, duration);
 
   if (!player || !text)
@@ -3588,7 +3589,8 @@ mplayer_osd_show_text (player_t *player,
 static void
 mplayer_audio_set_volume (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "audio_set_volume: %d", value);
 
   if (!player)
     return;
@@ -3610,7 +3612,7 @@ mplayer_audio_set_mute (player_t *player, player_mute_t value)
   if (value == PLAYER_MUTE_ON)
     mute = 1;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
 
   if (!player)
@@ -3625,7 +3627,7 @@ mplayer_audio_set_delay (player_t *player, int value, int absolute)
   float delay = 0.0;
   int val;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "audio_set_delay: %i %i", value, absolute);
 
   if (!player)
@@ -3645,7 +3647,7 @@ mplayer_audio_set_delay (player_t *player, int value, int absolute)
 static void
 mplayer_audio_select (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_select: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_select: %i", value);
 
   if (!player)
     return;
@@ -3661,7 +3663,7 @@ mplayer_audio_prev (player_t *player)
 {
   int audio;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_prev");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_prev");
 
   if (!player)
     return;
@@ -3685,7 +3687,7 @@ mplayer_audio_next (player_t *player)
 {
   int audio;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_next");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_next");
 
   if (!player)
     return;
@@ -3700,7 +3702,7 @@ mplayer_audio_next (player_t *player)
 static void
 mplayer_video_set_fullscreen (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "video_set_fullscreen: %s", value ? "on" : "off");
 
   if (!player)
@@ -3714,7 +3716,7 @@ mplayer_video_set_ar (player_t *player, float value)
 {
   mrl_t *mrl;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "video_set_ar: %.2f", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "video_set_ar: %.2f", value);
 
   if (!player)
     return;
@@ -3748,7 +3750,7 @@ mplayer_sub_set_delay (player_t *player, int value)
 {
   float delay;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_delay: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_set_delay: %i", value);
 
   if (!player)
     return;
@@ -3763,7 +3765,7 @@ mplayer_sub_set_alignment (player_t *player, player_sub_alignment_t a)
 {
   mplayer_sub_alignment_t alignment;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_alignment: %i", a);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_set_alignment: %i", a);
 
   if (!player)
     return;
@@ -3792,7 +3794,7 @@ mplayer_sub_set_alignment (player_t *player, player_sub_alignment_t a)
 static void
 mplayer_sub_set_pos (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_pos: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_set_pos: %i", value);
 
   if (!player)
     return;
@@ -3803,7 +3805,8 @@ mplayer_sub_set_pos (player_t *player, int value)
 static void
 mplayer_sub_set_visibility (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_visibility: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "sub_set_visibility: %i", value);
 
   if (!player)
     return;
@@ -3814,7 +3817,7 @@ mplayer_sub_set_visibility (player_t *player, int value)
 static void
 mplayer_sub_scale (player_t *player, int value, int absolute)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME,
           "sub_scale: %i [%d]", value, absolute);
 
   if (!player)
@@ -3826,7 +3829,7 @@ mplayer_sub_scale (player_t *player, int value, int absolute)
 static void
 mplayer_sub_select (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_select: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_select: %i", value);
 
   if (!player)
     return;
@@ -3842,7 +3845,7 @@ mplayer_sub_prev (player_t *player)
 {
   int sub;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_prev");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_prev");
 
   if (!player)
     return;
@@ -3866,7 +3869,7 @@ mplayer_sub_next (player_t *player)
 {
   int sub;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_next");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_next");
 
   if (!player)
     return;
@@ -3883,7 +3886,7 @@ mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
 {
   int action;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "dvd_nav: %i", value);
 
   if (!player)
     return;
@@ -3932,7 +3935,7 @@ mplayer_dvd_nav (player_t *player, player_dvdnav_t value)
 static void
 mplayer_dvd_angle_set (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_angle_set: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "dvd_angle_set: %i", value);
 
   if (!player)
     return;
@@ -3948,7 +3951,7 @@ mplayer_dvd_angle_prev (player_t *player)
 {
   int angle;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_angle_prev");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "dvd_angle_prev");
 
   if (!player)
     return;
@@ -3972,7 +3975,7 @@ mplayer_dvd_angle_next (player_t *player)
 {
   int angle;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_angle_next");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "dvd_angle_next");
 
   if (!player)
     return;
@@ -3987,7 +3990,7 @@ mplayer_dvd_angle_next (player_t *player)
 static void
 mplayer_dvd_title_set (player_t *player, int value)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_title_set: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "dvd_title_set: %i", value);
 
   if (!player)
     return;
@@ -4003,7 +4006,7 @@ mplayer_tv_channel_set (player_t *player, const char *channel)
 {
   mrl_resource_t res;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "tv_channel_set: %s", channel ? channel : "?");
 
   if (!player || !channel)
@@ -4021,7 +4024,7 @@ mplayer_tv_channel_prev (player_t *player)
 {
   mrl_resource_t res;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "tv_channel_prev");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "tv_channel_prev");
 
   if (!player)
     return;
@@ -4038,7 +4041,7 @@ mplayer_tv_channel_next (player_t *player)
 {
   mrl_resource_t res;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "tv_channel_next");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "tv_channel_next");
 
   if (!player)
     return;
@@ -4053,7 +4056,7 @@ mplayer_tv_channel_next (player_t *player)
 static void
 mplayer_radio_channel_set (player_t *player, const char *channel)
 {
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "radio_channel_set: %s", channel ? channel : "?");
 
   if (!player || !channel)
@@ -4065,7 +4068,7 @@ mplayer_radio_channel_set (player_t *player, const char *channel)
 static void
 mplayer_radio_channel_prev (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "radio_channel_prev");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "radio_channel_prev");
 
   if (!player)
     return;
@@ -4076,7 +4079,7 @@ mplayer_radio_channel_prev (player_t *player)
 static void
 mplayer_radio_channel_next (player_t *player)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "radio_channel_next");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "radio_channel_next");
 
   if (!player)
     return;

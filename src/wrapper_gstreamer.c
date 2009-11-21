@@ -212,7 +212,7 @@ gstreamer_player_playback_start (player_t *player)
   pthread_attr_t attr;
   pthread_t th;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -261,7 +261,7 @@ gstreamer_player_playback_stop (player_t *player)
 {
   gstreamer_player_t *g = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_stop");
 
   if (!player)
     return;

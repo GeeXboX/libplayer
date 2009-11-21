@@ -750,7 +750,7 @@ xine_player_set_verbosity (player_t *player, player_verbosity_level_t level)
 static void
 xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_properties");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_properties");
 
   if (!player || !mrl || !mrl->prop)
     return;
@@ -777,7 +777,7 @@ xine_player_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 static void
 xine_player_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "mrl_retrieve_metadata");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_metadata");
 
   if (!player || !mrl || !mrl->meta)
     return;
@@ -792,7 +792,7 @@ xine_player_get_time_pos (player_t *player)
   int time_pos = 0;
   int ret;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "get_time_pos");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "get_time_pos");
 
   if (!player)
     return -1;
@@ -816,7 +816,7 @@ xine_player_get_percent_pos (player_t *player)
   int percent_pos = 0;
   int ret;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "get_percent_pos");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "get_percent_pos");
 
   if (!player)
     return -1;
@@ -840,7 +840,8 @@ xine_player_set_mouse_pos (player_t *player, int x, int y)
   xine_input_data_t input;
   x11_rectangle_t rect;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "set_mouse_pos: %i %i", x, y);
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "set_mouse_pos: %i %i", x, y);
 
   if (!player)
     return;
@@ -883,7 +884,7 @@ xine_player_playback_start (player_t *player)
   char *uri = NULL;
   mrl_t *mrl_c;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_start");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -939,7 +940,7 @@ xine_player_playback_stop (player_t *player)
 #endif /* USE_X11 */
   xine_player_t *x = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_stop");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_stop");
 
   if (!player)
     return;
@@ -964,7 +965,7 @@ xine_player_playback_pause (player_t *player)
 {
   xine_player_t *x = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "playback_pause");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_pause");
 
   if (!player)
     return PLAYER_PB_FATAL;
@@ -988,7 +989,7 @@ xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   xine_player_t *x = NULL;
   int pos_time = 0, pos_percent = 0, length = 0;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "playback_seek: %d %d", value, seek);
 
   if (!player)
@@ -1029,7 +1030,7 @@ xine_player_audio_get_volume (player_t *player)
 {
   xine_player_t *x = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_volume");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_get_volume");
 
   if (!player)
     return -1;
@@ -1047,7 +1048,8 @@ xine_player_audio_set_volume (player_t *player, int value)
 {
   xine_player_t *x = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_set_volume: %d", value);
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "audio_set_volume: %d", value);
 
   if (!player)
     return;
@@ -1065,7 +1067,7 @@ xine_player_audio_get_mute (player_t *player)
 {
   xine_player_t *x = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "audio_get_mute");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_get_mute");
 
   if (!player)
     return PLAYER_MUTE_UNKNOWN;
@@ -1093,7 +1095,7 @@ xine_player_audio_set_mute (player_t *player, player_mute_t value)
   if (value == PLAYER_MUTE_ON)
     mute = 1;
 
-  pl_log (player, PLAYER_MSG_INFO,
+  pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
 
   if (!player)
@@ -1113,7 +1115,7 @@ xine_player_sub_set_delay (player_t *player, int value)
   int delay;
   xine_player_t *x = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "sub_set_delay: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "sub_set_delay: %i", value);
 
   /* unit is 1/90000 sec */
   delay = (int) rintf (value / 1000.0 * PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV);
@@ -1136,7 +1138,7 @@ xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
   xine_player_t *x;
   xine_input_data_t *input = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "dvd_nav: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "dvd_nav: %i", value);
 
   if (!player)
     return;
@@ -1196,7 +1198,7 @@ xine_player_vdr (player_t *player, player_vdr_t value)
 {
   int event;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "vdr: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "vdr: %i", value);
 
   if (!player)
     return;
