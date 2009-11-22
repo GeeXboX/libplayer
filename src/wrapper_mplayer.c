@@ -2864,7 +2864,7 @@ mplayer_init (player_t *player)
 
     case PLAYER_VO_VDPAU:
       params[pp++] = "-vo";
-      params[pp++] = "vdpau:deint=1,xv,x11";
+      params[pp++] = "vdpau,xv,x11";
       params[pp++] = "-vc";
       params[pp++] = "ffh264vdpau,ffmpeg12vdpau,ffvc1vdpau,ffwmv3vdpau,";
       break;
