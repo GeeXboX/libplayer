@@ -20,9 +20,11 @@
  */
 
 #define _GNU_SOURCE
+#include <stdio.h>
 #include <stdlib.h>
-#include <locale.h>
 #include <string.h>
+#include <math.h>
+#include <ctype.h>
 
 #include "parse_utils.h"
 
@@ -76,12 +78,26 @@ pl_strrstr (const char *buf, const char *str)
 double
 pl_atof (const char *nptr)
 {
-  double res;
-  locale_t new_locale;
+  double div = 1.0;
+  int res, integer;
+  unsigned int frac = 0, start = 0, end = 0;
 
-  new_locale = newlocale (LC_NUMERIC_MASK, "C", NULL);
-  res = strtod_l (nptr, NULL, new_locale);
-  freelocale (new_locale);
+  while (*nptr && !isdigit (*nptr) && *nptr != '-')
+    nptr++;
 
-  return res;
+  if (!*nptr)
+    return 0.0;
+
+  res = sscanf (nptr, "%i.%n%u%n", &integer, &start, &frac, &end);
+  if (res < 1)
+    return 0.0;
+
+  if (!frac)
+    return (double) integer;
+
+  if (integer < 0)
+    div = -div;
+
+  div *= pow (10.0, end - start);
+  return integer + frac / div;
 }
