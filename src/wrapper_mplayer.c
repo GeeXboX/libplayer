@@ -800,6 +800,9 @@ thread_fifo (void *arg)
      * then MPlayer is in english. But if --language is found, then the
      * first language must be 'en' or 'all'.
      * --language-msg is provided by MPlayer >= r29363.
+     *
+     * FIXME: to find a way to detect when MPlayer is compiled for an other
+     *        language with the LINGUAS environment variable.
      */
     else if (check_init)
     {
