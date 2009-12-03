@@ -82,7 +82,7 @@ pl_atof (const char *nptr)
   int res, integer;
   unsigned int frac = 0, start = 0, end = 0;
 
-  while (*nptr && !isdigit (*nptr) && *nptr != '-')
+  while (*nptr && !isdigit ((int) (unsigned char) *nptr) && *nptr != '-')
     nptr++;
 
   if (!*nptr)
