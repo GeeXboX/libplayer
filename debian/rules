@@ -7,9 +7,7 @@ DEB_DH_INSTALL_SOURCEDIR := debian/tmp
 
 # make targets
 DEB_MAKE_CLEAN_TARGET    := distclean
-DEB_MAKE_BUILD_TARGET    := lib doxygen
-DEB_MAKE_INSTALL_TARGET  := install-pkgconfig install-lib install-doxygen \
-			    DESTDIR=$(DEB_DESTDIR)
+DEB_MAKE_INSTALL_TARGET  := install DESTDIR=$(DEB_DESTDIR)
 
 # Common configuration flags
 confflags += --prefix=/usr
@@ -20,9 +18,10 @@ confflags += --disable-gstreamer
 confflags += --enable-mplayer
 confflags += --disable-vlc
 confflags += --enable-xine
+confflags += --disable-binding-python
 confflags += --enable-x11
 confflags += --enable-logcolor
 confflags += --enable-doc
 
-configure/libplayer configure/libplayer-dev configure/libplayer-doc::
+configure/libplayer configure/libplayer-dev configure/libplayer-bin configure/libplayer-doc::
 	[ -f config.mak ] || ./configure $(confflags)

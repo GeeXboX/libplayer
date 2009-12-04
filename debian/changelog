@@ -1,5 +1,5 @@
-libplayer (0.0.1) jaunty; urgency=low
+libplayer (0.0.1) karmic; urgency=low
 
   * initial release.
 
- -- Benjamin Zores <ben@geexbox.org>  Sun, 19 Apr 2009 11:11:00 +0200
+ -- Benjamin Zores <ben@geexbox.org>  Fri, 4 Dec 2009 21:00:00 +0200

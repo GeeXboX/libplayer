@@ -2,19 +2,17 @@ Source: libplayer
 Section: libs
 Priority: optional
 Maintainer: Benjamin Zores <ben@geexbox.org>
-Standards-Version: 3.8.0
+Standards-Version: 3.8.1
 Vcs-Hg: http://hg.geexbox.org/libplayer
 Vcs-Browser: http://hg.geexbox.org/libplayer/summary
 Homepage: http://libplayer.geexbox.org/
 Build-Depends-Indep: doxygen
-Build-Depends: debhelper (>= 4),
-               libxine-dev
+Build-Depends: debhelper (>= 6), cdbs, pkg-config, libxine-dev, libx11-dev, libxv-dev
 
 Package: libplayer
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, mplayer, libxine1
-Suggests: mplayer
+Depends: ${shlibs:Depends}, ${misc:Depends}, mplayer, libxine1, libxine1-all-plugins, libxine1-ffmpeg, libxine1-x
 Description: a multimedia A/V abstraction layer API
  libplayer is a multimedia A/V abstraction layer API.
  Its goal is to interact with Enna Media Center.
@@ -26,20 +24,22 @@ Description: a multimedia A/V abstraction layer API
 Package: libplayer-dev
 Section: libdevel
 Architecture: any
-Depends: libplayer (= ${binary:Version}),
-         libxine-dev
-Description: development files for libplayer
- libplayer is a multimedia A/V abstraction layer API.
- .
+Depends: libplayer (= ${binary:Version}), libxine-dev, libx11-dev, libxv-dev
+Description: a multimedia A/V abstraction layer API
  This package contains the header files and static libraries needed to
  compile applications or shared objects that use libplayer.
 
-Package: libplayer-doc
-Section: libdoc
+Package: libplayer-bin
 Architecture: any
-Depends: libplayer-dev (= ${binary:Version})
-Description: documentation files for libplayer
+Depends: libplayer (= ${binary:Version}), ${shlibs:Depends}
+Description: a multimedia A/V abstraction layer API
+ This package contains test-player
+
+Package: libplayer-doc
+Section: doc
+Architecture: all
+Enhances: libplayer-dev
+Description: libplayer API documentation
  libplayer is a multimedia A/V abstraction layer API.
  .
  This package contains development documentation files of libplayer.
-
