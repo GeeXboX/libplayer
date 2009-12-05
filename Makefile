@@ -37,19 +37,11 @@ ifeq ($(DOC),yes)
   endif
 endif
 
-bindings: binding-python
+bindings: lib
+	$(MAKE) -C bindings
 
-binding-python: lib
-ifeq ($(BINDING_PYTHON),yes)
-	cd bindings/python && PKG_CONFIG_PATH="../../" python setup.py build
-endif
-
-bindings-clean: binding-python-clean
-
-binding-python-clean:
-ifeq ($(BINDING_PYTHON),yes)
-	cd bindings/python && python setup.py clean && rm -rf build
-endif
+bindings-clean:
+	$(MAKE) -C bindings clean
 
 clean: bindings-clean
 	$(MAKE) -C src clean
@@ -86,12 +78,8 @@ ifeq ($(DOC),yes)
 	fi
 endif
 
-install-bindings: install-binding-python
-
-install-binding-python:
-ifeq ($(BINDING_PYTHON),yes)
-	cd bindings/python && python setup.py install --prefix=$(DESTDIR)$(PREFIX)
-endif
+install-bindings:
+	$(MAKE) -C bindings install
 
 uninstall-pkgconfig:
 	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
