@@ -69,14 +69,14 @@ distclean: clean docs-clean
 	rm -f config.mak
 	rm -f $(PKGCONFIG_FILE)
 
-install: install-pkgconfig install-lib install-test install-docs install-bindings
+install: install-lib install-pkgconfig install-test install-docs install-bindings
+
+install-lib: lib
+	$(MAKE) -C src install
 
 install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
 	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
-
-install-lib: lib
-	$(MAKE) -C src install
 
 install-test: test
 	$(INSTALL) -d $(bindir)
@@ -90,11 +90,13 @@ install-docs: docs
 install-bindings:
 	$(MAKE) -C bindings install
 
-uninstall-pkgconfig:
-	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
+uninstall: uninstall-lib uninstall-pkgconfig uninstall-test uninstall-docs
 
 uninstall-lib:
 	$(MAKE) -C src uninstall
+
+uninstall-pkgconfig:
+	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
 
 uninstall-test:
 	rm -f $(bindir)/$(PLREGTEST)
@@ -103,8 +105,6 @@ uninstall-test:
 
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
-
-uninstall: uninstall-pkgconfig uninstall-lib uninstall-test uninstall-docs
 
 .PHONY: *clean *install* docs binding*
 
