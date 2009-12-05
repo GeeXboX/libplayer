@@ -48,25 +48,13 @@ EXTRADIST = \
 	wrapper_xine.h \
 	x11_common.h \
 
-ifeq ($(WRAPPER_MPLAYER),yes)
-  SRCS += wrapper_mplayer.c
-endif
+SRCS-$(X11)			+= x11_common.c
+SRCS-$(WRAPPER_MPLAYER)		+= wrapper_mplayer.c
+SRCS-$(WRAPPER_VLC)		+= wrapper_vlc.c
+SRCS-$(WRAPPER_XINE)		+= wrapper_xine.c
+SRCS-$(WRAPPER_GSTREAMER)	+= wrapper_gstreamer.c
 
-ifeq ($(WRAPPER_VLC),yes)
-  SRCS += wrapper_vlc.c
-endif
-
-ifeq ($(WRAPPER_XINE),yes)
-  SRCS += wrapper_xine.c
-endif
-
-ifeq ($(WRAPPER_GSTREAMER),yes)
-  SRCS += wrapper_gstreamer.c
-endif
-
-ifeq ($(X11),yes)
-  SRCS += x11_common.c
-endif
+SRCS += $(SRCS-yes)
 
 OBJS = $(SRCS:.c=.o)
 
