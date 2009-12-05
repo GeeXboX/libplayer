@@ -16,7 +16,8 @@ SHARED_LIBNAME = ${LIBNAME}.so
 SHARED_LIBNAME_VERSION = ${SHARED_LIBNAME}.${LIBPLAYER_VERSION}
 SHARED_LIBNAME_MAJOR = $(SHARED_LIBNAME).$(shell echo $(LIBPLAYER_VERSION) | cut -f1 -d.)
 
-SRCS =  player.c \
+SRCS = \
+	player.c \
 	player_internal.c \
 	mrl.c \
 	mrl_internal.c \
