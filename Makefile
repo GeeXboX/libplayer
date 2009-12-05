@@ -6,12 +6,12 @@ include config.mak
 PKGCONFIG_DIR = $(libdir)/pkgconfig
 PKGCONFIG_FILE = libplayer.pc
 
-LIBTEST = regtest-libplayer
-LIBTEST_SRCS = regtest-libplayer.c
-TESTPLAYER = test-player
-TESTPLAYER_SRCS = test-player.c
-TESTVDR = test-vdr
-TESTVDR_SRCS = test-vdr.c
+PLREGTEST = libplayer-regtest
+PLREGTEST_SRCS = libplayer-regtest.c
+PLTEST = libplayer-test
+PLTEST_SRCS = libplayer-test.c
+PLTESTVDR = libplayer-testvdr
+PLTESTVDR_SRCS = libplayer-testvdr.c
 
 CFLAGS += -Isrc
 LDFLAGS += -Lsrc -lplayer -lpthread
@@ -42,9 +42,9 @@ lib:
 	$(MAKE) -C src
 
 test: lib
-	$(CC) $(LIBTEST_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(LIBTEST)
-	$(CC) $(TESTPLAYER_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTPLAYER)
-	$(CC) $(TESTVDR_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTVDR)
+	$(CC) $(PLREGTEST_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(PLREGTEST)
+	$(CC) $(PLTEST_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(PLTEST)
+	$(CC) $(PLTESTVDR_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(PLTESTVDR)
 
 docs:
 	$(MAKE) -C DOCS
@@ -60,9 +60,9 @@ bindings-clean:
 
 clean: bindings-clean
 	$(MAKE) -C src clean
-	rm -f $(LIBTEST)
-	rm -f $(TESTPLAYER)
-	rm -f $(TESTVDR)
+	rm -f $(PLREGTEST)
+	rm -f $(PLTEST)
+	rm -f $(PLTESTVDR)
 
 distclean: clean docs-clean
 	rm -f config.log
@@ -80,9 +80,9 @@ install-lib: lib
 
 install-test: test
 	$(INSTALL) -d $(bindir)
-	$(INSTALL) -c -m 755 $(LIBTEST) $(bindir)
-	$(INSTALL) -c -m 755 $(TESTPLAYER) $(bindir)
-	$(INSTALL) -c -m 755 $(TESTVDR) $(bindir)
+	$(INSTALL) -c -m 755 $(PLREGTEST) $(bindir)
+	$(INSTALL) -c -m 755 $(PLTEST) $(bindir)
+	$(INSTALL) -c -m 755 $(PLTESTVDR) $(bindir)
 
 install-docs: docs
 	$(MAKE) -C DOCS install
@@ -97,9 +97,9 @@ uninstall-lib:
 	$(MAKE) -C src uninstall
 
 uninstall-test:
-	rm -f $(bindir)/$(LIBTEST)
-	rm -f $(bindir)/$(TESTPLAYER)
-	rm -f $(bindir)/$(TESTVDR)
+	rm -f $(bindir)/$(PLREGTEST)
+	rm -f $(bindir)/$(PLTEST)
+	rm -f $(bindir)/$(PLTESTVDR)
 
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
@@ -119,6 +119,6 @@ dist:
 	-$(RM) -rf libplayer-$(LIBPLAYER_VERSION)
 
 dist-all:
-	cp $(EXTRADIST) $(LIBTEST_SRCS) $(TESTPLAYER_SRCS) $(TESTVDR_SRCS) Makefile $(DIST)
+	cp $(EXTRADIST) $(PLREGTEST_SRCS) $(PLTEST_SRCS) $(PLTESTVDR_SRCS) Makefile $(DIST)
 
 .PHONY: dist dist-all

@@ -33,7 +33,7 @@ Package: libplayer-bin
 Architecture: any
 Depends: libplayer (= ${binary:Version}), ${shlibs:Depends}
 Description: a multimedia A/V abstraction layer API
- This package contains test-player
+ This package contains libplayer-test and libplayer-testvdr
 
 Package: libplayer-doc
 Section: doc
