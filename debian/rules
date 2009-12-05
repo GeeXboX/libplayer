@@ -14,6 +14,7 @@ confflags += --prefix=/usr
 confflags += --enable-static
 confflags += --enable-shared
 confflags += --disable-debug
+confflags += --disable-optimize
 confflags += --disable-gstreamer
 confflags += --enable-mplayer
 confflags += --disable-vlc
