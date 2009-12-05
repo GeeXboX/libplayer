@@ -30,6 +30,24 @@ SRCS =  player.c \
 	supervisor.c \
 	wrapper_dummy.c
 
+EXTRADIST = \
+	event.h \
+	event_handler.h \
+	fifo_queue.h \
+	fs_utils.h \
+	logs.h \
+	parse_utils.h \
+	player.h \
+	player_internals.h \
+	playlist.h \
+	supervisor.h \
+	wrapper_dummy.h \
+	wrapper_gstreamer.h \
+	wrapper_mplayer.h \
+	wrapper_vlc.h \
+	wrapper_xine.h \
+	x11_common.h \
+
 ifeq ($(WRAPPER_MPLAYER),yes)
   SRCS += wrapper_mplayer.c
 endif
@@ -94,6 +112,11 @@ depend:
 
 .PHONY: clean depend
 .PHONY: uninstall
+
+dist-all:
+	cp $(EXTRADIST) $(SRCS) Makefile $(DIST)
+
+.PHONY: dist-all
 
 #
 # include dependency files if they exist

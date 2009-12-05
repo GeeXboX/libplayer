@@ -3,6 +3,14 @@ $(error "../../config.mak is not present, run configure !")
 endif
 include ../../config.mak
 
+EXTRADIST = \
+	mrl.c \
+	player.c \
+	player_module.c \
+	pyplayer.h \
+	player-example.py \
+	setup.py \
+
 all: binding
 
 binding:
@@ -20,4 +28,7 @@ ifeq ($(BINDING_PYTHON),yes)
 	python setup.py install --prefix=$(DESTDIR)$(PREFIX)
 endif
 
-.PHONY: binding clean install
+dist-all:
+	cp $(EXTRADIST) Makefile $(DIST)
+
+.PHONY: binding clean dist-all install

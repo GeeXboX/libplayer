@@ -20,6 +20,22 @@ ifeq ($(BUILD_STATIC),yes)
   LDFLAGS += $(EXTRALIBS)
 endif
 
+DISTFILE = libplayer-$(LIBPLAYER_VERSION).tar.bz2
+
+EXTRADIST = \
+	AUTHORS \
+	configure \
+	COPYING \
+	README \
+	stats.sh \
+
+SUBDIRS = \
+	bindings \
+	bindings/python \
+	DOCS \
+	samples \
+	src \
+
 all: lib test doxygen bindings
 
 lib:
@@ -98,3 +114,18 @@ uninstall-doxygen:
 uninstall: uninstall-pkgconfig uninstall-lib uninstall-test uninstall-doxygen
 
 .PHONY: *clean *install* doxygen binding*
+
+dist:
+	-$(RM) $(DISTFILE)
+	dist=$(shell pwd)/libplayer-$(LIBPLAYER_VERSION) && \
+	for subdir in . $(SUBDIRS); do \
+		mkdir -p "$$dist/$$subdir"; \
+		$(MAKE) -C $$subdir dist-all DIST="$$dist/$$subdir"; \
+	done && \
+	tar cjf $(DISTFILE) libplayer-$(LIBPLAYER_VERSION)
+	-$(RM) -rf libplayer-$(LIBPLAYER_VERSION)
+
+dist-all:
+	cp $(EXTRADIST) $(LIBTEST_SRCS) $(TESTPLAYER_SRCS) $(TESTVDR_SRCS) Makefile $(DIST)
+
+.PHONY: dist dist-all

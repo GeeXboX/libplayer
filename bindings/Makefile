@@ -18,4 +18,7 @@ binding-python-clean:
 binding-python-install:
 	$(MAKE) -C python install
 
-.PHONY: clean install* binding*
+dist-all:
+	cp Makefile $(DIST)
+
+.PHONY: clean dist-all install binding*
