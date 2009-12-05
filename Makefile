@@ -36,7 +36,7 @@ SUBDIRS = \
 	samples \
 	src \
 
-all: lib test doxygen bindings
+all: lib test docs bindings
 
 lib:
 	$(MAKE) -C src
@@ -46,12 +46,11 @@ test: lib
 	$(CC) $(TESTPLAYER_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTPLAYER)
 	$(CC) $(TESTVDR_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(TESTVDR)
 
-doxygen:
-ifeq ($(DOC),yes)
-  ifeq (,$(wildcard DOCS/doxygen))
-	PROJECT_NUMBER="$(LIBPLAYER_VERSION)" doxygen DOCS/Doxyfile
-  endif
-endif
+docs:
+	$(MAKE) -C DOCS
+
+docs-clean:
+	$(MAKE) -C DOCS clean
 
 bindings: lib
 	$(MAKE) -C bindings
@@ -65,13 +64,12 @@ clean: bindings-clean
 	rm -f $(TESTPLAYER)
 	rm -f $(TESTVDR)
 
-distclean: clean
+distclean: clean docs-clean
 	rm -f config.log
 	rm -f config.mak
 	rm -f $(PKGCONFIG_FILE)
-	rm -rf DOCS/doxygen
 
-install: install-pkgconfig install-lib install-test install-doxygen install-bindings
+install: install-pkgconfig install-lib install-test install-docs install-bindings
 
 install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
@@ -86,13 +84,8 @@ install-test: test
 	$(INSTALL) -c -m 755 $(TESTPLAYER) $(bindir)
 	$(INSTALL) -c -m 755 $(TESTVDR) $(bindir)
 
-install-doxygen: doxygen
-ifeq ($(DOC),yes)
-	if [ -d DOCS/doxygen/html ]; then \
-		$(INSTALL) -d $(docdir)/libplayer; \
-		$(INSTALL) -c -m 755 DOCS/doxygen/html/* $(docdir)/libplayer; \
-	fi
-endif
+install-docs: docs
+	$(MAKE) -C DOCS install
 
 install-bindings:
 	$(MAKE) -C bindings install
@@ -108,12 +101,12 @@ uninstall-test:
 	rm -f $(bindir)/$(TESTPLAYER)
 	rm -f $(bindir)/$(TESTVDR)
 
-uninstall-doxygen:
-	rm -rf $(docdir)/libplayer
+uninstall-docs:
+	$(MAKE) -C DOCS uninstall
 
-uninstall: uninstall-pkgconfig uninstall-lib uninstall-test uninstall-doxygen
+uninstall: uninstall-pkgconfig uninstall-lib uninstall-test uninstall-docs
 
-.PHONY: *clean *install* doxygen binding*
+.PHONY: *clean *install* docs binding*
 
 dist:
 	-$(RM) $(DISTFILE)
