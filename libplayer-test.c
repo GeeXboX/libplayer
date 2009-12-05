@@ -31,11 +31,12 @@
 
 #include "player.h"
 
+#define APPNAME "libplayer-test"
 
 #define TESTPLAYER_OPTIONS \
-  "test-player for libplayer\n" \
+  APPNAME " for libplayer\n" \
   "\n" \
-  "Usage: test-player [options ...] [files ...]\n" \
+  "Usage: " APPNAME " [options ...] [files ...]\n" \
   "\n" \
   "Options:\n" \
   " -h --help               this help\n" \
@@ -47,7 +48,7 @@
   "Default values are dummy player, auto video and auto audio output.\n" \
   "\n"
 #define TESTPLAYER_COMMANDS \
-  "Commands to use test-player:\n" \
+  "Commands to use " APPNAME ":\n" \
   "\n" \
   " #   : change playback mode (auto or single)\n" \
   " .   : change loop value and mode\n" \
@@ -78,7 +79,7 @@
   " n   : start the next stream in the playlist\n" \
   " r   : remove the current stream of the playlist\n" \
   " t   : remove all streams of the playlist\n" \
-  " q   : quit test-player\n" \
+  " q   : quit " APPNAME "\n" \
   "\n" \
   "Commands for dvdnav:\n" \
   "\n" \
@@ -1136,7 +1137,7 @@ main (int argc, char **argv)
       volume = player_audio_volume_get (player);
       speed = 1.0;
       break;
-    case 'q':   /* quit test-player */
+    case 'q':   /* quit libplayer-test */
       run = 0;
       printf ("QUIT\n");
       break;
