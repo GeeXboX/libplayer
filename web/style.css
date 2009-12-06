@@ -1,0 +1,84 @@
+body {
+  margin : 0;
+  padding: 0;
+  font: small sans-serif;
+}
+pre {
+  font-size: medium;
+  color: #ffffff;
+  background-color: #666666;
+  padding: 10px;
+  border: 1px solid #000000;
+  margin: 10px 50px 10px 15px;
+}
+h1 {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+h2 {
+  margin-top: 35px;
+  margin-bottom: 10px;
+  background-color: #eeeeee;
+  color: #000000;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  font-weight: normal;
+}
+h2:hover {
+  background-color: #dddddd;
+}
+h3 {
+  margin-top: 20px;
+  margin-bottom: 5px;
+  margin-left: 12px;
+  font-weight: bold;
+  color: #333333;
+  font-variant: small-caps;
+}
+p {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+li {
+  list-style-type: square;
+}
+fieldset#contents {
+  border: 1px solid #c0c0c0;
+  margin-bottom: 20px;
+  width: 250px;
+  position: relative;
+  top: 120px;
+}
+fieldset#contents a {
+  text-decoration: none;
+  font-weight: bold;
+}
+fieldset#contents legend {
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 0 5px 0 5px;
+  margin-left: 20px;
+}
+#adsense {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+#page {
+  margin: 20px;
+}
+#content {
+  margin-top: 150px;
+}
+h2 .top {
+  font-size : 0.5em;
+  float: right;
+}
+h2 .top a {
+  text-decoration: none;
+}

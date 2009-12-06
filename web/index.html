@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   <!--
       This web site is (c) 2007 Zores Benjamin
       HomePage for the libplayer, a multimedia A/V abstraction layer API (http://libplayer.geexbox.org/)
@@ -9,7 +9,7 @@
   <head>
     <title>GeeXboX libplayer HomePage</title>
     <meta http-equiv="Content-language" content="en"/>
-    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=ISO-8859-1"/>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8"/>
     <meta name="description" content="GeeXboX libplayer Homepage : a multimedia A/V abstraction layer API"/>
 
     <meta name="dc.description" content="GeeXboX libplayer Homepage : a multimedia A/V abstraction layer API"/>
@@ -18,87 +18,215 @@
     <meta name="author" content="Benjamin Zores, Mathieu Schroeter"/>
     <meta name="robots" content="index, follow"/>
     <meta name="keywords" content="computer, OS, Linux, A/V, DLNA, multimedia, HTPC, movie, audio, video, media, free, software, open, source, API, library, MPlayer, xine, VLC, VideoLAN, libplayer, geexbox, geexbox.org"/>
-    <style type="text/css">
-      body { margin: 10px; padding: 0; font : 0.8em Verdana,Arial,Helvetica,sans-serif; }
-      pre { font-size : 1.1em; background-color: rgb(220, 220, 220); padding: 2ex 6ex; border: 1px solid #ccc;}
-      h1 { text-align: center; margin-bottom: 2em; }
-      h2 { margin-top: 1em; border-bottom: 2px solid #ccc; }
-      h3 { }
-      dl.list { margin-left: 2em; }
-      dt { font-weight: bold; }
-      dd { margin-bottom: 1ex; }
-      li { list-style-type: square; }
-    </style>
+    <link type="text/css" rel="stylesheet" href="style.css"/>
   </head>
   <body>
+    <div id="page">
+
     <h1>
       <tt>GeeXboX libplayer</tt><br/>
       A multimedia A/V abstraction layer API.
     </h1>
 
-    <h2>Introduction</h2>
-    <p>
-      libplayer is a multimedia A/V abstraction layer API. Its goal is to interact with Enna Media Center.<br/>
-      <br/>
-      libplayer provides a generic A/V API that relies on various multimedia player for Linux systems. It currently supports MPlayer, xine and VLC only. More bindings (GStreamer, ...) are bound to come some day.<br/>
-      <br/>
-      Its main goal is to provide an unique API that player frontends can use to control any kind of multimedia player underneath. For example, it provides a library to easily control MPlayer famous slave-mode.<br/>
-      <br/>
-      libplayer is free software - it is licensed under the terms of the <a href="http://www.gnu.org/copyleft/lgpl.html">GNU Lesser General Public License</a> (LGPL).
-    </p>
-
-    <h2>Latest News</h2>
-    <div>
-      libplayer is work in progress right now. If you're interested in its development, you're highly welcomed to join in.<br/>
-      API is _NOT_ stable nor finalized, some controls are still missing.<br/>
-      <br/>
-      Currently supported multimedia players:
-      <ul>
-	<li><a href="http://www.mplayerhq.hu/">MPlayer</a> (through slave-mode)</li>
-	<li><a href="http://www.xinehq.de/">xine</a></li>
-	<li><a href="http://www.videolan.org/">VLC</a></li>
-      </ul>
+    <div id="adsense">
+<!-- Google AdSense -->
+<script type="text/javascript"><!--
+google_ad_client = "pub-8177632591767420";
+//200x200, date de création 21/12/07
+google_ad_slot = "8252219206";
+google_ad_width = 200;
+google_ad_height = 200;
+//--></script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
     </div>
 
-    <h2>Copyright and License</h2>
-    <div>
-      libplayer is copyright (C) 2007-2009 Benjamin Zores, Mathieu Schroeter.<br/>
-      <br/>
-      This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.<br/>
-      <br/>
-      This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.<br/>
-      <br/>
-      You should have received a copy of the GNU Lesser General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+    <div style="float: right; margin-right: 20px; margin-top: 140px">
+      <img src="libplayer.png" alt="libplayer" title="libplayer" />
     </div>
 
-    <h2>Download</h2>
-    <p>
-      There's no official public release right now.<br/>
-    </p>
-    <dl>
-      <dt>Development Tree</dt>
-      <dd>
-      The latest libplayer development tree can be grabbed using <a href="http://www.selenic.com/mercurial/">Mercurial</a>, a revision control system, similar in purpose to tools such as CVS, SCCS, and Subversion. It is used to keep track of the changes made to a source tree and to help programmers combine and otherwise manipulate changes made by multiple people or at different times.<br/>
-      <br/>
-      There are currently 2 ways of accessing the Mercurial tree: via command-line or web interface (to just have a look to some changes on a specific file, for example). You can directly access to the web interface with your browser from:<br/>
-      <br/>
-      <a href="http://hg.geexbox.org/libplayer/">libplayer Mercurial</a><br/>
-      <br/>
-      In order to access to Mercurial via command line, create and enter a new directory and do the following (be sure that you have installed the mercurial package).<br/>
+    <fieldset id="contents">
+      <legend>Contents</legend>
       <ul>
-        <li>To get a local copy of the libplayer Mercurial repository :
-          <pre class="code">hg clone http://hg.geexbox.org/libplayer</pre>
-        </li>
-        <li>To update your local copy of the Mercurial, synchronizing with our server :
-          <pre class="code">hg pull -u</pre>
-        </li>
+        <li><a href="#Introduction">Introduction</a></li>
+        <li><a href="#Latest_News">Latest News</a></li>
+        <li><a href="#Copyright_and_License">Copyright and License</a></li>
+        <li><a href="#Documentation">Documentation</a></li>
+        <li><a href="#Download">Download</a></li>
+        <li><a href="#Feedback">Feedback</a></li>
+        <li><a href="#Links">Links</a></li>
       </ul>
-      </dd>
-    </dl>
+    </fieldset>
 
-    <h2>Feedback</h2>
-    <p>
-      Please send bug reports, suggestions, ideas, comments or patches to : <a href="mailto:users@geexbox.org">users@geexbox.org</a>.
-    </p>
+    <div id="content">
+    <h2 id="Introduction">
+      <span class="top"><a href="#top">top</a></span>
+      Introduction
+    </h2>
+      <p>
+      libplayer is a multimedia A/V abstraction layer API. Its goal is to
+      interact with <a href="http://enna.geexbox.org">Enna Media Center</a>.
+      </p>
+      <p>
+      libplayer provides a generic A/V API that relies on various multimedia
+      player for Linux systems. It currently supports MPlayer, xine VLC and
+      GStreamer only.
+      </p>
+      <p>
+      Its main goal is to provide an unique API that player frontends can use
+      to control any kind of multimedia player underneath. For example, it
+      provides a library to easily control MPlayer famous slave-mode.
+      </p>
+      <p>
+      libplayer is free software - it is licensed under the terms of the
+      <a href="http://www.gnu.org/copyleft/lgpl.html">GNU Lesser General Public
+      License</a> (GNU/LGPL) version 2.1.
+      </p>
+
+    <h2 id="Latest_News">
+      <span class="top"><a href="#top">top</a></span>
+      Latest News
+    </h2>
+      <p>
+      libplayer is work in progress right now. If you're interested in its
+      development, you're highly welcomed to join in.
+      </p>
+      <p>
+      Current release is 1.0.0, featuring with the following changes :
+      </p>
+      <ul>
+        <li>Initial project release</li>
+        <li>MPlayer and xine backends are well supported</li>
+      </ul>
+      <p>Currently supported multimedia players :</p>
+      <ul>
+        <li><b><a href="http://www.mplayerhq.hu/">MPlayer</a></b>
+            (through slave-mode)</li>
+        <li><b><a href="http://www.xinehq.de/">xine</a></b></li>
+        <li><b><a href="http://www.videolan.org/">VLC</a></b></li>
+        <li><b><a href="http://www.gstreamer.org/">GStreamer</a></b></li>
+      </ul>
+
+    <h2 id="Copyright_and_License">
+      <span class="top"><a href="#top">top</a></span>
+      Copyright and License
+    </h2>
+      <p>
+      libplayer is copyright (C) 2007-2009 Benjamin Zores, Mathieu Schroeter.
+      </p>
+      <p>
+      This library is free software; you can redistribute it and/or modify it
+      under the terms of the GNU Lesser General Public License as published by
+      the Free Software Foundation; either version 2.1 of the License, or
+      (at your option) any later version.
+      </p>
+      <p>
+      This library is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+      General Public License for more details.
+      </p>
+      <p>
+      You should have received a copy of the GNU Lesser General Public License
+      along with this library; If not, see &lt;http://www.gnu.org/licenses/&gt;.
+      </p>
+
+    <h2 id="Documentation">
+      <span class="top"><a href="#top">top</a></span>
+      Documentation
+    </h2>
+      <p>
+      More documentation will be provided in some time.<br />
+      You can find the public API documentation
+      <a href="http://libplayer.geexbox.org/doxygen/html/index.html">HTML</a>
+      /
+      <a href="http://libplayer.geexbox.org/doxygen/pdf/libplayer-1.0.0.pdf">
+      PDF</a> automatically generated from the libplayer source code, using
+      <a href="http://www.doxygen.org">Doxygen</a>.
+      </p>
+
+    <h2 id="Download">
+      <span class="top"><a href="#top">top</a></span>
+      Download
+    </h2>
+      <p>
+      The currently available libplayer release is 1.0.0.<br />
+      Sources can be downloaded
+      <a href="http://libplayer.geexbox.org/releases/libplayer-1.0.0.tar.bz2">
+      here</a>.
+      </p>
+
+      <h3>Packages</h3>
+        <p>
+        If you're using Ubuntu 9.10 (Karmic) GNU/Linux distribution, libplayer
+        packages are available through your packet manager for your i386 and
+        amd64 architectures.
+        </p>
+        <p>Simply add the following line to your /etc/apt/sources.list file :</p>
+        <pre>deb http://packages.geexbox.org/ karmic main</pre>
+        <p>and install libplayer with : </p>
+        <pre>sudo aptitude update &amp;&amp; sudo aptitude install libplayer</pre>
+
+      <h3>Development Tree</h3>
+        <p>
+        The latest libplayer development tree can be grabbed using
+        <a href="http://www.selenic.com/mercurial/">Mercurial</a>, a revision
+        control system, similar in purpose to tools such as CVS, SCCS, SVN and
+        Arch. It is used to keep track of the changes made to a source tree
+        and to help programmers combine and otherwise manipulate changes made
+        by multiple people or at different times.
+        </p>
+        <p>
+        There are currently 2 ways of accessing the Mercurial tree :
+        via command-line or (to just have a look to some changes on a specific
+        file, for example) You can directly access to the web interface with
+        your browser from :
+        </p>
+        <p>
+        <a href="http://hg.geexbox.org/libplayer/">libplayer Mercurial</a>
+        </p>
+        <p>
+        In order to access to Mercurial via command line, create and enter a
+        new directory and do the following (be sure that you have installed the
+        mercurial package).<br/>
+        </p>
+        <ul>
+          <li>
+            To get a local copy of the libplayer Mercurial repository :
+            <pre>hg clone http://hg.geexbox.org/libplayer</pre>
+          </li>
+          <li>
+            To update your local copy of the Mercurial, synchronizing with
+            our server :
+            <pre>hg pull -u</pre>
+          </li>
+        </ul>
+
+    <h2 id="Feedback"><span class="top"><a href="#top">top</a></span>Feedback</h2>
+      <p>
+      The authors of libplayer and this document, can be contacted by e-mail.
+      </p>
+      <ul>
+        <li><i><a href="mailto:ben@geexbox.org">Benjamin Zores</a></i></li>
+        <li><i><a href="mailto:mathieu.schroeter@gamesover.ch">Mathieu Schroeter
+            </a></i></li>
+      </ul>
+      <p>
+      Please send bug reports, suggestions, ideas, comments or patches to the
+      GeeXboX <a href="https://www.geexbox.org/sympa/info/devel">devel mailing
+      list</a> : <a href="mailto:devel@geexbox.org">devel@geexbox.org</a>
+      </p>
+
+    <h2 id="Links">
+      <span class="top"><a href="#top">top</a></span>
+      Links
+    </h2>
+      <ul>
+        <li><b><a href="http://www.geexbox.org">GeeXboX</a></b></li>
+        <li><b><a href="http://enna.geexbox.org">Enna Media Center</a></b></li>
+      </ul>
+
+    </div>
+    </div>
   </body>
 </html>
