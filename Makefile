@@ -8,10 +8,13 @@ PKGCONFIG_FILE = libplayer.pc
 
 PLREGTEST = libplayer-regtest
 PLREGTEST_SRCS = libplayer-regtest.c
+PLREGTEST_OBJS = $(PLREGTEST_SRCS:.c=.o)
 PLTEST = libplayer-test
 PLTEST_SRCS = libplayer-test.c
+PLTEST_OBJS = $(PLTEST_SRCS:.c=.o)
 PLTESTVDR = libplayer-testvdr
 PLTESTVDR_SRCS = libplayer-testvdr.c
+PLTESTVDR_OBJS = $(PLTESTVDR_SRCS:.c=.o)
 
 CFLAGS += -Isrc
 LDFLAGS += -Lsrc -lplayer -lpthread
@@ -37,15 +40,32 @@ SUBDIRS = \
 	samples \
 	src \
 
+.SUFFIXES: .c .o
+
 all: lib test docs bindings
+
+.c.o:
+	$(CC) -c $(CFLAGS) $(EXTRACFLAGS) $(OPTFLAGS) -o $@ $<
 
 lib:
 	$(MAKE) -C src
 
-test: lib
-	$(CC) $(PLREGTEST_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(PLREGTEST)
-	$(CC) $(PLTEST_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(PLTEST)
-	$(CC) $(PLTESTVDR_SRCS) $(OPTFLAGS) $(CFLAGS) $(EXTRACFLAGS) $(LDFLAGS) -o $(PLTESTVDR)
+$(PLREGTEST): $(PLREGTEST_OBJS)
+	$(CC) $(PLREGTEST_OBJS) $(LDFLAGS) -o $(PLREGTEST)
+$(PLTEST): $(PLTEST_OBJS)
+	$(CC) $(PLTEST_OBJS) $(LDFLAGS) -o $(PLTEST)
+$(PLTESTVDR): $(PLTESTVDR_OBJS)
+	$(CC) $(PLTESTVDR_OBJS) $(LDFLAGS) -o $(PLTESTVDR)
+
+test-dep:
+	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(PLREGTEST_SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(PLTEST_SRCS) 1>>.depend
+	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(PLTESTVDR_SRCS) 1>>.depend
+
+test-all: $(PLREGTEST) $(PLTEST) $(PLTESTVDR)
+
+test: test-dep lib
+	$(MAKE) test-all
 
 docs:
 	$(MAKE) -C DOCS
@@ -61,9 +81,11 @@ bindings-clean:
 
 clean: bindings-clean
 	$(MAKE) -C src clean
+	rm -f *.o
 	rm -f $(PLREGTEST)
 	rm -f $(PLTEST)
 	rm -f $(PLTESTVDR)
+	rm -f .depend
 
 distclean: clean docs-clean
 	rm -f config.log
@@ -108,7 +130,7 @@ uninstall-test:
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
 
-.PHONY: *clean *install* docs binding*
+.PHONY: *clean *install* docs binding* test*
 
 dist:
 	-$(RM) $(DISTFILE)
@@ -124,3 +146,10 @@ dist-all:
 	cp $(EXTRADIST) $(PLREGTEST_SRCS) $(PLTEST_SRCS) $(PLTESTVDR_SRCS) Makefile $(DIST)
 
 .PHONY: dist dist-all
+
+#
+# include dependency files if they exist
+#
+ifneq ($(wildcard .depend),)
+include .depend
+endif
