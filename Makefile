@@ -16,8 +16,8 @@ PLTESTVDR = libplayer-testvdr
 PLTESTVDR_SRCS = libplayer-testvdr.c
 PLTESTVDR_OBJS = $(PLTESTVDR_SRCS:.c=.o)
 
-CFLAGS += -Isrc
-LDFLAGS += -Lsrc -lplayer -lpthread
+override CFLAGS += -Isrc
+override LDFLAGS += -Lsrc -lplayer -lpthread
 
 ifeq ($(BUILD_STATIC),yes)
   LDFLAGS += $(EXTRALIBS)
