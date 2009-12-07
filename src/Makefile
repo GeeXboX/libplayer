@@ -66,11 +66,15 @@ all: depend $(BUILD_RULES)
 .c.o:
 	$(CC) -c $(CFLAGS) $(EXTRACFLAGS) $(OPTFLAGS) -o $@ $<
 
-lib_static: $(OBJS)
+lib_static: $(STATIC_LIBNAME)
+
+lib_shared: $(SHARED_LIBNAME)
+
+$(STATIC_LIBNAME): $(OBJS)
 	$(AR) r $(STATIC_LIBNAME) $(OBJS)
 	$(RANLIB) $(STATIC_LIBNAME)
 
-lib_shared: $(OBJS)
+$(SHARED_LIBNAME): $(OBJS)
 	$(CC) -shared -Wl,-soname,$(SHARED_LIBNAME_MAJOR) \
 	  $(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(SHARED_LIBNAME_VERSION)
 	$(LN) -sf $(SHARED_LIBNAME_VERSION) $(SHARED_LIBNAME_MAJOR)
