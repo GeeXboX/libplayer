@@ -6,7 +6,9 @@ include ../config.mak
 EXTRADIST = \
 	Doxyfile \
 	event_handler-supervisor.txt \
+	libplayer.png \
 	libplayer-internals.png \
+	libplayer-internals.svg \
 
 all: doxygen
 
