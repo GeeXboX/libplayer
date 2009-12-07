@@ -386,6 +386,7 @@ cpu=`uname -m`
 optimize="yes"
 debug="yes"
 dostrip="yes"
+extracflags=""
 extralibs=""
 installstrip="-s"
 cross_compile="no"
