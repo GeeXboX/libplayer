@@ -42,7 +42,7 @@ SUBDIRS = \
 
 .SUFFIXES: .c .o
 
-all: lib test docs bindings
+all: lib apps docs bindings
 
 .c.o:
 	$(CC) -c $(CFLAGS) $(EXTRACFLAGS) $(OPTFLAGS) -o $@ $<
@@ -57,15 +57,15 @@ $(PLTEST): $(PLTEST_OBJS)
 $(PLTESTVDR): $(PLTESTVDR_OBJS)
 	$(CC) $(PLTESTVDR_OBJS) $(LDFLAGS) -o $(PLTESTVDR)
 
-test-dep:
+apps-dep:
 	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(PLREGTEST_SRCS) 1>.depend
 	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(PLTEST_SRCS) 1>>.depend
 	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(PLTESTVDR_SRCS) 1>>.depend
 
-test-all: $(PLREGTEST) $(PLTEST) $(PLTESTVDR)
+apps-all: $(PLREGTEST) $(PLTEST) $(PLTESTVDR)
 
-test: test-dep lib
-	$(MAKE) test-all
+apps: apps-dep lib
+	$(MAKE) apps-all
 
 docs:
 	$(MAKE) -C DOCS
@@ -93,7 +93,7 @@ distclean: clean docs-clean
 	rm -f $(DISTFILE)
 	rm -f $(PKGCONFIG_FILE)
 
-install: install-lib install-pkgconfig install-test install-docs install-bindings
+install: install-lib install-pkgconfig install-apps install-docs install-bindings
 
 install-lib: lib
 	$(MAKE) -C src install
@@ -102,7 +102,7 @@ install-pkgconfig: $(PKGCONFIG_FILE)
 	$(INSTALL) -d "$(PKGCONFIG_DIR)"
 	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
 
-install-test: test
+install-apps: apps
 	$(INSTALL) -d $(bindir)
 	$(INSTALL) -c -m 755 $(PLREGTEST) $(bindir)
 	$(INSTALL) -c -m 755 $(PLTEST) $(bindir)
@@ -114,7 +114,7 @@ install-docs: docs
 install-bindings:
 	$(MAKE) -C bindings install
 
-uninstall: uninstall-lib uninstall-pkgconfig uninstall-test uninstall-docs
+uninstall: uninstall-lib uninstall-pkgconfig uninstall-apps uninstall-docs
 
 uninstall-lib:
 	$(MAKE) -C src uninstall
@@ -122,7 +122,7 @@ uninstall-lib:
 uninstall-pkgconfig:
 	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
 
-uninstall-test:
+uninstall-apps:
 	rm -f $(bindir)/$(PLREGTEST)
 	rm -f $(bindir)/$(PLTEST)
 	rm -f $(bindir)/$(PLTESTVDR)
@@ -130,7 +130,7 @@ uninstall-test:
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
 
-.PHONY: *clean *install* docs binding* test*
+.PHONY: *clean *install* docs binding* apps*
 
 dist:
 	-$(RM) $(DISTFILE)
