@@ -199,7 +199,7 @@ main (int argc, char **argv)
   pthread_attr_t attr;
   pthread_t tid;
 
-  printf ("*** libplayer %s regression tool ***\n", LIBPLAYER_VERSION);
+  printf ("*** libplayer %s regression tool ***\n", LIBPLAYER_VERSION_STR);
 
   if (argc > 1)
   {

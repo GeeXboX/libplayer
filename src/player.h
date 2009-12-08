@@ -67,13 +67,28 @@ extern "C" {
 #endif
 #endif
 
+#define PL_STRINGIFY(s) #s
+#define PL_TOSTRING(s) PL_STRINGIFY(s)
+
+#define PL_VERSION_INT(a, b, c) (a << 16 | b << 8 | c)
+#define PL_VERSION_DOT(a, b, c) a ##.## b ##.## c
+#define PL_VERSION(a, b, c) PL_VERSION_DOT(a, b, c)
+
+#define LIBPLAYER_VERSION_MAJOR  1
+#define LIBPLAYER_VERSION_MINOR  0
+#define LIBPLAYER_VERSION_MICRO  0
+
+#define LIBPLAYER_VERSION_INT PL_VERSION_INT(LIBPLAYER_VERSION_MAJOR, \
+                                             LIBPLAYER_VERSION_MINOR, \
+                                             LIBPLAYER_VERSION_MICRO)
+#define LIBPLAYER_VERSION     PL_VERSION(LIBPLAYER_VERSION_MAJOR, \
+                                         LIBPLAYER_VERSION_MINOR, \
+                                         LIBPLAYER_VERSION_MICRO)
+#define LIBPLAYER_VERSION_STR PL_TOSTRING(LIBPLAYER_VERSION)
+#define LIBPLAYER_BUILD       LIBPLAYER_VERSION_INT
+
 #include <inttypes.h>
 #include <sys/types.h>
-
-#define LIBPLAYER_VERSION_MAJOR 1
-#define LIBPLAYER_VERSION_MINOR 0
-#define LIBPLAYER_VERSION_MICRO 0
-#define LIBPLAYER_VERSION "1.0.0"
 
 /***************************************************************************/
 /*                                                                         */

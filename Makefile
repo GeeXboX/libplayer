@@ -23,7 +23,7 @@ ifeq ($(BUILD_STATIC),yes)
   LDFLAGS += $(EXTRALIBS)
 endif
 
-DISTFILE = libplayer-$(LIBPLAYER_VERSION).tar.bz2
+DISTFILE = libplayer-$(VERSION).tar.bz2
 
 EXTRADIST = \
 	AUTHORS \
@@ -134,13 +134,13 @@ uninstall-docs:
 
 dist:
 	-$(RM) $(DISTFILE)
-	dist=$(shell pwd)/libplayer-$(LIBPLAYER_VERSION) && \
+	dist=$(shell pwd)/libplayer-$(VERSION) && \
 	for subdir in . $(SUBDIRS); do \
 		mkdir -p "$$dist/$$subdir"; \
 		$(MAKE) -C $$subdir dist-all DIST="$$dist/$$subdir"; \
 	done && \
-	tar cjf $(DISTFILE) libplayer-$(LIBPLAYER_VERSION)
-	-$(RM) -rf libplayer-$(LIBPLAYER_VERSION)
+	tar cjf $(DISTFILE) libplayer-$(VERSION)
+	-$(RM) -rf libplayer-$(VERSION)
 
 dist-all:
 	cp $(EXTRADIST) $(PLREGTEST_SRCS) $(PLTEST_SRCS) $(PLTESTVDR_SRCS) Makefile $(DIST)

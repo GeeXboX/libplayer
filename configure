@@ -113,6 +113,7 @@ save_flags(){
     flags_saved && return
     SAVE_CFLAGS="$CFLAGS"
     SAVE_extracflags="$extracflags"
+    SAVE_HOST_CFLAGS="$HOST_CFLAGS"
     SAVE_LDFLAGS="$LDFLAGS"
     SAVE_extralibs="$extralibs"
 }
@@ -120,10 +121,12 @@ save_flags(){
 restore_flags(){
     CFLAGS="$SAVE_CFLAGS"
     extracflags="$SAVE_extracflags"
+    HOST_CFLAGS="$SAVE_HOST_CFLAGS"
     LDFLAGS="$SAVE_LDFLAGS"
     extralibs="$SAVE_extralibs"
     unset SAVE_CFLAGS
     unset SAVE_extracflags
+    unset SAVE_HOST_CFLAGS
     unset SAVE_LDFLAGS
     unset SAVE_extralibs
 }
@@ -134,6 +137,10 @@ temp_cflags(){
 
 temp_extracflags(){
     temp_append extracflags "$@"
+}
+
+temp_host_cflags(){
+    temp_append HOST_CFLAGS "$@"
 }
 
 temp_ldflags(){
@@ -203,6 +210,13 @@ check_cc(){
     check_cmd $cc $CFLAGS "$@" -c -o $TMPO $TMPC
 }
 
+check_host_cc(){
+    log check_host_cc "$@"
+    cat >$TMPC
+    log_file $TMPC
+    check_cmd $host_cc $HOST_CFLAGS "$@" -c -o $TMPO $TMPC
+}
+
 check_cpp(){
     log check_cpp "$@"
     cat >$TMPC
@@ -214,6 +228,12 @@ check_ld(){
     log check_ld "$@"
     check_cc || return
     check_cmd $cc $LDFLAGS "$@" -o $TMPE $TMPO $extralibs
+}
+
+check_host_ld(){
+    log check_host_ld "$@"
+    check_host_cc || return
+    check_cmd $host_cc $HOST_LDFLAGS "$@" -o $TMPE $TMPO
 }
 
 check_exec(){
@@ -378,6 +398,7 @@ docdir='${PREFIX}/share/doc'
 static="yes"
 shared="yes"
 cc="gcc"
+host_cc="gcc"
 ar="ar"
 ranlib="ranlib"
 make="make"
@@ -397,7 +418,7 @@ wrapper_gstreamer="auto"
 binding_python="auto"
 x11="auto"
 INSTALL="install"
-libplayer_version=`grep '#define LIBPLAYER_VERSION[[:space:]]' src/player.h | sed 's/[^0-9\.]//g'`
+VERSION=""
 pkgconfig_requires=""
 logcolor="yes"
 doc="no"
@@ -577,6 +598,10 @@ else
 fi
 [ -n "$MAKE" ] && make="$MAKE"
 
+[ -n "$HOST_CC" ] && HOST_CC="$HOST_CC"
+[ -n "$HOST_CFLAGS" ] && HOST_CFLAGS="$HOST_CFLAGS"
+[ -n "$HOST_LDFLAGS" ] && HOST_LDFLAGS="$HOST_LDFLAGS"
+
 #################################################
 #   create logging file
 #################################################
@@ -740,6 +765,22 @@ if enabled shared; then
 fi
 
 #################################################
+#   version
+#################################################
+temp_host_cflags "-Isrc"
+check_host_ld <<EOF
+#include <stdio.h>
+#include <player.h>
+int main(){
+  printf("LIBPLAYER_VERSION:"LIBPLAYER_VERSION_STR);
+  printf("\n");
+  return 0;
+}
+EOF
+VERSION=`strings $TMPE | sed -n -e 's,LIBPLAYER_VERSION:,,p'`
+restore_flags
+
+#################################################
 #   check for libxine
 #################################################
 if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
@@ -859,7 +900,7 @@ fi
 #################################################
 echolog ""
 echolog "libplayer: configure is OK"
-echolog "  version            $libplayer_version"
+echolog "  version            $VERSION"
 echolog "configuration:"
 echolog "  install prefix     $PREFIX"
 echolog "  C compiler         $cc"
@@ -915,7 +956,7 @@ append_config "LN=ln"
 append_config "BUILD_STATIC=$static"
 append_config "BUILD_SHARED=$shared"
 
-append_config "LIBPLAYER_VERSION=$libplayer_version"
+append_config "VERSION=$VERSION"
 
 if enabled dostrip; then
   append_config "STRIP=$strip"
@@ -947,7 +988,7 @@ echolog "Creating libplayer.pc ..."
 
 pkgconfig_generate libplayer \
                    "A multimedia A/V abstraction layer library" \
-                   "$libplayer_version" \
+                   "$VERSION" \
                    "-lplayer" \
                    "$extralibs" \
                    "-D_FILE_OFFSET_BITS=64" \
