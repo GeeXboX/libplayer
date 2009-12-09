@@ -20,7 +20,7 @@ override CFLAGS += -Isrc
 override LDFLAGS += -Lsrc -lplayer -lpthread
 
 ifeq ($(BUILD_STATIC),yes)
-  LDFLAGS += $(EXTRALIBS)
+  override LDFLAGS += $(EXTRALIBS)
 endif
 
 DISTFILE = libplayer-$(VERSION).tar.bz2
