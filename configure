@@ -855,8 +855,8 @@ fi
 #   check for libX11
 #################################################
 if test "$x11" = "auto" -o "$x11" = "yes"; then
+  x11="no"
   if test "$wrapper_xine" = "yes" -o "$wrapper_mplayer" = "yes"; then
-    x11="no"
     echolog "Checking for libX11 ..."
     if [ -n "$libX11dir" ]; then
       check_cflags -I$libX11dir/include
