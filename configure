@@ -369,6 +369,13 @@ Cflags: -I\${includedir} $cflags
 EOF
 }
 
+add_pkgconfig_deps() {
+    if `which pkg-config 1>/dev/null 2>&1`; then
+      add_cflags `pkg-config "$1" --cflags 2>>$logfile`
+      add_extralibs `pkg-config "$1" --libs 2>>$logfile`
+    fi
+}
+
 # set temporary file name
 if test ! -z "$TMPDIR" ; then
     TMPDIR1="${TMPDIR}"
@@ -790,6 +797,9 @@ if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
     check_cflags -I$libxinedir/include
     check_ldflags -L$libxinedir/lib
   fi
+  if [ -z "$libxinedir" ]; then
+    add_pkgconfig_deps libxine
+  fi
   check_lib xine.h xine_init -lxine
   if [ "$?" = 0 ]; then
     add_extracflags -DHAVE_XINE
@@ -824,9 +834,13 @@ if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
     check_cflags -I$libvlcdir/include
     check_ldflags -L$libvlcdir/lib
   fi
+  if [ -z "$libvlcdir" ]; then
+    add_pkgconfig_deps libvlc
+  fi
   check_lib vlc/vlc.h libvlc_media_new -lvlc
   if [ "$?" = 0 ]; then
     add_extracflags -DHAVE_VLC
+    add_pkgconfig_requires libvlc
     wrapper_vlc="yes"
   fi
 fi
@@ -837,11 +851,12 @@ fi
 if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
   wrapper_gstreamer="no"
   echolog "Checking for libgstreamer ..."
-  check_cflags `pkg-config gstreamer-0.10 --cflags`
-  check_ldflags `pkg-config gstreamer-0.10 --libs`
   if [ -n "$libgstreamerdir" ]; then
     check_cflags -I$libgstreamerdir/include
     check_ldflags -L$libgstreamerdir/lib
+  fi
+  if [ -z "$libgstreamerdir" ]; then
+    add_pkgconfig_deps gstreamer-0.10
   fi
   check_lib gst/gst.h gst_init -lgstreamer-0.10
   if [ "$?" = 0 ]; then
@@ -861,6 +876,9 @@ if test "$x11" = "auto" -o "$x11" = "yes"; then
     if [ -n "$libX11dir" ]; then
       check_cflags -I$libX11dir/include
       check_ldflags -L$libX11dir/lib
+    fi
+    if [ -z "$libX11dir" ]; then
+      add_pkgconfig_deps x11
     fi
     check_lib X11/X.h XInitThreads -lX11
     if [ "$?" = 0 ]; then
