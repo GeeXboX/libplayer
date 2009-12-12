@@ -812,7 +812,6 @@ if test "$wrapper_mplayer" = "auto"; then
 fi
 if test "$wrapper_mplayer" = "yes"; then
   add_extracflags -DHAVE_MPLAYER
-  add_extralibs -lm
 fi
 
 #################################################
