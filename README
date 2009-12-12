@@ -35,7 +35,7 @@ Check your code for warnings before commits.
 PACKAGERS
 ~~~~~~~~~
 
-Debian/Ubuntu: debuild -us -uc
+Debian/Ubuntu: see ./debian/README.txt
 
 AUTHORS
 ~~~~~~~
