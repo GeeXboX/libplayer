@@ -17,7 +17,7 @@ PLTESTVDR_SRCS = libplayer-testvdr.c
 PLTESTVDR_OBJS = $(PLTESTVDR_SRCS:.c=.o)
 
 override CFLAGS += -Isrc
-override LDFLAGS += -Lsrc -lplayer -lpthread
+override LDFLAGS += -Lsrc -lplayer
 
 ifeq ($(BUILD_STATIC),yes)
   override LDFLAGS += $(EXTRALIBS)
@@ -51,7 +51,7 @@ lib:
 	$(MAKE) -C src
 
 $(PLREGTEST): $(PLREGTEST_OBJS)
-	$(CC) $(PLREGTEST_OBJS) $(LDFLAGS) -o $(PLREGTEST)
+	$(CC) $(PLREGTEST_OBJS) $(LDFLAGS) -lpthread -o $(PLREGTEST)
 $(PLTEST): $(PLTEST_OBJS)
 	$(CC) $(PLTEST_OBJS) $(LDFLAGS) -o $(PLTEST)
 $(PLTESTVDR): $(PLTESTVDR_OBJS)
