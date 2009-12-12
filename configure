@@ -763,15 +763,6 @@ if enabled optimize; then
 fi
 
 #################################################
-#   check for shared library build
-#################################################
-if enabled shared; then
-  case "$cpu" in
-    x86_64|ia64|alpha|sparc*|power*) add_cflags "-fPIC" ;;
-  esac
-fi
-
-#################################################
 #   version
 #################################################
 temp_host_cflags "-Isrc"
@@ -897,6 +888,15 @@ if test "$binding_python" = "auto" -o "$binding_python" = "yes"; then
   echolog "Checking for Python ..."
   check_libconfig_exists python-config _PyObject_New
   [ "$?" = 0 ] && binding_python="yes"
+fi
+
+#################################################
+#   check for shared library build
+#################################################
+if test "$shared" = "yes" -o "$binding_python" = "yes"; then
+  case "$cpu" in
+    x86_64|ia64|alpha|sparc*|power*) add_cflags "-fPIC" ;;
+  esac
 fi
 
 #################################################
