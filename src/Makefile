@@ -3,18 +3,26 @@ $(error "../config.mak is not present, run configure !")
 endif
 include ../config.mak
 
+LIBNAME = libplayer
+STATIC_LIBNAME = $(LIBNAME).a
+
 ifeq ($(BUILD_STATIC),yes)
   BUILD_RULES += lib_static
 endif
 ifeq ($(BUILD_SHARED),yes)
   BUILD_RULES += lib_shared
-endif
-
-LIBNAME = libplayer
-STATIC_LIBNAME = ${LIBNAME}.a
+  ifeq ($(BUILD_DYLIB),yes)
+    SHARED_LIBNAME         = ${LIBNAME}.dylib
+    SHARED_LIBNAME_VERSION = $(LIBNAME).$(VERSION).dylib
+    SHARED_LIBNAME_MAJOR   = $(LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.).dylib
+    SHARED_LIBNAME_FLAGS   = -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-install_name,$(SHARED_LIBNAME_VERSION)
+  else
 SHARED_LIBNAME = ${LIBNAME}.so
 SHARED_LIBNAME_VERSION = ${SHARED_LIBNAME}.${VERSION}
 SHARED_LIBNAME_MAJOR = $(SHARED_LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.)
+    SHARED_LIBNAME_FLAGS   = -shared -Wl,-soname,$(SHARED_LIBNAME_MAJOR)
+  endif
+endif
 
 SRCS = \
 	player.c \
@@ -75,7 +83,7 @@ $(STATIC_LIBNAME): $(OBJS)
 	$(RANLIB) $(STATIC_LIBNAME)
 
 $(SHARED_LIBNAME): $(OBJS)
-	$(CC) -shared -Wl,-soname,$(SHARED_LIBNAME_MAJOR) \
+	$(CC) $(SHARED_LIBNAME_FLAGS) \
 	  $(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(SHARED_LIBNAME_VERSION)
 	$(LN) -sf $(SHARED_LIBNAME_VERSION) $(SHARED_LIBNAME_MAJOR)
 	$(LN) -sf $(SHARED_LIBNAME_MAJOR) $(SHARED_LIBNAME)
