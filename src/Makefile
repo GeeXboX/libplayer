@@ -17,9 +17,9 @@ ifeq ($(BUILD_SHARED),yes)
     SHARED_LIBNAME_MAJOR   = $(LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.).dylib
     SHARED_LIBNAME_FLAGS   = -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-install_name,$(SHARED_LIBNAME_VERSION)
   else
-SHARED_LIBNAME = ${LIBNAME}.so
-SHARED_LIBNAME_VERSION = ${SHARED_LIBNAME}.${VERSION}
-SHARED_LIBNAME_MAJOR = $(SHARED_LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.)
+    SHARED_LIBNAME         = $(LIBNAME).so
+    SHARED_LIBNAME_VERSION = $(SHARED_LIBNAME).$(VERSION)
+    SHARED_LIBNAME_MAJOR   = $(SHARED_LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.)
     SHARED_LIBNAME_FLAGS   = -shared -Wl,-soname,$(SHARED_LIBNAME_MAJOR)
   endif
 endif
