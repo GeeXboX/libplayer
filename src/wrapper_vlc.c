@@ -71,34 +71,20 @@ vlc_event_callback (const libvlc_event_t *ev, void *data)
   type = ev->type;
   switch (type)
   {
-  case libvlc_MediaPlayerPlaying:
-    pl_log (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Playback of stream has started");
-    player_event_send (player, PLAYER_EVENT_PLAYBACK_START, NULL);
-    break;
-
-  case libvlc_MediaPlayerPaused:
-    pl_log (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Playback of stream has been paused");
-    player_event_send (player, PLAYER_EVENT_PLAYBACK_PAUSE, NULL);
-    break;
-
   case libvlc_MediaPlayerEndReached:
     pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Playback of stream has ended");
     player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
     break;
 
+  case libvlc_MediaPlayerPlaying:
+  case libvlc_MediaPlayerPaused:
   case libvlc_MediaPlayerStopped:
-    pl_log (player, PLAYER_MSG_INFO,
-            MODULE_NAME, "Playback of stream has stopped");
-    player_event_send (player, PLAYER_EVENT_PLAYBACK_STOP, NULL);
     break;
 
   default:
     pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
             "Unknown event received: %s", libvlc_event_type_name (type));
-    player_event_send (player, PLAYER_EVENT_UNKNOWN, NULL);
     break;
   }
 }
