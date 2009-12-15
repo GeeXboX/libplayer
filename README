@@ -32,6 +32,14 @@ NEVER include other headers in .h files, always do so in .c files.
 NEVER use printf(), always use plog().
 Check your code for warnings before commits.
 
+Versioning policy
+--
+The major version means no backward compatibility to previous versions (e.g.
+removal of a function from the public API). The minor version means backward
+compatible change (e.g. addition of a function to the public API or extension
+of an existing data structure). The micro version means a noteworthy binary
+compatible change (e.g. new wrapper).
+
 PACKAGERS
 ~~~~~~~~~
 
