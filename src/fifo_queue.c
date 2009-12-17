@@ -33,6 +33,7 @@ typedef struct fifo_queue_item_s {
 
 struct fifo_queue_s {
   fifo_queue_item_t *item;
+  fifo_queue_item_t *item_last;
   pthread_mutex_t mutex;
   sem_t sem;
 };
@@ -88,10 +89,8 @@ pl_fifo_queue_push (fifo_queue_t *queue, int id, void *data)
   item = queue->item;
   if (item)
   {
-    while (item->next)
-      item = item->next;
-    item->next = calloc (1, sizeof (fifo_queue_item_t));
-    item = item->next;
+    queue->item_last->next = calloc (1, sizeof (fifo_queue_item_t));
+    item = queue->item_last->next;
   }
   else
   {
@@ -104,6 +103,8 @@ pl_fifo_queue_push (fifo_queue_t *queue, int id, void *data)
     pthread_mutex_unlock (&queue->mutex);
     return FIFO_QUEUE_ERROR_MALLOC;
   }
+
+  queue->item_last = item;
 
   item->id = id;
   item->data = data;
