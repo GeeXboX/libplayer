@@ -800,7 +800,6 @@ if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
   check_lib xine.h xine_init -lxine
   if [ "$?" = 0 ]; then
     add_extracflags -DHAVE_XINE
-    add_pkgconfig_requires libxine
     wrapper_xine="yes"
   fi
 fi
@@ -836,7 +835,6 @@ if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
   check_lib vlc/vlc.h libvlc_media_new -lvlc
   if [ "$?" = 0 ]; then
     add_extracflags -DHAVE_VLC
-    add_pkgconfig_requires libvlc
     wrapper_vlc="yes"
   fi
 fi
@@ -857,7 +855,6 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
   check_lib gst/gst.h gst_init -lgstreamer-0.10
   if [ "$?" = 0 ]; then
     add_extracflags -DHAVE_GSTREAMER
-    add_pkgconfig_requires gstreamer-0.10
     wrapper_gstreamer="yes"
   fi
 fi
@@ -879,7 +876,6 @@ if test "$x11" = "auto" -o "$x11" = "yes"; then
     check_lib X11/X.h XInitThreads -lX11
     if [ "$?" = 0 ]; then
       add_extracflags -DUSE_X11
-      add_pkgconfig_requires x11
       x11="yes"
     fi
   fi
