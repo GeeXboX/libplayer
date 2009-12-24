@@ -755,7 +755,7 @@ vlc_playback_seek (player_t *player, int value, player_pb_seek_t seek)
     break;
   }
   case PLAYER_PB_SEEK_PERCENT:
-    libvlc_media_player_set_position (vlc->mp, value, &vlc->ex);
+    libvlc_media_player_set_position (vlc->mp, value / 100.0, &vlc->ex);
     break;
   case PLAYER_PB_SEEK_ABSOLUTE:
     libvlc_media_player_set_time (vlc->mp, (value * 1000), &vlc->ex);
