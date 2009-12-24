@@ -62,8 +62,8 @@ pl_log_test (player_t *player, player_verbosity_level_t level)
 }
 
 void
-pl_log (player_t *player, player_verbosity_level_t level,
-        const char *module, const char *format, ...)
+pl_log_orig (player_t *player,
+             player_verbosity_level_t level, const char *format, ...)
 {
 #ifdef USE_LOGCOLOR
   static const char *const c[] = {
@@ -81,6 +81,7 @@ pl_log (player_t *player, player_verbosity_level_t level,
     [PLAYER_MSG_ERROR]    = "Err",
     [PLAYER_MSG_CRITICAL] = "Crit",
   };
+  char fmt[256];
   va_list va;
 
   if (!player || !format)
@@ -89,16 +90,16 @@ pl_log (player_t *player, player_verbosity_level_t level,
   if (!pl_log_test (player, level))
     return;
 
-  va_start (va, format);
-
 #ifdef USE_LOGCOLOR
-  fprintf (stderr, "[" BOLD "libplayer/%s" NORMAL "] %s%s" NORMAL ": ",
-           module, c[level], l[level]);
+  snprintf (fmt, sizeof (fmt),
+            "[" BOLD "libplayer/%%s" NORMAL "] %s%s" NORMAL ": %s\n",
+            c[level], l[level], format);
 #else
-  fprintf (stderr, "[libplayer/%s] %s: ", module, l[level]);
+  snprintf (fmt, sizeof (fmt),
+            "[libplayer/%%s] %s: %s\n", l[level], format);
 #endif /* USE_LOGCOLOR */
 
-  vfprintf (stderr, format, va);
-  fprintf (stderr, "\n");
+  va_start (va, format);
+  vfprintf (stderr, fmt, va);
   va_end (va);
 }

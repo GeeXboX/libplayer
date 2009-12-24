@@ -23,7 +23,10 @@
 #define PLAYER_LOGS_H
 
 int pl_log_test (player_t *player, player_verbosity_level_t level);
-void pl_log (player_t *player, player_verbosity_level_t level,
-             const char *module, const char *format, ...);
+void pl_log_orig (player_t *player,
+                  player_verbosity_level_t level, const char *format, ...);
+
+#define pl_log(player, level, module, format, arg...) \
+  pl_log_orig (player, level, format, module, ##arg)
 
 #endif /* PLAYER_LOGS_H */
