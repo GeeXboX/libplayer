@@ -3651,7 +3651,7 @@ mplayer_audio_set_delay (player_t *player, int value, int absolute)
   if (!absolute)
     delay = slave_get_property_float (player, PROPERTY_AUDIO_DELAY);
 
-  delay += (float) value / 1000.0;
+  delay += value / 1000.0;
   val = (int) rintf (delay);
   if (!check_range (player, PROPERTY_AUDIO_DELAY, &val, 0))
     return;
@@ -3770,7 +3770,7 @@ mplayer_sub_set_delay (player_t *player, int value)
   if (!player)
     return;
 
-  delay = (float) value / 1000.0;
+  delay = value / 1000.0;
 
   slave_set_property_float (player, PROPERTY_SUB_DELAY, delay);
 }
