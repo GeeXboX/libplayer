@@ -1139,12 +1139,14 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
                              command, value->s_val, opt);
     break;
 
+  /* command */
   case SLAVE_PAUSE:
   case SLAVE_QUIT:
     if (state_cmd == ITEM_ON)
       send_to_slave (player, command);
     break;
 
+  /* PREFIX command int int */
   case SLAVE_SEEK:
   case SLAVE_SEEK_CHAPTER:
   case SLAVE_SET_MOUSE_POS:
@@ -1157,6 +1159,11 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
 
   case SLAVE_STOP:
     if (state_cmd == ITEM_HACK)
+      /*
+       * With very old versions of MPlayer where "stop" command is not
+       * available, a playback can be stopped by trying to load an
+       * unexistent file.
+       */
       send_to_slave (player, "loadfile \"\"");
     else if (state_cmd == ITEM_ON)
       send_to_slave (player, command);
@@ -1164,16 +1171,19 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     sem_wait (&mplayer->sem);
     break;
 
+  /* command "string" */
   case SLAVE_SUB_LOAD:
     if (state_cmd == ITEM_ON && value && value->s_val)
       send_to_slave (player, "%s \"%s\"", command, value->s_val);
     break;
 
+  /* PREFIX command float */
   case SLAVE_SWITCH_RATIO:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player, SLAVE_CMD_PREFIX "%s %.2f", command, value->f_val);
     break;
 
+  /* PREFIX command string */
   case SLAVE_RADIO_SET_CHANNEL:
   case SLAVE_TV_SET_CHANNEL:
   case SLAVE_TV_SET_NORM:
@@ -1181,6 +1191,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
       send_to_slave (player, SLAVE_CMD_PREFIX "%s %s", command, value->s_val);
     break;
 
+  /* PREFIX command int */
   case SLAVE_DVDNAV:
   case SLAVE_RADIO_STEP_CHANNEL:
   case SLAVE_SUB_POS:
