@@ -1011,7 +1011,7 @@ pkgconfig_generate libplayer \
                    "$VERSION" \
                    "-lplayer" \
                    "$extralibs" \
-                   "-D_FILE_OFFSET_BITS=64" \
+                   "" \
                    "" \
                    "$pkgconfig_requires"
 
