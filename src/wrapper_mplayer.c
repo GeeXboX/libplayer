@@ -1133,30 +1133,6 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     }
     break;
 
-  case SLAVE_OSD_SHOW_TEXT:
-    if (state_cmd == ITEM_ON && value && value->s_val)
-      send_to_slave (player, SLAVE_CMD_PREFIX "%s \"%s\" %i 0",
-                             command, value->s_val, opt);
-    break;
-
-  /* command */
-  case SLAVE_PAUSE:
-  case SLAVE_QUIT:
-    if (state_cmd == ITEM_ON)
-      send_to_slave (player, command);
-    break;
-
-  /* PREFIX command int int */
-  case SLAVE_SEEK:
-  case SLAVE_SEEK_CHAPTER:
-  case SLAVE_SET_MOUSE_POS:
-  case SLAVE_SUB_SCALE:
-  case SLAVE_VOLUME:
-    if (state_cmd == ITEM_ON && value)
-      send_to_slave (player,
-                     SLAVE_CMD_PREFIX "%s %i %i", command, value->i_val, opt);
-    break;
-
   case SLAVE_STOP:
     if (state_cmd == ITEM_HACK)
       /*
@@ -1171,16 +1147,23 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     sem_wait (&mplayer->sem);
     break;
 
+  case SLAVE_OSD_SHOW_TEXT:
+    if (state_cmd == ITEM_ON && value && value->s_val)
+      send_to_slave (player, SLAVE_CMD_PREFIX "%s \"%s\" %i 0",
+                             command, value->s_val, opt);
+    break;
+
+  /* command */
+  case SLAVE_PAUSE:
+  case SLAVE_QUIT:
+    if (state_cmd == ITEM_ON)
+      send_to_slave (player, command);
+    break;
+
   /* command "string" */
   case SLAVE_SUB_LOAD:
     if (state_cmd == ITEM_ON && value && value->s_val)
       send_to_slave (player, "%s \"%s\"", command, value->s_val);
-    break;
-
-  /* PREFIX command float */
-  case SLAVE_SWITCH_RATIO:
-    if (state_cmd == ITEM_ON && value)
-      send_to_slave (player, SLAVE_CMD_PREFIX "%s %.2f", command, value->f_val);
     break;
 
   /* PREFIX command string */
@@ -1199,6 +1182,23 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   case SLAVE_TV_STEP_CHANNEL:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player, SLAVE_CMD_PREFIX "%s %i", command, value->i_val);
+    break;
+
+  /* PREFIX command int int */
+  case SLAVE_SEEK:
+  case SLAVE_SEEK_CHAPTER:
+  case SLAVE_SET_MOUSE_POS:
+  case SLAVE_SUB_SCALE:
+  case SLAVE_VOLUME:
+    if (state_cmd == ITEM_ON && value)
+      send_to_slave (player,
+                     SLAVE_CMD_PREFIX "%s %i %i", command, value->i_val, opt);
+    break;
+
+  /* PREFIX command float */
+  case SLAVE_SWITCH_RATIO:
+    if (state_cmd == ITEM_ON && value)
+      send_to_slave (player, SLAVE_CMD_PREFIX "%s %.2f", command, value->f_val);
     break;
 
   default:
