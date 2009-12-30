@@ -223,8 +223,10 @@ pl_x11_resize (player_t *player)
 
     /* fix the size and offset */
     zoom (player, width, height, player->aspect,
-          (int16_t *)  &changes[0], (int16_t *)  &changes[1],
-          (uint16_t *) &changes[2], (uint16_t *) &changes[3]);
+          (int16_t *)  &changes[PL_X11_CHANGES_X],
+          (int16_t *)  &changes[PL_X11_CHANGES_Y],
+          (uint16_t *) &changes[PL_X11_CHANGES_W],
+          (uint16_t *) &changes[PL_X11_CHANGES_H]);
 
     xcb_configure_window (x11->display, x11->win_video,
                           XCB_CONFIG_WINDOW_X     |
