@@ -566,6 +566,11 @@ xine_player_init (player_t *player)
     use_x11 = 1;
     id_vo = "opengl";
     break;
+
+  case PLAYER_VO_VDPAU:
+    use_x11 = 1;
+    id_vo = "vdpau";
+    break;
 #endif /* USE_X11 */
 
   case PLAYER_VO_FB:
