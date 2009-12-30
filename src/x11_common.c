@@ -255,12 +255,12 @@ pl_x11_resize (player_t *player)
     changes[PL_X11_CHANGES_H] = height;
   }
 
-    xcb_configure_window (x11->display, x11->win_video,
-                          XCB_CONFIG_WINDOW_X     |
-                          XCB_CONFIG_WINDOW_Y     |
-                          XCB_CONFIG_WINDOW_WIDTH |
-                          XCB_CONFIG_WINDOW_HEIGHT,
-                          changes);
+  xcb_configure_window (x11->display, x11->win_video,
+                        XCB_CONFIG_WINDOW_X     |
+                        XCB_CONFIG_WINDOW_Y     |
+                        XCB_CONFIG_WINDOW_WIDTH |
+                        XCB_CONFIG_WINDOW_HEIGHT,
+                        changes);
 
   xcb_flush (x11->display);
 
