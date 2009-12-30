@@ -102,13 +102,13 @@ zoom (player_t *player, uint16_t parentwidth, uint16_t parentheight,
                        *x, *y, *width, *height, convert);
 }
 
-xcb_window_t
+uint32_t
 pl_x11_get_window (x11_t *x11)
 {
   if (!x11)
     return 0;
 
-  return x11->win_video;
+  return (uint32_t) x11->win_video;
 }
 
 void *
