@@ -687,7 +687,7 @@ thread_fifo (void *arg)
         player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
 #ifdef USE_X11
-          pl_x11_unmap (player);
+        pl_x11_unmap (player);
 #endif /* USE_X11 */
       }
       else
@@ -830,7 +830,7 @@ thread_fifo (void *arg)
   }
 
 #ifdef USE_X11
-    pl_x11_unmap (player);
+  pl_x11_unmap (player);
 #endif /* USE_X11 */
 
   pthread_mutex_lock (&mplayer->mutex_status);
@@ -3014,7 +3014,7 @@ mplayer_uninit (player_t *player)
   }
 
 #ifdef USE_X11
-    pl_x11_uninit (player);
+  pl_x11_uninit (player);
 #endif /* USE_X11 */
 
   item_list_free (mplayer->slave_cmds, g_slave_cmds_nb);
@@ -3750,7 +3750,7 @@ mplayer_video_set_ar (player_t *player, float value)
     player->aspect = value;
 
 #ifdef USE_X11
-    pl_x11_resize (player);
+  pl_x11_resize (player);
 #endif /* USE_X11 */
 
   slave_cmd_float (player, SLAVE_SWITCH_RATIO, player->aspect);

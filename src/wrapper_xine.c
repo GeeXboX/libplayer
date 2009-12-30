@@ -75,7 +75,7 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
     player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
 #ifdef USE_X11
-      pl_x11_unmap (player);
+    pl_x11_unmap (player);
 #endif /* USE_X11 */
     break;
   }
@@ -700,7 +700,7 @@ xine_player_uninit (player_t *player)
     xine_exit (x->xine);
 
 #ifdef USE_X11
-    pl_x11_uninit (player);
+  pl_x11_uninit (player);
 #endif /* USE_X11 */
 
   free (x);
