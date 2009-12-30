@@ -2672,7 +2672,7 @@ executable_is_available (player_t *player, const char *bin)
 }
 
 static int
-mp_preinit_vo (player_t *player, unsigned long *winid)
+mp_preinit_vo (player_t *player, uint32_t *winid)
 {
   int ret = 0;
 
@@ -2751,7 +2751,7 @@ mplayer_init (player_t *player)
   struct sigaction action;
   mplayer_t *mplayer = NULL;
   char winid[32];
-  unsigned long winid_l = 0;
+  uint32_t winid_l = 0;
   int use_x11 = 0;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
@@ -2796,7 +2796,7 @@ mplayer_init (player_t *player)
   if (use_x11 < 0)
     return PLAYER_INIT_ERROR;
 
-  snprintf (winid, sizeof (winid), "%lu", winid_l);
+  snprintf (winid, sizeof (winid), "%u", winid_l);
 
   if (pipe (mplayer->pipe_in))
     return PLAYER_INIT_ERROR;
