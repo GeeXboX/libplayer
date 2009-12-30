@@ -75,7 +75,6 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
     player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
 #ifdef USE_X11
-    if (player->x11)
       pl_x11_unmap (player);
 #endif /* USE_X11 */
     break;
@@ -701,7 +700,6 @@ xine_player_uninit (player_t *player)
     xine_exit (x->xine);
 
 #ifdef USE_X11
-  if (player->x11)
     pl_x11_uninit (player);
 #endif /* USE_X11 */
 
@@ -916,7 +914,7 @@ xine_player_playback_start (player_t *player)
     return PLAYER_PB_ERROR;
 
 #ifdef USE_X11
-  if (player->x11 && !mrl_uses_vo (mrl_c))
+  if (!mrl_uses_vo (mrl_c))
     pl_x11_map (player);
 #endif /* USE_X11 */
 
@@ -948,7 +946,7 @@ xine_player_playback_stop (player_t *player)
 
 #ifdef USE_X11
   mrl = pl_playlist_get_mrl (player->playlist);
-  if (player->x11 && !mrl_uses_vo (mrl))
+  if (!mrl_uses_vo (mrl))
     pl_x11_unmap (player);
 #endif /* USE_X11 */
 

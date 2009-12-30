@@ -687,7 +687,6 @@ thread_fifo (void *arg)
         player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
 
 #ifdef USE_X11
-        if (player->x11)
           pl_x11_unmap (player);
 #endif /* USE_X11 */
       }
@@ -831,7 +830,6 @@ thread_fifo (void *arg)
   }
 
 #ifdef USE_X11
-  if (player->x11)
     pl_x11_unmap (player);
 #endif /* USE_X11 */
 
@@ -3016,7 +3014,6 @@ mplayer_uninit (player_t *player)
   }
 
 #ifdef USE_X11
-  if (player->x11)
     pl_x11_uninit (player);
 #endif /* USE_X11 */
 
@@ -3315,7 +3312,7 @@ mplayer_playback_start (player_t *player)
   }
 
 #ifdef USE_X11
-  if (player->x11 && !mrl_uses_vo (mrl))
+  if (!mrl_uses_vo (mrl))
     pl_x11_map (player);
 #endif /* USE_X11 */
 
@@ -3352,7 +3349,7 @@ mplayer_playback_stop (player_t *player)
 
 #ifdef USE_X11
   mrl = pl_playlist_get_mrl (player->playlist);
-  if (player->x11 && !mrl_uses_vo (mrl))
+  if (!mrl_uses_vo (mrl))
     pl_x11_unmap (player);
 #endif /* USE_X11 */
 
@@ -3753,7 +3750,6 @@ mplayer_video_set_ar (player_t *player, float value)
     player->aspect = value;
 
 #ifdef USE_X11
-  if (player->x11)
     pl_x11_resize (player);
 #endif /* USE_X11 */
 
