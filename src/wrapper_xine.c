@@ -601,7 +601,7 @@ xine_player_init (player_t *player)
     else
     {
       data = pl_x11_get_data (player->x11);
-      visual = XINE_VISUAL_TYPE_X11_2;
+      visual = XINE_VISUAL_TYPE_XCB;
     }
 #else
     pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
@@ -661,12 +661,8 @@ xine_player_init (player_t *player)
 
 #ifdef USE_X11
   if (player->x11 && pl_x11_get_display (player->x11))
-  {
-    xine_port_send_gui_data (x->vo_port, XINE_GUI_SEND_DRAWABLE_CHANGED,
-                             (void *) pl_x11_get_window (player->x11));
     xine_port_send_gui_data (x->vo_port, XINE_GUI_SEND_VIDEOWIN_VISIBLE,
                              (void *) 1);
-  }
 #endif /* USE_X11 */
 
   return PLAYER_INIT_OK;
