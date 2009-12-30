@@ -41,8 +41,8 @@ static const uint32_t val_raised[] = { XCB_STACK_MODE_ABOVE };
 
 struct x11_s {
   xcb_connection_t *display;
-  xcb_window_t win_video;
-  xcb_screen_t *screen;
+  xcb_window_t      win_video;
+  xcb_screen_t     *screen;
   void *data;
   int use_subwin;
   int16_t  x, y;       /* position set by the user */
@@ -52,7 +52,7 @@ struct x11_s {
   double pixel_aspect;
   pthread_mutex_t mutex_display;
   xcb_window_t win_black; /* black background (use_subwin to 1) */
-  xcb_window_t win_trans; /* InputOnly window to catch events (use_subwin to 1) */
+  xcb_window_t win_trans; /* InputOnly win to catch events (use_subwin to 1) */
 };
 
 
@@ -60,8 +60,8 @@ struct x11_s {
  * Center the movie in the parent window and zoom to use the max of surface.
  */
 static void
-zoom (player_t *player, uint16_t parentwidth, uint16_t parentheight, float aspect,
-      int16_t *x, int16_t *y, uint16_t *width, uint16_t *height)
+zoom (player_t *player, uint16_t parentwidth, uint16_t parentheight,
+      float aspect, int16_t *x, int16_t *y, uint16_t *width, uint16_t *height)
 {
   float convert;
 
@@ -193,7 +193,7 @@ pl_x11_resize (player_t *player)
     return;
 
   pthread_mutex_lock (&x11->mutex_display);
-  width = x11->width;
+  width  = x11->width;
   height = x11->height;
 
   if (player->winid)
@@ -210,7 +210,7 @@ pl_x11_resize (player_t *player)
       free (geom);
     }
 
-    x11->width = width;
+    x11->width  = width;
     x11->height = height;
   }
 
@@ -398,7 +398,7 @@ xine_dest_props (x11_t *x11,
   }
   else
   {
-    *dest_width = video_width;
+    *dest_width  = video_width;
     *dest_height = video_height;
     *dest_pixel_aspect = video_pixel_aspect;
   }
@@ -426,8 +426,8 @@ xine_frame_output_cb (void *data, int video_width, int video_height,
 
   *dest_x = 0;
   *dest_y = 0;
-  *win_x = 0;
-  *win_y = 0;
+  *win_x  = 0;
+  *win_y  = 0;
 
   xine_dest_props (x11,
                    video_width, video_height, video_pixel_aspect,
@@ -481,7 +481,7 @@ pl_x11_init (player_t *player)
   if (player->type == PLAYER_TYPE_MPLAYER)
     x11->use_subwin = 1;
 
-    pthread_mutex_init (&x11->mutex_display, NULL);
+  pthread_mutex_init (&x11->mutex_display, NULL);
 
   x11->screen = screen_of_display (x11->display, screen);
   if (!x11->screen)
@@ -538,22 +538,16 @@ pl_x11_init (player_t *player)
     /* create a window for the black background */
     x11->win_black = xcb_generate_id (x11->display);
     xcb_create_window (x11->display, XCB_COPY_FROM_PARENT, x11->win_black,
-                                    win_root,
-                                    0, 0, x11->width, x11->height,
-                       0,
-                       XCB_WINDOW_CLASS_INPUT_OUTPUT,
-                                    visual,
+                       win_root, 0, 0, x11->width, x11->height, 0,
+                       XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
                        XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
                        attributes);
 
     /* create a window for the video out */
     x11->win_video = xcb_generate_id (x11->display);
     xcb_create_window (x11->display, XCB_COPY_FROM_PARENT, x11->win_video,
-                                    x11->win_black,
-                                    0, 0, x11->width, x11->height,
-                       0,
-                       XCB_WINDOW_CLASS_INPUT_OUTPUT,
-                                    visual,
+                       x11->win_black, 0, 0, x11->width, x11->height, 0,
+                       XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
                        XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
                        attributes);
 
@@ -565,11 +559,8 @@ pl_x11_init (player_t *player)
      */
     x11->win_trans = xcb_generate_id (x11->display);
     xcb_create_window (x11->display, XCB_COPY_FROM_PARENT, x11->win_trans,
-                                    x11->win_black,
-                                    0, 0, x11->width, x11->height,
-                       0,
-                       XCB_WINDOW_CLASS_INPUT_ONLY,
-                                    visual,
+                       x11->win_black, 0, 0, x11->width, x11->height, 0,
+                       XCB_WINDOW_CLASS_INPUT_ONLY, visual,
                        XCB_CW_OVERRIDE_REDIRECT, attributes + 1);
 
     xcb_configure_window (x11->display, x11->win_trans,
@@ -581,11 +572,8 @@ pl_x11_init (player_t *player)
     /* create a window for the video out */
     x11->win_video = xcb_generate_id (x11->display);
     xcb_create_window (x11->display, XCB_COPY_FROM_PARENT, x11->win_video,
-                                    win_root,
-                                    0, 0, x11->width, x11->height,
-                       0,
-                       XCB_WINDOW_CLASS_INPUT_OUTPUT,
-                                    visual,
+                       win_root, 0, 0, x11->width, x11->height, 0,
+                       XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
                        XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
                        attributes);
   }
@@ -601,12 +589,12 @@ pl_x11_init (player_t *player)
 
     if (vis)
     {
-      vis->connection = x11->display;
-      vis->screen = x11->screen;
-      vis->window = x11->win_video;
-      vis->dest_size_cb = xine_dest_size_cb;
+      vis->connection      = x11->display;
+      vis->screen          = x11->screen;
+      vis->window          = x11->win_video;
+      vis->dest_size_cb    = xine_dest_size_cb;
       vis->frame_output_cb = xine_frame_output_cb;
-      vis->user_data = (void *) x11;
+      vis->user_data       = (void *) x11;
     }
 
     x11->data = (void *) vis;
