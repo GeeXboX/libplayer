@@ -51,7 +51,7 @@ struct x11_s {
   uint16_t w, h;       /* size set by the user */
   uint16_t width;      /* screen width */
   uint16_t height;     /* screen height */
-  pthread_mutex_t mutex_display;
+  pthread_mutex_t mutex;
 
   int16_t  x_vid, y_vid;  /* position of win_video */
   uint16_t w_vid, h_vid;  /* size of win_video */
@@ -131,7 +131,7 @@ pl_x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags)
   if (!x11)
     return;
 
-  pthread_mutex_lock (&x11->mutex_display);
+  pthread_mutex_lock (&x11->mutex);
   if (flags & X11_PROPERTY_X)
     x11->x = x;
   if (flags & X11_PROPERTY_Y)
@@ -140,7 +140,7 @@ pl_x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags)
     x11->w = w;
   if (flags & X11_PROPERTY_H)
     x11->h = h;
-  pthread_mutex_unlock (&x11->mutex_display);
+  pthread_mutex_unlock (&x11->mutex);
 }
 
 void
@@ -149,12 +149,12 @@ pl_x11_get_video_pos (x11_t *x11, int *x, int *y)
   if (!x11 || (!x && !y))
     return;
 
-  pthread_mutex_lock (&x11->mutex_display);
+  pthread_mutex_lock (&x11->mutex);
   if (x)
     *x = x11->x_vid + (x11->use_subwin ? x11->x : 0);
   if (y)
     *y = x11->y_vid + (x11->use_subwin ? x11->y : 0);
-  pthread_mutex_unlock (&x11->mutex_display);
+  pthread_mutex_unlock (&x11->mutex);
 }
 
 #define PL_X11_CHANGES_X 0
@@ -178,7 +178,7 @@ pl_x11_resize (player_t *player)
   if (!x11->display)
     return;
 
-  pthread_mutex_lock (&x11->mutex_display);
+  pthread_mutex_lock (&x11->mutex);
   width  = x11->width;
   height = x11->height;
 
@@ -207,7 +207,7 @@ pl_x11_resize (player_t *player)
     width = x11->w;
   if (x11->h)
     height = x11->h;
-  pthread_mutex_unlock (&x11->mutex_display);
+  pthread_mutex_unlock (&x11->mutex);
 
   if (x11->use_subwin && x11->win_black)
   {
@@ -362,7 +362,7 @@ pl_x11_uninit (player_t *player)
   if (x11->data)
     free (x11->data);
 
-  pthread_mutex_destroy (&x11->mutex_display);
+  pthread_mutex_destroy (&x11->mutex);
   free (x11);
   player->x11 = NULL;
 
@@ -377,7 +377,7 @@ xine_dest_props (x11_t *x11,
 {
   if (x11)
   {
-    pthread_mutex_lock (&x11->mutex_display);
+    pthread_mutex_lock (&x11->mutex);
     if (x11->w)
       *dest_width = x11->w;
     else
@@ -387,7 +387,7 @@ xine_dest_props (x11_t *x11,
       *dest_height = x11->h;
     else
       *dest_height = x11->height;
-    pthread_mutex_unlock (&x11->mutex_display);
+    pthread_mutex_unlock (&x11->mutex);
 
     *dest_pixel_aspect = x11->pixel_aspect;
   }
@@ -476,7 +476,7 @@ pl_x11_init (player_t *player)
   if (player->type == PLAYER_TYPE_MPLAYER)
     x11->use_subwin = 1;
 
-  pthread_mutex_init (&x11->mutex_display, NULL);
+  pthread_mutex_init (&x11->mutex, NULL);
 
   x11->screen = screen_of_display (x11->display, screen);
   if (!x11->screen)
