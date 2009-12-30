@@ -211,27 +211,6 @@ pl_x11_resize (player_t *player)
 
   if (x11->use_subwin && x11->win_black)
   {
-    x11->x_vid = 0;
-    x11->y_vid = 0;
-    x11->w_vid = player->w;
-    x11->h_vid = player->h;
-
-    /* fix the size and offset */
-    zoom (player, width, height,
-          player->aspect, &x11->x_vid, &x11->y_vid, &x11->w_vid, &x11->h_vid);
-
-    changes[PL_X11_CHANGES_X] = (uint32_t) x11->x_vid;
-    changes[PL_X11_CHANGES_Y] = (uint32_t) x11->y_vid;
-    changes[PL_X11_CHANGES_W] = x11->w_vid;
-    changes[PL_X11_CHANGES_H] = x11->h_vid;
-
-    xcb_configure_window (x11->display, x11->win_video,
-                          XCB_CONFIG_WINDOW_X     |
-                          XCB_CONFIG_WINDOW_Y     |
-                          XCB_CONFIG_WINDOW_WIDTH |
-                          XCB_CONFIG_WINDOW_HEIGHT,
-                          changes);
-
     /* reconfigure black and trans windows */
     changes[PL_X11_CHANGES_X] = x;
     changes[PL_X11_CHANGES_Y] = y;
@@ -248,6 +227,20 @@ pl_x11_resize (player_t *player)
                             XCB_CONFIG_WINDOW_WIDTH |
                             XCB_CONFIG_WINDOW_HEIGHT,
                             changes + 2);
+
+    x11->x_vid = 0;
+    x11->y_vid = 0;
+    x11->w_vid = player->w;
+    x11->h_vid = player->h;
+
+    /* fix the size and offset */
+    zoom (player, width, height,
+          player->aspect, &x11->x_vid, &x11->y_vid, &x11->w_vid, &x11->h_vid);
+
+    changes[PL_X11_CHANGES_X] = (uint32_t) x11->x_vid;
+    changes[PL_X11_CHANGES_Y] = (uint32_t) x11->y_vid;
+    changes[PL_X11_CHANGES_W] = x11->w_vid;
+    changes[PL_X11_CHANGES_H] = x11->h_vid;
   }
   else
   {
@@ -260,6 +253,7 @@ pl_x11_resize (player_t *player)
     changes[PL_X11_CHANGES_Y] = y;
     changes[PL_X11_CHANGES_W] = width;
     changes[PL_X11_CHANGES_H] = height;
+  }
 
     xcb_configure_window (x11->display, x11->win_video,
                           XCB_CONFIG_WINDOW_X     |
@@ -267,7 +261,6 @@ pl_x11_resize (player_t *player)
                           XCB_CONFIG_WINDOW_WIDTH |
                           XCB_CONFIG_WINDOW_HEIGHT,
                           changes);
-  }
 
   xcb_flush (x11->display);
 
