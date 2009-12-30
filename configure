@@ -55,7 +55,7 @@ show_help(){
   echo "  --with-gstreamer-dir=DIR    check for libgstreamer installed in DIR"
   echo "  --with-vlc-dir=DIR          check for libvlc installed in DIR"
   echo "  --with-xine-dir=DIR         check for libxine installed in DIR"
-  echo "  --with-X11-dir=DIR          check for libX11 installed in DIR"
+  echo "  --with-xcb-dir=DIR          check for libxcb installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
   echo "  --disable-debug             disable debugging symbols"
@@ -559,7 +559,7 @@ for opt do
   ;;
   --with-gstreamer-dir=*) libgstreamerdir="$optval";
   ;;
-  --with-X11-dir=*) libX11dir="$optval";
+  --with-xcb-dir=*) libxcbdir="$optval";
   ;;
   --enable-x11) x11="yes";
   ;;
@@ -860,20 +860,20 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
 fi
 
 #################################################
-#   check for libX11
+#   check for libxcb
 #################################################
 if test "$x11" = "auto" -o "$x11" = "yes"; then
   x11="no"
   if test "$wrapper_xine" = "yes" -o "$wrapper_mplayer" = "yes"; then
-    echolog "Checking for libX11 ..."
-    if [ -n "$libX11dir" ]; then
-      check_cflags -I$libX11dir/include
-      check_ldflags -L$libX11dir/lib
+    echolog "Checking for libxcb ..."
+    if [ -n "$libxcbdir" ]; then
+      check_cflags -I$libxcbdir/include
+      check_ldflags -L$libxcbdir/lib
     fi
-    if [ -z "$libX11dir" ]; then
-      add_pkgconfig_deps x11
+    if [ -z "$libxcbdir" ]; then
+      add_pkgconfig_deps xcb
     fi
-    check_lib X11/X.h XInitThreads -lX11
+    check_lib xcb/xcb.h xcb_generate_id -lxcb
     if [ "$?" = 0 ]; then
       add_extracflags -DUSE_X11
       x11="yes"

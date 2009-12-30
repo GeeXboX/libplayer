@@ -22,8 +22,6 @@
 #ifndef X11_COMMON_H
 #define X11_COMMON_H
 
-#include <X11/Xlib.h>
-
 /* opaque data type */
 typedef struct x11_s x11_t;
 
@@ -35,8 +33,8 @@ void pl_x11_map (player_t *player);
 void pl_x11_unmap (player_t *player);
 void pl_x11_resize (player_t *player);
 
-Display *pl_x11_get_display (x11_t *x11);
-Window pl_x11_get_window (x11_t *x11);
+void *pl_x11_get_display (x11_t *x11);
+uint32_t pl_x11_get_window (x11_t *x11);
 void *pl_x11_get_data (x11_t *x11);
 
 void pl_x11_get_video_pos (x11_t *x11, int *x, int *y);
