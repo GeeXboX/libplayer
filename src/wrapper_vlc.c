@@ -342,6 +342,14 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   libvlc_media_player_set_media (mp, media, &vlc->ex);
   libvlc_media_player_play (mp, &vlc->ex);
 
+  /*
+   * FIXME
+   * Most of time, vlc_identify() is unable to retrieve the properties
+   * because libvlc must be playing in order to read the informations.
+   * The code below waits that the Playing state begins, but it is not
+   * sufficient for many streams. It suggests that at least one frame
+   * or more must be decoded.
+   */
   while (st <= libvlc_Buffering)
   {
     st = libvlc_media_player_get_state (mp, &vlc->ex);
