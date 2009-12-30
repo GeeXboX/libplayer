@@ -49,6 +49,10 @@ struct x11_s {
   uint16_t w, h;       /* size set by the user */
   uint16_t width;      /* screen width */
   uint16_t height;     /* screen height */
+
+  int16_t  x_vid, y_vid;  /* position of win_video */
+  uint16_t w_vid, h_vid;  /* size of win_video */
+
   double pixel_aspect;
   pthread_mutex_t mutex_display;
   xcb_window_t win_black; /* black background (use_subwin to 1) */
@@ -141,25 +145,15 @@ pl_x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags)
 void
 pl_x11_get_video_pos (x11_t *x11, int *x, int *y)
 {
-  xcb_get_geometry_cookie_t cookie;
-  xcb_get_geometry_reply_t *geom;
-
   if (!x11 || (!x && !y))
-    return;
-
-  cookie = xcb_get_geometry (x11->display, x11->win_video);
-  geom = xcb_get_geometry_reply (x11->display, cookie, NULL);
-  if (!geom)
     return;
 
   pthread_mutex_lock (&x11->mutex_display);
   if (x)
-    *x = geom->x + (x11->use_subwin ? x11->x : 0);
+    *x = x11->x_vid + (x11->use_subwin ? x11->x : 0);
   if (y)
-    *y = geom->y + (x11->use_subwin ? x11->y : 0);
+    *y = x11->y_vid + (x11->use_subwin ? x11->y : 0);
   pthread_mutex_unlock (&x11->mutex_display);
-
-  free (geom);
 }
 
 #define PL_X11_CHANGES_X 0
@@ -216,17 +210,19 @@ pl_x11_resize (player_t *player)
 
   if (x11->use_subwin && x11->win_black)
   {
-    changes[PL_X11_CHANGES_X] = 0;
-    changes[PL_X11_CHANGES_Y] = 0;
-    changes[PL_X11_CHANGES_W] = (uint32_t) player->w;
-    changes[PL_X11_CHANGES_H] = (uint32_t) player->h;
+    x11->x_vid = 0;
+    x11->y_vid = 0;
+    x11->w_vid = player->w;
+    x11->h_vid = player->h;
 
     /* fix the size and offset */
-    zoom (player, width, height, player->aspect,
-          (int16_t *)  &changes[PL_X11_CHANGES_X],
-          (int16_t *)  &changes[PL_X11_CHANGES_Y],
-          (uint16_t *) &changes[PL_X11_CHANGES_W],
-          (uint16_t *) &changes[PL_X11_CHANGES_H]);
+    zoom (player, width, height,
+          player->aspect, &x11->x_vid, &x11->y_vid, &x11->w_vid, &x11->h_vid);
+
+    changes[PL_X11_CHANGES_X] = (uint32_t) x11->x_vid;
+    changes[PL_X11_CHANGES_Y] = (uint32_t) x11->y_vid;
+    changes[PL_X11_CHANGES_W] = x11->w_vid;
+    changes[PL_X11_CHANGES_H] = x11->h_vid;
 
     xcb_configure_window (x11->display, x11->win_video,
                           XCB_CONFIG_WINDOW_X     |
@@ -254,6 +250,11 @@ pl_x11_resize (player_t *player)
   }
   else
   {
+    x11->x_vid = x;
+    x11->y_vid = y;
+    x11->w_vid = width;
+    x11->h_vid = height;
+
     changes[PL_X11_CHANGES_X] = x;
     changes[PL_X11_CHANGES_Y] = y;
     changes[PL_X11_CHANGES_W] = width;
@@ -518,6 +519,9 @@ pl_x11_init (player_t *player)
       free (atts);
     }
   }
+
+  x11->w_vid = x11->width;
+  x11->h_vid = x11->height;
 
   /*
    * Some video outputs of MPlayer (like Xv and OpenGL), use the hardware
