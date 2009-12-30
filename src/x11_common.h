@@ -33,7 +33,6 @@ void pl_x11_map (player_t *player);
 void pl_x11_unmap (player_t *player);
 void pl_x11_resize (player_t *player);
 
-void *pl_x11_get_display (x11_t *x11);
 uint32_t pl_x11_get_window (x11_t *x11);
 void *pl_x11_get_data (x11_t *x11);
 
