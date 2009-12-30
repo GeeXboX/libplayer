@@ -312,9 +312,10 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   libvlc_media_t *media;
   char *uri = NULL;
   vlc_t *vlc;
-  const char *options[32] = { "--vout", "dummy", "--aout", "dummy" };
+  const char *options[] = { ":vout=dummy", ":aout=dummy" };
   libvlc_state_t st = libvlc_NothingSpecial;
   int wait = 0;
+  unsigned int i;
 
   if (!player || !mrl)
     return;
@@ -335,7 +336,8 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   if (!media)
     goto err_media;
 
-  libvlc_media_add_option (media, *options, &vlc->ex);
+  for (i = 0; i < ARRAY_NB_ELEMENTS (options); i++)
+    libvlc_media_add_option (media, options[i], &vlc->ex);
 
   libvlc_media_player_set_media (mp, media, &vlc->ex);
   libvlc_media_player_play (mp, &vlc->ex);
