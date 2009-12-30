@@ -40,7 +40,7 @@
 static const uint32_t val_raised[] = { XCB_STACK_MODE_ABOVE };
 
 struct x11_s {
-  xcb_connection_t *display;
+  xcb_connection_t *conn;
   xcb_window_t      win_video;
   xcb_window_t      win_black; /* black background  (use_subwin to 1) */
   xcb_window_t      win_trans; /* InputOnly windows (use_subwin to 1) */
@@ -175,7 +175,7 @@ pl_x11_resize (player_t *player)
 
   x11 = player->x11;
 
-  if (!x11->display)
+  if (!x11->conn)
     return;
 
   pthread_mutex_lock (&x11->mutex);
@@ -187,8 +187,8 @@ pl_x11_resize (player_t *player)
     xcb_get_geometry_cookie_t cookie;
     xcb_get_geometry_reply_t *geom;
 
-    cookie = xcb_get_geometry (x11->display, (xcb_window_t) player->winid);
-    geom = xcb_get_geometry_reply (x11->display, cookie, NULL);
+    cookie = xcb_get_geometry (x11->conn, (xcb_window_t) player->winid);
+    geom = xcb_get_geometry_reply (x11->conn, cookie, NULL);
     if (geom)
     {
       width  = geom->width;
@@ -216,14 +216,14 @@ pl_x11_resize (player_t *player)
     changes[PL_X11_CHANGES_Y] = y;
     changes[PL_X11_CHANGES_W] = width;
     changes[PL_X11_CHANGES_H] = height;
-    xcb_configure_window (x11->display, x11->win_black,
+    xcb_configure_window (x11->conn, x11->win_black,
                           XCB_CONFIG_WINDOW_X     |
                           XCB_CONFIG_WINDOW_Y     |
                           XCB_CONFIG_WINDOW_WIDTH |
                           XCB_CONFIG_WINDOW_HEIGHT,
                           changes);
     if (x11->win_trans)
-      xcb_configure_window (x11->display, x11->win_trans,
+      xcb_configure_window (x11->conn, x11->win_trans,
                             XCB_CONFIG_WINDOW_WIDTH |
                             XCB_CONFIG_WINDOW_HEIGHT,
                             changes + 2);
@@ -255,14 +255,14 @@ pl_x11_resize (player_t *player)
     changes[PL_X11_CHANGES_H] = height;
   }
 
-  xcb_configure_window (x11->display, x11->win_video,
+  xcb_configure_window (x11->conn, x11->win_video,
                         XCB_CONFIG_WINDOW_X     |
                         XCB_CONFIG_WINDOW_Y     |
                         XCB_CONFIG_WINDOW_WIDTH |
                         XCB_CONFIG_WINDOW_HEIGHT,
                         changes);
 
-  xcb_flush (x11->display);
+  xcb_flush (x11->conn);
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window resized");
 }
@@ -277,25 +277,25 @@ pl_x11_map (player_t *player)
 
   x11 = player->x11;
 
-  if (!x11->display)
+  if (!x11->conn)
     return;
 
   pl_x11_resize (player);
 
   if (x11->use_subwin && x11->win_black)
   {
-    xcb_configure_window (x11->display, x11->win_black,
+    xcb_configure_window (x11->conn, x11->win_black,
                           XCB_CONFIG_WINDOW_STACK_MODE, val_raised);
-    xcb_map_window (x11->display, x11->win_black);
+    xcb_map_window (x11->conn, x11->win_black);
   }
   else
   {
-    xcb_configure_window (x11->display, x11->win_video,
+    xcb_configure_window (x11->conn, x11->win_video,
                           XCB_CONFIG_WINDOW_STACK_MODE, val_raised);
-    xcb_map_window (x11->display, x11->win_video);
+    xcb_map_window (x11->conn, x11->win_video);
   }
 
-  xcb_flush (x11->display);
+  xcb_flush (x11->conn);
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window mapped");
 }
@@ -310,15 +310,15 @@ pl_x11_unmap (player_t *player)
 
   x11 = player->x11;
 
-  if (!x11->display)
+  if (!x11->conn)
     return;
 
   if (x11->use_subwin && x11->win_black)
-    xcb_unmap_window (x11->display, x11->win_black);
+    xcb_unmap_window (x11->conn, x11->win_black);
   else
-    xcb_unmap_window (x11->display, x11->win_video);
+    xcb_unmap_window (x11->conn, x11->win_video);
 
-  xcb_flush (x11->display);
+  xcb_flush (x11->conn);
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window unmapped");
 }
@@ -333,24 +333,24 @@ pl_x11_uninit (player_t *player)
 
   x11 = player->x11;
 
-  if (!x11->display)
+  if (!x11->conn)
     return;
 
-  xcb_unmap_window (x11->display, x11->win_video);
-  xcb_destroy_window (x11->display, x11->win_video);
+  xcb_unmap_window (x11->conn, x11->win_video);
+  xcb_destroy_window (x11->conn, x11->win_video);
 
   if (x11->win_trans)
   {
-    xcb_unmap_window (x11->display, x11->win_trans);
-    xcb_destroy_window (x11->display, x11->win_trans);
+    xcb_unmap_window (x11->conn, x11->win_trans);
+    xcb_destroy_window (x11->conn, x11->win_trans);
   }
   if (x11->win_black)
   {
-    xcb_unmap_window (x11->display, x11->win_black);
-    xcb_destroy_window (x11->display, x11->win_black);
+    xcb_unmap_window (x11->conn, x11->win_black);
+    xcb_destroy_window (x11->conn, x11->win_black);
   }
 
-  xcb_disconnect (x11->display);
+  xcb_disconnect (x11->conn);
 
   if (x11->data)
     free (x11->data);
@@ -459,8 +459,8 @@ pl_x11_init (player_t *player)
   if (!x11)
     return 0;
 
-  x11->display = xcb_connect (NULL, &screen);
-  if (!x11->display)
+  x11->conn = xcb_connect (NULL, &screen);
+  if (!x11->conn)
   {
     pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
     goto err;
@@ -471,7 +471,7 @@ pl_x11_init (player_t *player)
 
   pthread_mutex_init (&x11->mutex, NULL);
 
-  x11->screen = screen_of_display (x11->display, screen);
+  x11->screen = screen_of_display (x11->conn, screen);
   if (!x11->screen)
   {
     pl_log (player, PLAYER_MSG_WARNING,
@@ -496,8 +496,8 @@ pl_x11_init (player_t *player)
     xcb_get_window_attributes_cookie_t cookie_atts;
     xcb_get_window_attributes_reply_t *atts;
 
-    cookie_geom = xcb_get_geometry (x11->display, win_root);
-    geom = xcb_get_geometry_reply (x11->display, cookie_geom, NULL);
+    cookie_geom = xcb_get_geometry (x11->conn, win_root);
+    geom = xcb_get_geometry_reply (x11->conn, cookie_geom, NULL);
     if (geom)
     {
       x11->width  = geom->width;
@@ -505,8 +505,8 @@ pl_x11_init (player_t *player)
       free (geom);
     }
 
-    cookie_atts = xcb_get_window_attributes (x11->display, win_root);
-    atts = xcb_get_window_attributes_reply (x11->display, cookie_atts, NULL);
+    cookie_atts = xcb_get_window_attributes (x11->conn, win_root);
+    atts = xcb_get_window_attributes_reply (x11->conn, cookie_atts, NULL);
     if (atts)
     {
       visual = atts->visual;
@@ -527,49 +527,49 @@ pl_x11_init (player_t *player)
   if (x11->use_subwin)
   {
     /* create a window for the black background */
-    x11->win_black = xcb_generate_id (x11->display);
-    xcb_create_window (x11->display, XCB_COPY_FROM_PARENT, x11->win_black,
+    x11->win_black = xcb_generate_id (x11->conn);
+    xcb_create_window (x11->conn, XCB_COPY_FROM_PARENT, x11->win_black,
                        win_root, 0, 0, x11->width, x11->height, 0,
                        XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
                        XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
                        attributes);
 
     /* create a window for the video out */
-    x11->win_video = xcb_generate_id (x11->display);
-    xcb_create_window (x11->display, XCB_COPY_FROM_PARENT, x11->win_video,
+    x11->win_video = xcb_generate_id (x11->conn);
+    xcb_create_window (x11->conn, XCB_COPY_FROM_PARENT, x11->win_video,
                        x11->win_black, 0, 0, x11->width, x11->height, 0,
                        XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
                        XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
                        attributes);
 
-    xcb_map_window (x11->display, x11->win_video);
+    xcb_map_window (x11->conn, x11->win_video);
 
     /*
      * Transparent window to catch all events in order to prevent sending
      * events to MPlayer.
      */
-    x11->win_trans = xcb_generate_id (x11->display);
-    xcb_create_window (x11->display, XCB_COPY_FROM_PARENT, x11->win_trans,
+    x11->win_trans = xcb_generate_id (x11->conn);
+    xcb_create_window (x11->conn, XCB_COPY_FROM_PARENT, x11->win_trans,
                        x11->win_black, 0, 0, x11->width, x11->height, 0,
                        XCB_WINDOW_CLASS_INPUT_ONLY, visual,
                        XCB_CW_OVERRIDE_REDIRECT, attributes + 1);
 
-    xcb_configure_window (x11->display, x11->win_trans,
+    xcb_configure_window (x11->conn, x11->win_trans,
                           XCB_CONFIG_WINDOW_STACK_MODE, val_raised);
-    xcb_map_window (x11->display, x11->win_trans);
+    xcb_map_window (x11->conn, x11->win_trans);
   }
   else
   {
     /* create a window for the video out */
-    x11->win_video = xcb_generate_id (x11->display);
-    xcb_create_window (x11->display, XCB_COPY_FROM_PARENT, x11->win_video,
+    x11->win_video = xcb_generate_id (x11->conn);
+    xcb_create_window (x11->conn, XCB_COPY_FROM_PARENT, x11->win_video,
                        win_root, 0, 0, x11->width, x11->height, 0,
                        XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
                        XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
                        attributes);
   }
 
-  xcb_flush (x11->display);
+  xcb_flush (x11->conn);
 
   x11->pixel_aspect = 1.0;
 
@@ -580,7 +580,7 @@ pl_x11_init (player_t *player)
 
     if (vis)
     {
-      vis->connection      = x11->display;
+      vis->connection      = x11->conn;
       vis->screen          = x11->screen;
       vis->window          = x11->win_video;
       vis->dest_size_cb    = xine_dest_size_cb;
