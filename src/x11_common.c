@@ -42,21 +42,22 @@ static const uint32_t val_raised[] = { XCB_STACK_MODE_ABOVE };
 struct x11_s {
   xcb_connection_t *display;
   xcb_window_t      win_video;
+  xcb_window_t      win_black; /* black background  (use_subwin to 1) */
+  xcb_window_t      win_trans; /* InputOnly windows (use_subwin to 1) */
   xcb_screen_t     *screen;
-  void *data;
   int use_subwin;
+
   int16_t  x, y;       /* position set by the user */
   uint16_t w, h;       /* size set by the user */
   uint16_t width;      /* screen width */
   uint16_t height;     /* screen height */
+  pthread_mutex_t mutex_display;
 
   int16_t  x_vid, y_vid;  /* position of win_video */
   uint16_t w_vid, h_vid;  /* size of win_video */
 
   double pixel_aspect;
-  pthread_mutex_t mutex_display;
-  xcb_window_t win_black; /* black background (use_subwin to 1) */
-  xcb_window_t win_trans; /* InputOnly win to catch events (use_subwin to 1) */
+  void *data;
 };
 
 
