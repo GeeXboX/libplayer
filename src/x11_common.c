@@ -447,7 +447,7 @@ pl_x11_init (player_t *player)
 {
   x11_t *x11 = NULL;
   xcb_window_t win_root;
-  int screen;
+  int screen = 0;
   xcb_visualid_t visual;
   uint32_t attributes[] = { 0, 1 }; /* black_pixel, override_redirect */
 
