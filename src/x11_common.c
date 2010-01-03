@@ -469,8 +469,6 @@ pl_x11_init (player_t *player)
   if (player->type == PLAYER_TYPE_MPLAYER)
     x11->use_subwin = 1;
 
-  pthread_mutex_init (&x11->mutex, NULL);
-
   x11->screen = screen_of_display (x11->conn, screen);
   if (!x11->screen)
   {
@@ -478,6 +476,8 @@ pl_x11_init (player_t *player)
             MODULE_NAME, "Failed to found the screen");
     goto err;
   }
+
+  pthread_mutex_init (&x11->mutex, NULL);
 
   attributes[0] = x11->screen->black_pixel;
 
