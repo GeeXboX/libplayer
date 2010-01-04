@@ -620,12 +620,7 @@ thread_fifo (void *arg)
         (it = strstr (buffer, mplayer->search.property)) == buffer)
     {
       it = parse_field (it);
-
-      if ((mplayer->search.value = malloc (strlen (it) + 1)))
-      {
-        memcpy (mplayer->search.value, it, strlen (it));
-        *(mplayer->search.value + strlen (it)) = '\0';
-      }
+      mplayer->search.value = strdup (it);
     }
 
     /*
