@@ -170,7 +170,7 @@ typedef struct mplayer_s {
   pthread_cond_t cond_start;
   pthread_cond_t cond_status;
   sem_t sem;
-  mp_search_t *search;    /* use when a property is searched */
+  mp_search_t search;    /* use when a property is searched */
 } mplayer_t;
 
 /*
@@ -616,15 +616,15 @@ thread_fifo (void *arg)
      * 'get_property', is searched and saved.
      */
     pthread_mutex_lock (&mplayer->mutex_search);
-    if (mplayer->search && mplayer->search->property &&
-        (it = strstr (buffer, mplayer->search->property)) == buffer)
+    if (mplayer->search.property &&
+        (it = strstr (buffer, mplayer->search.property)) == buffer)
     {
       it = parse_field (it);
 
-      if ((mplayer->search->value = malloc (strlen (it) + 1)))
+      if ((mplayer->search.value = malloc (strlen (it) + 1)))
       {
-        memcpy (mplayer->search->value, it, strlen (it));
-        *(mplayer->search->value + strlen (it)) = '\0';
+        memcpy (mplayer->search.value, it, strlen (it));
+        *(mplayer->search.value + strlen (it)) = '\0';
       }
     }
 
@@ -637,10 +637,10 @@ thread_fifo (void *arg)
      */
     else if (strstr (buffer, "Command loadfile") == buffer)
     {
-      if (mplayer->search)
+      if (mplayer->search.property)
       {
-        free (mplayer->search->property);
-        mplayer->search->property = NULL;
+        free (mplayer->search.property);
+        mplayer->search.property = NULL;
         sem_post (&mplayer->sem);
       }
     }
@@ -926,15 +926,8 @@ slave_result (slave_property_t property, player_t *player)
   snprintf (str, sizeof (str), "ANS_%s=", prop);
 
   pthread_mutex_lock (&mplayer->mutex_search);
-  mplayer->search = malloc (sizeof (mp_search_t));
-  if (!mplayer->search)
-  {
-    pthread_mutex_unlock (&mplayer->mutex_search);
-    return NULL;
-  }
-
-  mplayer->search->property = strdup (str);
-  mplayer->search->value = NULL;
+  mplayer->search.property = strdup (str);
+  mplayer->search.value = NULL;
   pthread_mutex_unlock (&mplayer->mutex_search);
 
   slave_get_property (player, property);
@@ -951,13 +944,10 @@ slave_result (slave_property_t property, player_t *player)
   /* wait that the thread will found the value */
   sem_wait (&mplayer->sem);
 
-  /* we take the result */
-  ret = mplayer->search->value;
-
   /* the search is ended */
   pthread_mutex_lock (&mplayer->mutex_search);
-  free (mplayer->search);
-  mplayer->search = NULL;
+  ret = mplayer->search.value;
+  mplayer->search.value = NULL;
   pthread_mutex_unlock (&mplayer->mutex_search);
 
   return ret;
