@@ -436,6 +436,33 @@ screen_of_display (xcb_connection_t *c, int screen)
   return NULL;
 }
 
+static xcb_connection_t *
+x11_connection (player_t *player, xcb_screen_t **screen)
+{
+  int screen_num = 0;
+  xcb_connection_t *conn;
+
+  *screen = NULL;
+
+  conn = xcb_connect (NULL, &screen_num);
+  if (!conn)
+  {
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
+    return NULL;
+  }
+
+  *screen = screen_of_display (conn, screen_num);
+  if (!screen)
+  {
+    pl_log (player, PLAYER_MSG_WARNING,
+            MODULE_NAME, "Failed to found the screen");
+    xcb_disconnect (conn);
+    return NULL;
+  }
+
+  return conn;
+}
+
 /*
  * This X11 initialization seems to not work very well with Compiz Window
  * Manager and maybe all related managers. The main problem seems to be
@@ -447,7 +474,6 @@ pl_x11_init (player_t *player)
 {
   x11_t *x11 = NULL;
   xcb_window_t win_root;
-  int screen = 0;
   xcb_visualid_t visual;
   uint32_t attributes[] = { 0, 1 }; /* black_pixel, override_redirect */
 
@@ -459,23 +485,12 @@ pl_x11_init (player_t *player)
   if (!x11)
     return 0;
 
-  x11->conn = xcb_connect (NULL, &screen);
+  x11->conn = x11_connection (player, &x11->screen);
   if (!x11->conn)
-  {
-    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
     goto err;
-  }
 
   if (player->type == PLAYER_TYPE_MPLAYER)
     x11->use_subwin = 1;
-
-  x11->screen = screen_of_display (x11->conn, screen);
-  if (!x11->screen)
-  {
-    pl_log (player, PLAYER_MSG_WARNING,
-            MODULE_NAME, "Failed to found the screen");
-    goto err;
-  }
 
   pthread_mutex_init (&x11->mutex, NULL);
 
