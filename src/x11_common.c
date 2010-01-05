@@ -353,7 +353,14 @@ pl_x11_uninit (player_t *player)
   xcb_disconnect (x11->conn);
 
   if (x11->data)
+  {
+#ifdef HAVE_XINE
+    xcb_visual_t *vis = x11->data;
+    if (vis->connection)
+      xcb_disconnect (vis->connection);
+#endif /* HAVE_XINE */
     free (x11->data);
+  }
 
   pthread_mutex_destroy (&x11->mutex);
   free (x11);
@@ -595,8 +602,10 @@ pl_x11_init (player_t *player)
 
     if (vis)
     {
-      vis->connection      = x11->conn;
-      vis->screen          = x11->screen;
+      xcb_screen_t *screen;
+
+      vis->connection      = x11_connection (player, &screen);
+      vis->screen          = screen;
       vis->window          = x11->win_video;
       vis->dest_size_cb    = xine_dest_size_cb;
       vis->frame_output_cb = xine_frame_output_cb;
