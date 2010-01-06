@@ -1144,6 +1144,52 @@ xine_player_audio_set_mute (player_t *player, player_mute_t value)
 }
 
 static void
+xine_player_video_set_ar (player_t *player, float value)
+{
+  xine_player_t *x;
+  mrl_t *mrl;
+  int ar;
+
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "video_set_ar: %.2f", value);
+
+  if (!player)
+    return;
+
+  x = player->priv;
+
+  if (!x->stream)
+    return;
+
+  mrl = pl_playlist_get_mrl (player->playlist);
+  if (mrl_uses_vo (mrl))
+    return;
+
+  /* use original aspect ratio if value is 0.0 */
+  if (!value)
+  {
+    mrl_properties_video_t *video = mrl->prop->video;
+    player->aspect = video->aspect / PLAYER_VIDEO_ASPECT_RATIO_MULT;
+    ar = XINE_VO_ASPECT_AUTO;
+  }
+  else
+  {
+    player->aspect = value;
+    if (value >= 2.11)
+      ar = XINE_VO_ASPECT_DVB;
+    else if (value >= 16.0 / 9.0)
+      ar = XINE_VO_ASPECT_ANAMORPHIC;
+    else if (value >= 4.0 / 3.0)
+      ar = XINE_VO_ASPECT_4_3;
+    else if (value >= 1.0)
+      ar = XINE_VO_ASPECT_SQUARE;
+    else
+      return;
+  }
+
+  xine_set_param (x->stream, XINE_PARAM_VO_ASPECT_RATIO, ar);
+}
+
+static void
 xine_player_sub_set_delay (player_t *player, int value)
 {
   int delay;
@@ -1530,7 +1576,7 @@ pl_register_functions_xine (void)
   funcs->video_set_fs       = NULL;
   funcs->video_set_aspect   = NULL;
   funcs->video_set_panscan  = NULL;
-  funcs->video_set_ar       = NULL;
+  funcs->video_set_ar       = xine_player_video_set_ar;
 
   funcs->sub_set_delay      = xine_player_sub_set_delay;
   funcs->sub_set_alignment  = NULL;
