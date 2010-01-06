@@ -1471,16 +1471,16 @@ pl_supported_resources_xine (mrl_resource_t res)
 {
   switch (res)
   {
-  case MRL_RESOURCE_FILE:
   case MRL_RESOURCE_DVD:
   case MRL_RESOURCE_DVDNAV:
+  case MRL_RESOURCE_FILE:
   case MRL_RESOURCE_HTTP:
   case MRL_RESOURCE_MMS:
+  case MRL_RESOURCE_NETVDR:
   case MRL_RESOURCE_RTP:
   case MRL_RESOURCE_TCP:
   case MRL_RESOURCE_UDP:
   case MRL_RESOURCE_VDR:
-  case MRL_RESOURCE_NETVDR:
     return 1;
 
   default:

@@ -4092,22 +4092,22 @@ pl_supported_resources_mplayer (mrl_resource_t res)
 {
   switch (res)
   {
-  case MRL_RESOURCE_FILE:
   case MRL_RESOURCE_CDDA:
   case MRL_RESOURCE_CDDB:
   case MRL_RESOURCE_DVD:
   case MRL_RESOURCE_DVDNAV:
-  case MRL_RESOURCE_VCD:
-  case MRL_RESOURCE_RADIO:
-  case MRL_RESOURCE_TV:
+  case MRL_RESOURCE_FILE:
   case MRL_RESOURCE_FTP:
   case MRL_RESOURCE_HTTP:
   case MRL_RESOURCE_MMS:
+  case MRL_RESOURCE_RADIO:
   case MRL_RESOURCE_RTP:
   case MRL_RESOURCE_RTSP:
   case MRL_RESOURCE_SMB:
+  case MRL_RESOURCE_TV:
   case MRL_RESOURCE_UDP:
   case MRL_RESOURCE_UNSV:
+  case MRL_RESOURCE_VCD:
     return 1;
 
   default:
