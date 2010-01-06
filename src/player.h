@@ -389,6 +389,10 @@ typedef enum mrl_properties_type {
  *
  * This function can be slow when the stream is not (fastly) reachable.
  *
+ * The argument \p args and the strings provided with \p args must be
+ * allocated dynamically. The pointers are freed by libplayer when a mrl
+ * is no longer available.
+ *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
  * \param[in] res         Resource type.
