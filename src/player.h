@@ -265,14 +265,14 @@ typedef enum mrl_resource {
 
   /* Network Streams */
   MRL_RESOURCE_FTP,         /*  NO           YES          YES          NO   */
-  MRL_RESOURCE_HTTP,        /*  NO           YES          YES          NO   */
-  MRL_RESOURCE_MMS,         /*  NO           YES          YES          NO   */
+  MRL_RESOURCE_HTTP,        /*  NO           YES          YES          YES  */
+  MRL_RESOURCE_MMS,         /*  NO           YES          YES          YES  */
   MRL_RESOURCE_NETVDR,      /*  NO           NO           NO           YES  */
-  MRL_RESOURCE_RTP,         /*  NO           YES          YES          NO   */
+  MRL_RESOURCE_RTP,         /*  NO           YES          YES          YES  */
   MRL_RESOURCE_RTSP,        /*  NO           YES          YES          NO   */
   MRL_RESOURCE_SMB,         /*  NO           YES          YES          NO   */
-  MRL_RESOURCE_TCP,         /*  NO           NO           NO           NO   */
-  MRL_RESOURCE_UDP,         /*  NO           YES          YES          NO   */
+  MRL_RESOURCE_TCP,         /*  NO           NO           NO           YES  */
+  MRL_RESOURCE_UDP,         /*  NO           YES          YES          YES  */
   MRL_RESOURCE_UNSV,        /*  NO           YES          YES          NO   */
 } mrl_resource_t;
 

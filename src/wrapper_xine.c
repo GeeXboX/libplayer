@@ -126,7 +126,12 @@ xine_resource_get_uri (mrl_t *mrl)
     [MRL_RESOURCE_VDR]      = "vdr:/",
 
     /* Network Streams */
+    [MRL_RESOURCE_HTTP]     = "http://",
+    [MRL_RESOURCE_MMS]      = "mms://",
     [MRL_RESOURCE_NETVDR]   = "netvdr://",
+    [MRL_RESOURCE_RTP]      = "rtp://",
+    [MRL_RESOURCE_TCP]      = "tcp://",
+    [MRL_RESOURCE_UDP]      = "udp://",
 
     [MRL_RESOURCE_UNKNOWN]  = NULL
   };
@@ -209,18 +214,41 @@ xine_resource_get_uri (mrl_t *mrl)
     return uri;
   }
 
+  case MRL_RESOURCE_HTTP:   /* http://host...     */
+  case MRL_RESOURCE_MMS:    /* mms://host...      */
   case MRL_RESOURCE_NETVDR: /* netvdr://host:port */
+  case MRL_RESOURCE_RTP:    /* rtp://host:port    */
+  case MRL_RESOURCE_TCP:    /* tcp://host:port    */
+  case MRL_RESOURCE_UDP:    /* udp://host:port    */
   {
+    char *uri, *host_file;
+    size_t size;
     const char *protocol = protocols[mrl->resource];
     mrl_resource_network_args_t *args = mrl->priv;
 
     if (!args || !args->url)
       return NULL;
 
-    if (strncmp (args->url, protocol, strlen (protocol)))
+    size = strlen (protocol);
+
+    if (strstr (args->url, protocol) == args->url)
+      host_file = strdup (args->url + size);
+    else
+      host_file = strdup (args->url);
+
+    if (!host_file)
       return NULL;
 
-    return strdup (args->url);
+    size += strlen (host_file);
+
+    size++;
+    uri = malloc (size);
+    if (uri)
+      snprintf (uri, size, "%s%s", protocol, host_file);
+
+    free (host_file);
+
+    return uri;
   }
 
   default:
@@ -1434,6 +1462,11 @@ pl_supported_resources_xine (mrl_resource_t res)
   case MRL_RESOURCE_FILE:
   case MRL_RESOURCE_DVD:
   case MRL_RESOURCE_DVDNAV:
+  case MRL_RESOURCE_HTTP:
+  case MRL_RESOURCE_MMS:
+  case MRL_RESOURCE_RTP:
+  case MRL_RESOURCE_TCP:
+  case MRL_RESOURCE_UDP:
   case MRL_RESOURCE_VDR:
   case MRL_RESOURCE_NETVDR:
     return 1;
