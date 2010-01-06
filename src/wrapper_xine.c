@@ -112,6 +112,110 @@ send_event (player_t *player, int event, void *data, int data_size)
 }
 
 static char *
+xi_resource_get_uri_local (const char *protocol,
+                           mrl_resource_local_args_t *args)
+{
+  if (!args || !args->location || !protocol)
+    return NULL;
+
+  if (strchr (args->location, ':')
+      && strncmp (args->location, protocol, strlen (protocol)))
+    return NULL;
+
+  return strdup (args->location);
+}
+
+static char *
+xi_resource_get_uri_dvd (const char *protocol,
+                         mrl_resource_videodisc_args_t *args)
+{
+  char *uri;
+  char title_start[8] = "";
+  size_t size;
+
+  if (!args || !protocol)
+    return NULL;
+
+  size = strlen (protocol);
+
+  if (args->device)
+    size += strlen (args->device);
+
+  if (args->title_start)
+  {
+    size += 1 + pl_count_nb_dec (args->title_start);
+    snprintf (title_start, sizeof (title_start), "/%i", args->title_start);
+  }
+
+  size++;
+  uri = malloc (size);
+  if (uri)
+    snprintf (uri, size, "%s%s%s",
+              protocol, args->device ? args->device : "", title_start);
+
+  return uri;
+}
+
+static char *
+xi_resource_get_uri_vdr (const char *protocol, mrl_resource_tv_args_t *args)
+{
+  char *uri;
+  size_t size;
+
+  if (!protocol)
+    return NULL;
+
+  size = strlen (protocol);
+
+  if (!args || !args->device)
+    return strdup (protocol);
+
+  if (args->driver)
+    size += 1 + strlen (args->driver);
+
+  size += strlen (args->device) + 1;
+  uri = malloc (size);
+  snprintf (uri, size, "%s%s%s%s",
+            protocol, args->device,
+            args->driver ? "#" : "",
+            args->driver ? args->driver : "");
+
+  return uri;
+}
+
+static char *
+xi_resource_get_uri_network (const char *protocol,
+                             mrl_resource_network_args_t *args)
+{
+  char *uri, *host_file;
+  size_t size;
+
+  if (!args || !args->url || !protocol)
+    return NULL;
+
+  size = strlen (protocol);
+
+  if (strstr (args->url, protocol) == args->url)
+    host_file = strdup (args->url + size);
+  else
+    host_file = strdup (args->url);
+
+  if (!host_file)
+    return NULL;
+
+  size += strlen (host_file);
+
+  size++;
+  uri = malloc (size);
+  if (uri)
+    snprintf (uri, size, "%s%s", protocol, host_file);
+
+  free (host_file);
+
+  return uri;
+}
+
+static char *
 xine_resource_get_uri (mrl_t *mrl)
 {
   static const char *const protocols[] = {
@@ -142,77 +246,14 @@ xine_resource_get_uri (mrl_t *mrl)
   switch (mrl->resource)
   {
   case MRL_RESOURCE_FILE: /* file:location */
-  {
-    const char *protocol = protocols[mrl->resource];
-    mrl_resource_local_args_t *args = mrl->priv;
-
-    if (!args || !args->location)
-      return NULL;
-
-    if (strchr (args->location, ':')
-        && strncmp (args->location, protocol, strlen (protocol)))
-    {
-      return NULL;
-    }
-
-    return strdup (args->location);
-  }
+    return xi_resource_get_uri_local (protocols[mrl->resource], mrl->priv);
 
   case MRL_RESOURCE_DVD:    /* dvd:device/title_start */
   case MRL_RESOURCE_DVDNAV: /* dvd:device/title_start */
-  {
-    char *uri;
-    const char *protocol = protocols[mrl->resource];
-    char title_start[8] = "";
-    size_t size = strlen (protocol);
-    mrl_resource_videodisc_args_t *args;
-
-    args = mrl->priv;
-    if (!args)
-      break;
-
-    if (args->device)
-      size += strlen (args->device);
-
-    if (args->title_start)
-    {
-      size += 1 + pl_count_nb_dec (args->title_start);
-      snprintf (title_start, sizeof (title_start), "/%i", args->title_start);
-    }
-
-    size++;
-    uri = malloc (size);
-    if (!uri)
-      break;
-
-    snprintf (uri, size, "%s%s%s",
-              protocol, args->device ? args->device : "", title_start);
-
-    return uri;
-  }
+    return xi_resource_get_uri_dvd (protocols[mrl->resource], mrl->priv);
 
   case MRL_RESOURCE_VDR: /* vdr:/device#driver */
-  {
-    char *uri;
-    const char *protocol = protocols[mrl->resource];
-    size_t size = strlen (protocol);
-    mrl_resource_tv_args_t *args = mrl->priv;
-
-    if (!args || !args->device)
-      return strdup (protocol);
-
-    if (args->driver)
-      size += 1 + strlen (args->driver);
-
-    size += strlen (args->device) + 1;
-    uri = malloc (size);
-    snprintf (uri, size, "%s%s%s%s",
-              protocol, args->device,
-              args->driver ? "#" : "",
-              args->driver ? args->driver : "");
-
-    return uri;
-  }
+    return xi_resource_get_uri_vdr (protocols[mrl->resource], mrl->priv);
 
   case MRL_RESOURCE_HTTP:   /* http://host...     */
   case MRL_RESOURCE_MMS:    /* mms://host...      */
@@ -220,36 +261,7 @@ xine_resource_get_uri (mrl_t *mrl)
   case MRL_RESOURCE_RTP:    /* rtp://host:port    */
   case MRL_RESOURCE_TCP:    /* tcp://host:port    */
   case MRL_RESOURCE_UDP:    /* udp://host:port    */
-  {
-    char *uri, *host_file;
-    size_t size;
-    const char *protocol = protocols[mrl->resource];
-    mrl_resource_network_args_t *args = mrl->priv;
-
-    if (!args || !args->url)
-      return NULL;
-
-    size = strlen (protocol);
-
-    if (strstr (args->url, protocol) == args->url)
-      host_file = strdup (args->url + size);
-    else
-      host_file = strdup (args->url);
-
-    if (!host_file)
-      return NULL;
-
-    size += strlen (host_file);
-
-    size++;
-    uri = malloc (size);
-    if (uri)
-      snprintf (uri, size, "%s%s", protocol, host_file);
-
-    free (host_file);
-
-    return uri;
-  }
+    return xi_resource_get_uri_network (protocols[mrl->resource], mrl->priv);
 
   default:
     break;
