@@ -1,0 +1,3 @@
+
+ -> Improve the log system to send the messages in a callback
+    instead of the stderr (if the callback is defined).

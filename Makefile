@@ -32,6 +32,7 @@ EXTRADIST = \
 	COPYING \
 	README \
 	stats.sh \
+	TODO \
 
 SUBDIRS = \
 	bindings \
