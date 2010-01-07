@@ -8,6 +8,7 @@ DEB_DH_INSTALL_SOURCEDIR := debian/tmp
 # make targets
 DEB_MAKE_CLEAN_TARGET    := distclean
 DEB_MAKE_INSTALL_TARGET  := install DESTDIR=$(DEB_DESTDIR)
+DEB_MAKE_INVOKE          := $(DEB_MAKE_ENVVARS) make -C $(DEB_BUILDDIR)
 
 # Common configuration flags
 confflags += --prefix=/usr
