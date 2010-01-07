@@ -112,7 +112,7 @@ flags_saved(){
 save_flags(){
     flags_saved && return
     SAVE_CFLAGS="$CFLAGS"
-    SAVE_extracflags="$extracflags"
+    SAVE_CPPFLAGS="$CPPFLAGS"
     SAVE_HOST_CFLAGS="$HOST_CFLAGS"
     SAVE_LDFLAGS="$LDFLAGS"
     SAVE_extralibs="$extralibs"
@@ -120,12 +120,12 @@ save_flags(){
 
 restore_flags(){
     CFLAGS="$SAVE_CFLAGS"
-    extracflags="$SAVE_extracflags"
+    CPPFLAGS="$SAVE_CPPFLAGS"
     HOST_CFLAGS="$SAVE_HOST_CFLAGS"
     LDFLAGS="$SAVE_LDFLAGS"
     extralibs="$SAVE_extralibs"
     unset SAVE_CFLAGS
-    unset SAVE_extracflags
+    unset SAVE_CPPFLAGS
     unset SAVE_HOST_CFLAGS
     unset SAVE_LDFLAGS
     unset SAVE_extralibs
@@ -135,8 +135,8 @@ temp_cflags(){
     temp_append CFLAGS "$@"
 }
 
-temp_extracflags(){
-    temp_append extracflags "$@"
+temp_CPPFLAGS(){
+    temp_append CPPFLAGS "$@"
 }
 
 temp_host_cflags(){
@@ -182,8 +182,8 @@ add_cflags(){
     append CFLAGS "$@"
 }
 
-add_extracflags(){
-    append extracflags "$@"
+add_cppflags(){
+    append CPPFLAGS "$@"
 }
 
 add_ldflags(){
@@ -207,7 +207,7 @@ check_cc(){
     log check_cc "$@"
     cat >$TMPC
     log_file $TMPC
-    check_cmd $cc $CFLAGS "$@" -c -o $TMPO $TMPC
+    check_cmd $cc $CPPFLAGS $CFLAGS "$@" -c -o $TMPO $TMPC
 }
 
 check_host_cc(){
@@ -221,7 +221,7 @@ check_cpp(){
     log check_cpp "$@"
     cat >$TMPC
     log_file $TMPC
-    check_cmd $cc $CFLAGS "$@" -E -o $TMPO $TMPC
+    check_cmd $cc $CPPFLAGS $CFLAGS "$@" -E -o $TMPO $TMPC
 }
 
 check_ld(){
@@ -238,6 +238,13 @@ check_host_ld(){
 
 check_exec(){
     check_ld "$@" && { enabled cross_compile || $TMPE >>$logfile 2>&1; }
+}
+
+check_cppflags(){
+    log check_cppflags "$@"
+    check_cc "$@" <<EOF && append CPPFLAGS "$@"
+int x;
+EOF
 }
 
 check_cflags(){
@@ -414,7 +421,6 @@ cpu=`uname -m`
 optimize="yes"
 debug="yes"
 dostrip="yes"
-extracflags=""
 extralibs=""
 installstrip="-s"
 cross_compile="no"
@@ -742,9 +748,9 @@ fi
 # add some useful compiler flags if supported
 check_cflags -W
 check_cflags -Wall
-check_cflags -D_LARGEFILE_SOURCE
-check_cflags -D_FILE_OFFSET_BITS=64
-check_cflags -D_REENTRANT
+check_cppflags -D_LARGEFILE_SOURCE
+check_cppflags -D_FILE_OFFSET_BITS=64
+check_cppflags -D_REENTRANT
 
 # default extralibs
 add_extralibs -lpthread
@@ -755,7 +761,7 @@ add_extralibs -lm
 #################################################
 if enabled debug; then
   add_cflags -g3 -O0
-  add_cflags -DHAVE_DEBUG
+  add_cppflags -DHAVE_DEBUG
   optimize="no"
 fi
 
@@ -791,7 +797,7 @@ if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
   wrapper_xine="no"
   echolog "Checking for libxine ..."
   if [ -n "$libxinedir" ]; then
-    check_cflags -I$libxinedir/include
+    check_cppflags -I$libxinedir/include
     check_ldflags -L$libxinedir/lib
   fi
   if [ -z "$libxinedir" ]; then
@@ -799,7 +805,7 @@ if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
   fi
   check_lib xine.h xine_init -lxine
   if [ "$?" = 0 ]; then
-    add_extracflags -DHAVE_XINE
+    add_cppflags -DHAVE_XINE
     wrapper_xine="yes"
   fi
 fi
@@ -816,7 +822,7 @@ if test "$wrapper_mplayer" = "auto"; then
   fi
 fi
 if test "$wrapper_mplayer" = "yes"; then
-  add_extracflags -DHAVE_MPLAYER
+  add_cppflags -DHAVE_MPLAYER
 fi
 
 #################################################
@@ -826,7 +832,7 @@ if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
   wrapper_vlc="no"
   echolog "Checking for libvlc ..."
   if [ -n "$libvlcdir" ]; then
-    check_cflags -I$libvlcdir/include
+    check_cppflags -I$libvlcdir/include
     check_ldflags -L$libvlcdir/lib
   fi
   if [ -z "$libvlcdir" ]; then
@@ -834,7 +840,7 @@ if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
   fi
   check_lib vlc/vlc.h libvlc_media_new -lvlc
   if [ "$?" = 0 ]; then
-    add_extracflags -DHAVE_VLC
+    add_cppflags -DHAVE_VLC
     wrapper_vlc="yes"
   fi
 fi
@@ -846,7 +852,7 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
   wrapper_gstreamer="no"
   echolog "Checking for libgstreamer ..."
   if [ -n "$libgstreamerdir" ]; then
-    check_cflags -I$libgstreamerdir/include
+    check_cppflags -I$libgstreamerdir/include
     check_ldflags -L$libgstreamerdir/lib
   fi
   if [ -z "$libgstreamerdir" ]; then
@@ -854,7 +860,7 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
   fi
   check_lib gst/gst.h gst_init -lgstreamer-0.10
   if [ "$?" = 0 ]; then
-    add_extracflags -DHAVE_GSTREAMER
+    add_cppflags -DHAVE_GSTREAMER
     wrapper_gstreamer="yes"
   fi
 fi
@@ -867,7 +873,7 @@ if test "$x11" = "auto" -o "$x11" = "yes"; then
   if test "$wrapper_xine" = "yes" -o "$wrapper_mplayer" = "yes"; then
     echolog "Checking for libxcb ..."
     if [ -n "$libxcbdir" ]; then
-      check_cflags -I$libxcbdir/include
+      check_cppflags -I$libxcbdir/include
       check_ldflags -L$libxcbdir/lib
     fi
     if [ -z "$libxcbdir" ]; then
@@ -875,7 +881,7 @@ if test "$x11" = "auto" -o "$x11" = "yes"; then
     fi
     check_lib xcb/xcb.h xcb_generate_id -lxcb
     if [ "$?" = 0 ]; then
-      add_extracflags -DUSE_X11
+      add_cppflags -DUSE_X11
       x11="yes"
     fi
   fi
@@ -904,7 +910,7 @@ fi
 #   Miscellaneous
 #################################################
 if enabled logcolor; then
-  add_cflags -DUSE_LOGCOLOR
+  add_cppflags -DUSE_LOGCOLOR
 fi
 
 # Doxygen
@@ -934,7 +940,7 @@ echolog "  optimize           $optimize"
 echolog "  static             ${static}"
 echolog "  shared             ${shared}"
 echolog ""
-echolog "  CFLAGS             $CFLAGS $extracflags"
+echolog "  CFLAGS             $CFLAGS $CPPFLAGS"
 echolog "  LDFLAGS            $LDFLAGS"
 echolog "  extralibs          $extralibs"
 echolog ""
@@ -987,7 +993,7 @@ else
 fi
 append_config "EXTRALIBS=$extralibs"
 
-append_config "EXTRACFLAGS=$extracflags"
+append_config "CPPFLAGS=$CPPFLAGS"
 append_config "OPTFLAGS=$CFLAGS"
 append_config "LDFLAGS=$LDFLAGS"
 append_config "INSTALL=$INSTALL"

@@ -16,7 +16,7 @@ PLTESTVDR = libplayer-testvdr
 PLTESTVDR_SRCS = libplayer-testvdr.c
 PLTESTVDR_OBJS = $(PLTESTVDR_SRCS:.c=.o)
 
-override CFLAGS += -Isrc
+override CPPFLAGS += -Isrc
 override LDFLAGS += -Lsrc -lplayer
 
 ifeq ($(BUILD_STATIC),yes)
@@ -46,7 +46,7 @@ SUBDIRS = \
 all: lib apps docs bindings
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(EXTRACFLAGS) $(OPTFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(OPTFLAGS) -o $@ $<
 
 lib:
 	$(MAKE) -C src
@@ -59,9 +59,9 @@ $(PLTESTVDR): $(PLTESTVDR_OBJS)
 	$(CC) $(PLTESTVDR_OBJS) $(LDFLAGS) -o $(PLTESTVDR)
 
 apps-dep:
-	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(PLREGTEST_SRCS) 1>.depend
-	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(PLTEST_SRCS) 1>>.depend
-	$(CC) -MM $(CFLAGS) $(EXTRACFLAGS) $(PLTESTVDR_SRCS) 1>>.depend
+	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(PLREGTEST_SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(PLTEST_SRCS) 1>>.depend
+	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(PLTESTVDR_SRCS) 1>>.depend
 
 apps-all: $(PLREGTEST) $(PLTEST) $(PLTESTVDR)
 
