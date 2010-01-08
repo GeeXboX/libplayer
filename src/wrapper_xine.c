@@ -1617,8 +1617,5 @@ pl_register_private_xine (void)
   if (!x)
     return NULL;
 
-  x->vo_port = PLAYER_VO_NULL;
-  x->ao_port = PLAYER_AO_NULL;
-
   return x;
 }
