@@ -1227,21 +1227,6 @@ typedef enum player_video_aspect {
  */
 
 /**
- * \brief Set video in fullscreen.
- *
- * By default the video is always in fullscreen. To work with a window,
- * use winid parameter in player_init().
- *
- * Wrappers supported (even partially):
- *  MPlayer, VLC
- *
- * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
- * \param[in] player      Player controller.
- * \param[in] value       Different of 0 to set fullscreen.
- */
-void player_video_set_fullscreen (player_t *player, int value);
-
-/**
  * \brief Set video aspect.
  *
  * Wrappers supported (even partially):

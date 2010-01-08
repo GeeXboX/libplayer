@@ -889,24 +889,6 @@ vlc_audio_set_mute (player_t *player, player_mute_t value)
 }
 
 static void
-vlc_video_set_fullscreen (player_t *player, int value)
-{
-  vlc_t *vlc;
-
-  pl_log (player, PLAYER_MSG_VERBOSE,
-          MODULE_NAME, "video_set_fullscreen: %s", value ? "on" : "off");
-
-  if (!player)
-    return;
-
-  vlc = (vlc_t *) player->priv;
-  if (!vlc || !vlc->mp)
-    return;
-
-  libvlc_set_fullscreen (vlc->mp, value, &vlc->ex);
-}
-
-static void
 vlc_video_set_ar (player_t *player, float value)
 {
   vlc_t *vlc;
@@ -1141,7 +1123,6 @@ pl_register_functions_vlc (void)
   funcs->audio_prev         = NULL;
   funcs->audio_next         = NULL;
 
-  funcs->video_set_fs       = vlc_video_set_fullscreen;
   funcs->video_set_aspect   = NULL;
   funcs->video_set_panscan  = NULL;
   funcs->video_set_ar       = vlc_video_set_ar;

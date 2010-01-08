@@ -253,7 +253,6 @@ typedef enum slave_property {
   PROPERTY_AUDIO_DELAY,
   PROPERTY_CHANNELS,
   PROPERTY_FRAMEDROPPING,
-  PROPERTY_FULLSCREEN,
   PROPERTY_HEIGHT,
   PROPERTY_LOOP,
   PROPERTY_METADATA,
@@ -289,7 +288,6 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_AUDIO_DELAY]      = {"audio_delay",      ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_CHANNELS]         = {"channels",         ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_FRAMEDROPPING]    = {"framedropping",    ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_FULLSCREEN]       = {"fullscreen",       ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_HEIGHT]           = {"height",           ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_LOOP]             = {"loop",             ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_METADATA]         = {"metadata",         ITEM_ON,  ITEM_OFF, NULL},
@@ -1022,7 +1020,6 @@ slave_set_property (player_t *player, slave_property_t property,
   {
   case PROPERTY_ANGLE:
   case PROPERTY_FRAMEDROPPING:
-  case PROPERTY_FULLSCREEN:
   case PROPERTY_LOOP:
   case PROPERTY_MUTE:
   case PROPERTY_SUB:
@@ -3697,18 +3694,6 @@ mplayer_audio_next (player_t *player)
 }
 
 static void
-mplayer_video_set_fullscreen (player_t *player, int value)
-{
-  pl_log (player, PLAYER_MSG_VERBOSE,
-          MODULE_NAME, "video_set_fullscreen: %s", value ? "on" : "off");
-
-  if (!player)
-    return;
-
-  slave_set_property_flag (player, PROPERTY_FULLSCREEN, value);
-}
-
-static void
 mplayer_video_set_ar (player_t *player, float value)
 {
   mrl_t *mrl;
@@ -4154,7 +4139,6 @@ pl_register_functions_mplayer (void)
   funcs->audio_prev         = mplayer_audio_prev;
   funcs->audio_next         = mplayer_audio_next;
 
-  funcs->video_set_fs       = mplayer_video_set_fullscreen;
   funcs->video_set_aspect   = NULL;
   funcs->video_set_panscan  = NULL;
   funcs->video_set_ar       = mplayer_video_set_ar;

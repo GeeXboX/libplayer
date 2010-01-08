@@ -105,7 +105,6 @@ do_regression_tests (player_t *player, char *name)
   player_audio_select (player, 1);
   player_audio_prev (player);
   player_audio_next (player);
-  player_video_set_fullscreen (player, 1);
   player_video_set_aspect (player, PLAYER_VIDEO_ASPECT_BRIGHTNESS, 0, 0);
   player_video_set_panscan (player, 0, 0);
   player_video_set_aspect_ratio (player, 1.3333);

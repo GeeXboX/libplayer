@@ -709,18 +709,6 @@ supervisor_player_ao_next (player_t *player,
 /************************** Video related controls ***************************/
 
 static void
-supervisor_player_vo_set_fs (player_t *player,
-                             void *in, pl_unused void *out)
-{
-  int *input = in;
-
-  if (!player || !in)
-    return;
-
-  player_sv_video_set_fullscreen (player, *input);
-}
-
-static void
 supervisor_player_vo_set_aspect (player_t *player,
                                  void *in, pl_unused void *out)
 {
@@ -1073,7 +1061,6 @@ static void (*g_supervisor_funcs[]) (player_t *player, void *in, void *out) = {
   [SV_FUNC_PLAYER_AO_NEXT]               = supervisor_player_ao_next,
 
   /* Video related controls */
-  [SV_FUNC_PLAYER_VO_SET_FS]             = supervisor_player_vo_set_fs,
   [SV_FUNC_PLAYER_VO_SET_ASPECT]         = supervisor_player_vo_set_aspect,
   [SV_FUNC_PLAYER_VO_SET_PANSCAN]        = supervisor_player_vo_set_panscan,
   [SV_FUNC_PLAYER_VO_SET_AR]             = supervisor_player_vo_set_ar,

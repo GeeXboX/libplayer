@@ -183,7 +183,6 @@ typedef struct player_funcs_s {
   void (*audio_next) (player_t *player);
 
   /* Video */
-  void (*video_set_fs) (player_t *player, int value);
   void (*video_set_aspect) (player_t *player, player_video_aspect_t aspect,
                             int8_t value, int absolute);
   void (*video_set_panscan) (player_t *player, int8_t value, int absolute);
@@ -371,7 +370,6 @@ void player_sv_audio_prev (player_t *player);
 void player_sv_audio_next (player_t *player);
 
 /* Video related controls */
-void player_sv_video_set_fullscreen (player_t *player, int value);
 void player_sv_video_set_aspect (player_t *player, player_video_aspect_t aspect,
                                  int8_t value, int absolute);
 void player_sv_video_set_panscan (player_t *player, int8_t value, int absolute);

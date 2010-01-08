@@ -725,18 +725,6 @@ player_audio_next (player_t *player)
 /***************************************************************************/
 
 void
-player_video_set_fullscreen (player_t *player, int value)
-{
-  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
-
-  if (!player)
-    return;
-
-  pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
-                      SV_FUNC_PLAYER_VO_SET_FS, &value, NULL);
-}
-
-void
 player_video_set_aspect (player_t *player, player_video_aspect_t aspect,
                          int8_t value, int absolute)
 {

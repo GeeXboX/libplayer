@@ -238,7 +238,6 @@ pl_register_functions_dummy (void)
   funcs->audio_prev         = NULL;
   funcs->audio_next         = NULL;
 
-  funcs->video_set_fs       = NULL;
   funcs->video_set_aspect   = NULL;
   funcs->video_set_panscan  = NULL;
   funcs->video_set_ar       = NULL;

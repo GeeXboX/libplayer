@@ -105,7 +105,6 @@ typedef enum supervisor_ctl {
   SV_FUNC_PLAYER_AO_NEXT,
 
   /* Video related controls */
-  SV_FUNC_PLAYER_VO_SET_FS,
   SV_FUNC_PLAYER_VO_SET_ASPECT,
   SV_FUNC_PLAYER_VO_SET_PANSCAN,
   SV_FUNC_PLAYER_VO_SET_AR,
