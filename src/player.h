@@ -188,7 +188,6 @@ typedef struct player_init_param_s {
  * Wrappers supported (even partially):
  *  GStreamer, MPlayer, VLC, xine
  *
- * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] type        Type of wrapper to load.
  * \param[in] verbosity   Level of verbosity to set.
  * \param[in] param       Parameters, NULL for default values.
