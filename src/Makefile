@@ -72,7 +72,7 @@ OBJS = $(SRCS:.c=.o)
 all: depend $(BUILD_RULES)
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(OPTFLAGS) -o $@ $<
+	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 lib_static: $(STATIC_LIBNAME)
 

@@ -46,7 +46,7 @@ SUBDIRS = \
 all: lib apps docs bindings
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(OPTFLAGS) -o $@ $<
+	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 lib:
 	$(MAKE) -C src
