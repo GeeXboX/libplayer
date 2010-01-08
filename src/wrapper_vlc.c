@@ -74,7 +74,7 @@ vlc_event_callback (const libvlc_event_t *ev, void *data)
   case libvlc_MediaPlayerEndReached:
     pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Playback of stream has ended");
-    player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED);
     break;
 
   case libvlc_MediaPlayerPlaying:

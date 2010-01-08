@@ -50,7 +50,7 @@
 #define MODULE_NAME "player"
 
 static int
-player_event_cb (void *data, int e, void *data_cb)
+player_event_cb (void *data, int e)
 {
   int res = 0;
   player_t *player = data;
@@ -68,7 +68,7 @@ player_event_cb (void *data, int e, void *data_cb)
   if (player->event_cb)
   {
     pl_supervisor_callback_in (player, pthread_self ());
-    res = player->event_cb (e, data_cb);
+    res = player->event_cb (e, player->user_data);
     pl_supervisor_callback_out (player);
   }
 
@@ -120,6 +120,7 @@ player_init (player_type_t type,
   player->vo        = param ? param->vo       : PLAYER_VO_AUTO;
   player->winid     = param ? param->winid    : 0;
   player->event_cb  = param ? param->event_cb : NULL;
+  player->user_data = param ? param->data     : NULL;
   player->playlist  = pl_playlist_new (0, 0, PLAYER_LOOP_DISABLE);
 
   pthread_mutex_init (&player->mutex_verb, NULL);

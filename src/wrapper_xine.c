@@ -72,7 +72,7 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
   {
     pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Playback of stream has ended");
-    player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED, NULL);
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED);
 
 #ifdef USE_X11
     pl_x11_unmap (player);

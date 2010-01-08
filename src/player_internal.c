@@ -200,7 +200,7 @@ player_sv_mrl_next_play (player_t *player)
 
   if (!pl_playlist_next_play (player->playlist))
   {
-    player_event_send (player, PLAYER_EVENT_PLAYLIST_FINISHED, NULL);
+    player_event_send (player, PLAYER_EVENT_PLAYLIST_FINISHED);
     return;
   }
 
@@ -426,7 +426,7 @@ player_sv_playback_start (player_t *player)
   player->state = PLAYER_STATE_RUNNING;
 
   /* notify front-end */
-  player_event_send (player, PLAYER_EVENT_PLAYBACK_START, NULL);
+  player_event_send (player, PLAYER_EVENT_PLAYBACK_START);
 }
 
 void
@@ -446,7 +446,7 @@ player_sv_playback_stop (player_t *player)
   player->state = PLAYER_STATE_IDLE;
 
   /* notify front-end */
-  player_event_send (player, PLAYER_EVENT_PLAYBACK_STOP, NULL);
+  player_event_send (player, PLAYER_EVENT_PLAYBACK_STOP);
 }
 
 void
@@ -472,12 +472,12 @@ player_sv_playback_pause (player_t *player)
   if (player->state == PLAYER_STATE_RUNNING)
   {
     player->state = PLAYER_STATE_PAUSE;
-    player_event_send (player, PLAYER_EVENT_PLAYBACK_PAUSE, NULL);
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_PAUSE);
   }
   else
   {
     player->state = PLAYER_STATE_RUNNING;
-    player_event_send (player, PLAYER_EVENT_PLAYBACK_UNPAUSE, NULL);
+    player_event_send (player, PLAYER_EVENT_PLAYBACK_UNPAUSE);
   }
 }
 

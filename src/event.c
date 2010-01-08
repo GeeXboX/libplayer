@@ -27,14 +27,14 @@
 #include "event_handler.h"
 
 int
-player_event_send (player_t *player, int e, void *data)
+player_event_send (player_t *player, int e)
 {
   int res;
 
   if (!player || !player->supervisor || !player->event)
     return -1;
 
-  res = pl_event_handler_send (player->event, e, data);
+  res = pl_event_handler_send (player->event, e);
   if (res)
     return res;
 

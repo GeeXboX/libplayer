@@ -165,6 +165,8 @@ typedef struct player_init_param_s {
 
   /** Public event callback. */
   int (*event_cb) (player_event_t e, void *data);
+  /** User data for event callback. */
+  void *data;
 
 } player_init_param_t;
 
