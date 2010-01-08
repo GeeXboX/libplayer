@@ -115,8 +115,8 @@ typedef enum player_type {
 
 /** \brief Player video outputs. */
 typedef enum player_vo {
+  PLAYER_VO_AUTO = 0,
   PLAYER_VO_NULL,
-  PLAYER_VO_AUTO,
   PLAYER_VO_X11,
   PLAYER_VO_X11_SDL,
   PLAYER_VO_XV,
@@ -127,8 +127,8 @@ typedef enum player_vo {
 
 /** \brief Player audio outputs. */
 typedef enum player_ao {
+  PLAYER_AO_AUTO = 0,
   PLAYER_AO_NULL,
-  PLAYER_AO_AUTO,
   PLAYER_AO_ALSA,
   PLAYER_AO_OSS
 } player_ao_t;
