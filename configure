@@ -62,6 +62,7 @@ show_help(){
   echo "  --enable-debug=LEVEL        set the debug level [$debuglevel]"
   echo "  --disable-strip             disable stripping of executables at installation"
   echo "  --disable-optimize          disable compiler optimization"
+  echo "  --enable-small              optimize for size instead of speed"
   echo "  --cross-prefix=PREFIX       use PREFIX for compilation tools [$cross_prefix]"
   echo "  --cross-compile             assume a cross-compiler is used"
   echo "  --disable-x11               disable X11 support"
@@ -420,6 +421,7 @@ make="make"
 strip="strip"
 cpu=`uname -m`
 optimize="yes"
+small="no"
 debug="yes"
 dostrip="yes"
 extralibs=""
@@ -535,6 +537,10 @@ for opt do
   --enable-optimize) optimize="yes"
   ;;
   --disable-optimize) optimize="no"
+  ;;
+  --enable-small) small="yes"
+  ;;
+  --disable-small) small="no"
   ;;
   --cross-prefix=*) cross_prefix="$optval"
   ;;
@@ -762,7 +768,9 @@ add_extralibs -lm
 #################################################
 enabled debug && add_cflags -g"$debuglevel" && add_cppflags -DHAVE_DEBUG
 
-if enabled optimize; then
+if enabled small; then
+  check_cflags -Os
+elif enabled optimize; then
   if test -n "`$cc -v 2>&1 | grep xlc`"; then
     add_cflags  "-O5"
     add_ldflags "-O5"
