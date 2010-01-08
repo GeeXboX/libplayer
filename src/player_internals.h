@@ -241,22 +241,28 @@ struct player_s {
   player_type_t type;   /* the type of player we'll use */
   player_verbosity_level_t verbosity;
   pthread_mutex_t mutex_verb;
-  struct playlist_s *playlist; /* playlist */
-  player_state_t state; /* state of the playback */
-  player_pb_t pb_mode;  /* mode of the playback */
-  player_ao_t ao;       /* audio output driver name */
-  player_vo_t vo;       /* video output driver name */
-  unsigned long winid;  /* embedded WindowID for X11 */
-  int x, y;             /* video position */
-  int w, h;             /* video size */
-  float aspect;         /* video aspect */
-  struct x11_s *x11;    /* for X11 video out */
-  struct event_handler_s *event; /* event handler */
+
+  struct playlist_s *playlist;
+
+  player_state_t state; /* state of the playback        */
+  player_pb_t pb_mode;  /* mode of the playback         */
+
+  player_ao_t   ao;     /* audio output driver name     */
+  player_vo_t   vo;     /* video output driver name     */
+
+  struct x11_s *x11;    /* for X11 video out            */
+  unsigned long winid;  /* embedded Window ID for X11   */
+  int   x, y;           /* video position               */
+  int   w, h;           /* video size                   */
+  float aspect;         /* video aspect                 */
+
+  struct supervisor_s    *supervisor; /* manage all public operations        */
+  struct event_handler_s *event;      /* event handler                       */
   int (*event_cb) (player_event_t e, void *data); /* frontend event callback */
-  void *user_data;      /* User data for frontend event callback */
-  struct player_funcs_s *funcs; /* bindings to player specific functions */ 
-  struct supervisor_s *supervisor; /* manage all public operations */
-  void *priv;           /* specific configuration related to the player type */
+  void *user_data;                  /* user data for frontend event callback */
+
+  struct player_funcs_s *funcs; /* bindings to player specific functions     */
+  void *priv;                   /* specific conf related to the player type  */
 };
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
