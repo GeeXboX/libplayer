@@ -154,6 +154,20 @@ typedef enum {
   PLAYER_MSG_CRITICAL,      /* prevents lib from working */
 } player_verbosity_level_t;
 
+/** \brief Parameters for player_init() .*/
+typedef struct player_init_param_s {
+  /** Audio output driver. */
+  player_ao_t ao;
+  /** Video output driver. */
+  player_vo_t vo;
+  /** Window ID to attach the video (X Window). */
+  unsigned long winid;
+
+  /** Public event callback. */
+  int (*event_cb) (player_event_t e, void *data);
+
+} player_init_param_t;
+
 /**
  * \name Player (Un)Initialization.
  * @{
@@ -165,21 +179,23 @@ typedef enum {
  * Multiple player controllers can be initialized with any wrappers.
  * The same Window ID can be used to attach their video.
  *
+ * For a description of each parameters supported by this function:
+ * \see ::player_init_param_t
+ *
+ * When a parameter in \p param is 0 (or NULL), its default value is used.
+ * If \p param is NULL, then all default values are forced for all parameters.
+ *
  * Wrappers supported (even partially):
  *  GStreamer, MPlayer, VLC, xine
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] type        Type of wrapper to load.
- * \param[in] ao          Audio output driver to use.
- * \param[in] vo          Video output driver to use.
  * \param[in] verbosity   Level of verbosity to set.
- * \param[in] winid       WinID to attach the video (X Window), 0 to disable.
- * \param[in] event_cb    Public callback, NULL to disable.
+ * \param[in] param       Parameters, NULL for default values.
  * \return Player controller, NULL otherwise.
  */
-player_t *player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
-                       player_verbosity_level_t verbosity, unsigned long winid,
-                       int (*event_cb) (player_event_t e, void *data));
+player_t *player_init (player_type_t type, player_verbosity_level_t verbosity,
+                       player_init_param_t *param);
 
 /**
  * \brief Uninitialization of a player controller.

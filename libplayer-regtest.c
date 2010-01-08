@@ -140,9 +140,14 @@ static void
 player_run_test (player_type_t player_type)
 {
   player_t *player = NULL;
+  player_init_param_t param;
 
-  player = player_init (player_type, PLAYER_AO_ALSA, PLAYER_VO_XV,
-                        PLAYER_MSG_INFO, 0, frontend_event_cb);
+  memset (&param, 0, sizeof (player_init_param_t));
+  param.ao       = PLAYER_AO_ALSA;
+  param.vo       = PLAYER_VO_XV;
+  param.event_cb = frontend_event_cb;
+
+  player = player_init (player_type, PLAYER_MSG_INFO, &param);
   do_regression_tests (player, AUDIO_TEST_FILE);
   do_regression_tests (player, VIDEO_TEST_FILE);
   player_uninit (player);

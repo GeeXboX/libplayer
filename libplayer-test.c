@@ -802,6 +802,7 @@ int
 main (int argc, char **argv)
 {
   player_t *player;
+  player_init_param_t param;
   player_type_t type = PLAYER_TYPE_DUMMY;
   player_vo_t vo = PLAYER_VO_AUTO;
   player_ao_t ao = PLAYER_AO_AUTO;
@@ -921,7 +922,12 @@ main (int argc, char **argv)
   for (i = 0; i < argc; i++)
     *(argv_bak + i) = strdup (argv[i]);
 
-  player = player_init (type, ao, vo, verbosity, 0, event_cb);
+  memset (&param, 0, sizeof (player_init_param_t));
+  param.ao       = ao;
+  param.vo       = vo;
+  param.event_cb = event_cb;
+
+  player = player_init (type, verbosity, &param);
 
   if (!player)
     return -1;

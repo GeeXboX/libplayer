@@ -91,15 +91,19 @@ int
 main (pl_unused int argc, pl_unused char **argv)
 {
   player_t *player;
+  player_init_param_t param;
   player_type_t type = PLAYER_TYPE_XINE;
-  player_vo_t vo = PLAYER_VO_X11;
-  player_ao_t ao = PLAYER_AO_ALSA;
   player_verbosity_level_t verbosity = PLAYER_MSG_INFO;
   mrl_t *mrl = NULL;
   mrl_resource_tv_args_t *args;
   uint32_t input;
 
-  player = player_init (type, ao, vo, verbosity, 0, event_cb);
+  memset (&param, 0, sizeof (player_init_param_t));
+  param.ao       = PLAYER_AO_ALSA;
+  param.vo       = PLAYER_VO_X11;
+  param.event_cb = event_cb;
+
+  player = player_init (type, verbosity, &param);
 
   args = calloc (1, sizeof (mrl_resource_tv_args_t));
   args->device = strdup ("/tmp/vdr-xine/stream");

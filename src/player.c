@@ -96,9 +96,8 @@ player_event_cb (void *data, int e, void *data_cb)
 /***************************************************************************/
 
 player_t *
-player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
-             player_verbosity_level_t verbosity, unsigned long winid,
-             int (*event_cb) (player_event_t e, void *data))
+player_init (player_type_t type,
+             player_verbosity_level_t verbosity, player_init_param_t *param)
 {
   player_t *player = NULL;
   init_status_t res = PLAYER_INIT_ERROR;
@@ -117,10 +116,10 @@ player_init (player_type_t type, player_ao_t ao, player_vo_t vo,
   player->type      = type;
   player->verbosity = verbosity;
   player->state     = PLAYER_STATE_IDLE;
-  player->ao        = ao;
-  player->vo        = vo;
-  player->winid     = winid;
-  player->event_cb  = event_cb;
+  player->ao        = param ? param->ao       : PLAYER_AO_AUTO;
+  player->vo        = param ? param->vo       : PLAYER_VO_AUTO;
+  player->winid     = param ? param->winid    : 0;
+  player->event_cb  = param ? param->event_cb : NULL;
   player->playlist  = pl_playlist_new (0, 0, PLAYER_LOOP_DISABLE);
 
   pthread_mutex_init (&player->mutex_verb, NULL);
