@@ -6,9 +6,9 @@ syntax: regexp
 ~$
 config.log
 config.mak
-libvalhalla-regtest$
-libvalhalla-test$
-libvalhalla-testvdr$
+libplayer-regtest$
+libplayer-test$
+libplayer-testvdr$
 ^libplayer.pc
 ^DOCS/doxygen
 
