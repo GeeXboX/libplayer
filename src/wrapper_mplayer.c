@@ -2656,6 +2656,8 @@ mp_preinit_vo (player_t *player, uint32_t *winid)
 {
   int ret = 0;
 
+  *winid = 0;
+
   /* The video out is sent in our X11 window, winid is used for -wid arg. */
   switch (player->vo)
   {
