@@ -45,123 +45,74 @@ increase verbosity
 Default values are dummy player, auto video and auto audio output.
 .PP
 Commands to use libplayer\-test:
-.TP
-#
-: change playback mode (auto or single)
-.TP
-\&.
-: change loop value and mode
-.TP
-,
-: enable/disable shuffle on the playlist
-.TP
-%
-: write a text on the OSD
-.HP
-+/\- : increase/decrease speed
-.IP
-]/[ : audio delay +/\- 100 ms
-0/9 : increase/decrease volume
-m   : set/unset mute
-2/1 : 5s forward/backward
-3/4 : previous/next audio track
-5/6 : previous/next subtitle
-7/8 : previous/next TV analog channel
-{/} : previous/next radio channel
-(/) : previous/next chapter
-u   : toggle subtitle visibility
-a   : change aspect ratio (original/16:9)
-l   : load a stream in the playlist
-v   : print properties and metadata of the current stream
-j   : take a video snapshot of a specific time position
-y   : select a radio channel
-z   : select a TV channel
-i   : print current time position
-p   : start a new playback
-o   : pause/unpause the current playback
-s   : stop the current playback
-b   : start the previous stream in the playlist
-n   : start the next stream in the playlist
-r   : remove the current stream of the playlist
-t   : remove all streams of the playlist
-q   : quit libplayer\-test
+.IP #
+change playback mode (auto or single)
+.IP \&.
+change loop value and mode
+.IP ,
+enable/disable shuffle on the playlist
+.IP %
+write a text on the OSD
+.IP +/\-
+increase/decrease speed
+.IP ]/[
+audio delay +/\- 100 ms
+.IP 0/9
+increase/decrease volume
+.IP m
+set/unset mute
+.IP 2/1
+5s forward/backward
+.IP 3/4
+previous/next audio track
+.IP 5/6
+previous/next subtitle
+.IP 7/8
+previous/next TV analog channel
+.IP {/}
+previous/next radio channel
+.IP (/)
+previous/next chapter
+.IP u
+toggle subtitle visibility
+.IP a
+change aspect ratio (original/16:9)
+.IP l
+load a stream in the playlist
+.IP v
+print properties and metadata of the current stream
+.IP j
+take a video snapshot of a specific time position
+.IP y
+select a radio channel
+.IP z
+select a TV channel
+.IP i
+print current time position
+.IP p
+start a new playback
+.IP o
+pause/unpause the current playback
+.IP s
+stop the current playback
+.IP b
+start the previous stream in the playlist
+.IP n
+start the next stream in the playlist
+.IP r
+remove the current stream of the playlist
+.IP t
+remove all streams of the playlist
+.IP q
+quit libplayer\-test
 .PP
 Commands for dvdnav:
-.TP
-ARROWS
-: menu navigation
-.IP
-BACKSPACE : return to menu
-ENTER     : select
-.PP
-Usage: libplayer\-test [options ...] [files ...]
-.TP
-\fB\-h\fR \fB\-\-help\fR
-this help
-.TP
-\fB\-p\fR \fB\-\-player\fR <player>
-specify the player (mplayer|xine|vlc|gstreamer)
-.TP
-\fB\-a\fR \fB\-\-audio\fR
-<audioout>  specify the audio output (alsa|oss|null)
-.TP
-\fB\-g\fR \fB\-\-video\fR
-<videoout>  specify the video output (x11|sdl:x11|xv|gl|vdpau|fb|null)
-.TP
-\fB\-v\fR \fB\-\-verbose\fR
-increase verbosity
-.PP
-Default values are dummy player, auto video and auto audio output.
-.PP
-Commands to use libplayer\-test:
-.TP
-#
-: change playback mode (auto or single)
-.TP
-\&.
-: change loop value and mode
-.TP
-,
-: enable/disable shuffle on the playlist
-.TP
-%
-: write a text on the OSD
-.HP
-+/\- : increase/decrease speed
-.IP
-]/[ : audio delay +/\- 100 ms
-0/9 : increase/decrease volume
-m   : set/unset mute
-2/1 : 5s forward/backward
-3/4 : previous/next audio track
-5/6 : previous/next subtitle
-7/8 : previous/next TV analog channel
-{/} : previous/next radio channel
-(/) : previous/next chapter
-u   : toggle subtitle visibility
-a   : change aspect ratio (original/16:9)
-l   : load a stream in the playlist
-v   : print properties and metadata of the current stream
-j   : take a video snapshot of a specific time position
-y   : select a radio channel
-z   : select a TV channel
-i   : print current time position
-p   : start a new playback
-o   : pause/unpause the current playback
-s   : stop the current playback
-b   : start the previous stream in the playlist
-n   : start the next stream in the playlist
-r   : remove the current stream of the playlist
-t   : remove all streams of the playlist
-q   : quit libplayer\-test
-.PP
-Commands for dvdnav:
-.TP
-ARROWS
-: menu navigation
-.IP
-BACKSPACE : return to menu
-ENTER     : select
+.IP ARROWS
+menu navigation
+.IP BACKSPACE
+return to menu
+.IP ENTER
+select
 .SH "SEE ALSO"
 .B libplayer-testvdr
 (1), 
