@@ -30,6 +30,9 @@ EXTRADIST = \
 	ChangeLog \
 	configure \
 	COPYING \
+	libplayer-regtest.1 \
+	libplayer-test.1 \
+	libplayer-testvdr.1 \
 	README \
 	stats.sh \
 	TODO \
