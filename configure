@@ -33,6 +33,7 @@ show_help(){
   echo "  --libdir=DIR                install libs in DIR [PREFIX/lib]"
   echo "  --includedir=DIR            install includes in DIR [PREFIX/include]"
   echo "  --docdir=DIR                install docs in DIR [PREFIX/share/doc]"
+  echo "  --mandir=DIR                man documentation DIR [PREFIX/share/man]"
   echo "  --enable-static             build static libraries [default=yes]"
   echo "  --disable-static            do not build static libraries [default=no]"
   echo "  --enable-shared             build shared libraries [default=yes]"
@@ -442,6 +443,7 @@ bindir='${PREFIX}/bin'
 libdir='${PREFIX}/lib'
 includedir='${PREFIX}/include'
 docdir='${PREFIX}/share/doc'
+mandir='${PREFIX}/share/man'
 static="yes"
 shared="yes"
 cc="gcc"
@@ -491,6 +493,8 @@ for opt do
   --includedir=*) includedir="$optval"
   ;;
   --docdir=*) docdir="$optval"; force_docdir=yes
+  ;;
+  --mandir=*) mandir="$optval"
   ;;
   --enable-static) static="yes"
   ;;
@@ -1028,6 +1032,7 @@ append_config "bindir=\$(DESTDIR)$bindir"
 append_config "libdir=\$(DESTDIR)$libdir"
 append_config "includedir=\$(DESTDIR)$includedir"
 append_config "docdir=\$(DESTDIR)$docdir"
+append_config "mandir=\$(DESTDIR)$mandir"
 
 append_config "MAKE=$make"
 append_config "CC=$cc"

@@ -9,12 +9,17 @@ PKGCONFIG_FILE = libplayer.pc
 PLREGTEST = libplayer-regtest
 PLREGTEST_SRCS = libplayer-regtest.c
 PLREGTEST_OBJS = $(PLREGTEST_SRCS:.c=.o)
+PLREGTEST_MAN = $(PLREGTEST).1
 PLTEST = libplayer-test
 PLTEST_SRCS = libplayer-test.c
 PLTEST_OBJS = $(PLTEST_SRCS:.c=.o)
+PLTEST_MAN = $(PLTEST).1
 PLTESTVDR = libplayer-testvdr
 PLTESTVDR_SRCS = libplayer-testvdr.c
 PLTESTVDR_OBJS = $(PLTESTVDR_SRCS:.c=.o)
+PLTESTVDR_MAN = $(PLTESTVDR).1
+
+MANS = $(PLREGTEST_MAN) $(PLTEST_MAN) $(PLTESTVDR_MAN)
 
 override CPPFLAGS += -Isrc
 override LDFLAGS += -Lsrc -lplayer
@@ -30,12 +35,10 @@ EXTRADIST = \
 	ChangeLog \
 	configure \
 	COPYING \
-	libplayer-regtest.1 \
-	libplayer-test.1 \
-	libplayer-testvdr.1 \
 	README \
 	stats.sh \
 	TODO \
+	$(MANS) \
 
 SUBDIRS = \
 	bindings \
@@ -97,7 +100,7 @@ distclean: clean docs-clean
 	rm -f $(DISTFILE)
 	rm -f $(PKGCONFIG_FILE)
 
-install: install-lib install-pkgconfig install-apps install-docs install-bindings
+install: install-lib install-pkgconfig install-apps install-docs install-man install-bindings
 
 install-lib: lib
 	$(MAKE) -C src install
@@ -115,10 +118,17 @@ install-apps: apps
 install-docs: docs
 	$(MAKE) -C DOCS install
 
+install-man: $(MANS)
+	for m in $(MANS); do \
+	  section=`echo $$m | sed -e 's/^.*\\.//'`; \
+	  $(INSTALL) -d $(mandir)/man$$section; \
+	  $(INSTALL) -m 644 $$m $(mandir)/man$$section; \
+	done
+
 install-bindings:
 	$(MAKE) -C bindings install
 
-uninstall: uninstall-lib uninstall-pkgconfig uninstall-apps uninstall-docs
+uninstall: uninstall-lib uninstall-pkgconfig uninstall-apps uninstall-docs uninstall-man
 
 uninstall-lib:
 	$(MAKE) -C src uninstall
@@ -133,6 +143,12 @@ uninstall-apps:
 
 uninstall-docs:
 	$(MAKE) -C DOCS uninstall
+
+uninstall-man:
+	for m in $(MANS); do \
+	  section=`echo $$m | sed -e 's/^.*\\.//'`; \
+	  rm -f $(mandir)/man$$section/$$m; \
+	done
 
 .PHONY: *clean *install* docs binding* apps*
 
