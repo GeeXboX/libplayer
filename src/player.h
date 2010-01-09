@@ -1260,7 +1260,7 @@ void player_video_set_panscan (player_t *player, int8_t value, int absolute);
  * \brief Set video aspect ratio.
  *
  * Wrappers supported (even partially):
- *  MPlayer, VLC
+ *  MPlayer, VLC, xine
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
