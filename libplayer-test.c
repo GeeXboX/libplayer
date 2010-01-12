@@ -26,6 +26,10 @@
 #include <termios.h>
 #include <inttypes.h>
 
+#if defined (USE_X11) && defined (USE_XLIB_HACK)
+#include <X11/Xlib.h>
+#endif /* USE_X11 && USE_XLIB_HACK */
+
 #define _GNU_SOURCE
 #include <getopt.h>
 
@@ -921,6 +925,10 @@ main (int argc, char **argv)
   argv_bak = malloc (argc * sizeof (char *));
   for (i = 0; i < argc; i++)
     *(argv_bak + i) = strdup (argv[i]);
+
+#if defined (USE_X11) && defined (USE_XLIB_HACK)
+  XInitThreads ();
+#endif /* USE_X11 && USE_XLIB_HACK */
 
   memset (&param, 0, sizeof (player_init_param_t));
   param.ao       = ao;

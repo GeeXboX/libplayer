@@ -25,6 +25,10 @@
 #include <unistd.h>
 #include <string.h>
 
+#if defined (USE_X11) && defined (USE_XLIB_HACK)
+#include <X11/Xlib.h>
+#endif /* USE_X11 && USE_XLIB_HACK */
+
 #include "player.h"
 
 static uint32_t
@@ -97,6 +101,10 @@ main (pl_unused int argc, pl_unused char **argv)
   mrl_t *mrl = NULL;
   mrl_resource_tv_args_t *args;
   uint32_t input;
+
+#if defined (USE_X11) && defined (USE_XLIB_HACK)
+  XInitThreads ();
+#endif /* USE_X11 && USE_XLIB_HACK */
 
   memset (&param, 0, sizeof (player_init_param_t));
   param.ao       = PLAYER_AO_ALSA;

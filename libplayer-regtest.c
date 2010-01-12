@@ -25,6 +25,10 @@
 #include <unistd.h>
 #include <pthread.h>
 
+#if defined (USE_X11) && defined (USE_XLIB_HACK)
+#include <X11/Xlib.h>
+#endif /* USE_X11 && USE_XLIB_HACK */
+
 #include "player.h"
 
 #define AUDIO_TEST_FILE "samples/audio.ogg"
@@ -233,6 +237,10 @@ main (int argc, char **argv)
       return -1;
     }
   }
+
+#if defined (USE_X11) && defined (USE_XLIB_HACK)
+  XInitThreads ();
+#endif /* USE_X11 && USE_XLIB_HACK */
 
   pthread_attr_init (&attr);
   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
