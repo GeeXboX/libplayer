@@ -51,6 +51,7 @@ show_help(){
   echo ""
   echo "Optional features:"
   echo "  --enable-binding-python     build Python bindings"
+  echo "  --enable-xlib-hack          use Xlib (can cause races, beware)"
   echo ""
   echo "Search paths:"
   echo "  --with-gstreamer-dir=DIR    check for libgstreamer installed in DIR"
@@ -466,6 +467,7 @@ wrapper_mplayer="auto"
 wrapper_vlc="auto"
 wrapper_gstreamer="auto"
 binding_python="no"
+xlib_hack="no"
 x11="auto"
 pic="no"
 INSTALL="install"
@@ -531,6 +533,10 @@ for opt do
   --enable-binding-python) binding_python="yes";
   ;;
   --disable-binding-python) binding_python="no";
+  ;;
+  --enable-xlib-hack) xlib_hack="yes";
+  ;;
+  --disable-xlib-hack) xlib_hack="no";
   ;;
   --with-xine-dir=*) libxinedir="$optval";
   ;;
@@ -951,6 +957,22 @@ if test "$binding_python" = "auto" -o "$binding_python" = "yes"; then
 fi
 
 #################################################
+#   check for Xlib hack
+#################################################
+if test "$xlib_hack" = "auto" -o "$xlib_hack" = "yes"; then
+  xlib_hack="no"
+  if test "$x11" = "yes" -a "$wrapper_xine" = "yes"; then
+    echolog "Checking for libX11-xcb ..."
+    add_pkgconfig_deps x11-xcb
+    check_lib X11/Xlib-xcb.h xcb_generate_id -lX11-xcb -lX11 -lxcb
+    if [ "$?" = 0 ]; then
+      add_cppflags -DUSE_XLIB_HACK
+      xlib_hack="yes"
+    fi
+  fi
+fi
+
+#################################################
 #   version
 #################################################
 temp_host_cflags "-Isrc"
@@ -1016,8 +1038,16 @@ echolog "  Python:            $binding_python"
 echolog ""
 echolog "Miscellaneous:"
 echolog "  X11 support:       $x11"
+echolog "  Xlib hack:         $xlib_hack"
 echolog "  Documentation:     $doc"
 echolog ""
+if test  "$xlib_hack" = "yes"; then
+  echolog "*** WARNING ***"
+  echolog "The Xlib hack has been enabled. Programs using libplayer WILL have"
+  echolog "races unless XInitThreads() is called before any Xlib usage."
+  echolog "*** WARNING ***"
+  echolog ""
+fi
 
 #################################################
 #   save configs attributes
@@ -1071,6 +1101,7 @@ append_config "WRAPPER_VLC=$wrapper_vlc"
 append_config "WRAPPER_GSTREAMER=$wrapper_gstreamer"
 append_config "BINDING_PYTHON=$binding_python"
 append_config "X11=$x11"
+append_config "XLIB_HACK=$xlib_hack"
 append_config "DOC=$doc"
 
 #################################################

@@ -601,10 +601,17 @@ xine_player_init (player_t *player)
     id_vo = "xv";
     break;
 
+#ifdef USE_XLIB_HACK
   case PLAYER_VO_GL:
     use_x11 = 1;
     id_vo = "opengl";
     break;
+
+  case PLAYER_VO_VDPAU:
+    use_x11 = 1;
+    id_vo = "vdpau";
+    break;
+#endif /* USE_XLIB_HACK */
 #endif /* USE_X11 */
 
   case PLAYER_VO_FB:
@@ -640,7 +647,11 @@ xine_player_init (player_t *player)
     else
     {
       data = pl_x11_get_data (player->x11);
+#ifdef USE_XLIB_HACK
+      visual = XINE_VISUAL_TYPE_X11;
+#else
       visual = XINE_VISUAL_TYPE_XCB;
+#endif /* USE_XLIB_HACK */
     }
 #else
     pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,

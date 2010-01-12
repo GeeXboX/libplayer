@@ -24,7 +24,11 @@
 #include <math.h>
 #include <pthread.h>
 
+#ifdef USE_XLIB_HACK
+#include <X11/Xlib-xcb.h>
+#else
 #include <xcb/xcb.h>
+#endif /* USE_XLIB_HACK */
 
 #ifdef HAVE_XINE
 #include <xine.h>
@@ -598,15 +602,31 @@ pl_x11_init (player_t *player)
   if (player->type == PLAYER_TYPE_XINE)
   {
 #ifdef HAVE_XINE
+#ifdef USE_XLIB_HACK
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, 
+            "The Xlib hack has been enabled, beware of races!");
+    x11_visual_t *vis = calloc (1, sizeof (x11_visual_t));
+#else
     xcb_visual_t *vis = calloc (1, sizeof (xcb_visual_t));
+#endif /* USE_XLIB_HACK */
 
     if (vis)
     {
+#ifdef USE_XLIB_HACK
+      Display *display = XOpenDisplay (NULL);
+
+      XSetEventQueueOwner (display, XlibOwnsEventQueue);
+
+      vis->display         = display;
+      vis->screen          = XDefaultScreen (display);
+      vis->d               = x11->win_video;
+#else
       xcb_screen_t *screen;
 
       vis->connection      = x11_connection (player, &screen);
       vis->screen          = screen;
       vis->window          = x11->win_video;
+#endif /* USE_XLIB_HACK */
       vis->dest_size_cb    = xine_dest_size_cb;
       vis->frame_output_cb = xine_frame_output_cb;
       vis->user_data       = (void *) x11;
