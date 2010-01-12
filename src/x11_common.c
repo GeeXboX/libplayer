@@ -359,9 +359,15 @@ pl_x11_uninit (player_t *player)
   if (x11->data)
   {
 #ifdef HAVE_XINE
+#ifdef USE_XLIB_HACK
+    x11_visual_t *vis = x11->data;
+    if (vis->display)
+      XCloseDisplay (vis->display);
+#else
     xcb_visual_t *vis = x11->data;
     if (vis->connection)
       xcb_disconnect (vis->connection);
+#endif /* USE_XLIB_HACK */
 #endif /* HAVE_XINE */
     free (x11->data);
   }
