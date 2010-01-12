@@ -354,8 +354,6 @@ pl_x11_uninit (player_t *player)
     xcb_destroy_window (x11->conn, x11->win_black);
   }
 
-  xcb_disconnect (x11->conn);
-
   if (x11->data)
   {
 #ifdef HAVE_XINE
@@ -371,6 +369,8 @@ pl_x11_uninit (player_t *player)
 #endif /* HAVE_XINE */
     free (x11->data);
   }
+
+  xcb_disconnect (x11->conn);
 
   pthread_mutex_destroy (&x11->mutex);
   free (x11);
