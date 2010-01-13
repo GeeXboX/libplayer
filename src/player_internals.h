@@ -268,8 +268,8 @@ struct player_s {
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
 
-#define MRL_USES_VO(m) ((m) && (m)->prop && (m)->prop->video ? 1 : 0)
-#define MRL_USES_AO(m) ((m) && (m)->prop && (m)->prop->audio ? 1 : 0)
+#define MRL_USES_VO(m) ((m) && (m)->prop && (m)->prop->video)
+#define MRL_USES_AO(m) ((m) && (m)->prop && (m)->prop->audio)
 
 /*****************************************************************************/
 /*                          MRL Internal functions                           */
