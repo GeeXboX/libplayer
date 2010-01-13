@@ -609,9 +609,10 @@ pl_x11_init (player_t *player)
   {
 #ifdef HAVE_XINE
 #ifdef USE_XLIB_HACK
+    x11_visual_t *vis = calloc (1, sizeof (x11_visual_t));
+
     pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, 
             "The Xlib hack has been enabled, beware of races!");
-    x11_visual_t *vis = calloc (1, sizeof (x11_visual_t));
 #else
     xcb_visual_t *vis = calloc (1, sizeof (xcb_visual_t));
 #endif /* USE_XLIB_HACK */
