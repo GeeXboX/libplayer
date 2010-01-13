@@ -268,6 +268,9 @@ struct player_s {
 
 #define ARRAY_NB_ELEMENTS(array) (sizeof (array) / sizeof (array[0]))
 
+#define MRL_USES_VO(m) ((m) && (m)->prop && (m)->prop->video ? 1 : 0)
+#define MRL_USES_AO(m) ((m) && (m)->prop && (m)->prop->audio ? 1 : 0)
+
 /*****************************************************************************/
 /*                          MRL Internal functions                           */
 /*****************************************************************************/
@@ -290,8 +293,6 @@ mrl_metadata_sub_t *mrl_metadata_sub_get (mrl_metadata_sub_t **sub, uint32_t id)
 mrl_metadata_audio_t *mrl_metadata_audio_get (mrl_metadata_audio_t **audio,
                                               uint32_t id);
 void mrl_list_free (mrl_t *mrl);
-int mrl_uses_vo (mrl_t *mrl);
-int mrl_uses_ao (mrl_t *mrl);
 
 /*****************************************************************************/
 /*                   MRL Internal (Supervisor) functions                     */

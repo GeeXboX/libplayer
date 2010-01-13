@@ -3299,7 +3299,7 @@ mplayer_playback_start (player_t *player)
   }
 
 #ifdef USE_X11
-  if (!mrl_uses_vo (mrl))
+  if (MRL_USES_VO (mrl))
     pl_x11_map (player);
 #endif /* USE_X11 */
 
@@ -3336,7 +3336,7 @@ mplayer_playback_stop (player_t *player)
 
 #ifdef USE_X11
   mrl = pl_playlist_get_mrl (player->playlist);
-  if (!mrl_uses_vo (mrl))
+  if (MRL_USES_VO (mrl))
     pl_x11_unmap (player);
 #endif /* USE_X11 */
 
@@ -3724,7 +3724,7 @@ mplayer_video_set_ar (player_t *player, float value)
     return;
 
   mrl = pl_playlist_get_mrl (player->playlist);
-  if (mrl_uses_vo (mrl))
+  if (!MRL_USES_VO (mrl))
     return;
 
   /* use original aspect ratio if value is 0.0 */

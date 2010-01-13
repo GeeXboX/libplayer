@@ -530,30 +530,6 @@ mrl_list_free (mrl_t *mrl)
   mrl_sv_free (mrl, 1);
 }
 
-int
-mrl_uses_vo (mrl_t *mrl)
-{
-  if (!mrl || !mrl->prop)
-    return -1;
-
-  if (mrl->prop->video)
-    return 0;
-
-  return 1;
-}
-
-int
-mrl_uses_ao (mrl_t *mrl)
-{
-  if (!mrl || !mrl->prop)
-    return -1;
-
-  if (mrl->prop->audio)
-    return 0;
-
-  return 1;
-}
-
 static inline void
 mrl_use_internal (player_t *player, mrl_t **mrl)
 {
