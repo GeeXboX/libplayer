@@ -58,6 +58,7 @@
   " .   : change loop value and mode\n" \
   " ,   : enable/disable shuffle on the playlist\n" \
   " %%   : write a text on the OSD\n" \
+  " k   : enable/disable OSD\n" \
   " +/- : increase/decrease speed\n" \
   " ]/[ : audio delay +/- 100 ms\n" \
   " 0/9 : increase/decrease volume\n" \
@@ -816,7 +817,7 @@ main (int argc, char **argv)
   int time_pos, percent_pos;
   float speed = 1.0;
   int loop = 0, shuffle = 0;
-  int visibility = 0;
+  int visibility = 0, osd = 0;
   float ar = 0.0;
   player_loop_t loop_mode = PLAYER_LOOP_DISABLE;
   player_verbosity_level_t verbosity = PLAYER_MSG_WARNING;
@@ -1015,6 +1016,10 @@ main (int argc, char **argv)
       printf ("OSD SHOW TEXT (5s): %s\n", text);
       break;
     }
+    case 'k':
+      osd = !osd;
+      player_osd_state (player, osd);
+      break;
     case '+':
       speed += 0.1;
       if (speed > 100.0)
