@@ -1641,7 +1641,7 @@ void player_radio_channel_next (player_t *player);
 
 /** \brief Player VDR commands. */
 typedef enum player_vdr {
-  PLAYER_VDR_UP,
+  PLAYER_VDR_UP = 0,
   PLAYER_VDR_DOWN,
   PLAYER_VDR_LEFT,
   PLAYER_VDR_RIGHT,

@@ -1310,236 +1310,72 @@ xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
 static void
 xine_player_vdr (player_t *player, player_vdr_t value)
 {
-  int event;
+  static const player_vdr_t events[] = {
+    [PLAYER_VDR_UP]               = XINE_EVENT_INPUT_UP,
+    [PLAYER_VDR_DOWN]             = XINE_EVENT_INPUT_DOWN,
+    [PLAYER_VDR_LEFT]             = XINE_EVENT_INPUT_LEFT,
+    [PLAYER_VDR_RIGHT]            = XINE_EVENT_INPUT_RIGHT,
+    [PLAYER_VDR_OK]               = XINE_EVENT_INPUT_SELECT,
+    [PLAYER_VDR_BACK]             = XINE_EVENT_VDR_BACK,
+    [PLAYER_VDR_CHANNELPLUS]      = XINE_EVENT_VDR_CHANNELPLUS,
+    [PLAYER_VDR_CHANNELMINUS]     = XINE_EVENT_VDR_CHANNELMINUS,
+    [PLAYER_VDR_RED]              = XINE_EVENT_VDR_RED,
+    [PLAYER_VDR_GREEN]            = XINE_EVENT_VDR_GREEN,
+    [PLAYER_VDR_YELLOW]           = XINE_EVENT_VDR_YELLOW,
+    [PLAYER_VDR_BLUE]             = XINE_EVENT_VDR_BLUE,
+    [PLAYER_VDR_PLAY]             = XINE_EVENT_VDR_PLAY,
+    [PLAYER_VDR_PAUSE]            = XINE_EVENT_VDR_PAUSE,
+    [PLAYER_VDR_STOP]             = XINE_EVENT_VDR_STOP,
+    [PLAYER_VDR_RECORD]           = XINE_EVENT_VDR_RECORD,
+    [PLAYER_VDR_FASTFWD]          = XINE_EVENT_VDR_FASTFWD,
+    [PLAYER_VDR_FASTREW]          = XINE_EVENT_VDR_FASTREW,
+    [PLAYER_VDR_POWER]            = XINE_EVENT_VDR_POWER,
+    [PLAYER_VDR_SCHEDULE]         = XINE_EVENT_VDR_SCHEDULE,
+    [PLAYER_VDR_CHANNELS]         = XINE_EVENT_VDR_CHANNELS,
+    [PLAYER_VDR_TIMERS]           = XINE_EVENT_VDR_TIMERS,
+    [PLAYER_VDR_RECORDINGS]       = XINE_EVENT_VDR_RECORDINGS,
+    [PLAYER_VDR_MENU]             = XINE_EVENT_INPUT_MENU1,
+    [PLAYER_VDR_SETUP]            = XINE_EVENT_VDR_SETUP,
+    [PLAYER_VDR_COMMANDS]         = XINE_EVENT_VDR_COMMANDS,
+    [PLAYER_VDR_0]                = XINE_EVENT_INPUT_NUMBER_0,
+    [PLAYER_VDR_1]                = XINE_EVENT_INPUT_NUMBER_1,
+    [PLAYER_VDR_2]                = XINE_EVENT_INPUT_NUMBER_2,
+    [PLAYER_VDR_3]                = XINE_EVENT_INPUT_NUMBER_3,
+    [PLAYER_VDR_4]                = XINE_EVENT_INPUT_NUMBER_4,
+    [PLAYER_VDR_5]                = XINE_EVENT_INPUT_NUMBER_5,
+    [PLAYER_VDR_6]                = XINE_EVENT_INPUT_NUMBER_6,
+    [PLAYER_VDR_7]                = XINE_EVENT_INPUT_NUMBER_7,
+    [PLAYER_VDR_8]                = XINE_EVENT_INPUT_NUMBER_8,
+    [PLAYER_VDR_9]                = XINE_EVENT_INPUT_NUMBER_9,
+    [PLAYER_VDR_USER_1]           = XINE_EVENT_VDR_USER1,
+    [PLAYER_VDR_USER_2]           = XINE_EVENT_VDR_USER2,
+    [PLAYER_VDR_USER_3]           = XINE_EVENT_VDR_USER3,
+    [PLAYER_VDR_USER_4]           = XINE_EVENT_VDR_USER4,
+    [PLAYER_VDR_USER_5]           = XINE_EVENT_VDR_USER5,
+    [PLAYER_VDR_USER_6]           = XINE_EVENT_VDR_USER6,
+    [PLAYER_VDR_USER_7]           = XINE_EVENT_VDR_USER7,
+    [PLAYER_VDR_USER_8]           = XINE_EVENT_VDR_USER8,
+    [PLAYER_VDR_USER_9]           = XINE_EVENT_VDR_USER9,
+    [PLAYER_VDR_VOLPLUS]          = XINE_EVENT_VDR_VOLPLUS,
+    [PLAYER_VDR_VOLMINUS]         = XINE_EVENT_VDR_VOLMINUS,
+    [PLAYER_VDR_MUTE]             = XINE_EVENT_VDR_MUTE,
+    [PLAYER_VDR_AUDIO]            = XINE_EVENT_VDR_AUDIO,
+    [PLAYER_VDR_INFO]             = XINE_EVENT_VDR_INFO,
+    [PLAYER_VDR_CHANNELPREVIOUS]  = XINE_EVENT_VDR_CHANNELPREVIOUS,
+    [PLAYER_VDR_NEXT]             = XINE_EVENT_INPUT_NEXT,
+    [PLAYER_VDR_PREVIOUS]         = XINE_EVENT_INPUT_PREVIOUS,
+    [PLAYER_VDR_SUBTITLES]        = XINE_EVENT_VDR_SUBTITLES,
+  };
 
-  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "vdr: %i", value);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "vdr: %u", value);
 
   if (!player)
     return;
 
-  switch (value)
-  {
-  case PLAYER_VDR_UP:
-    event = XINE_EVENT_INPUT_UP;
-    break;
-
-  case PLAYER_VDR_DOWN:
-    event = XINE_EVENT_INPUT_DOWN;
-    break;
-
-  case PLAYER_VDR_LEFT:
-    event = XINE_EVENT_INPUT_LEFT;
-    break;
-
-  case PLAYER_VDR_RIGHT:
-    event = XINE_EVENT_INPUT_RIGHT;
-    break;
-
-  case PLAYER_VDR_OK:
-    event = XINE_EVENT_INPUT_SELECT;
-    break;
-
-  case PLAYER_VDR_BACK:
-    event = XINE_EVENT_VDR_BACK;
-    break;
-
-  case PLAYER_VDR_CHANNELPLUS:
-    event = XINE_EVENT_VDR_CHANNELPLUS;
-    break;
-
-  case PLAYER_VDR_CHANNELMINUS:
-    event = XINE_EVENT_VDR_CHANNELMINUS;
-    break;
-
-  case PLAYER_VDR_RED:
-    event = XINE_EVENT_VDR_RED;
-    break;
-
-  case PLAYER_VDR_GREEN:
-    event = XINE_EVENT_VDR_GREEN;
-    break;
-
-  case PLAYER_VDR_YELLOW:
-    event = XINE_EVENT_VDR_YELLOW;
-    break;
-
-  case PLAYER_VDR_BLUE:
-    event = XINE_EVENT_VDR_BLUE;
-    break;
-
-  case PLAYER_VDR_PLAY:
-    event = XINE_EVENT_VDR_PLAY;
-    break;
-
-  case PLAYER_VDR_PAUSE:
-    event = XINE_EVENT_VDR_PAUSE;
-    break;
-
-  case PLAYER_VDR_STOP:
-    event = XINE_EVENT_VDR_STOP;
-    break;
-
-  case PLAYER_VDR_RECORD:
-    event = XINE_EVENT_VDR_RECORD;
-    break;
-
-  case PLAYER_VDR_FASTFWD:
-    event = XINE_EVENT_VDR_FASTFWD;
-    break;
-
-  case PLAYER_VDR_FASTREW:
-    event = XINE_EVENT_VDR_FASTREW;
-    break;
-
-  case PLAYER_VDR_POWER:
-    event = XINE_EVENT_VDR_POWER;
-    break;
-
-  case PLAYER_VDR_SCHEDULE:
-    event = XINE_EVENT_VDR_SCHEDULE;
-    break;
-
-  case PLAYER_VDR_CHANNELS:
-    event = XINE_EVENT_VDR_CHANNELS;
-    break;
-
-  case PLAYER_VDR_TIMERS:
-    event = XINE_EVENT_VDR_TIMERS;
-    break;
-
-  case PLAYER_VDR_RECORDINGS:
-    event = XINE_EVENT_VDR_RECORDINGS;
-    break;
-
-  case PLAYER_VDR_MENU:
-    event = XINE_EVENT_INPUT_MENU1;
-    break;
-
-  case PLAYER_VDR_SETUP:
-    event = XINE_EVENT_VDR_SETUP;
-    break;
-
-  case PLAYER_VDR_COMMANDS:
-    event = XINE_EVENT_VDR_COMMANDS;
-    break;
-
-  case PLAYER_VDR_0:
-    event = XINE_EVENT_INPUT_NUMBER_0;
-    break;
-
-  case PLAYER_VDR_1:
-    event = XINE_EVENT_INPUT_NUMBER_1;
-    break;
-
-  case PLAYER_VDR_2:
-    event = XINE_EVENT_INPUT_NUMBER_2;
-    break;
-
-  case PLAYER_VDR_3:
-    event = XINE_EVENT_INPUT_NUMBER_3;
-    break;
-
-  case PLAYER_VDR_4:
-    event = XINE_EVENT_INPUT_NUMBER_4;
-    break;
-
-  case PLAYER_VDR_5:
-    event = XINE_EVENT_INPUT_NUMBER_5;
-    break;
-
-  case PLAYER_VDR_6:
-    event = XINE_EVENT_INPUT_NUMBER_6;
-    break;
-
-  case PLAYER_VDR_7:
-    event = XINE_EVENT_INPUT_NUMBER_7;
-    break;
-
-  case PLAYER_VDR_8:
-    event = XINE_EVENT_INPUT_NUMBER_8;
-    break;
-
-  case PLAYER_VDR_9:
-    event = XINE_EVENT_INPUT_NUMBER_9;
-    break;
-
-  case PLAYER_VDR_USER_1:
-    event = XINE_EVENT_VDR_USER1;
-    break;
-
-  case PLAYER_VDR_USER_2:
-    event = XINE_EVENT_VDR_USER2;
-    break;
-
-  case PLAYER_VDR_USER_3:
-    event = XINE_EVENT_VDR_USER3;
-    break;
-
-  case PLAYER_VDR_USER_4:
-    event = XINE_EVENT_VDR_USER4;
-    break;
-
-  case PLAYER_VDR_USER_5:
-    event = XINE_EVENT_VDR_USER5;
-    break;
-
-  case PLAYER_VDR_USER_6:
-    event = XINE_EVENT_VDR_USER6;
-    break;
-
-  case PLAYER_VDR_USER_7:
-    event = XINE_EVENT_VDR_USER7;
-    break;
-
-  case PLAYER_VDR_USER_8:
-    event = XINE_EVENT_VDR_USER8;
-    break;
-
-  case PLAYER_VDR_USER_9:
-    event = XINE_EVENT_VDR_USER9;
-    break;
-
-  case PLAYER_VDR_VOLPLUS:
-    event = XINE_EVENT_VDR_VOLPLUS;
-    break;
-
-  case PLAYER_VDR_VOLMINUS:
-    event = XINE_EVENT_VDR_VOLMINUS;
-    break;
-
-  case PLAYER_VDR_MUTE:
-    event = XINE_EVENT_VDR_MUTE;
-    break;
-
-  case PLAYER_VDR_AUDIO:
-    event = XINE_EVENT_VDR_AUDIO;
-    break;
-
-  case PLAYER_VDR_INFO:
-    event = XINE_EVENT_VDR_INFO;
-    break;
-
-  case PLAYER_VDR_CHANNELPREVIOUS:
-    event = XINE_EVENT_VDR_CHANNELPREVIOUS;
-    break;
-
-  case PLAYER_VDR_NEXT:
-    event = XINE_EVENT_INPUT_NEXT;
-    break;
-
-  case PLAYER_VDR_PREVIOUS:
-    event = XINE_EVENT_INPUT_PREVIOUS;
-    break;
-
-  case PLAYER_VDR_SUBTITLES:
-    event = XINE_EVENT_VDR_SUBTITLES;
-    break;
-
-  default:
+  if (value >= ARRAY_NB_ELEMENTS (events))
     return;
-  }
 
-  send_event (player, event, NULL, 0);
+  send_event (player, events[value], NULL, 0);
 }
 
 /*****************************************************************************/
