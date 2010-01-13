@@ -221,6 +221,7 @@ pl_register_functions_dummy (void)
   funcs->set_framedrop      = NULL;
   funcs->set_mouse_pos      = NULL;
   funcs->osd_show_text      = NULL;
+  funcs->osd_state          = NULL;
 
   funcs->pb_start           = dummy_playback_start;
   funcs->pb_stop            = dummy_playback_stop;

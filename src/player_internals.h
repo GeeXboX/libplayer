@@ -163,6 +163,7 @@ typedef struct player_funcs_s {
   void (*set_mouse_pos) (player_t *player, int x, int y);
   void (*osd_show_text) (player_t *player,
                          const char *text, int x, int y, int duration);
+  void (*osd_state) (player_t *player, int value);
 
   /* Playback */
   playback_status_t (*pb_start) (player_t *player);
@@ -354,6 +355,7 @@ void player_sv_x_window_set_properties (player_t *player,
                                         int x, int y, int w, int h, int flags);
 void player_sv_osd_show_text (player_t *player,
                               const char *text, int x, int y, int duration);
+void player_sv_osd_state (player_t *player, int value);
 
 /* Playback related controls */
 player_pb_state_t player_sv_playback_get_state (player_t *player);

@@ -969,6 +969,18 @@ void player_osd_show_text (player_t *player,
                            const char *text, int x, int y, int duration);
 
 /**
+ * \brief Enable/disable On-screen Display.
+ *
+ * Wrappers supported (even partially):
+ *  none
+ *
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
+ * \param[in] player      Player controller.
+ * \param[in] value       Different of 0 to enable.
+ */
+void player_osd_state (player_t *player, int value);
+
+/**
  * @}
  */
 

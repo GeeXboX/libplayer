@@ -84,6 +84,7 @@ typedef enum supervisor_ctl {
   SV_FUNC_PLAYER_SET_MOUSE_POS,
   SV_FUNC_PLAYER_X_WINDOW_SET_PROPS,
   SV_FUNC_PLAYER_OSD_SHOW_TEXT,
+  SV_FUNC_PLAYER_OSD_STATE,
 
   /* Playback related controls */
   SV_FUNC_PLAYER_PB_GET_STATE,

@@ -4124,6 +4124,7 @@ pl_register_functions_mplayer (void)
   funcs->set_framedrop      = mplayer_set_framedrop;
   funcs->set_mouse_pos      = mplayer_set_mouse_pos;
   funcs->osd_show_text      = mplayer_osd_show_text;
+  funcs->osd_state          = NULL;
 
   funcs->pb_start           = mplayer_playback_start;
   funcs->pb_stop            = mplayer_playback_stop;

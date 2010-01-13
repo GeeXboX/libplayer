@@ -363,6 +363,18 @@ player_sv_osd_show_text (player_t *player,
   PLAYER_FUNCS (osd_show_text, text, x, y, duration)
 }
 
+void
+player_sv_osd_state (player_t *player, int value)
+{
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  /* player specific osd_state() */
+  PLAYER_FUNCS (osd_state, value)
+}
+
 /***************************************************************************/
 /*                                                                         */
 /* Playback related controls                                               */

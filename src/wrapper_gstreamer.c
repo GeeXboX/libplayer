@@ -311,6 +311,7 @@ pl_register_functions_gstreamer (void)
   funcs->set_framedrop      = NULL;
   funcs->set_mouse_pos      = NULL;
   funcs->osd_show_text      = NULL;
+  funcs->osd_state          = NULL;
 
   funcs->pb_start           = gstreamer_player_playback_start;
   funcs->pb_stop            = gstreamer_player_playback_stop;

@@ -500,6 +500,18 @@ player_osd_show_text (player_t *player,
                       SV_FUNC_PLAYER_OSD_SHOW_TEXT, &in, NULL);
 }
 
+void
+player_osd_state (player_t *player, int value)
+{
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                      SV_FUNC_PLAYER_OSD_STATE, &value, NULL);
+}
+
 /***************************************************************************/
 /*                                                                         */
 /* Playback related controls                                               */
