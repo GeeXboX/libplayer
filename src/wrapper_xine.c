@@ -846,7 +846,7 @@ xine_player_get_time_pos (player_t *player)
 
   x = (xine_player_t *) player->priv;
 
-  if (!x || !x->stream)
+  if (!x->stream)
     return -1;
 
   ret = xine_get_pos_length (x->stream, NULL, &time_pos, NULL);
