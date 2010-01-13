@@ -661,7 +661,8 @@ xine_player_init (player_t *player)
   }
 
   /* init video output driver */
-  if (!(x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data)))
+  x->vo_port = xine_open_video_driver (x->xine, id_vo, visual, data);
+  if (!x->vo_port)
   {
     pl_log (player, PLAYER_MSG_ERROR,
             MODULE_NAME, "xine can't init '%s' video driver",
@@ -694,7 +695,8 @@ xine_player_init (player_t *player)
   }
 
   /* init audio output driver */
-  if (!(x->ao_port = xine_open_audio_driver (x->xine, id_ao, NULL)))
+  x->ao_port = xine_open_audio_driver (x->xine, id_ao, NULL);
+  if (!x->ao_port)
   {
     pl_log (player, PLAYER_MSG_ERROR,
             MODULE_NAME, "xine can't init '%s' audio driver",
@@ -711,8 +713,8 @@ xine_player_init (player_t *player)
 
 #ifdef USE_X11
   if (player->x11)
-    xine_port_send_gui_data (x->vo_port, XINE_GUI_SEND_VIDEOWIN_VISIBLE,
-                             (void *) 1);
+    xine_port_send_gui_data (x->vo_port,
+                             XINE_GUI_SEND_VIDEOWIN_VISIBLE, (void *) 1);
 #endif /* USE_X11 */
 
   return PLAYER_INIT_OK;
