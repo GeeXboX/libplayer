@@ -1088,7 +1088,7 @@ void player_playback_seek_chapter (player_t *player, int value, int absolute);
  * This function can't be used to play in backward.
  *
  * Wrappers supported (even partially):
- *  MPlayer, VLC
+ *  MPlayer, xine, VLC
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
