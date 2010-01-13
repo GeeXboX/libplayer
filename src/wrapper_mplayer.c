@@ -3593,7 +3593,7 @@ mplayer_osd_state (player_t *player, int value)
   if (!player)
     return;
 
-  /* we use only level 0 (only subtitles) and 1 (+ seek) */
+  /* we use only level 0 (only subtitles) and 1 (+ volume + seek) */
   slave_set_property_int (player, PROPERTY_OSDLEVEL, !!value);
 }
 
