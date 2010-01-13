@@ -1072,6 +1072,27 @@ xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   xine_play (x->stream, pos_percent, pos_time);
 }
 
+static void
+xine_player_playback_set_speed (player_t *player, float value)
+{
+  int speed;
+  xine_player_t *x = NULL;
+
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "playback_set_speed: %f", value);
+
+  if (!player)
+    return;
+
+  x = player->priv;
+
+  if (!x->stream)
+    return;
+
+  speed = (int) (value * XINE_FINE_SPEED_NORMAL);
+  xine_set_param (x->stream, XINE_PARAM_FINE_SPEED, speed);
+}
+
 static int
 xine_player_audio_get_volume (player_t *player)
 {
@@ -1576,7 +1597,7 @@ pl_register_functions_xine (void)
   funcs->pb_pause           = xine_player_playback_pause;
   funcs->pb_seek            = xine_player_playback_seek;
   funcs->pb_seek_chapter    = NULL;
-  funcs->pb_set_speed       = NULL;
+  funcs->pb_set_speed       = xine_player_playback_set_speed;
 
   funcs->audio_get_volume   = xine_player_audio_get_volume;
   funcs->audio_set_volume   = xine_player_audio_set_volume;
