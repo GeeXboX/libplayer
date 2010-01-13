@@ -971,8 +971,11 @@ void player_osd_show_text (player_t *player,
 /**
  * \brief Enable/disable On-screen Display.
  *
+ * With the MPlayer wrapper, this function must be called after every
+ * player_playback_start() if OSD must be disabled.
+ *
  * Wrappers supported (even partially):
- *  none
+ *  MPlayer
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.

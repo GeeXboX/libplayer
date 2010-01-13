@@ -266,6 +266,7 @@ typedef enum slave_property {
   PROPERTY_METADATA_TRACK,
   PROPERTY_METADATA_YEAR,
   PROPERTY_MUTE,
+  PROPERTY_OSDLEVEL,
   PROPERTY_PERCENT_POS,
   PROPERTY_SAMPLERATE,
   PROPERTY_SPEED,
@@ -301,6 +302,7 @@ static const item_list_t g_slave_props[] = {
   [PROPERTY_METADATA_TRACK]   = {"metadata/track",   ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_METADATA_YEAR]    = {"metadata/year",    ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_MUTE]             = {"mute",             ITEM_ON,  ITEM_OFF, NULL},
+  [PROPERTY_OSDLEVEL]         = {"osdlevel",         ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_PERCENT_POS]      = {"percent_pos",      ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SAMPLERATE]       = {"samplerate",       ITEM_ON,  ITEM_OFF, NULL},
   [PROPERTY_SPEED]            = {"speed",            ITEM_ON,  ITEM_OFF, NULL},
@@ -1022,6 +1024,7 @@ slave_set_property (player_t *player, slave_property_t property,
   case PROPERTY_FRAMEDROPPING:
   case PROPERTY_LOOP:
   case PROPERTY_MUTE:
+  case PROPERTY_OSDLEVEL:
   case PROPERTY_SUB:
   case PROPERTY_SUB_ALIGNMENT:
   case PROPERTY_SUB_VISIBILITY:
@@ -3583,6 +3586,18 @@ mplayer_osd_show_text (player_t *player,
 }
 
 static void
+mplayer_osd_state (player_t *player, int value)
+{
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "osd_state: %i", value);
+
+  if (!player)
+    return;
+
+  /* we use only level 0 (only subtitles) and 1 (+ seek) */
+  slave_set_property_int (player, PROPERTY_OSDLEVEL, !!value);
+}
+
+static void
 mplayer_audio_set_volume (player_t *player, int value)
 {
   pl_log (player, PLAYER_MSG_VERBOSE,
@@ -4124,7 +4139,7 @@ pl_register_functions_mplayer (void)
   funcs->set_framedrop      = mplayer_set_framedrop;
   funcs->set_mouse_pos      = mplayer_set_mouse_pos;
   funcs->osd_show_text      = mplayer_osd_show_text;
-  funcs->osd_state          = NULL;
+  funcs->osd_state          = mplayer_osd_state;
 
   funcs->pb_start           = mplayer_playback_start;
   funcs->pb_stop            = mplayer_playback_stop;
