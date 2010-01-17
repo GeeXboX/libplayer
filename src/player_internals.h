@@ -239,24 +239,24 @@ typedef struct player_funcs_s {
     PLAYER_FUNCS_WARN (fct);
 
 struct player_s {
-  player_type_t type;   /* the type of player we'll use */
+  player_type_t type;         /* the type of player we'll use */
   player_verbosity_level_t verbosity;
   pthread_mutex_t mutex_verb;
 
   struct playlist_s *playlist;
 
-  player_state_t state; /* state of the playback        */
-  player_pb_t pb_mode;  /* mode of the playback         */
+  player_state_t state;       /* state of the playback        */
+  player_pb_t pb_mode;        /* mode of the playback         */
 
-  player_ao_t   ao;     /* audio output driver name     */
-  player_vo_t   vo;     /* video output driver name     */
+  player_ao_t   ao;           /* audio output driver name     */
+  player_vo_t   vo;           /* video output driver name     */
 
-  struct x11_s *x11;    /* for X11 video out            */
+  struct x11_s *x11;          /* for X11 video out            */
   const char   *x11_display;  /* for non-default display      */
-  unsigned long winid;  /* embedded Window ID for X11   */
-  int   x, y;           /* video position               */
-  int   w, h;           /* video size                   */
-  float aspect;         /* video aspect                 */
+  unsigned long winid;        /* embedded Window ID for X11   */
+  int   x, y;                 /* video position               */
+  int   w, h;                 /* video size                   */
+  float aspect;               /* video aspect                 */
 
   struct supervisor_s    *supervisor; /* manage all public operations        */
   struct event_handler_s *event;      /* event handler                       */
