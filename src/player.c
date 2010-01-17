@@ -119,6 +119,7 @@ player_init (player_type_t type,
   player->ao        = param ? param->ao       : PLAYER_AO_AUTO;
   player->vo        = param ? param->vo       : PLAYER_VO_AUTO;
   player->winid     = param ? param->winid    : 0;
+  player->x11_display = param ? param->display  : NULL;
   player->event_cb  = param ? param->event_cb : NULL;
   player->user_data = param ? param->data     : NULL;
   player->playlist  = pl_playlist_new (0, 0, PLAYER_LOOP_DISABLE);

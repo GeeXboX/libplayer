@@ -461,7 +461,7 @@ x11_connection (player_t *player, xcb_screen_t **screen)
 
   *screen = NULL;
 
-  conn = xcb_connect (NULL, &screen_num);
+  conn = xcb_connect (player->x11_display, &screen_num);
   if (!conn)
   {
     pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
@@ -620,7 +620,7 @@ pl_x11_init (player_t *player)
     if (vis)
     {
 #ifdef USE_XLIB_HACK
-      Display *display = XOpenDisplay (NULL);
+      Display *display = XOpenDisplay (player->x11_display);
 
       XSetEventQueueOwner (display, XlibOwnsEventQueue);
 

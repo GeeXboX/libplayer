@@ -252,6 +252,7 @@ struct player_s {
   player_vo_t   vo;     /* video output driver name     */
 
   struct x11_s *x11;    /* for X11 video out            */
+  const char   *x11_display;  /* for non-default display      */
   unsigned long winid;  /* embedded Window ID for X11   */
   int   x, y;           /* video position               */
   int   w, h;           /* video size                   */

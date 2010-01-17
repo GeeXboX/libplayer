@@ -168,6 +168,9 @@ typedef struct player_init_param_s {
   /** User data for event callback. */
   void *data;
 
+  /** Display to use with X11 video outputs. */
+  const char *display;
+
 } player_init_param_t;
 
 /**
