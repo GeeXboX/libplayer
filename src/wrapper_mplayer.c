@@ -28,7 +28,6 @@
 #include <unistd.h>       /* pipe fork close dup2 */
 #include <math.h>         /* rintf */
 #include <sys/wait.h>     /* waitpid */
-#include <signal.h>       /* sigaction */
 #include <pthread.h>      /* pthread_... */
 #include <semaphore.h>    /* sem_post sem_wait sem_init sem_destroy */
 
@@ -329,13 +328,6 @@ static const item_list_t g_slave_props[] = {
 static const unsigned int g_slave_cmds_nb = ARRAY_NB_ELEMENTS (g_slave_cmds);
 static const unsigned int g_slave_props_nb = ARRAY_NB_ELEMENTS (g_slave_props);
 
-
-static void
-sig_handler (int signal)
-{
-  if (signal == SIGPIPE)
-    fprintf (stderr, "SIGPIPE detected by the death of MPlayer\n");
-}
 
 /*****************************************************************************/
 /*                      Properties and Commands Utils                        */
@@ -2733,7 +2725,6 @@ mp_preinit_vo (player_t *player, uint32_t *winid)
 static init_status_t
 mplayer_init (player_t *player)
 {
-  struct sigaction action;
   mplayer_t *mplayer = NULL;
   char winid[32];
   uint32_t winid_l = 0;
@@ -2770,12 +2761,6 @@ mplayer_init (player_t *player)
 
   if (!mp_check_compatibility (player, CHECKLIST_PROPERTIES))
     return PLAYER_INIT_ERROR;
-
-  /* action for SIGPIPE */
-  action.sa_handler = sig_handler;
-  sigemptyset (&action.sa_mask);
-  action.sa_flags = 0;
-  sigaction (SIGPIPE, &action, NULL);
 
   use_x11 = mp_preinit_vo (player, &winid_l);
   if (use_x11 < 0)
