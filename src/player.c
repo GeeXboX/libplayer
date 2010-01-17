@@ -116,13 +116,17 @@ player_init (player_type_t type,
   player->type        = type;
   player->verbosity   = verbosity;
   player->state       = PLAYER_STATE_IDLE;
-  player->ao          = param ? param->ao       : PLAYER_AO_AUTO;
-  player->vo          = param ? param->vo       : PLAYER_VO_AUTO;
-  player->winid       = param ? param->winid    : 0;
-  player->x11_display = param ? param->display  : NULL;
-  player->event_cb    = param ? param->event_cb : NULL;
-  player->user_data   = param ? param->data     : NULL;
   player->playlist    = pl_playlist_new (0, 0, PLAYER_LOOP_DISABLE);
+
+  if (param)
+  {
+    player->ao          = param->ao;
+    player->vo          = param->vo;
+    player->winid       = param->winid;
+    player->x11_display = param->display;
+    player->event_cb    = param->event_cb;
+    player->user_data   = param->data;
+  }
 
   pthread_mutex_init (&player->mutex_verb, NULL);
 
