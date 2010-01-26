@@ -168,7 +168,13 @@ typedef struct player_init_param_s {
   /** User data for event callback. */
   void *data;
 
-  /** Display to use with X11 video outputs. */
+  /**
+   * Display to use with X11 video outputs.
+   *
+   * The string has to follow the same rules that the DISPLAY environment
+   * variable. If \p display is NULL, then the environment variable is
+   * considered.
+   */
   const char *display;
 
 } player_init_param_t;
