@@ -157,19 +157,6 @@ vlc_resource_get_uri (mrl_t *mrl)
     /* Local Streams */
     [MRL_RESOURCE_FILE]     = "file://",
 
-    /* Audio CD */
-    [MRL_RESOURCE_CDDA]     = "cdda://",
-    [MRL_RESOURCE_CDDB]     = "cddb://",
-
-    /* Video discs */
-    [MRL_RESOURCE_DVD]      = "dvd://",
-    [MRL_RESOURCE_DVDNAV]   = "dvdnav://",
-    [MRL_RESOURCE_VCD]      = "vcd://",
-
-    /* Radio/Television */
-    [MRL_RESOURCE_RADIO]    = "radio://",
-    [MRL_RESOURCE_TV]       = "tv://",
-
     /* Network Streams */
     [MRL_RESOURCE_FTP]      = "ftp://",
     [MRL_RESOURCE_HTTP]     = "http://",
