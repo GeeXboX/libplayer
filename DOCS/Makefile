@@ -7,6 +7,7 @@ EXTRADIST = \
 	Doxyfile \
 	event_handler-supervisor.txt \
 	libplayer.png \
+	libplayer.svg \
 	libplayer-internals.png \
 	libplayer-internals.svg \
 
