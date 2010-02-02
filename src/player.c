@@ -89,6 +89,12 @@ player_event_cb (void *data, int e)
   return res;
 }
 
+unsigned int
+libplayer_version (void)
+{
+  return LIBPLAYER_VERSION_INT;
+}
+
 /***************************************************************************/
 /*                                                                         */
 /* Player (Un)Initialization                                               */

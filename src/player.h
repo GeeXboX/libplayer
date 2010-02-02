@@ -90,6 +90,12 @@ extern "C" {
 #include <inttypes.h>
 #include <sys/types.h>
 
+/**
+ * \brief Return LIBPLAYER_VERSION_INT constant.
+ */
+unsigned int libplayer_version (void);
+
+
 /***************************************************************************/
 /*                                                                         */
 /* Player (Un)Initialization                                               */
