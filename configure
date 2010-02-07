@@ -883,8 +883,21 @@ check_cppflags -D_FILE_OFFSET_BITS=64
 check_cppflags -D_REENTRANT
 
 # default extralibs
-add_extralibs -lpthread
 add_extralibs -lm && add_pkgconfig_libs -lm
+
+#################################################
+#   check for functions availability
+#################################################
+
+# pthread
+check_lib pthread.h pthread_mutex_init -lpthread
+if [ "$?" != 0 ]; then
+  check_lib pthread.h pthread_mutex_init -lpthreadGC2
+  [ "$?" != 0 ] && die "Error, can't find pthread_mutex_init !"
+  add_pkgconfig_libs -lpthreadGC2
+else
+  add_pkgconfig_libs -lpthread
+fi
 
 #################################################
 #   check for debug symbols
