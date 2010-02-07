@@ -224,6 +224,10 @@ add_pkgconfig_requires(){
     append pkgconfig_requires "$@"
 }
 
+add_pkgconfig_libs(){
+    append pkgconfig_libs "$@"
+}
+
 check_cmd(){
     log "$@"
     "$@" >>$logfile 2>&1
@@ -371,6 +375,54 @@ check_libconfig_exists(){
     return $err
 }
 
+check_pkgconfig(){
+    local pkg func ccflags clibs err
+    log check_pkgconfig "$@"
+    pkg="$1"
+    func="$2"
+    ccflags="${3:---cflags}"
+    clibs="${4:---libs}"
+    err=1
+    if `which pkg-config 1>/dev/null 2>&1`; then
+      cflags=`pkg-config $pkg $ccflags`
+      [ -n "$cflags" ] && check_cflags "$cflags"
+      libs=`pkg-config $pkg $clibs`
+      if [ -n "$libs" ]; then
+        temp_extralibs "$libs"
+        check_func $func && add_extralibs "$libs"
+        err=$?
+        restore_flags
+      fi
+    fi
+    return $err
+}
+
+check_lib_pkgcfg(){
+    local pkg header func err
+    log check_lib_pkgcfg "$@"
+    pkg="$1"
+    header="$2"
+    func="$3"
+    shift 3
+    err=1
+    check_pkgconfig $pkg $func && add_pkgconfig_requires $pkg && err=0
+    [ "$err" != 0 ] && check_lib $header $func "$@" && add_pkgconfig_libs "$@" && err=0
+    return $err
+}
+
+check_lib_libcfg(){
+    local config header func err
+    log check_lib_pkgcfg "$@"
+    config="$1"
+    header="$2"
+    func="$3"
+    shift 3
+    err=1
+    check_libconfig $config $func && add_pkgconfig_libs "$@" && err=0
+    [ "$err" != 0 ] && check_lib $header $func "$@" && add_pkgconfig_libs "$@" && err=0
+    return $err
+}
+
 check_lib_version() {
     local min_ver toobig_ver
     min_ver="$2"
@@ -473,6 +525,7 @@ pic="no"
 INSTALL="install"
 VERSION=""
 pkgconfig_requires=""
+pkgconfig_libs=""
 logcolor="yes"
 doc="no"
 
@@ -831,7 +884,7 @@ check_cppflags -D_REENTRANT
 
 # default extralibs
 add_extralibs -lpthread
-add_extralibs -lm
+add_extralibs -lm && add_pkgconfig_libs -lm
 
 #################################################
 #   check for debug symbols
@@ -859,10 +912,8 @@ if test "$wrapper_xine" = "auto" -o "$wrapper_xine" = "yes"; then
     check_cppflags -I$libxinedir/include
     check_ldflags -L$libxinedir/lib
   fi
-  if [ -z "$libxinedir" ]; then
-    add_pkgconfig_deps libxine
-  fi
-  check_lib xine.h xine_init -lxine
+
+  check_lib_pkgcfg libxine xine.h xine_init -lxine
   if [ "$?" = 0 ]; then
     add_cppflags -DHAVE_XINE
     wrapper_xine="yes"
@@ -894,10 +945,8 @@ if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
     check_cppflags -I$libvlcdir/include
     check_ldflags -L$libvlcdir/lib
   fi
-  if [ -z "$libvlcdir" ]; then
-    add_pkgconfig_deps libvlc
-  fi
-  check_lib vlc/vlc.h libvlc_media_new -lvlc
+
+  check_lib_pkgcfg libvlc vlc/vlc.h libvlc_media_new -lvlc
   if [ "$?" = 0 ]; then
     add_cppflags -DHAVE_VLC
     wrapper_vlc="yes"
@@ -914,10 +963,8 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
     check_cppflags -I$libgstreamerdir/include
     check_ldflags -L$libgstreamerdir/lib
   fi
-  if [ -z "$libgstreamerdir" ]; then
-    add_pkgconfig_deps gstreamer-0.10
-  fi
-  check_lib gst/gst.h gst_init -lgstreamer-0.10
+
+  check_lib_pkgcfg gstreamer-0.10 gst/gst.h gst_init -lgstreamer-0.10
   if [ "$?" = 0 ]; then
     add_cppflags -DHAVE_GSTREAMER
     wrapper_gstreamer="yes"
@@ -935,10 +982,8 @@ if test "$x11" = "auto" -o "$x11" = "yes"; then
       check_cppflags -I$libxcbdir/include
       check_ldflags -L$libxcbdir/lib
     fi
-    if [ -z "$libxcbdir" ]; then
-      add_pkgconfig_deps xcb
-    fi
-    check_lib xcb/xcb.h xcb_generate_id -lxcb
+
+    check_lib_pkgcfg xcb xcb/xcb.h xcb_generate_id -lxcb
     if [ "$?" = 0 ]; then
       add_cppflags -DUSE_X11
       x11="yes"
@@ -963,8 +1008,8 @@ if test "$xlib_hack" = "auto" -o "$xlib_hack" = "yes"; then
   xlib_hack="no"
   if test "$x11" = "yes" -a "$wrapper_xine" = "yes"; then
     echolog "Checking for libX11-xcb ..."
-    add_pkgconfig_deps x11-xcb
-    check_lib X11/Xlib-xcb.h xcb_generate_id -lX11-xcb -lX11 -lxcb
+
+    check_lib_pkgcfg x11-xcb X11/Xlib-xcb.h xcb_generate_id -lX11-xcb -lX11 -lxcb
     if [ "$?" = 0 ]; then
       add_cppflags -DUSE_XLIB_HACK
       xlib_hack="yes"
@@ -1113,7 +1158,7 @@ pkgconfig_generate libplayer \
                    "A multimedia A/V abstraction layer library" \
                    "$VERSION" \
                    "-lplayer" \
-                   "$extralibs" \
+                   "$pkgconfig_libs" \
                    "" \
                    "" \
                    "$pkgconfig_requires"
