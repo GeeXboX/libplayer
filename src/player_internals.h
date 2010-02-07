@@ -23,6 +23,8 @@
 #ifndef PLAYER_INTERNALS_H
 #define PLAYER_INTERNALS_H
 
+#include <pthread.h>
+
 struct x11_s;
 struct playlist_s;
 struct event_handler_s;
