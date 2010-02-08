@@ -389,7 +389,7 @@ check_pkgconfig(){
       libs=`pkg-config $pkg $clibs`
       if [ -n "$libs" ]; then
         temp_extralibs "$libs"
-        check_func $func && add_extralibs "$libs"
+        check_func $func
         err=$?
         restore_flags
       fi
@@ -1058,6 +1058,10 @@ if enabled doc; then
   which doxygen 2>&1 > /dev/null
   [ "$?" = 0 ] && doc="yes"
 fi
+
+# Add all extralibs provided by the pkgconfig files
+add_extralibs `pkg-config $pkgconfig_requires --libs`
+
 
 #################################################
 #   logging result
