@@ -1146,9 +1146,9 @@ else
 fi
 append_config "EXTRALIBS=$extralibs"
 
-append_config "CPPFLAGS=$CPPFLAGS"
+append_config "override CPPFLAGS += $CPPFLAGS"
 append_config "OPTFLAGS=$CFLAGS"
-append_config "LDFLAGS=$LDFLAGS"
+append_config "override LDFLAGS += $LDFLAGS"
 append_config "INSTALL=$INSTALL"
 
 if enabled bigendian; then
