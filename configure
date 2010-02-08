@@ -1060,7 +1060,7 @@ if enabled doc; then
 fi
 
 # Add all extralibs provided by the pkgconfig files
-add_extralibs `pkg-config $pkgconfig_requires --libs`
+[ -n "$pkgconfig_requires" ] && add_extralibs `pkg-config $pkgconfig_requires --libs`
 
 
 #################################################
