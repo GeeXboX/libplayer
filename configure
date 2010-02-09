@@ -410,6 +410,19 @@ check_lib_pkgcfg(){
     return $err
 }
 
+check_lib_pkgcfg_minversion(){
+    local pkg version err
+    log check_lib_pkgcf_minversiong "$@"
+    pkg="$1"
+    version="$2"
+    shift 2
+    err=1
+    if `which pkg-config 1>/dev/null 2>&1`; then
+      pkg-config --atleast-version=$version $pkg && err=0
+    fi
+    return $err
+}
+
 check_lib_libcfg(){
     local config header func err
     log check_lib_pkgcfg "$@"
