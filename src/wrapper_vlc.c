@@ -44,7 +44,6 @@
 typedef struct vlc_s {
   libvlc_instance_t *core;
   libvlc_media_player_t *mp;
-  libvlc_exception_t ex;
 } vlc_t;
 
 static const libvlc_event_type_t mp_events[] = {
@@ -87,26 +86,6 @@ vlc_event_callback (const libvlc_event_t *ev, void *data)
             "Unknown event received: %s", libvlc_event_type_name (type));
     break;
   }
-}
-
-static void
-vlc_check_exception (player_t *player)
-{
-  vlc_t *vlc;
-
-  if (!player)
-    return;
-
-  vlc = (vlc_t *) player->priv;
-  if (!vlc)
-    return;
-
-  if (!libvlc_exception_raised (&vlc->ex))
-    return;
-
-  pl_log (player, PLAYER_MSG_WARNING,
-          MODULE_NAME, libvlc_exception_get_message (&vlc->ex));
-  libvlc_exception_clear (&vlc->ex);
 }
 
 static char *
@@ -207,16 +186,15 @@ vlc_resource_get_uri (mrl_t *mrl)
 /*****************************************************************************/
 
 static void
-vlc_identify_metadata (mrl_t *mrl, libvlc_media_player_t *mp,
-                       libvlc_exception_t *ex)
+vlc_identify_metadata (mrl_t *mrl, libvlc_media_player_t *mp)
 {
   mrl_metadata_t *meta;
   libvlc_media_t *media;
 
-  if (!mp || !ex || !mrl || !mrl->meta)
+  if (!mp || !mrl || !mrl->meta)
     return;
 
-  media = libvlc_media_player_get_media (mp, ex);
+  media = libvlc_media_player_get_media (mp);
   if (!media)
     return;
 
@@ -224,35 +202,33 @@ vlc_identify_metadata (mrl_t *mrl, libvlc_media_player_t *mp,
   if (!meta)
     return;
 
-  meta->title   = libvlc_media_get_meta (media, libvlc_meta_Title,       ex);
-  meta->artist  = libvlc_media_get_meta (media, libvlc_meta_Artist,      ex);
-  meta->genre   = libvlc_media_get_meta (media, libvlc_meta_Genre,       ex);
-  meta->album   = libvlc_media_get_meta (media, libvlc_meta_Album,       ex);
-  meta->year    = libvlc_media_get_meta (media, libvlc_meta_Date,        ex);
-  meta->track   = libvlc_media_get_meta (media, libvlc_meta_TrackNumber, ex);
-  meta->comment = libvlc_media_get_meta (media, libvlc_meta_Description, ex);
+  meta->title   = libvlc_media_get_meta (media, libvlc_meta_Title);
+  meta->artist  = libvlc_media_get_meta (media, libvlc_meta_Artist);
+  meta->genre   = libvlc_media_get_meta (media, libvlc_meta_Genre);
+  meta->album   = libvlc_media_get_meta (media, libvlc_meta_Album);
+  meta->year    = libvlc_media_get_meta (media, libvlc_meta_Date);
+  meta->track   = libvlc_media_get_meta (media, libvlc_meta_TrackNumber);
+  meta->comment = libvlc_media_get_meta (media, libvlc_meta_Description);
 }
 
 static void
-vlc_identify_audio (pl_unused mrl_t *mrl, pl_unused libvlc_media_player_t *mp,
-                    pl_unused libvlc_exception_t *ex)
+vlc_identify_audio (pl_unused mrl_t *mrl, pl_unused libvlc_media_player_t *mp)
 {
   /* VLC API is not yet complete enough to retrieve these info */
 }
 
 static void
-vlc_identify_video (mrl_t *mrl, libvlc_media_player_t *mp,
-                    libvlc_exception_t *ex)
+vlc_identify_video (mrl_t *mrl, libvlc_media_player_t *mp)
 {
   mrl_properties_video_t *video;
   libvlc_track_description_t *tracks, *t;
   float val;
 
-  if (!mrl || !mrl->prop || !mp || !ex)
+  if (!mrl || !mrl->prop || !mp)
     return;
 
   /* check if MRL actually has video stream */
-  if (!libvlc_media_player_has_vout (mp, ex))
+  if (!libvlc_media_player_has_vout (mp))
     return;
 
   if (!mrl->prop->video)
@@ -260,13 +236,13 @@ vlc_identify_video (mrl_t *mrl, libvlc_media_player_t *mp,
 
   video = mrl->prop->video;
 
-  video->width   = libvlc_video_get_width (mp, ex);
-  video->height  = libvlc_video_get_height (mp, ex);
-  video->aspect  = (uint32_t) (pl_atof (libvlc_video_get_aspect_ratio (mp, ex))
+  video->width   = libvlc_video_get_width (mp);
+  video->height  = libvlc_video_get_height (mp);
+  video->aspect  = (uint32_t) (pl_atof (libvlc_video_get_aspect_ratio (mp))
                                * PLAYER_VIDEO_ASPECT_RATIO_MULT);
 
   video->streams = 0;
-  tracks = libvlc_video_get_track_description (mp, ex);
+  tracks = libvlc_video_get_track_description (mp);
   t = tracks;
   while (t)
   {
@@ -275,21 +251,20 @@ vlc_identify_video (mrl_t *mrl, libvlc_media_player_t *mp,
   }
   libvlc_track_description_release (tracks);
 
-  val = libvlc_media_player_get_fps (mp, ex);
+  val = libvlc_media_player_get_fps (mp);
   video->frameduration =
     (uint32_t) (val ? PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV / val : 0);
 }
 
 static void
-vlc_identify_properties (mrl_t *mrl, libvlc_media_player_t *mp,
-                         libvlc_exception_t *ex)
+vlc_identify_properties (mrl_t *mrl, libvlc_media_player_t *mp)
 {
-  if (!mrl || !mrl->prop || !mp || !ex)
+  if (!mrl || !mrl->prop || !mp)
     return;
 
-  mrl->prop->seekable = libvlc_media_player_is_seekable (mp, ex);
+  mrl->prop->seekable = libvlc_media_player_is_seekable (mp);
 
-  mrl->prop->length = (uint32_t) libvlc_media_player_get_length (mp, ex);
+  mrl->prop->length = (uint32_t) libvlc_media_player_get_length (mp);
 }
 
 static void
@@ -315,19 +290,19 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   if (!uri)
     return;
 
-  mp = libvlc_media_player_new (vlc->core, &vlc->ex);
+  mp = libvlc_media_player_new (vlc->core);
   if (!mp)
     goto err_mp;
 
-  media = libvlc_media_new (vlc->core, uri, &vlc->ex);
+  media = libvlc_media_new (vlc->core, uri);
   if (!media)
     goto err_media;
 
   for (i = 0; i < ARRAY_NB_ELEMENTS (options); i++)
-    libvlc_media_add_option (media, options[i], &vlc->ex);
+    libvlc_media_add_option (media, options[i]);
 
-  libvlc_media_player_set_media (mp, media, &vlc->ex);
-  libvlc_media_player_play (mp, &vlc->ex);
+  libvlc_media_player_set_media (mp, media);
+  libvlc_media_player_play (mp);
 
   /*
    * FIXME
@@ -339,7 +314,7 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
    */
   while (st <= libvlc_Buffering)
   {
-    st = libvlc_media_player_get_state (mp, &vlc->ex);
+    st = libvlc_media_player_get_state (mp);
     usleep (WAIT_PERIOD);
     wait += WAIT_PERIOD;
     if (wait >= WAIT_MAX)
@@ -347,18 +322,18 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   }
 
   if (flags & IDENTIFY_VIDEO)
-    vlc_identify_video (mrl, mp, &vlc->ex);
+    vlc_identify_video (mrl, mp);
 
   if (flags & IDENTIFY_AUDIO)
-    vlc_identify_audio (mrl, mp, &vlc->ex);
+    vlc_identify_audio (mrl, mp);
 
   if (flags & IDENTIFY_METADATA)
-    vlc_identify_metadata (mrl, mp, &vlc->ex);
+    vlc_identify_metadata (mrl, mp);
 
   if (flags & IDENTIFY_PROPERTIES)
-    vlc_identify_properties (mrl, mp, &vlc->ex);
+    vlc_identify_properties (mrl, mp);
 
-  libvlc_media_player_stop (mp, &vlc->ex);
+  libvlc_media_player_stop (mp);
   libvlc_media_release (media);
 
  err_media:
@@ -448,25 +423,23 @@ vlc_init (player_t *player)
   }
 
   vlc = (vlc_t *) player->priv;
-  libvlc_exception_init (&vlc->ex);
-  vlc->core = libvlc_new (vlc_argc, vlc_argv, &vlc->ex);
-  vlc_check_exception (player);
+  vlc->core = libvlc_new (vlc_argc, vlc_argv);
 
   if (!vlc->core)
     return PLAYER_INIT_ERROR;
 
-  vlc->mp = libvlc_media_player_new (vlc->core, &vlc->ex);
+  vlc->mp = libvlc_media_player_new (vlc->core);
   if (!vlc->mp)
     return PLAYER_INIT_ERROR;
 
   /* register the event manager */
-  ev = libvlc_media_player_event_manager (vlc->mp, &vlc->ex);
+  ev = libvlc_media_player_event_manager (vlc->mp);
   if (!ev)
     return PLAYER_INIT_ERROR;
 
   for (i = 0; i < (sizeof (mp_events) / sizeof (*mp_events)); i++)
     libvlc_event_attach (ev, mp_events[i],
-                         vlc_event_callback, player, &vlc->ex);
+                         vlc_event_callback, player);
 
   return PLAYER_INIT_OK;
 }
@@ -486,7 +459,6 @@ vlc_uninit (player_t *player)
   if (!vlc)
     return;
 
-  libvlc_exception_clear (&vlc->ex);
   if (vlc->core)
     libvlc_release (vlc->core);
   if (vlc->mp)
@@ -528,7 +500,7 @@ vlc_set_verbosity (player_t *player, player_verbosity_level_t level)
   }
 
   if (vlc->core && verbosity != -1)
-    libvlc_set_log_verbosity (vlc->core, verbosity, &vlc->ex);
+    libvlc_set_log_verbosity (vlc->core, verbosity);
 }
 
 static void
@@ -585,13 +557,13 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
   if (!vlc || !vlc->mp)
     return;
 
-  if (!libvlc_media_player_has_vout (vlc->mp, &vlc->ex))
+  if (!libvlc_media_player_has_vout (vlc->mp))
     return;
 
-  width  = libvlc_video_get_width  (vlc->mp, &vlc->ex);
-  height = libvlc_video_get_height (vlc->mp, &vlc->ex);
+  width  = libvlc_video_get_width  (vlc->mp);
+  height = libvlc_video_get_height (vlc->mp);
 
-  libvlc_video_take_snapshot (vlc->mp, dst, width, height, &vlc->ex);
+  libvlc_video_take_snapshot (vlc->mp, 0, dst, width, height);
 }
 
 static int
@@ -609,7 +581,7 @@ vlc_get_time_pos (player_t *player)
   if (!vlc || !vlc->mp)
     return -1;
 
-  time_pos = libvlc_media_player_get_time (vlc->mp, &vlc->ex);
+  time_pos = libvlc_media_player_get_time (vlc->mp);
 
   return (time_pos < 0.0) ? -1: (int) time_pos;
 }
@@ -629,7 +601,7 @@ vlc_get_percent_pos (player_t *player)
   if (!vlc || !vlc->mp)
     return -1;
 
-  pos = libvlc_media_player_get_position (vlc->mp, &vlc->ex);
+  pos = libvlc_media_player_get_position (vlc->mp);
   return (pos < 0.0) ? -1 : (int) (pos * 100.0);
 }
 
@@ -662,14 +634,14 @@ vlc_playback_start (player_t *player)
     return PLAYER_PB_ERROR;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "uri: %s", uri);
-  media = libvlc_media_new (vlc->core, uri, &vlc->ex);
+  media = libvlc_media_new (vlc->core, uri);
   free (uri);
 
   if (!media)
     return PLAYER_PB_ERROR;
 
-  libvlc_media_player_set_media (vlc->mp, media, &vlc->ex);
-  libvlc_media_player_play (vlc->mp, &vlc->ex);
+  libvlc_media_player_set_media (vlc->mp, media);
+  libvlc_media_player_play (vlc->mp);
 
   return PLAYER_PB_OK;
 }
@@ -689,8 +661,8 @@ vlc_playback_stop (player_t *player)
   if (!vlc || !vlc->mp)
     return;
 
-  media = libvlc_media_player_get_media (vlc->mp, &vlc->ex);
-  libvlc_media_player_stop (vlc->mp, &vlc->ex);
+  media = libvlc_media_player_get_media (vlc->mp);
+  libvlc_media_player_stop (vlc->mp);
   libvlc_media_release (media);
 }
 
@@ -708,11 +680,11 @@ vlc_playback_pause (player_t *player)
   if (!vlc || !vlc->mp)
     return PLAYER_PB_FATAL;
 
-  if (libvlc_media_player_is_playing (vlc->mp, &vlc->ex) &&
-      libvlc_media_player_can_pause (vlc->mp, &vlc->ex))
-    libvlc_media_player_pause (vlc->mp, &vlc->ex);
+  if (libvlc_media_player_is_playing (vlc->mp) &&
+      libvlc_media_player_can_pause (vlc->mp))
+    libvlc_media_player_pause (vlc->mp);
   else
-    libvlc_media_player_play (vlc->mp, &vlc->ex);
+    libvlc_media_player_play (vlc->mp);
 
   return PLAYER_PB_OK;
 }
@@ -739,8 +711,8 @@ vlc_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   {
     libvlc_time_t pos_time, length;
 
-    length = libvlc_media_player_get_length (vlc->mp, &vlc->ex);
-    pos_time = libvlc_media_player_get_time (vlc->mp, &vlc->ex);
+    length = libvlc_media_player_get_length (vlc->mp);
+    pos_time = libvlc_media_player_get_time (vlc->mp);
     pos_time += value * 1000;
 
     if (pos_time < 0)
@@ -748,14 +720,14 @@ vlc_playback_seek (player_t *player, int value, player_pb_seek_t seek)
     if (pos_time > length)
       break;
 
-    libvlc_media_player_set_time (vlc->mp, pos_time, &vlc->ex);
+    libvlc_media_player_set_time (vlc->mp, pos_time);
     break;
   }
   case PLAYER_PB_SEEK_PERCENT:
-    libvlc_media_player_set_position (vlc->mp, value / 100.0, &vlc->ex);
+    libvlc_media_player_set_position (vlc->mp, value / 100.0);
     break;
   case PLAYER_PB_SEEK_ABSOLUTE:
-    libvlc_media_player_set_time (vlc->mp, (value * 1000), &vlc->ex);
+    libvlc_media_player_set_time (vlc->mp, (value * 1000));
     break;
   }
 }
@@ -777,12 +749,12 @@ vlc_playback_seek_chapter (player_t *player, int value, int absolute)
     return;
 
   chapter = absolute ? value :
-    libvlc_media_player_get_chapter (vlc->mp, &vlc->ex) + value;
+    libvlc_media_player_get_chapter (vlc->mp) + value;
 
-  if (chapter > libvlc_media_player_get_chapter_count (vlc->mp, &vlc->ex))
+  if (chapter > libvlc_media_player_get_chapter_count (vlc->mp))
     return;
 
-  libvlc_media_player_set_chapter (vlc->mp, chapter, &vlc->ex);
+  libvlc_media_player_set_chapter (vlc->mp, chapter);
 }
 
 static void
@@ -800,7 +772,7 @@ vlc_playback_set_speed (player_t *player, float value)
   if (!vlc || !vlc->mp)
     return;
 
-  libvlc_media_player_set_rate (vlc->mp, value, &vlc->ex);
+  libvlc_media_player_set_rate (vlc->mp, value);
 }
 
 static int
@@ -815,7 +787,7 @@ vlc_audio_get_volume (player_t *player)
     return volume;
 
   vlc = (vlc_t *) player->priv;
-  volume = libvlc_audio_get_volume (vlc->core, &vlc->ex);
+  volume = libvlc_audio_get_volume (vlc->mp);
 
   return (volume < 0) ? -1 : volume;
 }
@@ -832,7 +804,7 @@ vlc_audio_set_volume (player_t *player, int value)
     return;
 
   vlc = (vlc_t *) player->priv;
-  libvlc_audio_set_volume (vlc->core, value, &vlc->ex);
+  libvlc_audio_set_volume (vlc->mp, value);
 }
 
 static player_mute_t
@@ -847,7 +819,7 @@ vlc_audio_get_mute (player_t *player)
     return mute;
 
   vlc = (vlc_t *) player->priv;
-  mute = libvlc_audio_get_mute (vlc->core, &vlc->ex) ?
+  mute = libvlc_audio_get_mute (vlc->mp) ?
     PLAYER_MUTE_ON : PLAYER_MUTE_OFF;
 
   return mute;
@@ -872,7 +844,7 @@ vlc_audio_set_mute (player_t *player, player_mute_t value)
     return;
 
   vlc = (vlc_t *) player->priv;
-  libvlc_audio_set_mute (vlc->core, mute , &vlc->ex);
+  libvlc_audio_set_mute (vlc->mp, mute);
 }
 
 static void
@@ -906,7 +878,7 @@ vlc_video_set_ar (player_t *player, float value)
   else
     return;
 
-  libvlc_video_set_aspect_ratio (vlc->mp, ar, &vlc->ex);
+  libvlc_video_set_aspect_ratio (vlc->mp, ar);
 }
 
 static void
@@ -924,13 +896,13 @@ vlc_sub_select (player_t *player, int value)
   if (!vlc || !vlc->mp)
     return;
 
-  max = libvlc_video_get_spu_count (vlc->mp, &vlc->ex);
+  max = libvlc_video_get_spu_count (vlc->mp);
   if (value < 0)
     value = 0;
   if (value > max)
     value = max;
 
-  libvlc_video_set_spu (vlc->mp, value, &vlc->ex);
+  libvlc_video_set_spu (vlc->mp, value);
 }
 
 static void
@@ -948,15 +920,15 @@ vlc_sub_prev (player_t *player)
   if (!vlc || !vlc->mp)
     return;
 
-  cur = libvlc_video_get_spu (vlc->mp, &vlc->ex);
-  max = libvlc_video_get_spu_count (vlc->mp, &vlc->ex);
+  cur = libvlc_video_get_spu (vlc->mp);
+  max = libvlc_video_get_spu_count (vlc->mp);
   val = cur - 1;
 
   /* if current is first one, just cycle */
   if (val < 0)
     val = max;
 
-  libvlc_video_set_spu (vlc->mp, val, &vlc->ex);
+  libvlc_video_set_spu (vlc->mp, val);
 }
 
 static void
@@ -974,15 +946,15 @@ vlc_sub_next (player_t *player)
   if (!vlc || !vlc->mp)
     return;
 
-  cur = libvlc_video_get_spu (vlc->mp, &vlc->ex);
-  max = libvlc_video_get_spu_count (vlc->mp, &vlc->ex);
+  cur = libvlc_video_get_spu (vlc->mp);
+  max = libvlc_video_get_spu_count (vlc->mp);
   val = cur + 1;
 
   /* if current is last one, just cycle */
   if (val > max)
     val = 0;
 
-  libvlc_video_set_spu (vlc->mp, val, &vlc->ex);
+  libvlc_video_set_spu (vlc->mp, val);
 }
 
 static void
@@ -1002,10 +974,10 @@ vlc_dvd_title_set (player_t *player, int value)
   if (value < 1 || value > 99)
     return;
 
-  if (value > libvlc_media_player_get_title_count (vlc->mp, &vlc->ex))
+  if (value > libvlc_media_player_get_title_count (vlc->mp))
     return;
 
-  libvlc_media_player_set_title (vlc->mp, value, &vlc->ex);
+  libvlc_media_player_set_title (vlc->mp, value);
 }
 
 static void
@@ -1023,7 +995,7 @@ vlc_dvd_title_prev (player_t *player)
   if (!vlc || !vlc->mp)
     return;
 
-  value = libvlc_media_player_get_title_count (vlc->mp, &vlc->ex) - 1;
+  value = libvlc_media_player_get_title_count (vlc->mp) - 1;
   vlc_dvd_title_set (player, value);
 }
 
@@ -1042,7 +1014,7 @@ vlc_dvd_title_next (player_t *player)
   if (!vlc || !vlc->mp)
     return;
 
-  value = libvlc_media_player_get_title_count (vlc->mp, &vlc->ex) + 1;
+  value = libvlc_media_player_get_title_count (vlc->mp) + 1;
   vlc_dvd_title_set (player, value);
 }
 
