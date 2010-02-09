@@ -455,6 +455,9 @@ vlc_init (player_t *player)
   if (!vlc->mp)
     return PLAYER_INIT_ERROR;
 
+  libvlc_video_set_key_input   (vlc->mp, 0);
+  libvlc_video_set_mouse_input (vlc->mp, 0);
+
   /* register the event manager */
   ev = libvlc_media_player_event_manager (vlc->mp);
   if (!ev)
