@@ -212,23 +212,32 @@ vlc_identify_metadata (mrl_t *mrl, libvlc_media_player_t *mp)
 }
 
 static void
-vlc_identify_audio (pl_unused mrl_t *mrl, pl_unused libvlc_media_player_t *mp)
+vlc_identify_audio (mrl_t *mrl,
+                    libvlc_media_player_t *mp, libvlc_media_es_t *es)
 {
-  /* VLC API is not yet complete enough to retrieve these info */
+  mrl_properties_audio_t *audio;
+
+  if (!mrl || !mrl->prop || !mp || !es)
+    return;
+
+  if (!mrl->prop->audio)
+    mrl->prop->audio = mrl_properties_audio_new ();
+
+  audio = mrl->prop->audio;
+
+  audio->bitrate  = es->i_rate;
+  audio->channels = es->i_channels;
 }
 
 static void
-vlc_identify_video (mrl_t *mrl, libvlc_media_player_t *mp)
+vlc_identify_video (mrl_t *mrl,
+                    libvlc_media_player_t *mp, libvlc_media_es_t *es)
 {
   mrl_properties_video_t *video;
   libvlc_track_description_t *tracks, *t;
   float val;
 
-  if (!mrl || !mrl->prop || !mp)
-    return;
-
-  /* check if MRL actually has video stream */
-  if (!libvlc_media_player_has_vout (mp))
+  if (!mrl || !mrl->prop || !mp || !es)
     return;
 
   if (!mrl->prop->video)
@@ -236,8 +245,8 @@ vlc_identify_video (mrl_t *mrl, libvlc_media_player_t *mp)
 
   video = mrl->prop->video;
 
-  video->width   = libvlc_video_get_width (mp);
-  video->height  = libvlc_video_get_height (mp);
+  video->width   = es->i_width;
+  video->height  = es->i_height;
   video->aspect  = (uint32_t) (pl_atof (libvlc_video_get_aspect_ratio (mp))
                                * PLAYER_VIDEO_ASPECT_RATIO_MULT);
 
@@ -275,9 +284,12 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   char *uri = NULL;
   vlc_t *vlc;
   const char *options[] = { ":vout=dummy", ":aout=dummy" };
+  libvlc_media_es_t *esv = NULL, *esa = NULL;
+  libvlc_media_es_t **es = NULL;
   libvlc_state_t st = libvlc_NothingSpecial;
   int wait = 0;
   unsigned int i;
+  unsigned int es_count;
 
   if (!player || !mrl)
     return;
@@ -321,11 +333,20 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
       break;
   }
 
+  es_count = libvlc_media_get_es (media, es);
+  for (i = 0; i < es_count; i++)
+  {
+    if (!esv && es[i]->i_type == libvlc_es_video)
+      esv = es[i];
+    else if (!esa && es[i]->i_type == libvlc_es_audio)
+      esa = es[i];
+  }
+
   if (flags & IDENTIFY_VIDEO)
-    vlc_identify_video (mrl, mp);
+    vlc_identify_video (mrl, mp, esv);
 
   if (flags & IDENTIFY_AUDIO)
-    vlc_identify_audio (mrl, mp);
+    vlc_identify_audio (mrl, mp, esa);
 
   if (flags & IDENTIFY_METADATA)
     vlc_identify_metadata (mrl, mp);
@@ -372,6 +393,8 @@ vlc_init (player_t *player)
   vlc_argv[vlc_argc++] = "--no-one-instance";
   vlc_argv[vlc_argc++] = "--no-osd";
   vlc_argv[vlc_argc++] = "--no-video-title-show" ;
+  vlc_argv[vlc_argc++] = "--sout";
+  vlc_argv[vlc_argc++] = "#description";
 
   /* select the video output */
   switch (player->vo)
@@ -547,6 +570,11 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
 {
   vlc_t *vlc;
   unsigned int width, height;
+  libvlc_media_es_t **es = NULL;
+  libvlc_media_es_t *esv = NULL;
+  libvlc_media_t *media;
+  unsigned int es_count;
+  unsigned int i;
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_video_snapshot");
 
@@ -557,11 +585,23 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
   if (!vlc || !vlc->mp)
     return;
 
-  if (!libvlc_media_player_has_vout (vlc->mp))
+  media = libvlc_media_player_get_media (vlc->mp);
+  if (!media)
     return;
 
-  width  = libvlc_video_get_width  (vlc->mp);
-  height = libvlc_video_get_height (vlc->mp);
+  es_count = libvlc_media_get_es (media, es);
+  for (i = 0; i < es_count; i++)
+    if (es[i]->i_type == libvlc_es_video)
+    {
+      esv = es[i];
+      break;
+    }
+
+  if (!esv)
+    return;
+
+  width  = esv->i_width;
+  height = esv->i_height;
 
   libvlc_video_take_snapshot (vlc->mp, 0, dst, width, height);
 }
