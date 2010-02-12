@@ -19,14 +19,14 @@ PLTESTVDR_SRCS = libplayer-testvdr.c
 PLTESTVDR_OBJS = $(PLTESTVDR_SRCS:.c=.o)
 PLTESTVDR_MAN = $(PLTESTVDR).1
 
-MANS = $(PLREGTEST_MAN) $(PLTEST_MAN) $(PLTESTVDR_MAN)
+APPS_CPPFLAGS = $(CPPFLAGS) -Isrc
+APPS_LDFLAGS = $(LDFLAGS) -Lsrc -lplayer
 
-override CPPFLAGS += -Isrc
-override LDFLAGS += -Lsrc -lplayer
+MANS = $(PLREGTEST_MAN) $(PLTEST_MAN) $(PLTESTVDR_MAN)
 
 ifeq ($(BUILD_STATIC),yes)
 ifeq ($(BUILD_SHARED),no)
-  override LDFLAGS += $(EXTRALIBS)
+  APPS_LDFLAGS += $(EXTRALIBS)
 endif
 endif
 
@@ -54,7 +54,7 @@ SUBDIRS = \
 all: lib apps docs bindings
 
 .c.o:
-	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(APPS_CPPFLAGS) -o $@ $<
 
 config.mak: configure
 	@echo "############################################################"
@@ -65,16 +65,16 @@ lib:
 	$(MAKE) -C src
 
 $(PLREGTEST): $(PLREGTEST_OBJS)
-	$(CC) $(PLREGTEST_OBJS) $(LDFLAGS) -lpthread -o $(PLREGTEST)
+	$(CC) $(PLREGTEST_OBJS) $(APPS_LDFLAGS) -lpthread -o $(PLREGTEST)
 $(PLTEST): $(PLTEST_OBJS)
-	$(CC) $(PLTEST_OBJS) $(LDFLAGS) -o $(PLTEST)
+	$(CC) $(PLTEST_OBJS) $(APPS_LDFLAGS) -o $(PLTEST)
 $(PLTESTVDR): $(PLTESTVDR_OBJS)
-	$(CC) $(PLTESTVDR_OBJS) $(LDFLAGS) -o $(PLTESTVDR)
+	$(CC) $(PLTESTVDR_OBJS) $(APPS_LDFLAGS) -o $(PLTESTVDR)
 
 apps-dep:
-	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(PLREGTEST_SRCS) 1>.depend
-	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(PLTEST_SRCS) 1>>.depend
-	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(PLTESTVDR_SRCS) 1>>.depend
+	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(PLREGTEST_SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(PLTEST_SRCS) 1>>.depend
+	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(PLTESTVDR_SRCS) 1>>.depend
 
 apps-all: $(PLREGTEST) $(PLTEST) $(PLTESTVDR)
 
