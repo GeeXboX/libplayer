@@ -360,6 +360,9 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   libvlc_media_player_stop (mp);
   libvlc_media_release (media);
 
+  if (es)
+    free (es);
+
  err_media:
   libvlc_media_player_release (mp);
  err_mp:
