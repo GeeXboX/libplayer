@@ -598,6 +598,11 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
   if (!media)
     return;
 
+  /*
+   * FIXME
+   * Like vlc_identify and according to the documentation of libvlc, the media
+   * must be played at least one time, else ES array will be empty.
+   */
   es_count = libvlc_media_get_es (media, &es);
   for (i = 0; i < es_count; i++)
     if (es[i].i_type == libvlc_es_video)
