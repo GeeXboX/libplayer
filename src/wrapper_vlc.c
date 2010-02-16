@@ -285,7 +285,7 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   vlc_t *vlc;
   const char *options[] = { ":vout=dummy", ":aout=dummy" };
   libvlc_media_es_t *esv = NULL, *esa = NULL;
-  libvlc_media_es_t **es = NULL;
+  libvlc_media_es_t *es = NULL;
   libvlc_state_t st = libvlc_NothingSpecial;
   int wait = 0;
   unsigned int i;
@@ -333,13 +333,13 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
       break;
   }
 
-  es_count = libvlc_media_get_es (media, es);
+  es_count = libvlc_media_get_es (media, &es);
   for (i = 0; i < es_count; i++)
   {
-    if (!esv && es[i]->i_type == libvlc_es_video)
-      esv = es[i];
-    else if (!esa && es[i]->i_type == libvlc_es_audio)
-      esa = es[i];
+    if (!esv && es[i].i_type == libvlc_es_video)
+      esv = es + i;
+    else if (!esa && es[i].i_type == libvlc_es_audio)
+      esa = es + i;
   }
 
   if (flags & IDENTIFY_VIDEO)
