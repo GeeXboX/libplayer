@@ -286,7 +286,11 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   libvlc_media_t *media;
   char *uri = NULL;
   vlc_t *vlc;
-  const char *options[] = { ":vout=dummy", ":aout=dummy", ":sout=#description" };
+  const char *options[] = {
+    ":vout=dummy",
+    ":aout=dummy",
+    ":sout=#description",
+  };
   libvlc_media_es_t *esv = NULL, *esa = NULL;
   libvlc_media_es_t *es = NULL;
   libvlc_state_t st = libvlc_NothingSpecial;
