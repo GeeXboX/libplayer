@@ -235,6 +235,7 @@ vlc_identify_video (mrl_t *mrl,
 {
   mrl_properties_video_t *video;
   libvlc_track_description_t *tracks, *t;
+  const char *ar;
   float val;
 
   if (!mrl || !mrl->prop || !mp || !es)
@@ -247,8 +248,10 @@ vlc_identify_video (mrl_t *mrl,
 
   video->width   = es->i_width;
   video->height  = es->i_height;
-  video->aspect  = (uint32_t) (pl_atof (libvlc_video_get_aspect_ratio (mp))
-                               * PLAYER_VIDEO_ASPECT_RATIO_MULT);
+
+  ar = libvlc_video_get_aspect_ratio (mp);
+  if (ar)
+    video->aspect = (uint32_t) (pl_atof (ar) * PLAYER_VIDEO_ASPECT_RATIO_MULT);
 
   video->streams = 0;
   tracks = libvlc_video_get_track_description (mp);
