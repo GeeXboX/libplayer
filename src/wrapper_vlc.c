@@ -579,7 +579,7 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
 {
   vlc_t *vlc;
   unsigned int width, height;
-  libvlc_media_es_t **es = NULL;
+  libvlc_media_es_t *es = NULL;
   libvlc_media_es_t *esv = NULL;
   libvlc_media_t *media;
   unsigned int es_count;
@@ -598,21 +598,25 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
   if (!media)
     return;
 
-  es_count = libvlc_media_get_es (media, es);
+  es_count = libvlc_media_get_es (media, &es);
   for (i = 0; i < es_count; i++)
-    if (es[i]->i_type == libvlc_es_video)
+    if (es[i].i_type == libvlc_es_video)
     {
-      esv = es[i];
+      esv = es + i;
       break;
     }
 
   if (!esv)
-    return;
+    goto out;
 
   width  = esv->i_width;
   height = esv->i_height;
 
   libvlc_video_take_snapshot (vlc->mp, 0, dst, width, height);
+
+ out:
+  if (es)
+    free (es);
 }
 
 static int
