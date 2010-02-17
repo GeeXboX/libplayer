@@ -257,7 +257,7 @@ check_cpp(){
 check_ld(){
     log check_ld "$@"
     check_cc || return
-    check_cmd $cc $LDFLAGS "$@" -o $TMPE $TMPO $extralibs
+    check_cmd $cc "$@" -o $TMPE $TMPO $extralibs $LDFLAGS
 }
 
 check_host_ld(){
