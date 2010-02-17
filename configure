@@ -451,13 +451,12 @@ append_config(){
 
 pkgconfig_generate(){
     name=$1
+    shortname=${name#lib}
     comment=$2
     version=$3
     libs=$4
-    libs_private=$5
+    requires=$5
     cflags=$6
-    requires=$7
-    requires_private=$8
 
     cat <<EOF >$name.pc
 PREFIX=$PREFIX
@@ -467,11 +466,11 @@ includedir=$includedir
 Name: $name
 Description: $comment
 Version: $version
-Requires: $requires
-Requires.private: $requires_private
+Requires: $(enabled shared || echo $requires)
+Requires.private: $(enabled shared && echo $requires)
 Conflicts:
-Libs: -L\${libdir} $libs
-Libs.private: $libs_private
+Libs: -L\${libdir} -l${shortname} $(enabled shared || echo $libs)
+Libs.private: $(enabled shared && echo $libs)
 Cflags: -I\${includedir} $cflags
 EOF
 }
@@ -1189,11 +1188,9 @@ echolog "Creating libplayer.pc ..."
 pkgconfig_generate libplayer \
                    "A multimedia A/V abstraction layer library" \
                    "$VERSION" \
-                   "-lplayer" \
                    "$pkgconfig_libs" \
-                   "" \
-                   "" \
-                   "$pkgconfig_requires"
+                   "$pkgconfig_requires" \
+                   ""
 
 clean
 exit 0
