@@ -313,7 +313,7 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   if (!mp)
     goto err_mp;
 
-  media = libvlc_media_new (vlc->core, uri);
+  media = libvlc_media_new_location (vlc->core, uri);
   if (!media)
     goto err_media;
 
@@ -696,7 +696,7 @@ vlc_playback_start (player_t *player)
     return PLAYER_PB_ERROR;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "uri: %s", uri);
-  media = libvlc_media_new (vlc->core, uri);
+  media = libvlc_media_new_location (vlc->core, uri);
   free (uri);
 
   if (!media)

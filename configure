@@ -973,7 +973,7 @@ if test "$wrapper_vlc" = "auto" -o "$wrapper_vlc" = "yes"; then
 
   check_lib_pkgcfg_minversion libvlc 1.1
   if [ "$?" = 0 ]; then
-    check_lib_pkgcfg libvlc vlc/vlc.h libvlc_media_new -lvlc
+    check_lib_pkgcfg libvlc vlc/vlc.h libvlc_media_new_location -lvlc
     if [ "$?" = 0 ]; then
       add_cppflags -DHAVE_VLC
       wrapper_vlc="yes"
