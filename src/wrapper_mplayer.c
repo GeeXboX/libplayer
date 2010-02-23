@@ -144,32 +144,41 @@ typedef struct item_opt_s {
 typedef struct item_list_s {
   const char *str;
   const int state_lib;    /* states of the item in libplayer */
-  item_state_t state_mp;  /* state of the item in MPlayer */
-  item_opt_t *opt;        /* options of the item in MPlayer */
+  item_state_t state_mp;  /* state of the item in MPlayer    */
+  item_opt_t *opt;        /* options of the item in MPlayer  */
 } item_list_t;
 
 /* player specific structure */
 typedef struct mplayer_s {
-  item_list_t *slave_cmds;
-  item_list_t *slave_props;
-  mplayer_status_t status;
-  pid_t pid;          /* process pid */
-  int pipe_in[2];     /* pipe for send commands to MPlayer */
-  int pipe_out[2];    /* pipe for receive results */
-  FILE *fifo_in;      /* fifo on the pipe_in  (write only) */
-  FILE *fifo_out;     /* fifo on the pipe_out (read only) */
-  int verbosity;
-  int start_ok;
-  /* specific to thread */
-  pthread_t th_fifo;      /* thread for the fifo_out parser */
-  pthread_mutex_t mutex_search;
-  pthread_mutex_t mutex_status;
-  pthread_mutex_t mutex_verbosity;
+  item_list_t *slave_cmds;    /* private list of commands   */
+  item_list_t *slave_props;   /* private list of properties */
+  pid_t        pid;           /* forked process PID         */
+
+  /* manage the initialization of MPlayer */
   pthread_mutex_t mutex_start;
-  pthread_cond_t cond_start;
-  pthread_cond_t cond_status;
-  sem_t sem;
-  mp_search_t search;    /* use when a property is searched */
+  pthread_cond_t  cond_start;
+  int             start_ok;
+
+  /* communications between the father and the son         */
+  int   pipe_in[2];   /* pipe for send commands to MPlayer */
+  int   pipe_out[2];  /* pipe for receive results          */
+  FILE *fifo_in;      /* fifo on the pipe_in  (write only) */
+  FILE *fifo_out;     /* fifo on the pipe_out (read only)  */
+  pthread_t th_fifo;
+
+  sem_t sem;  /* common to 'loadfile' and 'get_property' */
+
+  /* for the MPlayer properties, see slave_result() */
+  pthread_mutex_t mutex_search;
+  mp_search_t     search;
+
+  pthread_mutex_t mutex_verbosity;
+  int             verbosity;
+
+  /* manage the status of MPlayer */
+  pthread_cond_t   cond_status;
+  pthread_mutex_t  mutex_status;
+  mplayer_status_t status;
 } mplayer_t;
 
 /*
@@ -184,28 +193,28 @@ typedef struct mplayer_s {
 
 typedef enum slave_cmd {
   SLAVE_UNKNOWN = 0,
-  SLAVE_DVDNAV,             /* dvdnav int */
-  SLAVE_GET_PROPERTY,       /* get_property string */
-  SLAVE_LOADFILE,           /* loadfile string [int] */
-  SLAVE_OSD_SHOW_TEXT,      /* osd_show_text string [int] [int] */
-  SLAVE_PAUSE,              /* pause */
-  SLAVE_QUIT,               /* quit [int] */
-  SLAVE_RADIO_SET_CHANNEL,  /* radio_set_channel string */
-  SLAVE_RADIO_STEP_CHANNEL, /* radio_step_channel int */
-  SLAVE_SEEK,               /* seek float [int] */
-  SLAVE_SEEK_CHAPTER,       /* seek_chapter int [int] */
-  SLAVE_SET_MOUSE_POS,      /* set_mouse_pos int int */
-  SLAVE_SET_PROPERTY,       /* set_property string string */
-  SLAVE_STOP,               /* stop */
-  SLAVE_SUB_LOAD,           /* sub_load string */
-  SLAVE_SUB_POS,            /* sub_pos int */
-  SLAVE_SUB_SCALE,          /* sub_scale int [int] */
-  SLAVE_SWITCH_RATIO,       /* switch_ratio float */
-  SLAVE_SWITCH_TITLE,       /* switch_title [int] */
-  SLAVE_TV_SET_CHANNEL,     /* tv_set_channel string */
-  SLAVE_TV_SET_NORM,        /* tv_set_norm string */
-  SLAVE_TV_STEP_CHANNEL,    /* tv_step_channel int */
-  SLAVE_VOLUME,             /* volume int [int] */
+  SLAVE_DVDNAV,             /* dvdnav              int                       */
+  SLAVE_GET_PROPERTY,       /* get_property        string                    */
+  SLAVE_LOADFILE,           /* loadfile            string [int]              */
+  SLAVE_OSD_SHOW_TEXT,      /* osd_show_text       string [int] [int]        */
+  SLAVE_PAUSE,              /* pause                                         */
+  SLAVE_QUIT,               /* quit               [int]                      */
+  SLAVE_RADIO_SET_CHANNEL,  /* radio_set_channel   string                    */
+  SLAVE_RADIO_STEP_CHANNEL, /* radio_step_channel  int                       */
+  SLAVE_SEEK,               /* seek                float  [int]              */
+  SLAVE_SEEK_CHAPTER,       /* seek_chapter        int    [int]              */
+  SLAVE_SET_MOUSE_POS,      /* set_mouse_pos       int int                   */
+  SLAVE_SET_PROPERTY,       /* set_property        string  string            */
+  SLAVE_STOP,               /* stop                                          */
+  SLAVE_SUB_LOAD,           /* sub_load            string                    */
+  SLAVE_SUB_POS,            /* sub_pos             int                       */
+  SLAVE_SUB_SCALE,          /* sub_scale           int    [int]              */
+  SLAVE_SWITCH_RATIO,       /* switch_ratio        float                     */
+  SLAVE_SWITCH_TITLE,       /* switch_title       [int]                      */
+  SLAVE_TV_SET_CHANNEL,     /* tv_set_channel      string                    */
+  SLAVE_TV_SET_NORM,        /* tv_set_norm         string                    */
+  SLAVE_TV_STEP_CHANNEL,    /* tv_step_channel     int                       */
+  SLAVE_VOLUME,             /* volume              int    [int]              */
 } slave_cmd_t;
 
 static const item_list_t g_slave_cmds[] = {
