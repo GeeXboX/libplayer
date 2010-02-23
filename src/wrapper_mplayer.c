@@ -196,14 +196,14 @@ typedef enum slave_cmd {
   SLAVE_DVDNAV,             /* dvdnav              int                       */
   SLAVE_GET_PROPERTY,       /* get_property        string                    */
   SLAVE_LOADFILE,           /* loadfile            string [int]              */
-  SLAVE_OSD_SHOW_TEXT,      /* osd_show_text       string [int] [int]        */
+  SLAVE_OSD_SHOW_TEXT,      /* osd_show_text       string [int]   [int]      */
   SLAVE_PAUSE,              /* pause                                         */
   SLAVE_QUIT,               /* quit               [int]                      */
   SLAVE_RADIO_SET_CHANNEL,  /* radio_set_channel   string                    */
   SLAVE_RADIO_STEP_CHANNEL, /* radio_step_channel  int                       */
   SLAVE_SEEK,               /* seek                float  [int]              */
   SLAVE_SEEK_CHAPTER,       /* seek_chapter        int    [int]              */
-  SLAVE_SET_MOUSE_POS,      /* set_mouse_pos       int int                   */
+  SLAVE_SET_MOUSE_POS,      /* set_mouse_pos       int     int               */
   SLAVE_SET_PROPERTY,       /* set_property        string  string            */
   SLAVE_STOP,               /* stop                                          */
   SLAVE_SUB_LOAD,           /* sub_load            string                    */
