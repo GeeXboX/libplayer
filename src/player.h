@@ -168,7 +168,7 @@ typedef struct player_init_param_s {
   /** Video output driver. */
   player_vo_t vo;
   /** Window ID to attach the video (X Window). */
-  unsigned long winid;
+  uint32_t winid;
 
   /** Public event callback. */
   int (*event_cb) (player_event_t e, void *data);
