@@ -187,7 +187,7 @@ typedef struct mplayer_s {
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
-/* entry for a array of item_list_t */
+/* entry for an array of item_list_t */
 #define ILT(s, f) { s, f, ITEM_OFF, NULL }
 
 /*****************************************************************************/
