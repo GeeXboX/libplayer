@@ -160,8 +160,8 @@ typedef struct mplayer_s {
   int             start_ok;
 
   /* communications between the father and the son         */
-  int   pipe_in[2];   /* pipe for send commands to MPlayer */
-  int   pipe_out[2];  /* pipe for receive results          */
+  int   pipe_in[2];   /* pipe to send commands to MPlayer  */
+  int   pipe_out[2];  /* pipe to receive results           */
   FILE *fifo_in;      /* fifo on the pipe_in  (write only) */
   FILE *fifo_out;     /* fifo on the pipe_out (read only)  */
   pthread_t th_fifo;
