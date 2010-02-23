@@ -187,6 +187,9 @@ typedef struct mplayer_s {
  */
 #define SLAVE_CMD_PREFIX "pausing_keep "
 
+/* entry for a array of item_list_t */
+#define ILT(s, f) { s, f, ITEM_OFF, NULL }
+
 /*****************************************************************************/
 /*                              Slave Commands                               */
 /*****************************************************************************/
@@ -218,36 +221,30 @@ typedef enum slave_cmd {
 } slave_cmd_t;
 
 static const item_list_t g_slave_cmds[] = {
-  [SLAVE_DVDNAV]             = {"dvdnav",             ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_GET_PROPERTY]       = {"get_property",       ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_LOADFILE]           = {"loadfile",           ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_OSD_SHOW_TEXT]      = {"osd_show_text",      ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_PAUSE]              = {"pause",              ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_QUIT]               = {"quit",               ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_RADIO_SET_CHANNEL]  = {"radio_set_channel",  ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_RADIO_STEP_CHANNEL] = {"radio_step_channel", ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SEEK]               = {"seek",               ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SEEK_CHAPTER]       = {"seek_chapter",       ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SET_MOUSE_POS]      = {"set_mouse_pos",      ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SET_PROPERTY]       = {"set_property",       ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_STOP]               = {"stop",               ITEM_ON | ITEM_HACK, ITEM_OFF, NULL},
-  [SLAVE_SUB_LOAD]           = {"sub_load",           ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SUB_POS]            = {"sub_pos",            ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SUB_SCALE]          = {"sub_scale",          ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SWITCH_RATIO]       = {"switch_ratio",       ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_SWITCH_TITLE]       = {"switch_title",       ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_TV_SET_CHANNEL]     = {"tv_set_channel",     ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_TV_SET_NORM]        = {"tv_set_norm",        ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_TV_STEP_CHANNEL]    = {"tv_step_channel",    ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_VOLUME]             = {"volume",             ITEM_ON,             ITEM_OFF, NULL},
-  [SLAVE_UNKNOWN]            = {NULL,                 ITEM_OFF,            ITEM_OFF, NULL}
+  [SLAVE_DVDNAV]             = ILT ("dvdnav",             ITEM_ON            ),
+  [SLAVE_GET_PROPERTY]       = ILT ("get_property",       ITEM_ON            ),
+  [SLAVE_LOADFILE]           = ILT ("loadfile",           ITEM_ON            ),
+  [SLAVE_OSD_SHOW_TEXT]      = ILT ("osd_show_text",      ITEM_ON            ),
+  [SLAVE_PAUSE]              = ILT ("pause",              ITEM_ON            ),
+  [SLAVE_QUIT]               = ILT ("quit",               ITEM_ON            ),
+  [SLAVE_RADIO_SET_CHANNEL]  = ILT ("radio_set_channel",  ITEM_ON            ),
+  [SLAVE_RADIO_STEP_CHANNEL] = ILT ("radio_step_channel", ITEM_ON            ),
+  [SLAVE_SEEK]               = ILT ("seek",               ITEM_ON            ),
+  [SLAVE_SEEK_CHAPTER]       = ILT ("seek_chapter",       ITEM_ON            ),
+  [SLAVE_SET_MOUSE_POS]      = ILT ("set_mouse_pos",      ITEM_ON            ),
+  [SLAVE_SET_PROPERTY]       = ILT ("set_property",       ITEM_ON            ),
+  [SLAVE_STOP]               = ILT ("stop",               ITEM_ON | ITEM_HACK),
+  [SLAVE_SUB_LOAD]           = ILT ("sub_load",           ITEM_ON            ),
+  [SLAVE_SUB_POS]            = ILT ("sub_pos",            ITEM_ON            ),
+  [SLAVE_SUB_SCALE]          = ILT ("sub_scale",          ITEM_ON            ),
+  [SLAVE_SWITCH_RATIO]       = ILT ("switch_ratio",       ITEM_ON            ),
+  [SLAVE_SWITCH_TITLE]       = ILT ("switch_title",       ITEM_ON            ),
+  [SLAVE_TV_SET_CHANNEL]     = ILT ("tv_set_channel",     ITEM_ON            ),
+  [SLAVE_TV_SET_NORM]        = ILT ("tv_set_norm",        ITEM_ON            ),
+  [SLAVE_TV_STEP_CHANNEL]    = ILT ("tv_step_channel",    ITEM_ON            ),
+  [SLAVE_VOLUME]             = ILT ("volume",             ITEM_ON            ),
+  [SLAVE_UNKNOWN]            = ILT (NULL,                 ITEM_OFF           )
 };
-/*                                    ^                        ^              ^       ^
- * slave command (const) -------------'                        |              |       |
- * state in libplayer (const flags) ---------------------------'              |       |
- * state in MPlayer (set at the init) ----------------------------------------'       |
- * options with the command (unused) -------------------------------------------------'
- */
 
 /*****************************************************************************/
 /*                             Slave Properties                              */
@@ -291,47 +288,41 @@ typedef enum slave_property {
 } slave_property_t;
 
 static const item_list_t g_slave_props[] = {
-  [PROPERTY_ANGLE]            = {"angle",            ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_AUDIO_BITRATE]    = {"audio_bitrate",    ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_AUDIO_CODEC]      = {"audio_codec",      ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_AUDIO_DELAY]      = {"audio_delay",      ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_CHANNELS]         = {"channels",         ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_FRAMEDROPPING]    = {"framedropping",    ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_HEIGHT]           = {"height",           ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_LOOP]             = {"loop",             ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_METADATA]         = {"metadata",         ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_METADATA_ALBUM]   = {"metadata/album",   ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_METADATA_ARTIST]  = {"metadata/artist",  ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_METADATA_AUTHOR]  = {"metadata/author",  ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_METADATA_COMMENT] = {"metadata/comment", ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_METADATA_GENRE]   = {"metadata/genre",   ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_METADATA_NAME]    = {"metadata/name",    ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_METADATA_TITLE]   = {"metadata/title",   ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_METADATA_TRACK]   = {"metadata/track",   ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_METADATA_YEAR]    = {"metadata/year",    ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_MUTE]             = {"mute",             ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_OSDLEVEL]         = {"osdlevel",         ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_PERCENT_POS]      = {"percent_pos",      ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_SAMPLERATE]       = {"samplerate",       ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_SPEED]            = {"speed",            ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_SUB]              = {"sub",              ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_SUB_ALIGNMENT]    = {"sub_alignment",    ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_SUB_DELAY]        = {"sub_delay",        ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_SUB_VISIBILITY]   = {"sub_visibility",   ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_SWITCH_AUDIO]     = {"switch_audio",     ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_TIME_POS]         = {"time_pos",         ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_VIDEO_BITRATE]    = {"video_bitrate",    ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_VIDEO_CODEC]      = {"video_codec",      ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_VOLUME]           = {"volume",           ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_WIDTH]            = {"width",            ITEM_ON,  ITEM_OFF, NULL},
-  [PROPERTY_UNKNOWN]          = {NULL,               ITEM_OFF, ITEM_OFF, NULL}
+  [PROPERTY_ANGLE]            = ILT ("angle",            ITEM_ON ),
+  [PROPERTY_AUDIO_BITRATE]    = ILT ("audio_bitrate",    ITEM_ON ),
+  [PROPERTY_AUDIO_CODEC]      = ILT ("audio_codec",      ITEM_ON ),
+  [PROPERTY_AUDIO_DELAY]      = ILT ("audio_delay",      ITEM_ON ),
+  [PROPERTY_CHANNELS]         = ILT ("channels",         ITEM_ON ),
+  [PROPERTY_FRAMEDROPPING]    = ILT ("framedropping",    ITEM_ON ),
+  [PROPERTY_HEIGHT]           = ILT ("height",           ITEM_ON ),
+  [PROPERTY_LOOP]             = ILT ("loop",             ITEM_ON ),
+  [PROPERTY_METADATA]         = ILT ("metadata",         ITEM_ON ),
+  [PROPERTY_METADATA_ALBUM]   = ILT ("metadata/album",   ITEM_ON ),
+  [PROPERTY_METADATA_ARTIST]  = ILT ("metadata/artist",  ITEM_ON ),
+  [PROPERTY_METADATA_AUTHOR]  = ILT ("metadata/author",  ITEM_ON ),
+  [PROPERTY_METADATA_COMMENT] = ILT ("metadata/comment", ITEM_ON ),
+  [PROPERTY_METADATA_GENRE]   = ILT ("metadata/genre",   ITEM_ON ),
+  [PROPERTY_METADATA_NAME]    = ILT ("metadata/name",    ITEM_ON ),
+  [PROPERTY_METADATA_TITLE]   = ILT ("metadata/title",   ITEM_ON ),
+  [PROPERTY_METADATA_TRACK]   = ILT ("metadata/track",   ITEM_ON ),
+  [PROPERTY_METADATA_YEAR]    = ILT ("metadata/year",    ITEM_ON ),
+  [PROPERTY_MUTE]             = ILT ("mute",             ITEM_ON ),
+  [PROPERTY_OSDLEVEL]         = ILT ("osdlevel",         ITEM_ON ),
+  [PROPERTY_PERCENT_POS]      = ILT ("percent_pos",      ITEM_ON ),
+  [PROPERTY_SAMPLERATE]       = ILT ("samplerate",       ITEM_ON ),
+  [PROPERTY_SPEED]            = ILT ("speed",            ITEM_ON ),
+  [PROPERTY_SUB]              = ILT ("sub",              ITEM_ON ),
+  [PROPERTY_SUB_ALIGNMENT]    = ILT ("sub_alignment",    ITEM_ON ),
+  [PROPERTY_SUB_DELAY]        = ILT ("sub_delay",        ITEM_ON ),
+  [PROPERTY_SUB_VISIBILITY]   = ILT ("sub_visibility",   ITEM_ON ),
+  [PROPERTY_SWITCH_AUDIO]     = ILT ("switch_audio",     ITEM_ON ),
+  [PROPERTY_TIME_POS]         = ILT ("time_pos",         ITEM_ON ),
+  [PROPERTY_VIDEO_BITRATE]    = ILT ("video_bitrate",    ITEM_ON ),
+  [PROPERTY_VIDEO_CODEC]      = ILT ("video_codec",      ITEM_ON ),
+  [PROPERTY_VOLUME]           = ILT ("volume",           ITEM_ON ),
+  [PROPERTY_WIDTH]            = ILT ("width",            ITEM_ON ),
+  [PROPERTY_UNKNOWN]          = ILT (NULL,               ITEM_OFF),
 };
-/*                                       ^              ^         ^       ^
- * slave property (const) ---------------'              |         |       |
- * state in libplayer (const flags) --------------------'         |       |
- * state in MPlayer (set at the init) ----------------------------'       |
- * options with the property (set at the init) ---------------------------'
- */
 
 
 static const unsigned int g_slave_cmds_nb = ARRAY_NB_ELEMENTS (g_slave_cmds);
