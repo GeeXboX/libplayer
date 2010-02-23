@@ -2886,6 +2886,11 @@ mplayer_init (player_t *player)
       params[pp++] = "oss";
       break;
 
+    case PLAYER_AO_PULSE:
+      params[pp++] = "-ao";
+      params[pp++] = "pulse";
+      break;
+
     case PLAYER_AO_AUTO:
     default:
       break;

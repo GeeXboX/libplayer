@@ -136,7 +136,8 @@ typedef enum player_ao {
   PLAYER_AO_AUTO = 0,
   PLAYER_AO_NULL,
   PLAYER_AO_ALSA,
-  PLAYER_AO_OSS
+  PLAYER_AO_OSS,
+  PLAYER_AO_PULSE,
 } player_ao_t;
 
 /** \brief Player events. */

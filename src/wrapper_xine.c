@@ -685,6 +685,10 @@ xine_player_init (player_t *player)
     id_ao = "oss";
     break;
 
+  case PLAYER_AO_PULSE:
+    id_ao = "pulseaudio";
+    break;
+
   case PLAYER_AO_AUTO:
     break;
 
