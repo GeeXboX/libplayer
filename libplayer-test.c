@@ -45,7 +45,7 @@
   "Options:\n" \
   " -h --help               this help\n" \
   " -p --player <player>    specify the player (mplayer|xine|vlc|gstreamer)\n" \
-  " -a --audio  <audioout>  specify the audio output (alsa|oss|null)\n" \
+  " -a --audio  <audioout>  specify the audio output (alsa|oss|pulse|null)\n" \
   " -g --video  <videoout>  specify the video output (x11|sdl:x11|xv|gl|vdpau|fb|null)\n" \
   " -v --verbose            increase verbosity\n" \
   "\n" \
@@ -895,6 +895,8 @@ main (int argc, char **argv)
         ao = PLAYER_AO_ALSA;
       else if (!strcmp (optarg, "oss"))
         ao = PLAYER_AO_OSS;
+      else if (!strcmp (optarg, "pulse"))
+        ao = PLAYER_AO_PULSE;
       else if (!strcmp (optarg, "null"))
         ao = PLAYER_AO_NULL;
       break;
