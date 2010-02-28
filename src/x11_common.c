@@ -494,6 +494,16 @@ pl_x11_init (player_t *player)
   xcb_visualid_t visual = { 0 };
   uint32_t attributes[] = { 0, 1 }; /* black_pixel, override_redirect */
 
+#ifdef HAVE_XINE
+#ifdef USE_XLIB_HACK
+  Display *xine_conn   = NULL;
+  int      xine_screen = 0;
+#else
+  xcb_connection_t *xine_conn   = NULL;
+  xcb_screen_t     *xine_screen = NULL;
+#endif /* !USE_XLIB_HACK */
+#endif /* HAVE_XINE */
+
   if (!player)
     return 0;
 
@@ -508,6 +518,23 @@ pl_x11_init (player_t *player)
 
   if (player->type == PLAYER_TYPE_MPLAYER)
     x11->use_subwin = 1;
+  else if (player->type == PLAYER_TYPE_XINE)
+  {
+#ifdef HAVE_XINE
+#ifdef USE_XLIB_HACK
+    xine_conn = XOpenDisplay (player->x11_display);
+    if (!xine_conn)
+      goto err_conn;
+
+    XSetEventQueueOwner (xine_conn, XlibOwnsEventQueue);
+    xine_screen = XDefaultScreen (xine_conn);
+#else
+    xine_conn = x11_connection (player, &xine_screen);
+    if (!xine_conn)
+      goto err_conn;
+#endif /* !USE_XLIB_HACK */
+#endif /* HAVE_XINE */
+  }
 
   pthread_mutex_init (&x11->mutex, NULL);
 
@@ -620,20 +647,13 @@ pl_x11_init (player_t *player)
     if (vis)
     {
 #ifdef USE_XLIB_HACK
-      Display *display = XOpenDisplay (player->x11_display);
-
-      XSetEventQueueOwner (display, XlibOwnsEventQueue);
-
-      vis->display         = display;
-      vis->screen          = XDefaultScreen (display);
+      vis->display         = xine_conn;
       vis->d               = x11->win_video;
 #else
-      xcb_screen_t *screen;
-
-      vis->connection      = x11_connection (player, &screen);
-      vis->screen          = screen;
+      vis->connection      = xine_conn;
       vis->window          = x11->win_video;
 #endif /* USE_XLIB_HACK */
+      vis->screen          = xine_screen;
       vis->dest_size_cb    = xine_dest_size_cb;
       vis->frame_output_cb = xine_frame_output_cb;
       vis->user_data       = (void *) x11;
@@ -646,6 +666,8 @@ pl_x11_init (player_t *player)
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
   return 1;
 
+ err_conn:
+  xcb_disconnect (x11->conn);
  err:
   free (x11);
   player->x11 = NULL;
