@@ -588,20 +588,22 @@ pl_x11_init (player_t *player)
   {
     /* create a window for the black background */
     x11->win_black = xcb_generate_id (x11->conn);
-    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT, x11->win_black,
-                       win_root, 0, 0, x11->width, x11->height, 0,
-                       XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
-                       XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
-                       attributes);
+    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT,
+                                        x11->win_black, win_root, 0, 0,
+                                        x11->width, x11->height, 0,
+                                        XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
+                                        XCB_CW_BACK_PIXEL
+                                        | XCB_CW_OVERRIDE_REDIRECT, attributes);
     xcb_request_check (x11->conn, cookie);
 
     /* create a window for the video out */
     x11->win_video = xcb_generate_id (x11->conn);
-    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT, x11->win_video,
-                       x11->win_black, 0, 0, x11->width, x11->height, 0,
-                       XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
-                       XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
-                       attributes);
+    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT,
+                                        x11->win_video, x11->win_black, 0, 0,
+                                        x11->width, x11->height, 0,
+                                        XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
+                                        XCB_CW_BACK_PIXEL
+                                        | XCB_CW_OVERRIDE_REDIRECT, attributes);
     xcb_request_check (x11->conn, cookie);
 
     xcb_map_window (x11->conn, x11->win_video);
@@ -611,10 +613,12 @@ pl_x11_init (player_t *player)
      * events to MPlayer.
      */
     x11->win_trans = xcb_generate_id (x11->conn);
-    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT, x11->win_trans,
-                       x11->win_black, 0, 0, x11->width, x11->height, 0,
-                       XCB_WINDOW_CLASS_INPUT_ONLY, visual,
-                       XCB_CW_OVERRIDE_REDIRECT, attributes + 1);
+    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT,
+                                        x11->win_trans, x11->win_black, 0, 0,
+                                        x11->width, x11->height, 0,
+                                        XCB_WINDOW_CLASS_INPUT_ONLY, visual,
+                                        XCB_CW_OVERRIDE_REDIRECT,
+                                        attributes + 1);
     xcb_request_check (x11->conn, cookie);
 
     xcb_configure_window (x11->conn, x11->win_trans,
@@ -625,11 +629,12 @@ pl_x11_init (player_t *player)
   {
     /* create a window for the video out */
     x11->win_video = xcb_generate_id (x11->conn);
-    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT, x11->win_video,
-                       win_root, 0, 0, x11->width, x11->height, 0,
-                       XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
-                       XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
-                       attributes);
+    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT,
+                                        x11->win_video, win_root, 0, 0,
+                                        x11->width, x11->height, 0,
+                                        XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
+                                        XCB_CW_BACK_PIXEL
+                                        | XCB_CW_OVERRIDE_REDIRECT, attributes);
     xcb_request_check (x11->conn, cookie);
   }
 
