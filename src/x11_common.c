@@ -491,6 +491,7 @@ pl_x11_init (player_t *player)
 {
   x11_t *x11 = NULL;
   xcb_window_t win_root;
+  xcb_void_cookie_t cookie;
   xcb_visualid_t visual = { 0 };
   uint32_t attributes[] = { 0, 1 }; /* black_pixel, override_redirect */
 
@@ -587,19 +588,21 @@ pl_x11_init (player_t *player)
   {
     /* create a window for the black background */
     x11->win_black = xcb_generate_id (x11->conn);
-    xcb_create_window (x11->conn, XCB_COPY_FROM_PARENT, x11->win_black,
+    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT, x11->win_black,
                        win_root, 0, 0, x11->width, x11->height, 0,
                        XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
                        XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
                        attributes);
+    xcb_request_check (x11->conn, cookie);
 
     /* create a window for the video out */
     x11->win_video = xcb_generate_id (x11->conn);
-    xcb_create_window (x11->conn, XCB_COPY_FROM_PARENT, x11->win_video,
+    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT, x11->win_video,
                        x11->win_black, 0, 0, x11->width, x11->height, 0,
                        XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
                        XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
                        attributes);
+    xcb_request_check (x11->conn, cookie);
 
     xcb_map_window (x11->conn, x11->win_video);
 
@@ -608,10 +611,11 @@ pl_x11_init (player_t *player)
      * events to MPlayer.
      */
     x11->win_trans = xcb_generate_id (x11->conn);
-    xcb_create_window (x11->conn, XCB_COPY_FROM_PARENT, x11->win_trans,
+    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT, x11->win_trans,
                        x11->win_black, 0, 0, x11->width, x11->height, 0,
                        XCB_WINDOW_CLASS_INPUT_ONLY, visual,
                        XCB_CW_OVERRIDE_REDIRECT, attributes + 1);
+    xcb_request_check (x11->conn, cookie);
 
     xcb_configure_window (x11->conn, x11->win_trans,
                           XCB_CONFIG_WINDOW_STACK_MODE, val_raised);
@@ -621,11 +625,12 @@ pl_x11_init (player_t *player)
   {
     /* create a window for the video out */
     x11->win_video = xcb_generate_id (x11->conn);
-    xcb_create_window (x11->conn, XCB_COPY_FROM_PARENT, x11->win_video,
+    cookie = xcb_create_window_checked (x11->conn, XCB_COPY_FROM_PARENT, x11->win_video,
                        win_root, 0, 0, x11->width, x11->height, 0,
                        XCB_WINDOW_CLASS_INPUT_OUTPUT, visual,
                        XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT,
                        attributes);
+    xcb_request_check (x11->conn, cookie);
   }
 
   xcb_flush (x11->conn);
