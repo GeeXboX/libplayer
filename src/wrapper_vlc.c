@@ -413,8 +413,6 @@ vlc_init (player_t *player)
   vlc_argv[vlc_argc++] = "--no-one-instance";
   vlc_argv[vlc_argc++] = "--no-osd";
   vlc_argv[vlc_argc++] = "--no-video-title-show" ;
-  vlc_argv[vlc_argc++] = "--sout";
-  vlc_argv[vlc_argc++] = "#description";
 
   if (player->x11_display)
   {
