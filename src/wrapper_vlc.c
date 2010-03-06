@@ -518,7 +518,7 @@ vlc_init (player_t *player)
   if (!ev)
     return PLAYER_INIT_ERROR;
 
-  for (i = 0; i < (sizeof (mp_events) / sizeof (*mp_events)); i++)
+  for (i = 0; i < ARRAY_NB_ELEMENTS (mp_events); i++)
     libvlc_event_attach (ev, mp_events[i],
                          vlc_event_callback, player);
 
