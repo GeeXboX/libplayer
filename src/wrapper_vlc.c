@@ -221,7 +221,7 @@ vlc_identify_metadata (mrl_t *mrl, libvlc_media_player_t *mp)
 
 static void
 vlc_identify_audio (mrl_t *mrl,
-                    libvlc_media_player_t *mp, libvlc_media_es_t *es)
+                    libvlc_media_player_t *mp, libvlc_media_track_info_t *es)
 {
   mrl_properties_audio_t *audio;
 
@@ -233,13 +233,13 @@ vlc_identify_audio (mrl_t *mrl,
 
   audio = mrl->prop->audio;
 
-  audio->bitrate  = es->i_rate;
-  audio->channels = es->i_channels;
+  audio->bitrate  = es->u.audio.i_rate;
+  audio->channels = es->u.audio.i_channels;
 }
 
 static void
 vlc_identify_video (mrl_t *mrl,
-                    libvlc_media_player_t *mp, libvlc_media_es_t *es)
+                    libvlc_media_player_t *mp, libvlc_media_track_info_t *es)
 {
   mrl_properties_video_t *video;
   libvlc_track_description_t *tracks, *t;
@@ -254,8 +254,8 @@ vlc_identify_video (mrl_t *mrl,
 
   video = mrl->prop->video;
 
-  video->width   = es->i_width;
-  video->height  = es->i_height;
+  video->width   = es->u.video.i_width;
+  video->height  = es->u.video.i_height;
 
   ar = libvlc_video_get_aspect_ratio (mp);
   if (ar)
@@ -299,8 +299,8 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
     ":aout=dummy",
     ":sout=#description",
   };
-  libvlc_media_es_t *esv = NULL, *esa = NULL;
-  libvlc_media_es_t *es = NULL;
+  libvlc_media_track_info_t *esv = NULL, *esa = NULL;
+  libvlc_media_track_info_t *es = NULL;
   libvlc_state_t st = libvlc_NothingSpecial;
   int wait = 0;
   unsigned int i;
@@ -348,12 +348,13 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
       break;
   }
 
-  es_count = libvlc_media_get_es (media, &es);
+  libvlc_media_parse (media);
+  es_count = libvlc_media_get_tracks_info (media, &es);
   for (i = 0; i < es_count; i++)
   {
-    if (!esv && es[i].i_type == libvlc_es_video)
+    if (!esv && es[i].i_type == libvlc_track_video)
       esv = es + i;
-    else if (!esa && es[i].i_type == libvlc_es_audio)
+    else if (!esa && es[i].i_type == libvlc_track_audio)
       esa = es + i;
   }
 
@@ -632,8 +633,8 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
 {
   vlc_t *vlc;
   unsigned int width, height;
-  libvlc_media_es_t *es = NULL;
-  libvlc_media_es_t *esv = NULL;
+  libvlc_media_track_info_t *es = NULL;
+  libvlc_media_track_info_t *esv = NULL;
   libvlc_media_t *media;
   unsigned int es_count;
   unsigned int i;
@@ -656,9 +657,9 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
    * Like vlc_identify and according to the documentation of libvlc, the media
    * must be played at least one time, else ES array will be empty.
    */
-  es_count = libvlc_media_get_es (media, &es);
+  es_count = libvlc_media_get_tracks_info (media, &es);
   for (i = 0; i < es_count; i++)
-    if (es[i].i_type == libvlc_es_video)
+    if (es[i].i_type == libvlc_track_video)
     {
       esv = es + i;
       break;
@@ -667,8 +668,8 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
   if (!esv)
     goto out;
 
-  width  = esv->i_width;
-  height = esv->i_height;
+  width  = esv->u.video.i_width;
+  height = esv->u.video.i_height;
 
   libvlc_video_take_snapshot (vlc->mp, 0, dst, width, height);
 
