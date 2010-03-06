@@ -398,9 +398,9 @@ static init_status_t
 vlc_init (player_t *player)
 {
   vlc_t *vlc = NULL;
-  const char *vlc_argv[32] = { "vlc" };
+  const char *vlc_argv[32];
   libvlc_event_manager_t *ev;
-  int vlc_argc = 1;
+  int vlc_argc = 0;
   int use_x11 = 0;
   unsigned int i;
   uint32_t winid = 0;
