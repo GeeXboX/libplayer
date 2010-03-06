@@ -530,6 +530,7 @@ static void
 vlc_uninit (player_t *player)
 {
   vlc_t *vlc = NULL;
+  libvlc_media_t *media;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "uninit");
 
@@ -541,10 +542,15 @@ vlc_uninit (player_t *player)
   if (!vlc)
     return;
 
+  if (vlc->mp)
+  {
+    media = libvlc_media_player_get_media (vlc->mp);
+    if (media)
+      libvlc_media_release (media);
+    libvlc_media_player_release (vlc->mp);
+  }
   if (vlc->core)
     libvlc_release (vlc->core);
-  if (vlc->mp)
-    libvlc_media_player_release (vlc->mp);
 
 #ifdef USE_X11
   pl_x11_uninit (player);
