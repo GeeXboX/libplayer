@@ -32,6 +32,7 @@ struct playlist_s {
   int *shuffle_list;
   int shuffle_it;
   int shuffle_cnt;
+  unsigned int shuffle_seed;
   int loop;
   int loop_cnt;
   int reset;
@@ -94,17 +95,13 @@ playlist_goto_mrl (playlist_t *playlist, int value)
 static void
 playlist_shuffle_init (playlist_t *playlist)
 {
-  static int srnd;
   int i;
 
   if (!playlist)
     return;
 
-  if (!srnd)
-  {
-    srand (time (NULL));
-    srnd = 1;
-  }
+  if (!playlist->shuffle_seed)
+    playlist->shuffle_seed = time (NULL);
 
   playlist->shuffle_cnt = pl_playlist_count_mrl (playlist);
 
@@ -123,7 +120,7 @@ playlist_shuffle_init (playlist_t *playlist)
   for (i = 0; i < (playlist->shuffle_cnt - 1); i++)
   {
     int r, tmp;
-    r = i + (int) (rand () / (double) RAND_MAX * (playlist->shuffle_cnt - i));
+    r = i + (int) (rand_r (&playlist->shuffle_seed) / (double) RAND_MAX * (playlist->shuffle_cnt - i));
     tmp = *(playlist->shuffle_list + i);
     *(playlist->shuffle_list + i) = *(playlist->shuffle_list + r);
     *(playlist->shuffle_list + r) = tmp;
