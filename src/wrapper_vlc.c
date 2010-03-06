@@ -348,6 +348,14 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
       break;
   }
 
+  /*
+   * HACK
+   * This sleep breaks the possibility to found the informations in the
+   * very short files. But without this hack, libvlc, sometimes, is not
+   * able to read the ES and metadata (see FIXME above).
+   */
+  usleep (200000);
+
   libvlc_media_parse (media);
   es_count = libvlc_media_get_tracks_info (media, &es);
   for (i = 0; i < es_count; i++)
