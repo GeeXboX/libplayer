@@ -35,6 +35,10 @@
 #include "parse_utils.h"
 #include "wrapper_vlc.h"
 
+#ifdef USE_X11
+#include "x11_common.h"
+#endif /* USE_X11 */
+
 #define MODULE_NAME "vlc"
 
 #define WAIT_PERIOD    1000 /* in micro-seconds */
@@ -74,6 +78,10 @@ vlc_event_callback (const libvlc_event_t *ev, void *data)
     pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Playback of stream has ended");
     player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED);
+
+#ifdef USE_X11
+    pl_x11_unmap (player);
+#endif /* USE_X11 */
     break;
 
   case libvlc_MediaPlayerPlaying:
@@ -384,7 +392,9 @@ vlc_init (player_t *player)
   const char *vlc_argv[32] = { "vlc" };
   libvlc_event_manager_t *ev;
   int vlc_argc = 1;
+  int use_x11 = 0;
   unsigned int i;
+  uint32_t winid = 0;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
 
@@ -406,6 +416,12 @@ vlc_init (player_t *player)
   vlc_argv[vlc_argc++] = "--sout";
   vlc_argv[vlc_argc++] = "#description";
 
+  if (player->x11_display)
+  {
+    vlc_argv[vlc_argc++] = "--x11-display";
+    vlc_argv[vlc_argc++] = player->x11_display;
+  }
+
   /* select the video output */
   switch (player->vo)
   {
@@ -417,18 +433,25 @@ vlc_init (player_t *player)
   case PLAYER_VO_X11:
     vlc_argv[vlc_argc++] = "--vout";
     vlc_argv[vlc_argc++] = "x11,dummy";
+    use_x11 = 1;
     break;
 
   case PLAYER_VO_XV:
     vlc_argv[vlc_argc++] = "--vout";
     vlc_argv[vlc_argc++] = "xvideo,dummy";
+    use_x11 = 1;
     break;
 
   case PLAYER_VO_GL:
     vlc_argv[vlc_argc++] = "--vout";
     vlc_argv[vlc_argc++] = "glx,dummy";
+    use_x11 = 1;
     break;
 #endif
+
+  case PLAYER_VO_AUTO:
+    use_x11 = 1;
+    break;
 
   default:
     return PLAYER_INIT_ERROR;
@@ -455,6 +478,27 @@ vlc_init (player_t *player)
     break;
   }
 
+  if (use_x11)
+  {
+#ifdef USE_X11
+    int rc;
+
+    rc = pl_x11_init (player);
+    if (!rc && player->vo != PLAYER_VO_AUTO)
+    {
+      pl_log (player, PLAYER_MSG_ERROR,
+              MODULE_NAME, "initialization for X has failed");
+      return PLAYER_INIT_ERROR;
+    }
+
+    winid = pl_x11_get_window (player->x11);
+#else
+    pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
+            "auto-detection for videoout is not enabled without X11 support");
+    return PLAYER_INIT_ERROR;
+#endif /* USE_X11 */
+  }
+
   vlc = (vlc_t *) player->priv;
   vlc->core = libvlc_new (vlc_argc, vlc_argv);
 
@@ -464,6 +508,9 @@ vlc_init (player_t *player)
   vlc->mp = libvlc_media_player_new (vlc->core);
   if (!vlc->mp)
     return PLAYER_INIT_ERROR;
+
+  if (winid)
+    libvlc_media_player_set_xwindow (vlc->mp, winid);
 
   libvlc_video_set_key_input   (vlc->mp, 0);
   libvlc_video_set_mouse_input (vlc->mp, 0);
@@ -499,6 +546,10 @@ vlc_uninit (player_t *player)
     libvlc_release (vlc->core);
   if (vlc->mp)
     libvlc_media_player_release (vlc->mp);
+
+#ifdef USE_X11
+  pl_x11_uninit (player);
+#endif /* USE_X11 */
 
   free (vlc);
 }
@@ -702,6 +753,11 @@ vlc_playback_start (player_t *player)
   if (!media)
     return PLAYER_PB_ERROR;
 
+#ifdef USE_X11
+  if (MRL_USES_VO (mrl))
+    pl_x11_map (player);
+#endif /* USE_X11 */
+
   libvlc_media_player_set_media (vlc->mp, media);
   libvlc_media_player_play (vlc->mp);
 
@@ -711,6 +767,9 @@ vlc_playback_start (player_t *player)
 static void
 vlc_playback_stop (player_t *player)
 {
+#ifdef USE_X11
+  mrl_t *mrl;
+#endif /* USE_X11 */
   vlc_t *vlc;
   libvlc_media_t *media;
 
@@ -722,6 +781,12 @@ vlc_playback_stop (player_t *player)
   vlc = (vlc_t *) player->priv;
   if (!vlc || !vlc->mp)
     return;
+
+#ifdef USE_X11
+  mrl = pl_playlist_get_mrl (player->playlist);
+  if (MRL_USES_VO (mrl))
+    pl_x11_unmap (player);
+#endif /* USE_X11 */
 
   media = libvlc_media_player_get_media (vlc->mp);
   libvlc_media_player_stop (vlc->mp);
