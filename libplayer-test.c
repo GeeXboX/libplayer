@@ -823,8 +823,7 @@ main (int argc, char **argv)
   player_verbosity_level_t verbosity = PLAYER_MSG_WARNING;
   player_pb_t pb_mode = PLAYER_PB_SINGLE;
 
-  int c, index, optind_bak, argc_bak, i;
-  char **argv_bak;
+  int c, index;
   const char *const short_options = "hvp:a:g:";
   const struct option long_options [] = {
     {"help",    no_argument,       0, 'h' },
@@ -923,11 +922,6 @@ main (int argc, char **argv)
       return -1;
     }
   }
-  optind_bak = optind;
-  argc_bak = argc;
-  argv_bak = malloc (argc * sizeof (char *));
-  for (i = 0; i < argc; i++)
-    *(argv_bak + i) = strdup (argv[i]);
 
 #if defined (USE_X11) && defined (USE_XLIB_HACK)
   XInitThreads ();
@@ -944,7 +938,7 @@ main (int argc, char **argv)
     return -1;
 
   /* these arguments are files */
-  if (optind_bak < argc_bak)
+  if (optind < argc)
   {
     do
     {
@@ -952,19 +946,16 @@ main (int argc, char **argv)
       mrl_resource_local_args_t *args;
 
       args = calloc (1, sizeof (mrl_resource_local_args_t));
-      args->location = strdup (argv_bak[optind_bak]);
+      args->location = strdup (argv[optind]);
 
       mrl = mrl_new (player, MRL_RESOURCE_FILE, args);
       if (!mrl)
         continue;
-      printf (" > %s added to the playlist!\n", argv_bak[optind_bak]);
+      printf (" > %s added to the playlist!\n", argv[optind]);
       player_mrl_append (player, mrl, PLAYER_MRL_ADD_QUEUE);
-    } while (++optind_bak < argc_bak);
+    } while (++optind < argc);
     putchar ('\n');
   }
-  for (i = 0; i < argc; i++)
-    free (*(argv_bak + i));
-  free (argv_bak);
 
   printf (TESTPLAYER_COMMANDS);
 
