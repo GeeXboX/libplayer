@@ -16,7 +16,7 @@ endif
 ifeq ($(BUILD_SHARED),yes)
   BUILD_RULES += lib_shared
   ifeq ($(BUILD_DYLIB),yes)
-    SHARED_LIBNAME         = ${LIBNAME}.dylib
+    SHARED_LIBNAME         = $(LIBNAME).dylib
     SHARED_LIBNAME_VERSION = $(LIBNAME).$(VERSION).dylib
     SHARED_LIBNAME_MAJOR   = $(LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.).dylib
     SHARED_LIBNAME_FLAGS   = -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-install_name,$(SHARED_LIBNAME_VERSION)
@@ -105,9 +105,9 @@ install: $(BUILD_RULES)
 	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir); \
 	if [ $(BUILD_SHARED) = yes ]; then \
 	  if [ $(BUILD_MINGW32) = no ]; then \
-	  $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(libdir); \
-	  $(LN) -sf $(SHARED_LIBNAME_VERSION) $(libdir)/$(SHARED_LIBNAME_MAJOR); \
-	  $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(libdir)/$(SHARED_LIBNAME); \
+	    $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(libdir); \
+	    $(LN) -sf $(SHARED_LIBNAME_VERSION) $(libdir)/$(SHARED_LIBNAME_MAJOR); \
+	    $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(libdir)/$(SHARED_LIBNAME); \
 	  else \
 	    $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(bindir); \
 	    $(INSTALL) -c $(LIBNAME).dll.a $(libdir); \
