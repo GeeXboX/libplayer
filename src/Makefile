@@ -20,6 +20,13 @@ ifeq ($(BUILD_SHARED),yes)
     SHARED_LIBNAME_VERSION = $(LIBNAME).$(VERSION).dylib
     SHARED_LIBNAME_MAJOR   = $(LIBNAME).$(shell echo $(VERSION) | cut -f1 -d.).dylib
     SHARED_LIBNAME_FLAGS   = -dynamiclib -Wl,-headerpad_max_install_names,-undefined,dynamic_lookup,-install_name,$(SHARED_LIBNAME_VERSION)
+  else
+    ifeq ($(BUILD_MINGW32),yes)
+      SHARED_LIBNAME         = $(LIBNAME)-$(shell echo $(VERSION) | cut -f1 -d.).dll
+      SHARED_LIBNAME_VERSION = $(SHARED_LIBNAME)
+      SHARED_LIBNAME_MAJOR   = $(SHARED_LIBNAME)
+      SHARED_LIBNAME_FLAGS   = -shared -Wl,--out-implib=$(LIBNAME).dll.a -Wl,--export-all-symbols -Wl,--enable-auto-import
+    endif
   endif
 endif
 
@@ -84,25 +91,36 @@ $(STATIC_LIBNAME): $(OBJS)
 $(SHARED_LIBNAME): $(OBJS)
 	$(CC) $(SHARED_LIBNAME_FLAGS) \
 	  $(OBJS) $(CFG_LDFLAGS) $(EXTRALIBS) $(LDFLAGS) -o $(SHARED_LIBNAME_VERSION)
-	$(LN) -sf $(SHARED_LIBNAME_VERSION) $(SHARED_LIBNAME_MAJOR)
-	$(LN) -sf $(SHARED_LIBNAME_MAJOR) $(SHARED_LIBNAME)
+	if [ $(BUILD_MINGW32) = no ]; then \
+	  $(LN) -sf $(SHARED_LIBNAME_VERSION) $(SHARED_LIBNAME_MAJOR); \
+	  $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(SHARED_LIBNAME); \
+	fi
 
 clean:
-	rm -f *.o *.a *.so*
+	rm -f *.o *.a *.so* *.dll
 	rm -f .depend
 
 install: $(BUILD_RULES)
 	$(INSTALL) -d $(libdir)
 	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir); \
 	if [ $(BUILD_SHARED) = yes ]; then \
+	  if [ $(BUILD_MINGW32) = no ]; then \
 	  $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(libdir); \
 	  $(LN) -sf $(SHARED_LIBNAME_VERSION) $(libdir)/$(SHARED_LIBNAME_MAJOR); \
 	  $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(libdir)/$(SHARED_LIBNAME); \
+	  else \
+	    $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(bindir); \
+	    $(INSTALL) -c $(LIBNAME).dll.a $(libdir); \
+	  fi \
 	fi
 	$(INSTALL) -d $(includedir)
 	$(INSTALL) -c -m 644 player.h $(includedir)
 
 uninstall:
+	if [ $(BUILD_MINGW32) = yes ]; then \
+	  rm -f $(bindir)/$(SHARED_LIBNAME); \
+	  rm -f $(libdir)/$(LIBNAME).dll.a; \
+	fi
 	rm -f $(libdir)/$(STATIC_LIBNAME)
 	rm -f $(libdir)/$(SHARED_LIBNAME)*
 	rm -f $(includedir)/player.h
