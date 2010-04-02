@@ -35,6 +35,7 @@
 
 #include "player.h"
 #include "player_internals.h"
+#include "playlist.h"
 #include "logs.h"
 #include "event.h"
 #include "wrapper_gstreamer.h"
@@ -210,31 +211,40 @@ gstreamer_player_playback_start (player_t *player)
   gstreamer_player_t *g;
   pthread_attr_t attr;
   pthread_t th;
+  mrl_t *m;
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
 
+  m = pl_playlist_get_mrl (player->playlist);
+  if (!m)
+    return PLAYER_PB_ERROR;
+
   g = player->priv;
 
-  switch (mrl_sv_get_resource (player, NULL))
+  switch (m->resource)
   {
   case MRL_RESOURCE_FILE:
   {
+    mrl_resource_local_args_t *args;
+
+    args = m->priv;
+    if (!args)
+      break;
+
     /* check if given MRL is a relative path */
-#if 0
-    if (player->mrl->name[0] != '/')
+    if (args->location[0] != '/')
     {
       char *cwd;
       cwd = get_current_dir_name ();
-      sprintf (mrl, "file://%s/%s", cwd, player->mrl->name);
+      sprintf (mrl, "file://%s/%s", cwd, args->location);
       free (cwd);
     }
     else
-      sprintf (mrl, "file://%s", player->mrl->name);
+      sprintf (mrl, "file://%s", args->location);
     break;
-#endif
   }
   default:
     break;
