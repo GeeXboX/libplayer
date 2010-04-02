@@ -45,7 +45,6 @@
 
 /* player specific structure */
 typedef struct gstreamer_player_s {
-  GMainLoop *loop;
   GstBus *bus;
   GstElement *bin;
   GstElement *video_sink;
@@ -57,7 +56,6 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 {
   player_t *player      = data;
   gstreamer_player_t *g = player->priv;
-  GMainLoop *loop       = g->loop;
 
   switch (GST_MESSAGE_TYPE (msg))
   {
@@ -67,7 +65,6 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
             MODULE_NAME, "Playback of stream has ended");
 
     /* properly shutdown playback engine */
-    g_main_loop_quit (loop);
     gst_element_set_state (g->bin, GST_STATE_NULL);
 
     /* tell player */
@@ -88,7 +85,6 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
     g_error_free (err);
 
     /* properly shutdown playback engine */
-    g_main_loop_quit (loop);
     gst_element_set_state (g->bin, GST_STATE_NULL);
     break;
   }
@@ -164,7 +160,6 @@ gstreamer_player_init (player_t *player)
     g_object_set (G_OBJECT (g->bin), "audio-sink", g->audio_sink, NULL);
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
-  g->loop = g_main_loop_new (NULL, FALSE);
 
   return PLAYER_INIT_OK;
 }
@@ -184,8 +179,6 @@ gstreamer_player_uninit (player_t *player)
     return;
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
-  g_main_loop_quit (g->loop);
-  g_main_loop_unref (g->loop);
 
   gst_object_unref (GST_OBJECT (g->bin));
   gst_object_unref (GST_OBJECT (g->bus));
@@ -195,22 +188,11 @@ gstreamer_player_uninit (player_t *player)
   free (g);
 }
 
-static void *
-gstreamer_playback_thread (void *arg)
-{
-  player_t *player      = arg;
-  gstreamer_player_t *g = player->priv;
-  g_main_loop_run (g->loop);
-  return NULL;
-}
-
 static playback_status_t
 gstreamer_player_playback_start (player_t *player)
 {
   char mrl[PATH_MAX + 16] = { 0 };
   gstreamer_player_t *g;
-  pthread_attr_t attr;
-  pthread_t th;
   mrl_t *m;
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_start");
@@ -255,12 +237,6 @@ gstreamer_player_playback_start (player_t *player)
   /* put GStreamer engine in playback state */
   gst_element_set_state (g->bin, GST_STATE_PLAYING);
 
-  /* create the playback thread */
-  pthread_attr_init (&attr);
-  pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_JOINABLE);
-  pthread_create (&th, &attr, gstreamer_playback_thread, player);
-  pthread_attr_destroy (&attr);
-
   return PLAYER_PB_OK;
 }
 
@@ -277,7 +253,6 @@ gstreamer_player_playback_stop (player_t *player)
   g = player->priv;
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
-  g_main_loop_quit (g->loop);
 }
 
 /*****************************************************************************/
