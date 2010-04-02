@@ -206,7 +206,7 @@ gstreamer_playback_thread (void *arg)
 static playback_status_t
 gstreamer_player_playback_start (player_t *player)
 {
-  char mrl[PATH_MAX + 16];
+  char mrl[PATH_MAX + 16] = { 0 };
   gstreamer_player_t *g;
   pthread_attr_t attr;
   pthread_t th;
@@ -217,7 +217,6 @@ gstreamer_player_playback_start (player_t *player)
     return PLAYER_PB_FATAL;
 
   g = player->priv;
-  memset (mrl, '\0', PATH_MAX + 16);
 
   switch (mrl_sv_get_resource (player, NULL))
   {
