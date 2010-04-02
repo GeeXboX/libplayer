@@ -54,9 +54,9 @@ typedef struct gstreamer_player_s {
 static gboolean
 bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 {
-  player_t *player = (player_t *) data;
-  gstreamer_player_t *g = (gstreamer_player_t *) player->priv;
-  GMainLoop *loop = (GMainLoop *) g->loop;
+  player_t *player      = data;
+  gstreamer_player_t *g = player->priv;
+  GMainLoop *loop       = g->loop;
 
   switch (GST_MESSAGE_TYPE (msg))
   {
@@ -109,7 +109,7 @@ gstreamer_player_init (player_t *player)
   if (!player)
     return PLAYER_INIT_ERROR;
 
-  g = (gstreamer_player_t *) player->priv;
+  g = player->priv;
 
   if (!g)
     return PLAYER_INIT_ERROR;
@@ -178,8 +178,7 @@ gstreamer_player_uninit (player_t *player)
   if (!player)
     return;
 
-  g = (gstreamer_player_t *) player->priv;
-
+  g = player->priv;
   if (!g)
     return;
 
@@ -198,8 +197,8 @@ gstreamer_player_uninit (player_t *player)
 static void *
 gstreamer_playback_thread (void *arg)
 {
-  player_t *player = (player_t *) arg;
-  gstreamer_player_t *g = (gstreamer_player_t *) player->priv;
+  player_t *player      = arg;
+  gstreamer_player_t *g = player->priv;
   g_main_loop_run (g->loop);
   return NULL;
 }
@@ -217,7 +216,7 @@ gstreamer_player_playback_start (player_t *player)
   if (!player)
     return PLAYER_PB_FATAL;
 
-  g = (gstreamer_player_t *) player->priv;
+  g = player->priv;
   memset (mrl, '\0', PATH_MAX + 16);
 
   switch (mrl_sv_get_resource (player, NULL))
@@ -266,7 +265,7 @@ gstreamer_player_playback_stop (player_t *player)
   if (!player)
     return;
 
-  g = (gstreamer_player_t *) player->priv;
+  g = player->priv;
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
   g_main_loop_quit (g->loop);
