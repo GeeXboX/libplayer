@@ -105,6 +105,9 @@ gstreamer_set_video_sink (player_t *player)
 
   switch (player->vo)
   {
+  case PLAYER_VO_AUTO:
+    sink = gst_element_factory_make ("autovideosink", "x11-output");
+    break;
   case PLAYER_VO_X11:
     sink = gst_element_factory_make ("ximagesink", "x11-output");
     break;
