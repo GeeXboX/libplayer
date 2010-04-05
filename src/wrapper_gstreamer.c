@@ -110,6 +110,9 @@ gstreamer_set_video_sink (player_t *player)
   case PLAYER_VO_AUTO:
     sink = gst_element_factory_make ("autovideosink", VIDEO_SINK_NAME);
     break;
+  case PLAYER_VO_NULL:
+    sink = gst_element_factory_make ("fakesink", VIDEO_SINK_NAME);
+    break;
   case PLAYER_VO_X11:
     sink = gst_element_factory_make ("ximagesink", VIDEO_SINK_NAME);
     break;
