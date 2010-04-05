@@ -1001,6 +1001,7 @@ if test "$wrapper_gstreamer" = "auto" -o "$wrapper_gstreamer" = "yes"; then
   fi
 
   check_lib_pkgcfg gstreamer-0.10 gst/gst.h gst_init -lgstreamer-0.10
+  check_lib_pkgcfg gstreamer-interfaces-0.10 gst/interfaces/propertyprobe.h gst_property_probe_get_property -lgstinterfaces-0.10
   if [ "$?" = 0 ]; then
     add_cppflags -DHAVE_GSTREAMER
     wrapper_gstreamer="yes"

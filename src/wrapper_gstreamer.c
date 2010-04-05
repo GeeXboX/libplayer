@@ -95,6 +95,54 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
   return TRUE;
 }
 
+static GstElement *
+gstreamer_set_video_sink (player_t *player)
+{
+  GstElement *sink = NULL;
+
+  if (!player)
+    return NULL;
+
+  switch (player->vo)
+  {
+  case PLAYER_VO_X11:
+    sink = gst_element_factory_make ("ximagesink", "x11-output");
+    break;
+  case PLAYER_VO_X11_SDL:
+    sink = gst_element_factory_make ("sdlvideosink", "sdl-output");
+    break;
+  case PLAYER_VO_XV:
+    sink = gst_element_factory_make ("xvimagesink", "xv-output");
+    break;
+  default:
+    break;
+  }
+
+  return sink;
+}
+
+static GstElement *
+gstreamer_set_audio_sink (player_t *player)
+{
+  GstElement *sink = NULL;
+
+  if (!player)
+    return NULL;
+
+  switch (player->ao) {
+  case PLAYER_AO_ALSA:
+    sink = gst_element_factory_make ("alsasink", "alsa-output");
+    break;
+  case PLAYER_AO_OSS:
+    sink = gst_element_factory_make ("osssink", "oss-output");
+    break;
+  default:
+    break;
+  }
+
+  return sink;
+}
+
 static init_status_t
 gstreamer_player_init (player_t *player)
 {
@@ -126,36 +174,13 @@ gstreamer_player_init (player_t *player)
   }
   gst_bus_add_watch (g->bus, bus_callback, player);
 
-  switch (player->vo)
-  {
-  case PLAYER_VO_X11:
-    g->video_sink = gst_element_factory_make ("ximagesink", "x11-output");
-    break;
-  case PLAYER_VO_X11_SDL:
-    g->video_sink = gst_element_factory_make ("sdlvideosink", "sdl-output");
-    break;
-  case PLAYER_VO_XV:
-    if (!g->video_sink)
-      g->video_sink = gst_element_factory_make ("xvimagesink", "xv-output");
-    break;
-  default:
-  break;
-  }
-
+  /* set video sink */
+  g->video_sink = gstreamer_set_video_sink (player);
   if (g->video_sink)
     g_object_set (G_OBJECT (g->bin), "video-sink", g->video_sink, NULL);
 
-  switch (player->ao) {
-  case PLAYER_AO_ALSA:
-    g->audio_sink = gst_element_factory_make ("alsasink", "alsa-output");
-    break;
-  case PLAYER_AO_OSS:
-    g->audio_sink = gst_element_factory_make ("osssink", "oss-output");
-    break;
-  default:
-    break;
-  }
-
+  /* set audio sink */
+  g->audio_sink = gstreamer_set_audio_sink (player);
   if (g->audio_sink)
     g_object_set (G_OBJECT (g->bin), "audio-sink", g->audio_sink, NULL);
 
