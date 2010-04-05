@@ -133,6 +133,9 @@ gstreamer_set_audio_sink (player_t *player)
   case PLAYER_AO_AUTO:
     sink = gst_element_factory_make ("autoaudiosink", "autoaudio-output");
     break;
+  case PLAYER_AO_NULL:
+    sink = gst_element_factory_make ("fakesink", "fakeaudio-output");
+    break;
   case PLAYER_AO_ALSA:
     sink = gst_element_factory_make ("alsasink", "alsa-output");
     break;
