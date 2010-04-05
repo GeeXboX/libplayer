@@ -121,6 +121,8 @@ gstreamer_set_video_sink (player_t *player)
   return sink;
 }
 
+#define AUDIO_SINK_NAME "audio-sink"
+
 static GstElement *
 gstreamer_set_audio_sink (player_t *player)
 {
@@ -131,19 +133,19 @@ gstreamer_set_audio_sink (player_t *player)
 
   switch (player->ao) {
   case PLAYER_AO_AUTO:
-    sink = gst_element_factory_make ("autoaudiosink", "autoaudio-output");
+    sink = gst_element_factory_make ("autoaudiosink", AUDIO_SINK_NAME);
     break;
   case PLAYER_AO_NULL:
-    sink = gst_element_factory_make ("fakesink", "fakeaudio-output");
+    sink = gst_element_factory_make ("fakesink", AUDIO_SINK_NAME);
     break;
   case PLAYER_AO_ALSA:
-    sink = gst_element_factory_make ("alsasink", "alsa-output");
+    sink = gst_element_factory_make ("alsasink", AUDIO_SINK_NAME);
     break;
   case PLAYER_AO_OSS:
-    sink = gst_element_factory_make ("osssink", "oss-output");
+    sink = gst_element_factory_make ("osssink", AUDIO_SINK_NAME);
     break;
   case PLAYER_AO_PULSE:
-    sink = gst_element_factory_make ("pulsesink", "pulse-output");
+    sink = gst_element_factory_make ("pulsesink", AUDIO_SINK_NAME);
     break;
   default:
     break;
