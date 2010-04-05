@@ -136,6 +136,9 @@ gstreamer_set_audio_sink (player_t *player)
   case PLAYER_AO_OSS:
     sink = gst_element_factory_make ("osssink", "oss-output");
     break;
+  case PLAYER_AO_PULSE:
+    sink = gst_element_factory_make ("pulsesink", "pulse-output");
+    break;
   default:
     break;
   }
