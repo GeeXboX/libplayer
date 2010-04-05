@@ -43,7 +43,9 @@
 #include "logs.h"
 #include "event.h"
 #include "wrapper_gstreamer.h"
+#ifdef USE_X11
 #include "x11_common.h"
+#endif /* USE_X11 */
 
 #define MODULE_NAME "gstreamer"
 
