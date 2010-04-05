@@ -112,6 +112,8 @@ gstreamer_set_video_sink (player_t *player)
     break;
   case PLAYER_VO_NULL:
     sink = gst_element_factory_make ("fakesink", VIDEO_SINK_NAME);
+    if (sink)
+      g_object_set (sink, "sync", TRUE, NULL);
     break;
   case PLAYER_VO_X11:
     sink = gst_element_factory_make ("ximagesink", VIDEO_SINK_NAME);
