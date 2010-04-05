@@ -95,6 +95,8 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
   return TRUE;
 }
 
+#define VIDEO_SINK_NAME "video-sink"
+
 static GstElement *
 gstreamer_set_video_sink (player_t *player)
 {
@@ -106,16 +108,16 @@ gstreamer_set_video_sink (player_t *player)
   switch (player->vo)
   {
   case PLAYER_VO_AUTO:
-    sink = gst_element_factory_make ("autovideosink", "x11-output");
+    sink = gst_element_factory_make ("autovideosink", VIDEO_SINK_NAME);
     break;
   case PLAYER_VO_X11:
-    sink = gst_element_factory_make ("ximagesink", "x11-output");
+    sink = gst_element_factory_make ("ximagesink", VIDEO_SINK_NAME);
     break;
   case PLAYER_VO_X11_SDL:
-    sink = gst_element_factory_make ("sdlvideosink", "sdl-output");
+    sink = gst_element_factory_make ("sdlvideosink", VIDEO_SINK_NAME);
     break;
   case PLAYER_VO_XV:
-    sink = gst_element_factory_make ("xvimagesink", "xv-output");
+    sink = gst_element_factory_make ("xvimagesink", VIDEO_SINK_NAME);
     break;
   default:
     break;
