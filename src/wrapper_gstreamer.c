@@ -33,6 +33,10 @@
 
 #include <gst/gst.h>
 
+#ifdef USE_X11
+#include <gst/interfaces/xoverlay.h>
+#endif /* USE_X11 */
+
 #include "player.h"
 #include "player_internals.h"
 #include "playlist.h"
@@ -101,6 +105,7 @@ static GstElement *
 gstreamer_set_video_sink (player_t *player)
 {
   GstElement *sink = NULL;
+  int use_x11 = 0;
 
   if (!player)
     return NULL;
@@ -117,16 +122,42 @@ gstreamer_set_video_sink (player_t *player)
     break;
   case PLAYER_VO_X11:
     sink = gst_element_factory_make ("ximagesink", VIDEO_SINK_NAME);
+    use_x11 = 1;
     break;
   case PLAYER_VO_X11_SDL:
     sink = gst_element_factory_make ("sdlvideosink", VIDEO_SINK_NAME);
+    use_x11 = 1;
     break;
   case PLAYER_VO_XV:
     sink = gst_element_factory_make ("xvimagesink", VIDEO_SINK_NAME);
+    use_x11 = 1;
     break;
   default:
     break;
   }
+
+#ifdef USE_X11
+  if (sink && use_x11)
+  {
+    GstXOverlay *ov;
+    uint32_t winid;
+    int ret = 0;
+
+    ret = pl_x11_init (player);
+    if (player->vo != PLAYER_VO_AUTO && !ret)
+    {
+      gst_object_unref (GST_OBJECT (sink));
+      pl_log (player, PLAYER_MSG_ERROR,
+              MODULE_NAME, "X initialization has failed");
+      return NULL;
+    }
+
+    winid = pl_x11_get_window (player->x11);
+
+    ov = GST_X_OVERLAY (sink);
+    gst_x_overlay_set_xwindow_id (ov, winid);
+  }
+#endif /* USE_X11 */
 
   return sink;
 }
@@ -226,6 +257,10 @@ gstreamer_player_uninit (player_t *player)
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
 
+#ifdef USE_X11
+  pl_x11_uninit (player);
+#endif /* USE_X11 */
+
   gst_object_unref (GST_OBJECT (g->bin));
   gst_object_unref (GST_OBJECT (g->bus));
 
@@ -283,6 +318,11 @@ gstreamer_player_playback_start (player_t *player)
   /* put GStreamer engine in playback state */
   gst_element_set_state (g->bin, GST_STATE_PLAYING);
 
+#ifdef USE_X11
+  //if (MRL_USES_VO (m)) /* properties retrieval is not yet working */
+    pl_x11_map (player);
+#endif /* USE_X11 */
+
   return PLAYER_PB_OK;
 }
 
@@ -290,6 +330,9 @@ static void
 gstreamer_player_playback_stop (player_t *player)
 {
   gstreamer_player_t *g = NULL;
+#ifdef USE_X11
+  //mrl_t *mrl; /* properties retrieval is not yet working */
+#endif /* USE_X11 */
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_stop");
 
@@ -299,6 +342,12 @@ gstreamer_player_playback_stop (player_t *player)
   g = player->priv;
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
+
+#ifdef USE_X11
+  //mrl = pl_playlist_get_mrl (player->playlist);
+  //if (MRL_USES_VO (mrl)) /* properties retrieval is not yet working */
+    pl_x11_unmap (player);
+#endif /* USE_X11 */
 }
 
 /*****************************************************************************/
