@@ -451,17 +451,17 @@ gstreamer_audio_set_volume (player_t *player, int value)
 
   if (gstreamer_audio_can_set_volume (player))
   {
-  volume = ((double) (value)) / 100.0;
+    volume = ((double) (value)) / 100.0;
 
-  gst_element_get_state (es, &cur_state, NULL, 0);
-  if (cur_state == GST_STATE_READY || cur_state == GST_STATE_PLAYING)
-  {
-    if (gst_element_implements_interface (es, GST_TYPE_STREAM_VOLUME))
-      gst_stream_volume_set_volume (GST_STREAM_VOLUME (es),
-				    GST_STREAM_VOLUME_FORMAT_CUBIC, volume);
-    else
-      g_object_set (es, "volume", volume, NULL);
-  }
+    gst_element_get_state (es, &cur_state, NULL, 0);
+    if (cur_state == GST_STATE_READY || cur_state == GST_STATE_PLAYING)
+    {
+      if (gst_element_implements_interface (es, GST_TYPE_STREAM_VOLUME))
+	gst_stream_volume_set_volume (GST_STREAM_VOLUME (es),
+				      GST_STREAM_VOLUME_FORMAT_CUBIC, volume);
+      else
+	g_object_set (es, "volume", volume, NULL);
+    }
   }
 }
 
