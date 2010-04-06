@@ -56,6 +56,7 @@ typedef struct gstreamer_player_s {
   GstElement *bin;
   GstElement *video_sink;
   GstElement *audio_sink;
+  GstElement *volume_ctrl;
 } gstreamer_player_t;
 
 static void
@@ -270,6 +271,13 @@ gstreamer_player_init (player_t *player)
   if (g->audio_sink)
     g_object_set (G_OBJECT (g->bin), "audio-sink", g->audio_sink, NULL);
 
+  /* If we're using an audio sink that has a volume property,
+     then that's what we need to modify for volume control,
+     not the playbin's one */
+  g->volume_ctrl =
+    g_object_class_find_property (G_OBJECT_GET_CLASS (g->audio_sink),
+				  "volume") ? g->audio_sink : g->bin;
+
   gst_element_set_state (g->bin, GST_STATE_NULL);
 
   return PLAYER_INIT_OK;
@@ -398,11 +406,7 @@ gstreamer_audio_get_volume (player_t *player)
     return -1;
 
   g = player->priv;
-
-  /* If we're using a sink that has a volume property, then that's what
-   * we need to modify, not playbin's one */
-  es = g_object_class_find_property (G_OBJECT_GET_CLASS (g->audio_sink),
-				     "volume") ? g->audio_sink : g->bin;
+  es = g->volume_ctrl;
 
   if (gst_element_implements_interface (es, GST_TYPE_STREAM_VOLUME))
     vol = gst_stream_volume_get_volume (GST_STREAM_VOLUME (es),
@@ -430,11 +434,7 @@ gstreamer_audio_set_volume (player_t *player, int value)
     return;
 
   g = player->priv;
-
-  /* If we're using a sink that has a volume property, then that's what
-   * we need to modify, not playbin's one */
-  es = g_object_class_find_property (G_OBJECT_GET_CLASS (g->audio_sink),
-				     "volume") ? g->audio_sink : g->bin;
+  es = g->volume_ctrl;
 
   volume = ((double) (value)) / 100.0;
 
