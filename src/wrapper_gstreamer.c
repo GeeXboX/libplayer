@@ -106,6 +106,8 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
     break;
   }
   default:
+    pl_log (player, PLAYER_MSG_VERBOSE,
+            MODULE_NAME, "Unhandled message: %" GST_PTR_FORMAT, msg);
     break;
   }
 
