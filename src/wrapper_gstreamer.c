@@ -105,6 +105,24 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
     gstreamer_set_eof (player);
     break;
   }
+  case GST_MESSAGE_STATE_CHANGED:
+  {
+    GstState old_state, new_state;
+    gchar *src;
+
+    gst_message_parse_state_changed (msg, &old_state, &new_state, NULL);
+
+    if (old_state == new_state)
+      break;
+
+    src = gst_object_get_name (msg->src);
+    pl_log (player, PLAYER_MSG_VERBOSE,
+	    "%s changed state from %s to %s", src,
+	    gst_element_state_get_name (old_state),
+	    gst_element_state_get_name (new_state));
+    g_free (src);
+    break;
+  }
   default:
     pl_log (player, PLAYER_MSG_VERBOSE,
             MODULE_NAME, "Unhandled message: %" GST_PTR_FORMAT, msg);
