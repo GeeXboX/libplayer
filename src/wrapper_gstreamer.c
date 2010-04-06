@@ -57,6 +57,23 @@ typedef struct gstreamer_player_s {
   GstElement *audio_sink;
 } gstreamer_player_t;
 
+static void
+gstreamer_set_eof (player_t *player)
+{
+  gstreamer_player_t *g;
+
+  if (!player)
+    return;
+
+  g = player->priv;
+
+  /* properly shutdown playback engine */
+  gst_element_set_state (g->bin, GST_STATE_NULL);
+
+  /* tell player */
+  player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED);
+}
+
 static gboolean
 bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 {
@@ -70,12 +87,7 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
     pl_log (player, PLAYER_MSG_INFO,
             MODULE_NAME, "Playback of stream has ended");
 
-    /* properly shutdown playback engine */
-    gst_element_set_state (g->bin, GST_STATE_NULL);
-
-    /* tell player */
-    player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED);
-
+    gstreamer_set_eof (player);
     break;
   }
   case GST_MESSAGE_ERROR:
@@ -90,8 +102,7 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
             MODULE_NAME, "Error: %s", err->message);
     g_error_free (err);
 
-    /* properly shutdown playback engine */
-    gst_element_set_state (g->bin, GST_STATE_NULL);
+    gstreamer_set_eof (player);
     break;
   }
   default:
