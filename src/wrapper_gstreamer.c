@@ -32,6 +32,7 @@
 #include <pthread.h>
 
 #include <gst/gst.h>
+#include <gst/interfaces/streamvolume.h>
 
 #ifdef USE_X11
 #include <gst/interfaces/xoverlay.h>
@@ -383,6 +384,71 @@ gstreamer_player_playback_stop (player_t *player)
 #endif /* USE_X11 */
 }
 
+static int
+gstreamer_audio_get_volume (player_t *player)
+{
+  gstreamer_player_t *g;
+  GstElement *es;
+  gdouble vol;
+  int volume;
+
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_get_volume");
+
+  if (!player)
+    return -1;
+
+  g = player->priv;
+
+  /* If we're using a sink that has a volume property, then that's what
+   * we need to modify, not playbin's one */
+  es = g_object_class_find_property (G_OBJECT_GET_CLASS (g->audio_sink),
+				     "volume") ? g->audio_sink : g->bin;
+
+  if (gst_element_implements_interface (es, GST_TYPE_STREAM_VOLUME))
+    vol = gst_stream_volume_get_volume (GST_STREAM_VOLUME (es),
+					GST_STREAM_VOLUME_FORMAT_CUBIC);
+  else
+    g_object_get (G_OBJECT (es), "volume", &vol, NULL);
+
+  volume = (int) (100 * vol);
+
+  return (volume < 0) ? -1 : volume;
+}
+
+static void
+gstreamer_audio_set_volume (player_t *player, int value)
+{
+  gstreamer_player_t *g;
+  GstState cur_state;
+  GstElement *es;
+  double volume;
+
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "audio_set_volume: %d", value);
+
+  if (!player)
+    return;
+
+  g = player->priv;
+
+  /* If we're using a sink that has a volume property, then that's what
+   * we need to modify, not playbin's one */
+  es = g_object_class_find_property (G_OBJECT_GET_CLASS (g->audio_sink),
+				     "volume") ? g->audio_sink : g->bin;
+
+  volume = ((double) (value)) / 100.0;
+
+  gst_element_get_state (es, &cur_state, NULL, 0);
+  if (cur_state == GST_STATE_READY || cur_state == GST_STATE_PLAYING)
+  {
+    if (gst_element_implements_interface (es, GST_TYPE_STREAM_VOLUME))
+      gst_stream_volume_set_volume (GST_STREAM_VOLUME (es),
+				    GST_STREAM_VOLUME_FORMAT_CUBIC, volume);
+    else
+      g_object_set (es, "volume", volume, NULL);
+  }
+}
+
 /*****************************************************************************/
 /*                            Public Wrapper API                             */
 /*****************************************************************************/
@@ -431,8 +497,8 @@ pl_register_functions_gstreamer (void)
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = NULL;
 
-  funcs->audio_get_volume   = NULL;
-  funcs->audio_set_volume   = NULL;
+  funcs->audio_get_volume   = gstreamer_audio_get_volume;
+  funcs->audio_set_volume   = gstreamer_audio_set_volume;
   funcs->audio_get_mute     = NULL;
   funcs->audio_set_mute     = NULL;
   funcs->audio_set_delay    = NULL;
