@@ -419,6 +419,19 @@ gstreamer_audio_get_volume (player_t *player)
   return (volume < 0) ? -1 : volume;
 }
 
+static gboolean
+gstreamer_audio_can_set_volume (player_t *player)
+{
+  gstreamer_player_t *g;
+
+  g = player->priv;
+  g_return_val_if_fail (GST_IS_ELEMENT (g->bin), FALSE);
+
+  /* TODO: return FALSE if using AC3 Passthrough */
+
+  return (player->ao == PLAYER_AO_NULL) ? 0 : 1;
+}
+
 static void
 gstreamer_audio_set_volume (player_t *player, int value)
 {
@@ -436,6 +449,8 @@ gstreamer_audio_set_volume (player_t *player, int value)
   g = player->priv;
   es = g->volume_ctrl;
 
+  if (gstreamer_audio_can_set_volume (player))
+  {
   volume = ((double) (value)) / 100.0;
 
   gst_element_get_state (es, &cur_state, NULL, 0);
@@ -446,6 +461,7 @@ gstreamer_audio_set_volume (player_t *player, int value)
 				    GST_STREAM_VOLUME_FORMAT_CUBIC, volume);
     else
       g_object_set (es, "volume", volume, NULL);
+  }
   }
 }
 
