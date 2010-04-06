@@ -249,7 +249,7 @@ gstreamer_player_init (player_t *player)
   if (!gst_init_check (NULL, NULL, &error))
     return PLAYER_INIT_ERROR;
 
-  g->bin = gst_element_factory_make ("playbin", "player");
+  g->bin = gst_element_factory_make ("playbin2", "player");
 
   g->bus = gst_pipeline_get_bus (GST_PIPELINE (g->bin));
   if (!g->bus)
