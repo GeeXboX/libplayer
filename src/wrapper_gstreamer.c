@@ -76,7 +76,7 @@ gstreamer_set_eof (player_t *player)
   player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED);
 }
 
-static gboolean
+static void
 bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 {
   player_t *player      = data;
@@ -130,8 +130,44 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
             MODULE_NAME, "Unhandled message: %" GST_PTR_FORMAT, msg);
     break;
   }
+}
 
-  return TRUE;
+static void
+playbin_source_notify_cb (GObject *play, GParamSpec *p, player_t *player)
+{
+  pl_log (player, PLAYER_MSG_VERBOSE, "%s", __FUNCTION__);
+}
+
+static void
+playbin_stream_changed_cb (pl_unused GstElement *obj, gpointer data)
+{
+  player_t *player = data;
+
+  pl_log (player, PLAYER_MSG_VERBOSE, "%s", __FUNCTION__);
+}
+
+static void
+video_tags_changed_cb (pl_unused GstElement *obj, gint id, gpointer data)
+{
+  player_t *player = data;
+
+  pl_log (player, PLAYER_MSG_VERBOSE, "%s", __FUNCTION__);
+}
+
+static void
+audio_tags_changed_cb (pl_unused GstElement *obj, gint id, gpointer data)
+{
+  player_t *player = data;
+
+  pl_log (player, PLAYER_MSG_VERBOSE, "%s", __FUNCTION__);
+}
+
+static void
+text_tags_changed_cb (pl_unused GstElement *obj, gint id, gpointer data)
+{
+  player_t *player = data;
+
+  pl_log (player, PLAYER_MSG_VERBOSE, "%s", __FUNCTION__);
 }
 
 #define VIDEO_SINK_NAME "video-sink"
@@ -259,7 +295,25 @@ gstreamer_player_init (player_t *player)
     gst_deinit ();
     return PLAYER_INIT_ERROR;
   }
-  gst_bus_add_watch (g->bus, bus_callback, player);
+
+  gst_bus_add_signal_watch (g->bus);
+  g_signal_connect (g->bus, "message",  G_CALLBACK (bus_callback), player);
+
+  g_signal_connect (g->bin, "notify::source",
+		    G_CALLBACK (playbin_source_notify_cb), player);
+  g_signal_connect (g->bin, "video-changed",
+		    G_CALLBACK (playbin_stream_changed_cb), player);
+  g_signal_connect (g->bin, "audio-changed",
+		    G_CALLBACK (playbin_stream_changed_cb), player);
+  g_signal_connect (g->bin, "text-changed",
+		    G_CALLBACK (playbin_stream_changed_cb), player);
+
+  g_signal_connect (g->bin, "video-tags-changed",
+		    G_CALLBACK (video_tags_changed_cb), player);
+  g_signal_connect (g->bin, "audio-tags-changed",
+		    G_CALLBACK (audio_tags_changed_cb), player);
+  g_signal_connect (g->bin, "text-tags-changed",
+		    G_CALLBACK (text_tags_changed_cb), player);
 
   /* set video sink */
   g->video_sink = gstreamer_set_video_sink (player);
