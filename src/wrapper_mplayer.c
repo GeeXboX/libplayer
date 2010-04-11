@@ -777,6 +777,10 @@ thread_fifo (void *arg)
           pthread_cond_signal (&mplayer->cond_status);
         mplayer->status = MPLAYER_IS_IDLE;
         pthread_mutex_unlock (&mplayer->mutex_status);
+
+#ifdef USE_X11
+        pl_x11_unmap (player);
+#endif /* USE_X11 */
       }
     }
 
