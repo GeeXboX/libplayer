@@ -119,9 +119,9 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 
     src = gst_object_get_name (msg->src);
     pl_log (player, PLAYER_MSG_VERBOSE,
-	    "%s changed state from %s to %s", src,
-	    gst_element_state_get_name (old_state),
-	    gst_element_state_get_name (new_state));
+            "%s changed state from %s to %s", src,
+            gst_element_state_get_name (old_state),
+            gst_element_state_get_name (new_state));
     g_free (src);
     break;
   }
@@ -300,20 +300,20 @@ gstreamer_player_init (player_t *player)
   g_signal_connect (g->bus, "message",  G_CALLBACK (bus_callback), player);
 
   g_signal_connect (g->bin, "notify::source",
-		    G_CALLBACK (playbin_source_notify_cb), player);
+                    G_CALLBACK (playbin_source_notify_cb), player);
   g_signal_connect (g->bin, "video-changed",
-		    G_CALLBACK (playbin_stream_changed_cb), player);
+                    G_CALLBACK (playbin_stream_changed_cb), player);
   g_signal_connect (g->bin, "audio-changed",
-		    G_CALLBACK (playbin_stream_changed_cb), player);
+                    G_CALLBACK (playbin_stream_changed_cb), player);
   g_signal_connect (g->bin, "text-changed",
-		    G_CALLBACK (playbin_stream_changed_cb), player);
+                    G_CALLBACK (playbin_stream_changed_cb), player);
 
   g_signal_connect (g->bin, "video-tags-changed",
-		    G_CALLBACK (video_tags_changed_cb), player);
+                    G_CALLBACK (video_tags_changed_cb), player);
   g_signal_connect (g->bin, "audio-tags-changed",
-		    G_CALLBACK (audio_tags_changed_cb), player);
+                    G_CALLBACK (audio_tags_changed_cb), player);
   g_signal_connect (g->bin, "text-tags-changed",
-		    G_CALLBACK (text_tags_changed_cb), player);
+                    G_CALLBACK (text_tags_changed_cb), player);
 
   /* set video sink */
   g->video_sink = gstreamer_set_video_sink (player);
@@ -330,7 +330,7 @@ gstreamer_player_init (player_t *player)
      not the playbin's one */
   g->volume_ctrl =
     g_object_class_find_property (G_OBJECT_GET_CLASS (g->audio_sink),
-				  "volume") ? g->audio_sink : g->bin;
+                                  "volume") ? g->audio_sink : g->bin;
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
 
@@ -464,7 +464,7 @@ gstreamer_audio_get_volume (player_t *player)
 
   if (gst_element_implements_interface (es, GST_TYPE_STREAM_VOLUME))
     vol = gst_stream_volume_get_volume (GST_STREAM_VOLUME (es),
-					GST_STREAM_VOLUME_FORMAT_CUBIC);
+                                        GST_STREAM_VOLUME_FORMAT_CUBIC);
   else
     g_object_get (G_OBJECT (es), "volume", &vol, NULL);
 
@@ -511,10 +511,10 @@ gstreamer_audio_set_volume (player_t *player, int value)
     if (cur_state == GST_STATE_READY || cur_state == GST_STATE_PLAYING)
     {
       if (gst_element_implements_interface (es, GST_TYPE_STREAM_VOLUME))
-	gst_stream_volume_set_volume (GST_STREAM_VOLUME (es),
-				      GST_STREAM_VOLUME_FORMAT_CUBIC, volume);
+        gst_stream_volume_set_volume (GST_STREAM_VOLUME (es),
+                                      GST_STREAM_VOLUME_FORMAT_CUBIC, volume);
       else
-	g_object_set (es, "volume", volume, NULL);
+        g_object_set (es, "volume", volume, NULL);
     }
   }
 }
