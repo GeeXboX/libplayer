@@ -266,6 +266,9 @@ gstreamer_set_audio_sink (player_t *player)
   return sink;
 }
 
+#define GST_SIGNAL(msg, cb) \
+  g_signal_connect (g->bin, msg,  G_CALLBACK (cb), player)
+
 static init_status_t
 gstreamer_player_init (player_t *player)
 {
@@ -299,21 +302,14 @@ gstreamer_player_init (player_t *player)
   gst_bus_add_signal_watch (g->bus);
   g_signal_connect (g->bus, "message",  G_CALLBACK (bus_callback), player);
 
-  g_signal_connect (g->bin, "notify::source",
-                    G_CALLBACK (playbin_source_notify_cb), player);
-  g_signal_connect (g->bin, "video-changed",
-                    G_CALLBACK (playbin_stream_changed_cb), player);
-  g_signal_connect (g->bin, "audio-changed",
-                    G_CALLBACK (playbin_stream_changed_cb), player);
-  g_signal_connect (g->bin, "text-changed",
-                    G_CALLBACK (playbin_stream_changed_cb), player);
+  GST_SIGNAL ("notify::source",     playbin_source_notify_cb);
+  GST_SIGNAL ("video-changed",      playbin_stream_changed_cb);
+  GST_SIGNAL ("audio-changed",      playbin_stream_changed_cb);
+  GST_SIGNAL ("text-changed",       playbin_stream_changed_cb);
 
-  g_signal_connect (g->bin, "video-tags-changed",
-                    G_CALLBACK (video_tags_changed_cb), player);
-  g_signal_connect (g->bin, "audio-tags-changed",
-                    G_CALLBACK (audio_tags_changed_cb), player);
-  g_signal_connect (g->bin, "text-tags-changed",
-                    G_CALLBACK (text_tags_changed_cb), player);
+  GST_SIGNAL ("video-tags-changed", video_tags_changed_cb);
+  GST_SIGNAL ("audio-tags-changed", audio_tags_changed_cb);
+  GST_SIGNAL ("text-tags-changed",  text_tags_changed_cb);
 
   /* set video sink */
   g->video_sink = gstreamer_set_video_sink (player);
