@@ -276,6 +276,8 @@ gstreamer_player_init (player_t *player)
   GError *error;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "init");
+  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
+          "Library Version is: %s", gst_version_string ());
 
   if (!player)
     return PLAYER_INIT_ERROR;
