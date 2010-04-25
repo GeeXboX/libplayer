@@ -615,6 +615,52 @@ gstreamer_audio_set_volume (player_t *player, int value)
   }
 }
 
+static player_mute_t
+gstreamer_audio_get_mute (player_t *player)
+{
+  player_mute_t mute = PLAYER_MUTE_UNKNOWN;
+  gstreamer_player_t *g;
+  GstElement *es;
+
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "audio_get_mute");
+
+  if (!player)
+    return mute;
+
+  g  = (gstreamer_player_t *) player->priv;
+  es = g->volume_ctrl;
+
+  mute = gst_stream_volume_get_mute (GST_STREAM_VOLUME (es)) ?
+    PLAYER_MUTE_ON : PLAYER_MUTE_OFF;
+
+  return mute;
+}
+
+static void
+gstreamer_audio_set_mute (player_t *player, player_mute_t value)
+{
+  gstreamer_player_t *g;
+  gboolean mute = FALSE;
+  GstElement *es;
+
+  if (value == PLAYER_MUTE_UNKNOWN)
+    return;
+
+  if (value == PLAYER_MUTE_ON)
+    mute = TRUE;
+
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "audio_set_mute: %s", mute ? "on" : "off");
+
+  if (!player)
+    return;
+
+  g  = (gstreamer_player_t *) player->priv;
+  es = g->volume_ctrl;
+
+  gst_stream_volume_set_mute (GST_STREAM_VOLUME (es), mute);
+}
+
 /*****************************************************************************/
 /*                            Public Wrapper API                             */
 /*****************************************************************************/
@@ -665,8 +711,8 @@ pl_register_functions_gstreamer (void)
 
   funcs->audio_get_volume   = gstreamer_audio_get_volume;
   funcs->audio_set_volume   = gstreamer_audio_set_volume;
-  funcs->audio_get_mute     = NULL;
-  funcs->audio_set_mute     = NULL;
+  funcs->audio_get_mute     = gstreamer_audio_get_mute;
+  funcs->audio_set_mute     = gstreamer_audio_set_mute;
   funcs->audio_set_delay    = NULL;
   funcs->audio_select       = NULL;
   funcs->audio_prev         = NULL;
