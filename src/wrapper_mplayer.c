@@ -2662,6 +2662,7 @@ mp_preinit_vo (player_t *player, uint32_t *winid)
   {
   case PLAYER_VO_NULL:
   case PLAYER_VO_FB:
+  case PLAYER_VO_OMAP:
     break;
 
   case PLAYER_VO_X11:
@@ -2848,6 +2849,11 @@ mplayer_init (player_t *player)
     case PLAYER_VO_FB:
       params[pp++] = "-vo";
       params[pp++] = "fbdev";
+      break;
+
+    case PLAYER_VO_OMAP:
+      params[pp++] = "-vo";
+      params[pp++] = "omapfb";
       break;
 
     case PLAYER_VO_VDPAU:
