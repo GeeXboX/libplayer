@@ -363,6 +363,52 @@ gstreamer_player_uninit (player_t *player)
   free (g);
 }
 
+static void
+gstreamer_set_verbosity (player_t *player, player_verbosity_level_t level)
+{
+  gstreamer_player_t *g;
+  GstDebugLevel verbosity = GST_LEVEL_DEFAULT;
+
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "set_verbosity");
+
+  if (!player)
+    return;
+
+  g = (gstreamer_player_t *) player->priv;
+  if (!g)
+    return;
+
+  switch (level)
+  {
+  case PLAYER_MSG_NONE:
+    verbosity = GST_LEVEL_NONE;
+    break;
+
+  case PLAYER_MSG_VERBOSE:
+    verbosity = GST_LEVEL_DEBUG;
+    break;
+
+  case PLAYER_MSG_INFO:
+    verbosity = GST_LEVEL_INFO;
+    break;
+
+  case PLAYER_MSG_WARNING:
+    verbosity = GST_LEVEL_WARNING;
+    break;
+
+  case PLAYER_MSG_ERROR:
+    verbosity = GST_LEVEL_ERROR;
+    break;
+
+  case PLAYER_MSG_CRITICAL:
+    verbosity = GST_LEVEL_FIXME;
+    break;
+  }
+
+  gst_debug_set_default_threshold (verbosity);
+  gst_debug_set_active (1);
+}
+
 static playback_status_t
 gstreamer_player_playback_start (player_t *player)
 {
@@ -545,7 +591,7 @@ pl_register_functions_gstreamer (void)
 
   funcs->init               = gstreamer_player_init;
   funcs->uninit             = gstreamer_player_uninit;
-  funcs->set_verbosity      = NULL;
+  funcs->set_verbosity      = gstreamer_set_verbosity;
 
   funcs->mrl_retrieve_props = NULL;
   funcs->mrl_retrieve_meta  = NULL;
