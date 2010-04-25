@@ -410,6 +410,7 @@ gstreamer_set_verbosity (player_t *player, player_verbosity_level_t level)
 }
 
 #define NS_TO_MS(ns) (ns / 1000000)
+#define MS_TO_NS(ms) (ms * 1000000)
 
 static int
 gstreamer_get_time_pos (player_t *player)
@@ -571,6 +572,62 @@ gstreamer_player_playback_pause (player_t *player)
   }
 
   return PLAYER_PB_ERROR;
+}
+
+static void
+gstreamer_player_playback_seek (player_t *player,
+                                int value, player_pb_seek_t seek)
+{
+  gstreamer_player_t *g;
+  GstFormat fmt = GST_FORMAT_TIME;
+  gint64 pos, len;
+  int res;
+
+  pl_log (player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "playback_seek: %d %d", value, seek);
+
+  if (!player)
+    return;
+
+  g = (gstreamer_player_t *) player->priv;
+  if (!g || !g->bin)
+    return;
+
+  res = gst_element_query_position (g->bin, &fmt, &pos);
+  if (!res)
+    return;
+
+  res = gst_element_query_duration (g->bin, &fmt, &len);
+  if (!res)
+    return;
+
+  switch (seek)
+  {
+  default:
+  case PLAYER_PB_SEEK_RELATIVE:
+    pos += value * MS_TO_NS (1000);
+
+    if (pos < 0)
+      pos = 0;
+    if (pos > len)
+      pos = len;
+
+    break;
+  case PLAYER_PB_SEEK_PERCENT:
+    pos = value / 100 * len;
+    break;
+  case PLAYER_PB_SEEK_ABSOLUTE:
+    pos = value * MS_TO_NS (1000);
+    break;
+  }
+
+  res = gst_element_seek (g->bin, 1.0,
+                          GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
+                          GST_SEEK_TYPE_SET, pos,
+                          GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE);
+
+  if (!res)
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "playback_seek failed");
 }
 
 static int
@@ -736,7 +793,7 @@ pl_register_functions_gstreamer (void)
   funcs->pb_start           = gstreamer_player_playback_start;
   funcs->pb_stop            = gstreamer_player_playback_stop;
   funcs->pb_pause           = gstreamer_player_playback_pause;
-  funcs->pb_seek            = NULL;
+  funcs->pb_seek            = gstreamer_player_playback_seek;
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = NULL;
 
