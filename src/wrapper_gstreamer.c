@@ -135,7 +135,7 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 static void
 playbin_source_notify_cb (GObject *play, GParamSpec *p, player_t *player)
 {
-  pl_log (player, PLAYER_MSG_VERBOSE, "%s", __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "%s", __FUNCTION__);
 }
 
 static void
@@ -143,7 +143,7 @@ playbin_stream_changed_cb (pl_unused GstElement *obj, gpointer data)
 {
   player_t *player = data;
 
-  pl_log (player, PLAYER_MSG_VERBOSE, "%s", __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "%s", __FUNCTION__);
 }
 
 static void
@@ -151,7 +151,7 @@ video_tags_changed_cb (pl_unused GstElement *obj, gint id, gpointer data)
 {
   player_t *player = data;
 
-  pl_log (player, PLAYER_MSG_VERBOSE, "%s", __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "%s", __FUNCTION__);
 }
 
 static void
@@ -159,7 +159,7 @@ audio_tags_changed_cb (pl_unused GstElement *obj, gint id, gpointer data)
 {
   player_t *player = data;
 
-  pl_log (player, PLAYER_MSG_VERBOSE, "%s", __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "%s", __FUNCTION__);
 }
 
 static void
@@ -167,7 +167,7 @@ text_tags_changed_cb (pl_unused GstElement *obj, gint id, gpointer data)
 {
   player_t *player = data;
 
-  pl_log (player, PLAYER_MSG_VERBOSE, "%s", __FUNCTION__);
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "%s", __FUNCTION__);
 }
 
 #define VIDEO_SINK_NAME "video-sink"
