@@ -512,7 +512,7 @@ gstreamer_player_playback_start (player_t *player)
 
 #ifdef USE_X11
   //if (MRL_USES_VO (m)) /* properties retrieval is not yet working */
-    pl_x11_map (player);
+  //pl_x11_map (player);
 #endif /* USE_X11 */
 
   return PLAYER_PB_OK;
@@ -538,7 +538,7 @@ gstreamer_player_playback_stop (player_t *player)
 #ifdef USE_X11
   //mrl = pl_playlist_get_mrl (player->playlist);
   //if (MRL_USES_VO (mrl)) /* properties retrieval is not yet working */
-    pl_x11_unmap (player);
+  //pl_x11_unmap (player);
 #endif /* USE_X11 */
 }
 
