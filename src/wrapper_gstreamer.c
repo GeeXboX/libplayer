@@ -52,6 +52,8 @@
 
 /* player specific structure */
 typedef struct gstreamer_player_s {
+  pthread_t th;
+  GMainLoop *loop;
   GstBus *bus;
   GstElement *bin;
   GstElement *video_sink;
@@ -271,6 +273,20 @@ gstreamer_set_audio_sink (player_t *player)
   return sink;
 }
 
+static void *
+gstreamer_gloop_thread (void *data)
+{
+  gstreamer_player_t *g = data;
+
+  if (!g)
+    return NULL;
+
+  g->loop = g_main_loop_new (NULL, FALSE);
+  g_main_loop_run (g->loop);
+
+  return NULL;
+}
+
 #define GST_SIGNAL(msg, cb) \
   g_signal_connect (g->bin, msg,  G_CALLBACK (cb), player)
 
@@ -338,6 +354,9 @@ gstreamer_player_init (player_t *player)
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
 
+  /* start our main loop thread */
+  pthread_create (&g->th, NULL, gstreamer_gloop_thread, g);
+
   return PLAYER_INIT_OK;
 }
 
@@ -363,6 +382,7 @@ gstreamer_player_uninit (player_t *player)
 
   gst_object_unref (GST_OBJECT (g->bin));
   gst_object_unref (GST_OBJECT (g->bus));
+  g_main_loop_unref (g->loop);
 
   gst_deinit ();
 
