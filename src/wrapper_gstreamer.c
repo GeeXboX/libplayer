@@ -287,6 +287,8 @@ gstreamer_player_init (player_t *player)
   if (!g)
     return PLAYER_INIT_ERROR;
 
+  g_thread_init (NULL);
+
   if (!gst_init_check (NULL, NULL, &error))
     return PLAYER_INIT_ERROR;
 
