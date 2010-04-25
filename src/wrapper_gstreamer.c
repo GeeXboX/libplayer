@@ -76,8 +76,8 @@ gstreamer_set_eof (player_t *player)
   player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED);
 }
 
-static void
-bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
+static gboolean
+bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
 {
   player_t *player      = data;
   gstreamer_player_t *g = player->priv;
@@ -130,6 +130,8 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
             MODULE_NAME, "Unhandled message: %" GST_PTR_FORMAT, msg);
     break;
   }
+
+  return TRUE;
 }
 
 static void
@@ -303,8 +305,7 @@ gstreamer_player_init (player_t *player)
     return PLAYER_INIT_ERROR;
   }
 
-  gst_bus_add_signal_watch (g->bus);
-  g_signal_connect (g->bus, "message",  G_CALLBACK (bus_callback), player);
+  gst_bus_add_watch (g->bus, bus_callback, player);
 
   GST_SIGNAL ("notify::source",     playbin_source_notify_cb);
   GST_SIGNAL ("video-changed",      playbin_stream_changed_cb);
