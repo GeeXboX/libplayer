@@ -123,7 +123,7 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
       break;
 
     src = gst_object_get_name (msg->src);
-    pl_log (player, PLAYER_MSG_VERBOSE,
+    pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME,
             "%s changed state from %s to %s", src,
             gst_element_state_get_name (old_state),
             gst_element_state_get_name (new_state));
