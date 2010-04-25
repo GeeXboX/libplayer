@@ -409,6 +409,30 @@ gstreamer_set_verbosity (player_t *player, player_verbosity_level_t level)
   gst_debug_set_active (1);
 }
 
+#define NS_TO_MS(ns) (ns / 1000000)
+
+static int
+gstreamer_get_time_pos (player_t *player)
+{
+  gstreamer_player_t *g;
+  GstFormat fmt = GST_FORMAT_TIME;
+  gint64 pos;
+  int res;
+
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "get_time_pos");
+
+  if (!player)
+    return -1;
+
+  g = (gstreamer_player_t *) player->priv;
+  if (!g || !g->bin)
+    return -1;
+
+  res = gst_element_query_position (g->bin, &fmt, &pos);
+
+  return res ? NS_TO_MS (pos) : -1;
+}
+
 static playback_status_t
 gstreamer_player_playback_start (player_t *player)
 {
@@ -597,7 +621,7 @@ pl_register_functions_gstreamer (void)
   funcs->mrl_retrieve_meta  = NULL;
   funcs->mrl_video_snapshot = NULL;
 
-  funcs->get_time_pos       = NULL;
+  funcs->get_time_pos       = gstreamer_get_time_pos;
   funcs->get_percent_pos    = NULL;
   funcs->set_framedrop      = NULL;
   funcs->set_mouse_pos      = NULL;
