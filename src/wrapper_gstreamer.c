@@ -43,6 +43,7 @@
 #include "playlist.h"
 #include "logs.h"
 #include "event.h"
+#include "fs_utils.h"
 #include "wrapper_gstreamer.h"
 #ifdef USE_X11
 #include "x11_common.h"
@@ -437,6 +438,30 @@ gstreamer_set_verbosity (player_t *player, player_verbosity_level_t level)
 #endif
 }
 
+static void
+gstreamer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
+{
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_properties");
+
+  if (!player || !mrl || !mrl->prop)
+    return;
+
+  /* now fetch properties */
+  if (mrl->resource == MRL_RESOURCE_FILE)
+  {
+    mrl_resource_local_args_t *args = mrl->priv;
+    if (args && args->location)
+    {
+      const char *location = args->location;
+
+      if (strstr (location, "file:") == location)
+        location += 5;
+
+      mrl->prop->size = pl_file_size (location);
+    }
+  }
+}
+
 #define NS_TO_MS(ns) (ns / 1000000)
 #define MS_TO_NS(ms) (ms * 1000000)
 
@@ -807,7 +832,7 @@ pl_register_functions_gstreamer (void)
   funcs->uninit             = gstreamer_player_uninit;
   funcs->set_verbosity      = gstreamer_set_verbosity;
 
-  funcs->mrl_retrieve_props = NULL;
+  funcs->mrl_retrieve_props = gstreamer_mrl_retrieve_properties;
   funcs->mrl_retrieve_meta  = NULL;
   funcs->mrl_video_snapshot = NULL;
 
