@@ -405,8 +405,10 @@ gstreamer_set_verbosity (player_t *player, player_verbosity_level_t level)
     break;
   }
 
+#if 0
   gst_debug_set_default_threshold (verbosity);
   gst_debug_set_active (1);
+#endif
 }
 
 #define NS_TO_MS(ns) (ns / 1000000)
