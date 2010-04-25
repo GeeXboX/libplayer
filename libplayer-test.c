@@ -881,7 +881,7 @@ main (int argc, char **argv)
 #else
         printf ("VLC not supported, dummy player used instead!\n");
 #endif /* HAVE_VLC */
-      if (!strcmp (optarg, "gstreamer"))
+      if (!strcmp (optarg, "gstreamer") || !strcmp (optarg, "gst"))
 #ifdef HAVE_GSTREAMER
         type = PLAYER_TYPE_GSTREAMER;
 #else
