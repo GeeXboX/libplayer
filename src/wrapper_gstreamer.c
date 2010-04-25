@@ -560,7 +560,7 @@ gstreamer_player_playback_pause (player_t *player)
     return PLAYER_PB_FATAL;
 
   /* check current playback status */
-  st = gst_element_get_state (g->bin, &state, NULL, 0);
+  st = gst_element_get_state (g->bin, &state, NULL, GST_CLOCK_TIME_NONE);
   if (st == GST_STATE_CHANGE_SUCCESS)
   {
     if (state == GST_STATE_PAUSED)
@@ -691,7 +691,7 @@ gstreamer_audio_set_volume (player_t *player, int value)
   {
     volume = ((double) (value)) / 100.0;
 
-    gst_element_get_state (es, &cur_state, NULL, 0);
+    gst_element_get_state (es, &cur_state, NULL, GST_CLOCK_TIME_NONE);
     if (cur_state == GST_STATE_READY || cur_state == GST_STATE_PLAYING)
     {
       if (gst_element_implements_interface (es, GST_TYPE_STREAM_VOLUME))
