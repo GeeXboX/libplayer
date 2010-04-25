@@ -46,7 +46,7 @@
   " -h --help               this help\n" \
   " -p --player <player>    specify the player (mplayer|xine|vlc|gstreamer)\n" \
   " -a --audio  <audioout>  specify the audio output (alsa|oss|pulse|null)\n" \
-  " -g --video  <videoout>  specify the video output (x11|sdl:x11|xv|gl|vdpau|fb|null)\n" \
+  " -g --video  <videoout>  specify the video output (x11|sdl:x11|xv|gl|vdpau|fb|omap|null)\n" \
   " -v --verbose            increase verbosity\n" \
   "\n" \
   "Default values are dummy player, auto video and auto audio output.\n" \
@@ -913,6 +913,8 @@ main (int argc, char **argv)
         vo = PLAYER_VO_VDPAU;
       else if (!strcmp (optarg, "fb"))
         vo = PLAYER_VO_FB;
+      else if (!strcmp (optarg, "omap"))
+        vo = PLAYER_VO_OMAP;
       else if (!strcmp (optarg, "null"))
         vo = PLAYER_VO_NULL;
       break;
