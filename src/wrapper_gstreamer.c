@@ -542,6 +542,37 @@ gstreamer_player_playback_stop (player_t *player)
 #endif /* USE_X11 */
 }
 
+static playback_status_t
+gstreamer_player_playback_pause (player_t *player)
+{
+  gstreamer_player_t *g;
+  GstStateChangeReturn st;
+  GstState state;
+
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_pause");
+
+  if (!player)
+    return PLAYER_PB_FATAL;
+
+  g = (gstreamer_player_t *) player->priv;
+  if (!g || !g->bin)
+    return PLAYER_PB_FATAL;
+
+  /* check current playback status */
+  st = gst_element_get_state (g->bin, &state, NULL, 0);
+  if (st == GST_STATE_CHANGE_SUCCESS)
+  {
+    if (state == GST_STATE_PAUSED)
+      gst_element_set_state (g->bin, GST_STATE_PLAYING);
+    else
+      gst_element_set_state (g->bin, GST_STATE_PAUSED);
+
+    return PLAYER_PB_OK;
+  }
+
+  return PLAYER_PB_ERROR;
+}
+
 static int
 gstreamer_audio_get_volume (player_t *player)
 {
@@ -704,7 +735,7 @@ pl_register_functions_gstreamer (void)
 
   funcs->pb_start           = gstreamer_player_playback_start;
   funcs->pb_stop            = gstreamer_player_playback_stop;
-  funcs->pb_pause           = NULL;
+  funcs->pb_pause           = gstreamer_player_playback_pause;
   funcs->pb_seek            = NULL;
   funcs->pb_seek_chapter    = NULL;
   funcs->pb_set_speed       = NULL;
