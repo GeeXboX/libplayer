@@ -148,44 +148,6 @@ bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
   return TRUE;
 }
 
-static void
-playbin_source_notify_cb (GObject *play, GParamSpec *p, player_t *player)
-{
-  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "%s", __FUNCTION__);
-}
-
-static void
-playbin_stream_changed_cb (pl_unused GstElement *obj, gpointer data)
-{
-  player_t *player = data;
-
-  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "%s", __FUNCTION__);
-}
-
-static void
-video_tags_changed_cb (pl_unused GstElement *obj, gint id, gpointer data)
-{
-  player_t *player = data;
-
-  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "%s", __FUNCTION__);
-}
-
-static void
-audio_tags_changed_cb (pl_unused GstElement *obj, gint id, gpointer data)
-{
-  player_t *player = data;
-
-  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "%s", __FUNCTION__);
-}
-
-static void
-text_tags_changed_cb (pl_unused GstElement *obj, gint id, gpointer data)
-{
-  player_t *player = data;
-
-  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "%s", __FUNCTION__);
-}
-
 #define VIDEO_SINK_NAME "video-sink"
 
 static GstElement *
@@ -525,15 +487,6 @@ gstreamer_player_init (player_t *player)
   }
 
   gst_bus_add_watch (g->bus, bus_callback, player);
-
-  GST_SIGNAL ("notify::source",     playbin_source_notify_cb);
-  GST_SIGNAL ("video-changed",      playbin_stream_changed_cb);
-  GST_SIGNAL ("audio-changed",      playbin_stream_changed_cb);
-  GST_SIGNAL ("text-changed",       playbin_stream_changed_cb);
-
-  GST_SIGNAL ("video-tags-changed", video_tags_changed_cb);
-  GST_SIGNAL ("audio-tags-changed", audio_tags_changed_cb);
-  GST_SIGNAL ("text-tags-changed",  text_tags_changed_cb);
 
   /* set video sink */
   g->video_sink = gstreamer_set_video_sink (player);
