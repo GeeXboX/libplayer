@@ -91,7 +91,6 @@ static gboolean
 bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 {
   player_t *player      = data;
-  gstreamer_player_t *g = player->priv;
 
   pl_log (player, PLAYER_MSG_VERBOSE,
           MODULE_NAME, "Message Type: %s", GST_MESSAGE_TYPE_NAME (msg));
