@@ -88,7 +88,7 @@ gstreamer_set_eof (player_t *player)
 }
 
 static gboolean
-bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
+bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 {
   player_t *player      = data;
   gstreamer_player_t *g = player->priv;
@@ -314,7 +314,7 @@ gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
   gstreamer_get_tag (tags, &meta->tag, GST_TAG_##name);
 
 static gboolean
-identify_bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
+identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 {
   gstreamer_identifier_t *id = data;
 
