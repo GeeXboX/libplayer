@@ -62,6 +62,14 @@ typedef struct gstreamer_player_s {
   GstElement *volume_ctrl;
 } gstreamer_player_t;
 
+typedef struct gstreamer_identifier_s {
+  player_t *player;
+  mrl_t *mrl;
+  GstElement *bin;
+  GMainLoop *loop;
+  int flags;
+} gstreamer_identifier_t;
+
 static void
 gstreamer_set_eof (player_t *player)
 {
@@ -288,6 +296,197 @@ gstreamer_gloop_thread (void *data)
   return NULL;
 }
 
+static void
+gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
+{
+  gboolean r;
+
+  if (!list || !tag)
+    return;
+
+  if (gst_tag_get_type (tag) == G_TYPE_STRING)
+  {
+    gchar *value;
+
+    r = gst_tag_list_get_string (list, tag, &value);
+    if (!r)
+      return;
+
+    if (*meta)
+      free (*meta);
+    *meta = strdup (value);
+
+    g_free (value);
+  }
+  else if (gst_tag_get_type (tag) == G_TYPE_UINT)
+  {
+    guint value;
+    char buf[128] = { 0 };
+
+    r = gst_tag_list_get_uint (list, tag, &value);
+    if (!r)
+      return;
+
+    snprintf (buf, sizeof (buf), "%d", value);
+    if (*meta)
+      free (*meta);
+    *meta = strdup (buf);
+  }
+  else if (gst_tag_get_type (tag) == G_TYPE_INT)
+  {
+    gint value;
+    char buf[128] = { 0 };
+
+    r = gst_tag_list_get_int (list, tag, &value);
+    if (!r)
+      return;
+
+    snprintf (buf, sizeof (buf), "%d", value);
+    if (*meta)
+      free (*meta);
+    *meta = strdup (buf);
+  }
+}
+
+#define GET_TAG(tag, name) \
+  gstreamer_get_tag (tags, &meta->tag, GST_TAG_##name);
+
+static gboolean
+identify_bus_callback (GstBus *bus, GstMessage *msg, gpointer data)
+{
+  gstreamer_identifier_t *id = data;
+
+  switch (GST_MESSAGE_TYPE (msg))
+  {
+  case GST_MESSAGE_ASYNC_DONE:
+    /* we now have enough stream information, shut it down */
+    gst_element_set_state (id->bin, GST_STATE_NULL);
+    g_main_loop_unref (id->loop);
+    return FALSE;
+
+  case GST_MESSAGE_TAG:
+  {
+    GstTagList *tags;
+    mrl_metadata_t *meta = id->mrl->meta;
+
+    /* only fetch metadata if really requested */
+    if (!(id->flags & IDENTIFY_METADATA))
+      break;
+
+    gst_message_parse_tag (msg, &tags);
+
+    GET_TAG (title,   TITLE);
+    GET_TAG (artist,  ARTIST);
+    GET_TAG (album,   ALBUM);
+    GET_TAG (genre,   GENRE);
+    GET_TAG (comment, COMMENT);
+    GET_TAG (track,   TRACK_NUMBER);
+
+    gst_tag_list_free (tags);
+    break;
+  }
+  default:
+    break;
+  }
+  return TRUE;
+}
+
+static void *
+gstreamer_identify_gloop_thread (void *data)
+{
+  GMainLoop *loop = data;
+
+  loop = g_main_loop_new (NULL, FALSE);
+  g_main_loop_run (loop);
+
+  return NULL;
+}
+
+static void
+gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
+{
+  pthread_t th;
+  GMainLoop **loop = NULL;
+  GstBus *bus;
+  GstElement *bin, *vs, *as;
+  GstState state = GST_STATE_PAUSED;
+  gstreamer_identifier_t *id;
+  char uri[PATH_MAX + 16] = { 0 };
+
+  /* create a new pipeline for stream identification */
+  bin = gst_element_factory_make ("playbin2", "identifier");
+  bus = gst_pipeline_get_bus (GST_PIPELINE (bin));
+
+  /* create a fake video sink */
+  vs = gst_element_factory_make ("fakesink", VIDEO_SINK_NAME);
+  g_object_set (vs, "sync", TRUE, NULL);
+  g_object_set (G_OBJECT (bin), "video-sink", vs, NULL);
+
+  /* create a fake video sink */
+  as = gst_element_factory_make ("fakesink", AUDIO_SINK_NAME);
+  g_object_set (G_OBJECT (bin), "audio-sink", as, NULL);
+
+  /* map the identification struct */
+  id         = malloc (sizeof (gstreamer_identifier_t));
+  id->player = player;
+  id->mrl    = mrl;
+  id->bin    = bin;
+  id->loop   = (GMainLoop *) &loop;
+  id->flags  = flags;
+
+  /* create the event loop and message handler */
+  gst_bus_add_watch (bus, identify_bus_callback, id);
+  pthread_create (&th, NULL, gstreamer_identify_gloop_thread, &loop);
+
+  /* resource name retrieval */
+  switch (mrl->resource)
+  {
+  case MRL_RESOURCE_FILE:
+  {
+    mrl_resource_local_args_t *args;
+
+    args = mrl->priv;
+    if (!args)
+      break;
+
+    /* check if given MRL is a relative path */
+    if (args->location[0] != '/')
+    {
+      char *cwd;
+      cwd = get_current_dir_name ();
+      snprintf (uri, sizeof (uri), "file://%s/%s", cwd, args->location);
+      free (cwd);
+    }
+    else
+      snprintf (uri, sizeof (uri), "file://%s", args->location);
+    break;
+  }
+  default:
+    break;
+  }
+
+  g_object_set (G_OBJECT (bin), "uri", uri, NULL);
+
+  /*
+   * Put GStreamer engine in paused mode
+   * Everything will be cleaned up by event loop at message reception
+   */
+  gst_element_set_state (bin, GST_STATE_PAUSED);
+
+  /* wait for stream parsing event */
+  while (state != GST_STATE_NULL)
+  {
+    GstStateChangeReturn st;
+
+    st = gst_element_get_state (bin, &state, NULL, GST_CLOCK_TIME_NONE);
+    if (st == GST_STATE_CHANGE_SUCCESS && state == GST_STATE_NULL)
+      break;
+
+    /* wait for 100 ms */
+    usleep (100000);
+  }
+}
+
 #define GST_SIGNAL(msg, cb) \
   g_signal_connect (g->bin, msg,  G_CALLBACK (cb), player)
 
@@ -460,6 +659,17 @@ gstreamer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
       mrl->prop->size = pl_file_size (location);
     }
   }
+}
+
+static void
+gstreamer_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
+{
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_metadata");
+
+  if (!player || !mrl || !mrl->meta)
+    return;
+
+  gstreamer_identify (player, mrl, IDENTIFY_METADATA);
 }
 
 #define NS_TO_MS(ns) (ns / 1000000)
@@ -833,7 +1043,7 @@ pl_register_functions_gstreamer (void)
   funcs->set_verbosity      = gstreamer_set_verbosity;
 
   funcs->mrl_retrieve_props = gstreamer_mrl_retrieve_properties;
-  funcs->mrl_retrieve_meta  = NULL;
+  funcs->mrl_retrieve_meta  = gstreamer_mrl_retrieve_metadata;
   funcs->mrl_video_snapshot = NULL;
 
   funcs->get_time_pos       = gstreamer_get_time_pos;
