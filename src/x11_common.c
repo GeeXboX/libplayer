@@ -145,7 +145,9 @@ pl_x11_vdpau_caps (player_t *player)
 
  out:
   XCloseDisplay (display);
-#endif /* USE_XLIB_HACK && USE_VDPAU */
+#else
+  (void) player;
+#endif /* !(USE_XLIB_HACK && USE_VDPAU) */
   return flags;
 }
 
