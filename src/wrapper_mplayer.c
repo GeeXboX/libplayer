@@ -2906,6 +2906,27 @@ mplayer_init (player_t *player)
       break;
     }
 
+    /* select expected video decoding quality */
+    switch (player->quality)
+    {
+    case PLAYER_QUALITY_LOW:
+      params[pp++] = "-vfm";
+      params[pp++] = "ffmpeg";
+      params[pp++] = "-lavdopts";
+      params[pp++] = "fast:skiploopfilter=all";
+      break;
+
+    case PLAYER_QUALITY_LOWEST:
+      params[pp++] = "-vfm";
+      params[pp++] = "ffmpeg";
+      params[pp++] = "-lavdopts";
+      params[pp++] = "lowres=1:fast:skiploopfilter=all";
+      break;
+
+    default:
+      break;
+    }
+
     params[pp] = NULL;
 
     execvp (MPLAYER_NAME, params);
