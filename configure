@@ -58,6 +58,7 @@ show_help(){
   echo "  --with-vlc-dir=DIR          check for libvlc installed in DIR"
   echo "  --with-xine-dir=DIR         check for libxine installed in DIR"
   echo "  --with-xcb-dir=DIR          check for libxcb installed in DIR"
+  echo "  --with-vdpau-dir=DIR        check for libvdpau installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
   echo "  --disable-debug             disable debugging symbols"
@@ -532,6 +533,7 @@ wrapper_vlc="auto"
 wrapper_gstreamer="auto"
 binding_python="no"
 xlib_hack="no"
+vdpau="no" # depends of xlib_hack
 x11="auto"
 pic="no"
 INSTALL="install"
@@ -624,6 +626,8 @@ for opt do
   --with-gstreamer-dir=*) libgstreamerdir="$optval";
   ;;
   --with-xcb-dir=*) libxcbdir="$optval";
+  ;;
+  --with-vdpau-dir=*) libvdpaudir="$optval";
   ;;
   --enable-x11) x11="yes";
   ;;
@@ -1051,6 +1055,19 @@ if test "$xlib_hack" = "auto" -o "$xlib_hack" = "yes"; then
       add_cppflags -DUSE_XLIB_HACK
       xlib_hack="yes"
     fi
+  fi
+fi
+
+#################################################
+#   check for libvdpau
+#################################################
+if enabled xlib_hack; then
+  echolog "Checking for libvdpau ..."
+
+  check_lib_pkgcfg vdpau vdpau/vdpau_x11.h vdp_device_create_x11 -lX11 -lvdpau
+  if [ "$?" = 0 ]; then
+    add_cppflags -DUSE_VDPAU
+    vdpau=yes
   fi
 fi
 

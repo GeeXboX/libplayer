@@ -26,6 +26,10 @@
 
 #ifdef USE_XLIB_HACK
 #include <X11/Xlib-xcb.h>
+#ifdef USE_VDPAU
+#include <vdpau/vdpau.h>
+#include <vdpau/vdpau_x11.h>
+#endif /* USE_VDPAU */
 #else
 #include <xcb/xcb.h>
 #endif /* USE_XLIB_HACK */
@@ -64,6 +68,86 @@ struct x11_s {
   void *data;
 };
 
+
+int
+pl_x11_vdpau_caps (player_t *player)
+{
+  int flags = 0;
+#if defined (USE_XLIB_HACK) && defined (USE_VDPAU)
+  x11_t *x11;
+  Display *display;
+  unsigned int i;
+  int screen;
+  VdpDevice device;
+  VdpGetProcAddress *get_proc_address;
+  VdpStatus rv;
+  VdpDecoderQueryCapabilities *func;
+
+  static const struct {
+    x11_vdpau_caps_t cap;
+    uint32_t id;
+  } vdpau_decoders[] = {
+    { X11_VDPAU_MPEG1,        VDP_DECODER_PROFILE_MPEG1               },
+    { X11_VDPAU_MPEG2,        VDP_DECODER_PROFILE_MPEG2_SIMPLE        },
+    { X11_VDPAU_MPEG2,        VDP_DECODER_PROFILE_MPEG2_MAIN          },
+    { X11_VDPAU_H264,         VDP_DECODER_PROFILE_H264_BASELINE       },
+    { X11_VDPAU_H264,         VDP_DECODER_PROFILE_H264_MAIN           },
+    { X11_VDPAU_H264,         VDP_DECODER_PROFILE_H264_HIGH           },
+    { X11_VDPAU_VC1,          VDP_DECODER_PROFILE_VC1_SIMPLE          },
+    { X11_VDPAU_VC1,          VDP_DECODER_PROFILE_VC1_MAIN            },
+    { X11_VDPAU_VC1,          VDP_DECODER_PROFILE_VC1_ADVANCED        },
+    { X11_VDPAU_MPEG4_PART2,  VDP_DECODER_PROFILE_MPEG4_PART2_SP      },
+    { X11_VDPAU_MPEG4_PART2,  VDP_DECODER_PROFILE_MPEG4_PART2_ASP     },
+    { X11_VDPAU_DIVX4,        VDP_DECODER_PROFILE_DIVX4_QMOBILE       },
+    { X11_VDPAU_DIVX4,        VDP_DECODER_PROFILE_DIVX4_MOBILE        },
+    { X11_VDPAU_DIVX4,        VDP_DECODER_PROFILE_DIVX4_HOME_THEATER  },
+    { X11_VDPAU_DIVX4,        VDP_DECODER_PROFILE_DIVX4_HD_1080P      },
+    { X11_VDPAU_DIVX5,        VDP_DECODER_PROFILE_DIVX5_QMOBILE       },
+    { X11_VDPAU_DIVX5,        VDP_DECODER_PROFILE_DIVX5_MOBILE        },
+    { X11_VDPAU_DIVX5,        VDP_DECODER_PROFILE_DIVX5_HOME_THEATER  },
+    { X11_VDPAU_DIVX5,        VDP_DECODER_PROFILE_DIVX5_HD_1080P      },
+  };
+
+  if (!player)
+    return 0;
+
+  x11 = player->x11;
+  if (!x11)
+    return 0;
+
+  display = XOpenDisplay (player->x11_display);
+  if (!display)
+    return 0;
+
+  screen = XDefaultScreen (display);
+
+  /* vdpau device */
+  rv = vdp_device_create_x11 (display, screen, &device, &get_proc_address);
+  if (rv != VDP_STATUS_OK)
+    goto out;
+
+  get_proc_address (device,
+                    VDP_FUNC_ID_DECODER_QUERY_CAPABILITIES, (void **) &func);
+
+  /* get capabilities */
+  for (i = 0; i < ARRAY_NB_ELEMENTS (vdpau_decoders); i++)
+  {
+    VdpBool supported = 0;
+    uint32_t max_level, max_macroblocks, max_width, max_height;
+
+    rv = func (device, vdpau_decoders[i].id, &supported,
+               &max_level, &max_macroblocks, &max_width, &max_height);
+    if (rv != VDP_STATUS_OK || !supported)
+      continue;
+
+    flags |= vdpau_decoders[i].cap;
+  }
+
+ out:
+  XCloseDisplay (display);
+#endif /* USE_XLIB_HACK && USE_VDPAU */
+  return flags;
+}
 
 /*
  * Center the movie in the parent window and zoom to use the max of surface.

@@ -47,4 +47,16 @@ typedef enum x11_winprops_flags {
 
 void pl_x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags);
 
+typedef enum x11_vdpau_caps {
+  X11_VDPAU_MPEG1       = (1 << 0),
+  X11_VDPAU_MPEG2       = (1 << 1),
+  X11_VDPAU_H264        = (1 << 2),
+  X11_VDPAU_VC1         = (1 << 3),
+  X11_VDPAU_MPEG4_PART2 = (1 << 4),
+  X11_VDPAU_DIVX4       = (1 << 5),
+  X11_VDPAU_DIVX5       = (1 << 6),
+} x11_vdpau_caps_t;
+
+int pl_x11_vdpau_caps (player_t *player);
+
 #endif /* X11_COMMON_H */
