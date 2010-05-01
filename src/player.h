@@ -162,6 +162,12 @@ typedef enum {
   PLAYER_MSG_CRITICAL,      /* prevents lib from working */
 } player_verbosity_level_t;
 
+typedef enum {
+  PLAYER_QUALITY_NORMAL,    /* normal picture quality */
+  PLAYER_QUALITY_LOW,       /* slightly degraded picture for fastest playback */
+  PLAYER_QUALITY_LOWEST,    /* degraded picture, suitable for low-end CPU */
+} player_quality_level_t;
+
 /** \brief Parameters for player_init() .*/
 typedef struct player_init_param_s {
   /** Audio output driver. */
@@ -184,6 +190,9 @@ typedef struct player_init_param_s {
    * considered.
    */
   const char *display;
+
+  /** Picture decoding quality. */
+  player_quality_level_t quality;
 
 } player_init_param_t;
 

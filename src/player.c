@@ -132,6 +132,7 @@ player_init (player_type_t type,
     player->x11_display = param->display;
     player->event_cb    = param->event_cb;
     player->user_data   = param->data;
+    player->quality     = param->quality;
   }
 
   pthread_mutex_init (&player->mutex_verb, NULL);
