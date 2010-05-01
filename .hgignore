@@ -4,12 +4,12 @@ syntax: regexp
 \.so
 \.depend
 ~$
-config.log
-config.mak
+config\.log
+config\.mak
 libplayer-regtest$
 libplayer-test$
 libplayer-testvdr$
-^libplayer.pc
+^libplayer\.pc
 ^DOCS/doxygen
 
 ^debian/files
@@ -17,11 +17,11 @@ libplayer-testvdr$
 ^debian/libplayer$
 ^debian/tmp
 ^debian/stamp-makefile-build$
-^debian/libplayer.debhelper.log$
-^debian/libplayer.postinst.debhelper*
-^debian/libplayer.postrm.debhelper$
-^debian/libplayer.substvars$
-^debian/libplayer-dev.debhelper.log$
-^debian/libplayer-dev.postinst.debhelper*
-^debian/libplayer-dev.postrm.debhelper$
-^debian/libplayer-dev.substvars$
+^debian/libplayer\.debhelper\.log$
+^debian/libplayer\.postinst\.debhelper*
+^debian/libplayer\.postrm\.debhelper$
+^debian/libplayer\.substvars$
+^debian/libplayer-dev\.debhelper\.log$
+^debian/libplayer-dev\.postinst\.debhelper*
+^debian/libplayer-dev\.postrm\.debhelper$
+^debian/libplayer-dev\.substvars$
