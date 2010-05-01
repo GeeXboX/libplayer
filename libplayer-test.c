@@ -47,6 +47,7 @@
   " -p --player <player>    specify the player (mplayer|xine|vlc|gstreamer)\n" \
   " -a --audio  <audioout>  specify the audio output (alsa|oss|pulse|null)\n" \
   " -g --video  <videoout>  specify the video output (x11|sdl:x11|xv|gl|vdpau|fb|omap|null)\n" \
+  " -q --quality <level>    specify the picture quality (0|1|2, best to worse)\n" \
   " -v --verbose            increase verbosity\n" \
   "\n" \
   "Default values are dummy player, auto video and auto audio output.\n" \
@@ -822,15 +823,17 @@ main (int argc, char **argv)
   player_loop_t loop_mode = PLAYER_LOOP_DISABLE;
   player_verbosity_level_t verbosity = PLAYER_MSG_WARNING;
   player_pb_t pb_mode = PLAYER_PB_SINGLE;
+  player_quality_level_t quality = PLAYER_QUALITY_NORMAL;
 
   int c, index;
-  const char *const short_options = "hvp:a:g:";
+  const char *const short_options = "hvp:a:g:q:";
   const struct option long_options [] = {
     {"help",    no_argument,       0, 'h' },
     {"verbose", no_argument,       0, 'v' },
     {"player",  required_argument, 0, 'p' },
     {"audio",   required_argument, 0, 'a' },
     {"video",   required_argument, 0, 'g' },
+    {"quality", required_argument, 0, 'q' },
     {0,         0,                 0,  0  }
   };
 
@@ -919,6 +922,15 @@ main (int argc, char **argv)
         vo = PLAYER_VO_NULL;
       break;
 
+    case 'q':
+      if (!strcmp (optarg, "0"))
+        quality = PLAYER_QUALITY_NORMAL;
+      else if (!strcmp (optarg, "1"))
+        quality = PLAYER_QUALITY_LOW;
+      else if (!strcmp (optarg, "2"))
+        quality = PLAYER_QUALITY_LOWEST;
+      break;
+
     default:
       printf (TESTPLAYER_HELP);
       return -1;
@@ -933,6 +945,7 @@ main (int argc, char **argv)
   param.ao       = ao;
   param.vo       = vo;
   param.event_cb = event_cb;
+  param.quality  = quality;
 
   player = player_init (type, verbosity, &param);
 
