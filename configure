@@ -1063,6 +1063,10 @@ fi
 #################################################
 if enabled xlib_hack; then
   echolog "Checking for libvdpau ..."
+  if [ -n "$libvdpaudir" ]; then
+    check_cppflags -I$libvdpaudir/include
+    check_ldflags -L$libvdpaudir/lib
+  fi
 
   check_lib_pkgcfg vdpau vdpau/vdpau_x11.h vdp_device_create_x11 -lX11 -lvdpau
   if [ "$?" = 0 ]; then
