@@ -1017,7 +1017,6 @@ fi
 #################################################
 if test "$x11" = "auto" -o "$x11" = "yes"; then
   x11="no"
-  if test "$wrapper_xine" = "yes" -o "$wrapper_mplayer" = "yes"; then
     echolog "Checking for libxcb ..."
     if [ -n "$libxcbdir" ]; then
       check_cppflags -I$libxcbdir/include
@@ -1029,7 +1028,6 @@ if test "$x11" = "auto" -o "$x11" = "yes"; then
       add_cppflags -DUSE_X11
       x11="yes"
     fi
-  fi
 fi
 
 #################################################
