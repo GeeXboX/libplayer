@@ -260,6 +260,8 @@ struct player_s {
   int   w, h;                 /* video size                   */
   float aspect;               /* video aspect                 */
 
+  player_quality_level_t quality; /* picture decoding quality */
+
   struct supervisor_s    *supervisor; /* manage all public operations        */
   struct event_handler_s *event;      /* event handler                       */
   int (*event_cb) (player_event_t e, void *data); /* frontend event callback */
