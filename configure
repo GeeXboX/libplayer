@@ -1045,7 +1045,7 @@ fi
 #################################################
 if test "$xlib_hack" = "auto" -o "$xlib_hack" = "yes"; then
   xlib_hack="no"
-  if test "$x11" = "yes" -a "$wrapper_xine" = "yes"; then
+  if test "$x11" = "yes"; then
     echolog "Checking for libX11-xcb ..."
 
     check_lib_pkgcfg x11-xcb X11/Xlib-xcb.h xcb_generate_id -lX11-xcb -lX11 -lxcb
