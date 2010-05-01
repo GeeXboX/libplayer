@@ -2857,12 +2857,30 @@ mplayer_init (player_t *player)
       break;
 
     case PLAYER_VO_VDPAU:
+    {
+      int caps;
+      char vc[256] = { 0 };
+
       params[pp++] = "-vo";
       params[pp++] = "vdpau,xv,x11";
+
+      caps = pl_x11_vdpau_caps (player);
+      if (!caps)
+        break;
+
       params[pp++] = "-vc";
-      params[pp++] = "ffh264vdpau,ffodivxvdpau,ffmpeg12vdpau,"
-                     "ffvc1vdpau,ffwmv3vdpau,";
+      if (caps & (X11_VDPAU_MPEG1 | X11_VDPAU_MPEG2))
+        strcat (vc, "ffmpeg12vdpau,");
+      if (caps & X11_VDPAU_H264)
+        strcat (vc, "ffh264vdpau,");
+      if (caps & X11_VDPAU_VC1)
+        strcat (vc, "ffvc1vdpau,ffwmv3vdpau,");
+      if (caps & (X11_VDPAU_MPEG4_PART2 | X11_VDPAU_DIVX4 | X11_VDPAU_DIVX5))
+        strcat (vc, "ffodivxvdpau,");
+      params[pp++] = vc;
+
       break;
+    }
 
     case PLAYER_VO_AUTO:
     default:
