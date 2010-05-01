@@ -1149,6 +1149,13 @@ if test  "$xlib_hack" = "yes"; then
   echolog "races unless XInitThreads() is called before any Xlib usage."
   echolog "*** WARNING ***"
   echolog ""
+else
+  echolog "*** NOTE ***"
+  echolog "The Xlib hack is disabled. VDPAU support will be limited to the"
+  echolog "video output of MPlayer. Use --enable-xlib-hack to enable VDPAU"
+  echolog "with xine and to have a full support with MPlayer."
+  echolog "*** NOTE ***"
+  echolog ""
 fi
 
 #################################################
