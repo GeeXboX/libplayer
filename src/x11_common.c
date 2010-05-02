@@ -74,7 +74,6 @@ pl_x11_vdpau_caps (player_t *player)
 {
   int flags = 0;
 #if defined (USE_XLIB_HACK) && defined (USE_VDPAU)
-  x11_t *x11;
   Display *display;
   unsigned int i;
   int screen;
@@ -109,10 +108,6 @@ pl_x11_vdpau_caps (player_t *player)
   };
 
   if (!player)
-    return 0;
-
-  x11 = player->x11;
-  if (!x11)
     return 0;
 
   display = XOpenDisplay (player->x11_display);
