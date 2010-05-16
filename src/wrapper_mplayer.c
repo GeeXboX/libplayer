@@ -1221,6 +1221,15 @@ slave_cmd_float (player_t *player, slave_cmd_t cmd, float value)
 }
 
 static inline void
+slave_cmd_float_opt (player_t *player, slave_cmd_t cmd, float value, int opt)
+{
+  slave_value_t param;
+
+  param.f_val = value;
+  slave_action (player, cmd, &param, opt);
+}
+
+static inline void
 slave_cmd_str (player_t *player, slave_cmd_t cmd, const char *str)
 {
   slave_value_t param;
@@ -2713,6 +2722,7 @@ mp_preinit_vo (player_t *player, uint32_t *winid)
  *   void  slave_cmd_int            (player_t, slave_cmd_t,      int)
  *   void  slave_cmd_int_opt        (player_t, slave_cmd_t,      int,    int)
  *   void  slave_cmd_float          (player_t, slave_cmd_t,      float)
+ *   void  slave_cmd_float_opt      (player_t, slave_cmd_t,      float,  int)
  *   void  slave_cmd_str            (player_t, slave_cmd_t,      char *)
  *   void  slave_cmd_str_opt        (player_t, slave_cmd_t,      char *, int)
  *
