@@ -853,7 +853,7 @@ vlc_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 
     length = libvlc_media_player_get_length (vlc->mp);
     pos_time = libvlc_media_player_get_time (vlc->mp);
-    pos_time += value * 1000;
+    pos_time += value;
 
     if (pos_time < 0)
       pos_time = 0;
@@ -867,7 +867,7 @@ vlc_playback_seek (player_t *player, int value, player_pb_seek_t seek)
     libvlc_media_player_set_position (vlc->mp, value / 100.0);
     break;
   case PLAYER_PB_SEEK_ABSOLUTE:
-    libvlc_media_player_set_time (vlc->mp, (value * 1000));
+    libvlc_media_player_set_time (vlc->mp, value);
     break;
   }
 }

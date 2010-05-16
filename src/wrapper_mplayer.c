@@ -1164,7 +1164,6 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
     break;
 
   /* PREFIX command int int */
-  case SLAVE_SEEK:
   case SLAVE_SEEK_CHAPTER:
   case SLAVE_SET_MOUSE_POS:
   case SLAVE_SUB_SCALE:
@@ -1178,6 +1177,13 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   case SLAVE_SWITCH_RATIO:
     if (state_cmd == ITEM_ON && value)
       send_to_slave (player, SLAVE_CMD_PREFIX "%s %.2f", command, value->f_val);
+    break;
+
+  /* PREFIX command float int */
+  case SLAVE_SEEK:
+    if (state_cmd == ITEM_ON && value)
+      send_to_slave (player,
+                     SLAVE_CMD_PREFIX "%s %.3f %i", command, value->f_val, opt);
     break;
 
   default:
@@ -3409,6 +3415,7 @@ static void
 mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
 {
   mplayer_seek_t opt;
+  float pos;
 
   pl_log (player, PLAYER_MSG_VERBOSE,
         MODULE_NAME, "playback_seek: %d %d", value, seek);
@@ -3420,21 +3427,24 @@ mplayer_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   {
   case PLAYER_PB_SEEK_RELATIVE:
     opt = MPLAYER_SEEK_RELATIVE;
+    pos = value / 1000.0;
     break;
 
   case PLAYER_PB_SEEK_PERCENT:
     opt = MPLAYER_SEEK_PERCENT;
+    pos = value;
     break;
 
   case PLAYER_PB_SEEK_ABSOLUTE:
     opt = MPLAYER_SEEK_ABSOLUTE;
+    pos = value / 1000.0;
     break;
 
   default:
     return;
   }
 
-  slave_cmd_int_opt (player, SLAVE_SEEK, value, opt);
+  slave_cmd_float_opt (player, SLAVE_SEEK, pos, opt);
 }
 
 static void

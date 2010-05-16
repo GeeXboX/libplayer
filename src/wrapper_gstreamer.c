@@ -820,7 +820,7 @@ gstreamer_player_playback_seek (player_t *player,
   {
   default:
   case PLAYER_PB_SEEK_RELATIVE:
-    pos += value * MS_TO_NS (1000);
+    pos += MS_TO_NS (value);
 
     if (pos < 0)
       pos = 0;
@@ -832,7 +832,7 @@ gstreamer_player_playback_seek (player_t *player,
     pos = value / 100 * len;
     break;
   case PLAYER_PB_SEEK_ABSOLUTE:
-    pos = value * MS_TO_NS (1000);
+    pos = MS_TO_NS (value);
     break;
   }
 

@@ -1090,7 +1090,7 @@ void player_playback_pause (player_t *player);
  *
  * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
  * \param[in] player      Player controller.
- * \param[in] value       Value for seeking (second or percent).
+ * \param[in] value       Value for seeking (millisecond or percent).
  * \param[in] seek        Seeking mode.
  */
 void player_playback_seek (player_t *player, int value, player_pb_seek_t seek);
