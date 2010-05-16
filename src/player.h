@@ -300,7 +300,7 @@ typedef enum mrl_resource {
   MRL_RESOURCE_VCD,         /*  NO           YES          NO           NO   */
 
   /* Radio/Television */
-  MRL_RESOURCE_DVB,         /*  NO           NO           NO           NO   */
+  MRL_RESOURCE_DVB,         /*  NO           YES          NO           NO   */
   MRL_RESOURCE_PVR,         /*  NO           NO           NO           NO   */
   MRL_RESOURCE_RADIO,       /*  NO           YES          NO           NO   */
   MRL_RESOURCE_TV,          /*  NO           YES          NO           NO   */

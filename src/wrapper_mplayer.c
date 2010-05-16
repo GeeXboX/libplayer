@@ -1450,7 +1450,14 @@ mp_resource_get_uri_tv (const char *protocol, mrl_resource_tv_args_t *args)
 
   size += pl_count_nb_dec (args->input) + 2;
   uri = malloc (size);
-  if (uri)
+  if (!uri)
+    return NULL;
+
+  if (!strcmp (protocol, "dvb://"))
+    snprintf (uri, size, "%s%i@%s",
+              protocol, args->input ? args->input : 1,
+              args->channel ? args->channel : "");
+  else
     snprintf (uri, size, "%s%s/%i",
               protocol, args->channel ? args->channel : "", args->input);
 
@@ -1518,6 +1525,7 @@ mp_resource_get_uri (mrl_t *mrl)
     [MRL_RESOURCE_VCD]      = "vcd://",
 
     /* Radio/Television */
+    [MRL_RESOURCE_DVB]      = "dvb://",
     [MRL_RESOURCE_RADIO]    = "radio://",
     [MRL_RESOURCE_TV]       = "tv://",
 
@@ -1556,6 +1564,7 @@ mp_resource_get_uri (mrl_t *mrl)
   case MRL_RESOURCE_RADIO: /* radio://channel/capture */
     return mp_resource_get_uri_radio (protocols[mrl->resource], mrl->priv);
 
+  case MRL_RESOURCE_DVB: /* dvb://input@channel */
   case MRL_RESOURCE_TV: /* tv://channel/input */
     return mp_resource_get_uri_tv (protocols[mrl->resource], mrl->priv);
 
@@ -4155,6 +4164,7 @@ pl_supported_resources_mplayer (mrl_resource_t res)
   {
   case MRL_RESOURCE_CDDA:
   case MRL_RESOURCE_CDDB:
+  case MRL_RESOURCE_DVB:
   case MRL_RESOURCE_DVD:
   case MRL_RESOURCE_DVDNAV:
   case MRL_RESOURCE_FILE:
