@@ -309,7 +309,7 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   if (!player || !mrl)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->core || !vlc->mp)
     return;
 
@@ -498,7 +498,7 @@ vlc_init (player_t *player)
 #endif /* USE_X11 */
   }
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   vlc->core = libvlc_new (vlc_argc, vlc_argv);
 
   if (!vlc->core)
@@ -537,7 +537,7 @@ vlc_uninit (player_t *player)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
 
   if (!vlc)
     return;
@@ -570,7 +570,7 @@ vlc_set_verbosity (player_t *player, player_verbosity_level_t level)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc)
     return;
 
@@ -650,7 +650,7 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
   if (!player || !mrl || !mrl->meta)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -695,7 +695,7 @@ vlc_get_time_pos (player_t *player)
   if (!player)
     return -1;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return -1;
 
@@ -715,7 +715,7 @@ vlc_get_percent_pos (player_t *player)
   if (!player)
     return -1;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return -1;
 
@@ -736,7 +736,7 @@ vlc_playback_start (player_t *player)
   if (!player)
     return PLAYER_PB_FATAL;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return PLAYER_PB_ERROR;
 
@@ -783,7 +783,7 @@ vlc_playback_stop (player_t *player)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -808,7 +808,7 @@ vlc_playback_pause (player_t *player)
   if (!player)
     return PLAYER_PB_FATAL;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return PLAYER_PB_FATAL;
 
@@ -832,7 +832,7 @@ vlc_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -876,7 +876,7 @@ vlc_playback_seek_chapter (player_t *player, int value, int absolute)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -900,7 +900,7 @@ vlc_playback_set_speed (player_t *player, float value)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -918,7 +918,7 @@ vlc_audio_get_volume (player_t *player)
   if (!player)
     return volume;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   volume = libvlc_audio_get_volume (vlc->mp);
 
   return (volume < 0) ? -1 : volume;
@@ -935,7 +935,7 @@ vlc_audio_set_volume (player_t *player, int value)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   libvlc_audio_set_volume (vlc->mp, value);
 }
 
@@ -950,7 +950,7 @@ vlc_audio_get_mute (player_t *player)
   if (!player)
     return mute;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   mute = libvlc_audio_get_mute (vlc->mp) ?
     PLAYER_MUTE_ON : PLAYER_MUTE_OFF;
 
@@ -975,7 +975,7 @@ vlc_audio_set_mute (player_t *player, player_mute_t value)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   libvlc_audio_set_mute (vlc->mp, mute);
 }
 
@@ -991,7 +991,7 @@ vlc_video_set_ar (player_t *player, float value)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -1024,7 +1024,7 @@ vlc_sub_select (player_t *player, int value)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -1048,7 +1048,7 @@ vlc_sub_prev (player_t *player)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -1074,7 +1074,7 @@ vlc_sub_next (player_t *player)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -1099,7 +1099,7 @@ vlc_dvd_title_set (player_t *player, int value)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -1123,7 +1123,7 @@ vlc_dvd_title_prev (player_t *player)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
@@ -1142,7 +1142,7 @@ vlc_dvd_title_next (player_t *player)
   if (!player)
     return;
 
-  vlc = (vlc_t *) player->priv;
+  vlc = player->priv;
   if (!vlc || !vlc->mp)
     return;
 
