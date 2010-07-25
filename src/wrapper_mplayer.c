@@ -361,7 +361,7 @@ get_cmd (player_t *player, slave_cmd_t cmd, item_state_t *state)
   if (!player)
     return NULL;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
   if (!mplayer || !mplayer->slave_cmds)
     return NULL;
 
@@ -384,7 +384,7 @@ get_prop (player_t *player, slave_property_t property, item_state_t *state)
   if (!player)
     return NULL;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
   if (!mplayer || !mplayer->slave_props)
     return NULL;
 
@@ -408,7 +408,7 @@ get_prop_range (player_t *player, slave_property_t property, int *min, int *max)
   if (!player)
     return OPT_OFF;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
   if (!mplayer || !mplayer->slave_props)
     return OPT_OFF;
 
@@ -549,7 +549,7 @@ thread_fifo (void *arg)
   if (!player)
     pthread_exit (NULL);
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
 
   if (!mplayer || !mplayer->fifo_out)
     pthread_exit (NULL);
@@ -848,7 +848,7 @@ send_to_slave (player_t *player, const char *format, ...)
   if (!player)
     return;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
 
   if (!mplayer)
     return;
@@ -905,7 +905,7 @@ slave_result (slave_property_t property, player_t *player)
   if (!player)
     return NULL;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
 
   if (get_mplayer_status (player) == MPLAYER_IS_DEAD)
     return NULL;
@@ -1081,7 +1081,7 @@ slave_action (player_t *player, slave_cmd_t cmd, slave_value_t *value, int opt)
   if (!player)
     return;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
 
   if (get_mplayer_status (player) == MPLAYER_IS_DEAD)
     return;
@@ -2765,7 +2765,7 @@ mplayer_init (player_t *player)
   if (!player)
     return PLAYER_INIT_ERROR;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer =player->priv;
 
   if (!mplayer)
     return PLAYER_INIT_ERROR;
@@ -3037,7 +3037,7 @@ mplayer_uninit (player_t *player)
   if (!player)
     return;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
 
   if (!mplayer)
     return;
@@ -3093,7 +3093,7 @@ mplayer_set_verbosity (player_t *player, player_verbosity_level_t level)
   if (!player)
     return;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
 
   if (!mplayer)
     return;
@@ -3320,7 +3320,7 @@ mplayer_playback_start (player_t *player)
   if (!player)
     return PLAYER_PB_FATAL;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
 
   if (!mplayer)
     return PLAYER_PB_FATAL;
@@ -3383,7 +3383,7 @@ mplayer_playback_stop (player_t *player)
   if (!player)
     return;
 
-  mplayer = (mplayer_t *) player->priv;
+  mplayer = player->priv;
 
   if (!mplayer)
     return;
