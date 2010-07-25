@@ -556,6 +556,7 @@ vlc_init (player_t *player)
     vlc_argv[vlc_argc++] = "pulse,dummy";
     break;
 
+  case PLAYER_AO_AUTO:
   default:
     break;
   }
