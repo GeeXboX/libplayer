@@ -550,6 +550,10 @@ vlc_init (player_t *player)
   case PLAYER_AO_OSS:
     vlc_argv[vlc_argc++] = "--aout";
     vlc_argv[vlc_argc++] = "oss,dummy";
+
+  case PLAYER_AO_PULSE:
+    vlc_argv[vlc_argc++] = "--aout";
+    vlc_argv[vlc_argc++] = "pulse,dummy";
     break;
 
   default:
