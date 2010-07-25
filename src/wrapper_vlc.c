@@ -462,7 +462,6 @@ vlc_init (player_t *player)
   if (!player)
     return PLAYER_INIT_ERROR;
 
-  //vlc_argv[vlc_argc++] = "-vv";
   vlc_argv[vlc_argc++] = "--no-stats";
   vlc_argv[vlc_argc++] = "--verbose";
   vlc_argv[vlc_argc++] = "0";
