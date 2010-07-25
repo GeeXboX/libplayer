@@ -2765,7 +2765,7 @@ mplayer_init (player_t *player)
   if (!player)
     return PLAYER_INIT_ERROR;
 
-  mplayer =player->priv;
+  mplayer = player->priv;
 
   if (!mplayer)
     return PLAYER_INIT_ERROR;
