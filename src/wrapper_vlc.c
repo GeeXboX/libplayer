@@ -306,11 +306,36 @@ vlc_identify_video (mrl_t *mrl,
   const char *ar;
   float val;
 
-  if (!mrl || !mrl->prop || !mp || !es)
+  if (!mrl || !mrl->prop || !mp)
     return;
 
   if (!mrl->prop->video)
+  {
+    int vid = 0;
+
+    /*
+     * HACK:
+     * VLC is not always able to found the streams with the following
+     * resources. But we can consider that they use always a video stream.
+     * Here we are sure that the video window is mapped in any cases.
+     */
+    switch (mrl->resource)
+    {
+    case MRL_RESOURCE_DVD:
+    case MRL_RESOURCE_DVDNAV:
+      vid = 1;
+      break;
+
+    default:
+      break;
+    }
+
+    if (vid || es)
     mrl->prop->video = mrl_properties_video_new ();
+  }
+
+  if (!es)
+    return;
 
   video = mrl->prop->video;
 
