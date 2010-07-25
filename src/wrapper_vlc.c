@@ -331,7 +331,7 @@ vlc_identify_video (mrl_t *mrl,
     }
 
     if (vid || es)
-    mrl->prop->video = mrl_properties_video_new ();
+      mrl->prop->video = mrl_properties_video_new ();
   }
 
   if (!es)
