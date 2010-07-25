@@ -295,8 +295,8 @@ typedef enum mrl_resource {
   MRL_RESOURCE_CDDB,        /*  NO           YES          NO           NO   */
 
   /* Video discs */
-  MRL_RESOURCE_DVD,         /*  NO           YES          NO           YES  */
-  MRL_RESOURCE_DVDNAV,      /*  NO           YES          NO           YES  */
+  MRL_RESOURCE_DVD,         /*  NO           YES          YES          YES  */
+  MRL_RESOURCE_DVDNAV,      /*  NO           YES          YES          YES  */
   MRL_RESOURCE_VCD,         /*  NO           YES          NO           NO   */
 
   /* Radio/Television */
@@ -335,12 +335,12 @@ typedef struct mrl_resource_cd_args_s {
 
 /** \brief Arguments for video discs. */
 typedef struct mrl_resource_videodisc_args_s {
-  char *device;             /*  NO           YES          NO           YES  */
+  char *device;             /*  NO           YES          YES          YES  */
   uint8_t speed;            /*  NO           NO           NO           NO   */
-  uint8_t angle;            /*  NO           YES          NO           NO   */
-  uint8_t title_start;      /*  NO           YES          NO           YES  */
+  uint8_t angle;            /*  NO           YES          YES          NO   */
+  uint8_t title_start;      /*  NO           YES          YES          YES  */
   uint8_t title_end;        /*  NO           YES          NO           NO   */
-  uint8_t chapter_start;    /*  NO           NO           NO           NO   */
+  uint8_t chapter_start;    /*  NO           NO           YES          NO   */
   uint8_t chapter_end;      /*  NO           NO           NO           NO   */
   uint8_t track_start;      /*  NO           YES          NO           NO   */
   uint8_t track_end;        /*  NO           NO           NO           NO   */

@@ -97,6 +97,58 @@ vlc_event_callback (const libvlc_event_t *ev, void *data)
 }
 
 static char *
+vlc_resource_get_uri_dvd (const char *protocol,
+                          mrl_resource_videodisc_args_t *args)
+{
+  char *uri;
+  char title_start[8] = "";
+  char chapter_start[8] = "";
+  char angle[8] = "";
+  size_t size;
+
+  if (!args || !protocol)
+    return NULL;
+
+  size = strlen (protocol);
+
+  if (args->device)
+    size += strlen (args->device);
+
+  if (args->title_start)
+  {
+    /* dvd://@title */
+    snprintf (title_start, sizeof (title_start), "@%u", args->title_start);
+    size += strlen (title_start);
+  }
+  if (args->chapter_start)
+  {
+    /* dvd://@:chapter */
+    snprintf (chapter_start, sizeof (chapter_start), "%s:%u",
+              args->title_start ? "" : "@",
+              args->chapter_start);
+    size += strlen (chapter_start);
+  }
+  if (args->angle)
+  {
+    /* dvd://@::angle */
+    snprintf (angle, sizeof (angle), "%s%s:%u",
+              args->title_start   ? "" : "@",
+              args->chapter_start ? "" : ":",
+              args->angle);
+    size += strlen (angle);
+  }
+
+  size++;
+  uri = malloc (size);
+  if (uri)
+    snprintf (uri, size, "%s%s%s%s%s",
+              protocol, args->device ? args->device : "",
+              title_start, chapter_start, angle);
+
+  return uri;
+}
+
+static char *
 vlc_resource_get_uri_network (const char *protocol,
                               mrl_resource_network_args_t *args)
 {
@@ -144,6 +196,10 @@ vlc_resource_get_uri (mrl_t *mrl)
     /* Local Streams */
     [MRL_RESOURCE_FILE]     = "file://",
 
+    /* Video discs */
+    [MRL_RESOURCE_DVD]      = "dvdsimple://",
+    [MRL_RESOURCE_DVDNAV]   = "dvd://",
+
     /* Network Streams */
     [MRL_RESOURCE_FTP]      = "ftp://",
     [MRL_RESOURCE_HTTP]     = "http://",
@@ -171,6 +227,10 @@ vlc_resource_get_uri (mrl_t *mrl)
 
     return strdup (args->location);
   }
+
+  case MRL_RESOURCE_DVD:    /* dvdsimple://device@title:chapter:angle */
+  case MRL_RESOURCE_DVDNAV: /* dvd://device@title:chapter:angle       */
+    return vlc_resource_get_uri_dvd (protocols[mrl->resource], mrl->priv);
 
   case MRL_RESOURCE_FTP:  /* ftp://username:password@url   */
   case MRL_RESOURCE_HTTP: /* http://username:password@url  */
@@ -1159,6 +1219,8 @@ pl_supported_resources_vlc (mrl_resource_t res)
 {
   switch (res)
   {
+  case MRL_RESOURCE_DVD:
+  case MRL_RESOURCE_DVDNAV:
   case MRL_RESOURCE_FILE:
   case MRL_RESOURCE_FTP:
   case MRL_RESOURCE_HTTP:
