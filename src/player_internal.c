@@ -316,6 +316,9 @@ player_sv_x_window_set_properties (player_t *player,
 {
 #ifdef USE_X11
   int f = 0;
+#else
+  player = NULL;
+  x = y = w = h = flags = 0;
 #endif /* USE_X11 */
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
