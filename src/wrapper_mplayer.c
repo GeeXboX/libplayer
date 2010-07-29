@@ -2881,7 +2881,7 @@ mplayer_init (player_t *player)
       params[pp++] = "omapfb";
       break;
 
-#if USE_X11
+#ifdef USE_X11
     case PLAYER_VO_VDPAU:
     {
       int caps;
