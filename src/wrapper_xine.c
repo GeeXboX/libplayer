@@ -619,6 +619,11 @@ xine_player_init (player_t *player)
     visual = XINE_VISUAL_TYPE_FB;
     break;
 
+  case PLAYER_VO_DIRECTFB:
+    id_vo = "directfb";
+    visual = XINE_VISUAL_TYPE_FB;
+    break;
+
   case PLAYER_VO_AUTO:
     use_x11 = 1;
     break;
