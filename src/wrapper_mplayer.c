@@ -2686,6 +2686,7 @@ mp_preinit_vo (player_t *player, uint32_t *winid)
   {
   case PLAYER_VO_NULL:
   case PLAYER_VO_FB:
+  case PLAYER_VO_DIRECTFB:
   case PLAYER_VO_OMAP:
     break;
 
@@ -2874,6 +2875,11 @@ mplayer_init (player_t *player)
     case PLAYER_VO_FB:
       params[pp++] = "-vo";
       params[pp++] = "fbdev";
+      break;
+
+    case PLAYER_VO_DIRECTFB:
+      params[pp++] = "-vo";
+      params[pp++] = "directfb:double";
       break;
 
     case PLAYER_VO_OMAP:
