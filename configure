@@ -10,15 +10,15 @@
 unset foo
 (: ${foo%%bar}) 2>/dev/null && ! (: ${foo?}) 2>/dev/null
 if test "$?" != 0; then
-    if test "x$OMC_CONFIGURE_EXEC" = x; then
-        OMC_CONFIGURE_EXEC=1
-        export OMC_CONFIGURE_EXEC
-        exec bash "$0" "$@"
-        exec ksh "$0" "$@"
-        exec /usr/xpg4/bin/sh "$0" "$@"
-    fi
-    echo "No compatible shell script interpreter found."
-    exit 1
+  if test "x$OMC_CONFIGURE_EXEC" = x; then
+    OMC_CONFIGURE_EXEC=1
+    export OMC_CONFIGURE_EXEC
+    exec bash "$0" "$@"
+    exec ksh "$0" "$@"
+    exec /usr/xpg4/bin/sh "$0" "$@"
+  fi
+  echo "No compatible shell script interpreter found."
+  exit 1
 fi
 
 show_help(){
@@ -78,388 +78,388 @@ show_help(){
 }
 
 log(){
-    echo "$@" >>$logfile
+  echo "$@" >>$logfile
 }
 
 log_file(){
-    log BEGIN $1
-    cat -n $1 >>$logfile
-    log END $1
+  log BEGIN $1
+  cat -n $1 >>$logfile
+  log END $1
 }
 
 echolog(){
-    log "$@"
-    echo "$@"
+  log "$@"
+  echo "$@"
 }
 
 echologn(){
-    log "$@"
-    echo -n "$@"
- }
+  log "$@"
+  echo -n "$@"
+}
 
 clean(){
-    rm -f $TMPC $TMPO $TMPE $TMPS
+  rm -f $TMPC $TMPO $TMPE $TMPS
 }
 
 die(){
-    echolog "$@"
-    if enabled logging; then
-      echo "See file \"$logfile\" produced by configure for more details."
-    else
-      echo "Rerun configure with logging enabled (do not use --log=no) for more details."
-    fi
-    clean
-    exit 1
+  echolog "$@"
+  if enabled logging; then
+    echo "See file \"$logfile\" produced by configure for more details."
+  else
+    echo "Rerun configure with logging enabled (do not use --log=no) for more details."
+  fi
+  clean
+  exit 1
 }
 
 set_all(){
-    value=$1
-    shift
-    for var in $*; do
-        eval $var=$value
-    done
+  value=$1
+  shift
+  for var in $*; do
+    eval $var=$value
+  done
 }
 
 enable(){
-    set_all yes $*
+  set_all yes $*
 }
 
 enabled(){
-    eval test "x\$$1" = "xyes"
+  eval test "x\$$1" = "xyes"
 }
 
 disabled(){
-    eval test "x\$$1" = "xno"
+  eval test "x\$$1" = "xno"
 }
 
 flags_saved(){
-    (: ${SAVE_CFLAGS?}) 2>/dev/null
+  (: ${SAVE_CFLAGS?}) 2>/dev/null
 }
 
 save_flags(){
-    flags_saved && return
-    SAVE_CFLAGS="$CFLAGS"
-    SAVE_CPPFLAGS="$CPPFLAGS"
-    SAVE_HOST_CFLAGS="$HOST_CFLAGS"
-    SAVE_LDFLAGS="$LDFLAGS"
-    SAVE_extralibs="$extralibs"
+  flags_saved && return
+  SAVE_CFLAGS="$CFLAGS"
+  SAVE_CPPFLAGS="$CPPFLAGS"
+  SAVE_HOST_CFLAGS="$HOST_CFLAGS"
+  SAVE_LDFLAGS="$LDFLAGS"
+  SAVE_extralibs="$extralibs"
 }
 
 restore_flags(){
-    CFLAGS="$SAVE_CFLAGS"
-    CPPFLAGS="$SAVE_CPPFLAGS"
-    HOST_CFLAGS="$SAVE_HOST_CFLAGS"
-    LDFLAGS="$SAVE_LDFLAGS"
-    extralibs="$SAVE_extralibs"
-    unset SAVE_CFLAGS
-    unset SAVE_CPPFLAGS
-    unset SAVE_HOST_CFLAGS
-    unset SAVE_LDFLAGS
-    unset SAVE_extralibs
+  CFLAGS="$SAVE_CFLAGS"
+  CPPFLAGS="$SAVE_CPPFLAGS"
+  HOST_CFLAGS="$SAVE_HOST_CFLAGS"
+  LDFLAGS="$SAVE_LDFLAGS"
+  extralibs="$SAVE_extralibs"
+  unset SAVE_CFLAGS
+  unset SAVE_CPPFLAGS
+  unset SAVE_HOST_CFLAGS
+  unset SAVE_LDFLAGS
+  unset SAVE_extralibs
 }
 
 temp_cflags(){
-    temp_append CFLAGS "$@"
+  temp_append CFLAGS "$@"
 }
 
 temp_CPPFLAGS(){
-    temp_append CPPFLAGS "$@"
+  temp_append CPPFLAGS "$@"
 }
 
 temp_host_cflags(){
-    temp_append HOST_CFLAGS "$@"
+  temp_append HOST_CFLAGS "$@"
 }
 
 temp_ldflags(){
-    temp_append LDFLAGS "$@"
+  temp_append LDFLAGS "$@"
 }
 
 temp_extralibs(){
-    temp_append extralibs "$@"
+  temp_append extralibs "$@"
 }
 
 temp_append(){
-    local var
-    var=$1
-    shift
-    save_flags
-    append_var "$var" "$@"
+  local var
+  var=$1
+  shift
+  save_flags
+  append_var "$var" "$@"
 }
 
 append_var(){
-    local var f
-    var=$1
-    shift
-    for f in $@; do
-      if eval echo \$$var | grep -qv -e "$f"; then
-        test -n "$(eval echo \$$var)" && eval "$var=\"\$$var $f\"" || eval "$var=\"$f\""
-      fi
-    done
+  local var f
+  var=$1
+  shift
+  for f in $@; do
+    if eval echo \$$var | grep -qv -e "$f"; then
+      test -n "$(eval echo \$$var)" && eval "$var=\"\$$var $f\"" || eval "$var=\"$f\""
+    fi
+  done
 }
 
 append(){
-    local var
-    var=$1
-    shift
-    flags_saved && append_var "SAVE_$var" "$@"
-    append_var "$var" "$@"
+  local var
+  var=$1
+  shift
+  flags_saved && append_var "SAVE_$var" "$@"
+  append_var "$var" "$@"
 }
 
 add_cflags(){
-    append CFLAGS "$@"
+  append CFLAGS "$@"
 }
 
 add_cppflags(){
-    append CPPFLAGS "$@"
+  append CPPFLAGS "$@"
 }
 
 add_ldflags(){
-    append LDFLAGS "$@"
+  append LDFLAGS "$@"
 }
 
 add_extralibs(){
-    append extralibs "$@"
+  append extralibs "$@"
 }
 
 add_pkgconfig_requires(){
-    append pkgconfig_requires "$@"
+  append pkgconfig_requires "$@"
 }
 
 add_pkgconfig_libs(){
-    append pkgconfig_libs "$@"
+  append pkgconfig_libs "$@"
 }
 
 check_cmd(){
-    log "$@"
-    "$@" >>$logfile 2>&1
+  log "$@"
+  "$@" >>$logfile 2>&1
 }
 
 check_cc(){
-    log check_cc "$@"
-    cat >$TMPC
-    log_file $TMPC
-    check_cmd $cc $CPPFLAGS $CFLAGS "$@" -c -o $TMPO $TMPC
+  log check_cc "$@"
+  cat >$TMPC
+  log_file $TMPC
+  check_cmd $cc $CPPFLAGS $CFLAGS "$@" -c -o $TMPO $TMPC
 }
 
 check_host_cc(){
-    log check_host_cc "$@"
-    cat >$TMPC
-    log_file $TMPC
-    check_cmd $host_cc $HOST_CFLAGS "$@" -c -o $TMPO $TMPC
+  log check_host_cc "$@"
+  cat >$TMPC
+  log_file $TMPC
+  check_cmd $host_cc $HOST_CFLAGS "$@" -c -o $TMPO $TMPC
 }
 
 check_cpp(){
-    log check_cpp "$@"
-    cat >$TMPC
-    log_file $TMPC
-    check_cmd $cc $CPPFLAGS $CFLAGS "$@" -E -o $TMPO $TMPC
+  log check_cpp "$@"
+  cat >$TMPC
+  log_file $TMPC
+  check_cmd $cc $CPPFLAGS $CFLAGS "$@" -E -o $TMPO $TMPC
 }
 
 check_ld(){
-    log check_ld "$@"
-    check_cc || return
-    check_cmd $cc "$@" -o $TMPE $TMPO $extralibs $LDFLAGS
+  log check_ld "$@"
+  check_cc || return
+  check_cmd $cc "$@" -o $TMPE $TMPO $extralibs $LDFLAGS
 }
 
 check_host_ld(){
-    log check_host_ld "$@"
-    check_host_cc || return
-    check_cmd $host_cc $HOST_LDFLAGS "$@" -o $TMPE $TMPO
+  log check_host_ld "$@"
+  check_host_cc || return
+  check_cmd $host_cc $HOST_LDFLAGS "$@" -o $TMPE $TMPO
 }
 
 check_exec(){
-    check_ld "$@" && { enabled cross_compile || $TMPE >>$logfile 2>&1; }
+  check_ld "$@" && { enabled cross_compile || $TMPE >>$logfile 2>&1; }
 }
 
 check_cppflags(){
-    log check_cppflags "$@"
-    check_cc "$@" <<EOF && append CPPFLAGS "$@"
+  log check_cppflags "$@"
+  check_cc "$@" <<EOF && append CPPFLAGS "$@"
 int x;
 EOF
 }
 
 check_cflags(){
-    log check_cflags "$@"
-    check_cc "$@" <<EOF && add_cflags "$@"
+  log check_cflags "$@"
+  check_cc "$@" <<EOF && add_cflags "$@"
 int x;
 EOF
 }
 
 check_ldflags(){
-    log check_ldflags "$@"
-    check_ld "$@" <<EOF && add_ldflags "$@"
+  log check_ldflags "$@"
+  check_ld "$@" <<EOF && add_ldflags "$@"
 int main(){
-    return 0;
+  return 0;
 }
 EOF
 }
 
 check_header(){
-    local header
-    log check_header "$@"
-    header=$1
-    shift
-    check_cpp "$@" <<EOF
+  local header
+  log check_header "$@"
+  header=$1
+  shift
+  check_cpp "$@" <<EOF
 #include <$header>
 int x;
 EOF
 }
 
 check_func(){
-    local func
-    log check_func "$@"
-    func=$1
-    shift
-    check_ld "$@" <<EOF
+  local func
+  log check_func "$@"
+  func=$1
+  shift
+  check_ld "$@" <<EOF
 extern int $func();
 int main(){
-    $func();
-    return 0;
+  $func();
+  return 0;
 }
 EOF
 }
 
 check_lib(){
-    local header func err
-    log check_lib "$@"
-    header="$1"
-    func="$2"
-    shift 2
-    temp_extralibs "$@"
-    check_header $header && check_func $func && add_extralibs "$@"
-    err=$?
-    restore_flags
-    return $err
+  local header func err
+  log check_lib "$@"
+  header="$1"
+  func="$2"
+  shift 2
+  temp_extralibs "$@"
+  check_header $header && check_func $func && add_extralibs "$@"
+  err=$?
+  restore_flags
+  return $err
 }
 
 check_libconfig(){
-    local config func ccflags clibs err
-    log check_libconfig "$@"
-    config="$1"
-    func="$2"
-    ccflags="${3:---cflags}"
-    clibs="${4:---libs}"
-    err=1
-    if `which "$config" 1>/dev/null 2>&1`; then
-      cflags=`$config $ccflags`
-      [ -n "$cflags" ] && check_cflags "$cflags"
-      libs=`$config $clibs`
-      if [ -n "$libs" ]; then
-        temp_extralibs "$libs"
-        check_func $func && add_extralibs "$libs"
-        err=$?
-        restore_flags
-      fi
+  local config func ccflags clibs err
+  log check_libconfig "$@"
+  config="$1"
+  func="$2"
+  ccflags="${3:---cflags}"
+  clibs="${4:---libs}"
+  err=1
+  if `which "$config" 1>/dev/null 2>&1`; then
+    cflags=`$config $ccflags`
+    [ -n "$cflags" ] && check_cflags "$cflags"
+    libs=`$config $clibs`
+    if [ -n "$libs" ]; then
+      temp_extralibs "$libs"
+      check_func $func && add_extralibs "$libs"
+      err=$?
+      restore_flags
     fi
-    return $err
+  fi
+  return $err
 }
 
 check_libconfig_exists(){
-    local config func ccflags clibs err
-    log check_libconfig_exists "$@"
-    config="$1"
-    func="$2"
-    ccflags="${3:---cflags}"
-    clibs="${4:---libs}"
-    err=1
-    if `which "$config" 1>/dev/null 2>&1`; then
-      cflags=`$config $ccflags`
-      [ -n "$cflags" ] && temp_cflags "$cflags"
-      libs=`$config $clibs`
-      if [ -n "$libs" ]; then
-        temp_extralibs "$libs"
-        check_func $func
-        err=$?
-        restore_flags
-      fi
+  local config func ccflags clibs err
+  log check_libconfig_exists "$@"
+  config="$1"
+  func="$2"
+  ccflags="${3:---cflags}"
+  clibs="${4:---libs}"
+  err=1
+  if `which "$config" 1>/dev/null 2>&1`; then
+    cflags=`$config $ccflags`
+    [ -n "$cflags" ] && temp_cflags "$cflags"
+    libs=`$config $clibs`
+    if [ -n "$libs" ]; then
+      temp_extralibs "$libs"
+      check_func $func
+      err=$?
+      restore_flags
     fi
-    return $err
+  fi
+  return $err
 }
 
 check_pkgconfig(){
-    local pkg func ccflags clibs err
-    log check_pkgconfig "$@"
-    pkg="$1"
-    func="$2"
-    ccflags="${3:---cflags}"
-    clibs="${4:---libs}"
-    err=1
-    if `which pkg-config 1>/dev/null 2>&1`; then
-      cflags=`pkg-config $pkg $ccflags`
-      [ -n "$cflags" ] && check_cflags "$cflags"
-      libs=`pkg-config $pkg $clibs`
-      if [ -n "$libs" ]; then
-        temp_extralibs "$libs"
-        check_func $func
-        err=$?
-        restore_flags
-      fi
+  local pkg func ccflags clibs err
+  log check_pkgconfig "$@"
+  pkg="$1"
+  func="$2"
+  ccflags="${3:---cflags}"
+  clibs="${4:---libs}"
+  err=1
+  if `which pkg-config 1>/dev/null 2>&1`; then
+    cflags=`pkg-config $pkg $ccflags`
+    [ -n "$cflags" ] && check_cflags "$cflags"
+    libs=`pkg-config $pkg $clibs`
+    if [ -n "$libs" ]; then
+      temp_extralibs "$libs"
+      check_func $func
+      err=$?
+      restore_flags
     fi
-    return $err
+  fi
+  return $err
 }
 
 check_lib_pkgcfg(){
-    local pkg header func err
-    log check_lib_pkgcfg "$@"
-    pkg="$1"
-    header="$2"
-    func="$3"
-    shift 3
-    err=1
-    check_pkgconfig $pkg $func && add_pkgconfig_requires $pkg && err=0
-    [ "$err" != 0 ] && check_lib $header $func "$@" && add_pkgconfig_libs "$@" && err=0
-    return $err
+  local pkg header func err
+  log check_lib_pkgcfg "$@"
+  pkg="$1"
+  header="$2"
+  func="$3"
+  shift 3
+  err=1
+  check_pkgconfig $pkg $func && add_pkgconfig_requires $pkg && err=0
+  [ "$err" != 0 ] && check_lib $header $func "$@" && add_pkgconfig_libs "$@" && err=0
+  return $err
 }
 
 check_lib_pkgcfg_minversion(){
-    local pkg version err
-    log check_lib_pkgcf_minversiong "$@"
-    pkg="$1"
-    version="$2"
-    shift 2
-    err=1
-    if `which pkg-config 1>/dev/null 2>&1`; then
-      pkg-config --atleast-version=$version $pkg && err=0
-    fi
-    return $err
+  local pkg version err
+  log check_lib_pkgcf_minversiong "$@"
+  pkg="$1"
+  version="$2"
+  shift 2
+  err=1
+  if `which pkg-config 1>/dev/null 2>&1`; then
+    pkg-config --atleast-version=$version $pkg && err=0
+  fi
+  return $err
 }
 
 check_lib_libcfg(){
-    local config header func err
-    log check_lib_pkgcfg "$@"
-    config="$1"
-    header="$2"
-    func="$3"
-    shift 3
-    err=1
-    check_libconfig $config $func && add_pkgconfig_libs "$@" && err=0
-    [ "$err" != 0 ] && check_lib $header $func "$@" && add_pkgconfig_libs "$@" && err=0
-    return $err
+  local config header func err
+  log check_lib_pkgcfg "$@"
+  config="$1"
+  header="$2"
+  func="$3"
+  shift 3
+  err=1
+  check_libconfig $config $func && add_pkgconfig_libs "$@" && err=0
+  [ "$err" != 0 ] && check_lib $header $func "$@" && add_pkgconfig_libs "$@" && err=0
+  return $err
 }
 
 check_lib_version() {
-    local min_ver toobig_ver
-    min_ver="$2"
-    toobig_ver="$3"
-    check_cmd pkg-config --print-errors --exists "$1 >= $min_ver $1 < $toobig_ver" 2>>$logfile
-    err=$?
-    return $err
+  local min_ver toobig_ver
+  min_ver="$2"
+  toobig_ver="$3"
+  check_cmd pkg-config --print-errors --exists "$1 >= $min_ver $1 < $toobig_ver" 2>>$logfile
+  err=$?
+  return $err
 }
 
 append_config(){
-    echo "$@" >> $CONFIGFILE
+  echo "$@" >> $CONFIGFILE
 }
 
 pkgconfig_generate(){
-    name=$1
-    shortname=${name#lib}
-    comment=$2
-    version=$3
-    libs=$4
-    requires=$5
-    cflags=$6
+  name=$1
+  shortname=${name#lib}
+  comment=$2
+  version=$3
+  libs=$4
+  requires=$5
+  cflags=$6
 
-    cat <<EOF >$name.pc
+  cat <<EOF >$name.pc
 PREFIX=$PREFIX
 libdir=$libdir
 includedir=$includedir
@@ -477,19 +477,19 @@ EOF
 }
 
 add_pkgconfig_deps() {
-    if `which pkg-config 1>/dev/null 2>&1`; then
-      add_cflags `pkg-config "$1" --cflags 2>>$logfile`
-      add_extralibs `pkg-config "$1" --libs 2>>$logfile`
-    fi
+  if `which pkg-config 1>/dev/null 2>&1`; then
+    add_cflags `pkg-config "$1" --cflags 2>>$logfile`
+    add_extralibs `pkg-config "$1" --libs 2>>$logfile`
+  fi
 }
 
 # set temporary file name
 if test ! -z "$TMPDIR" ; then
-    TMPDIR1="${TMPDIR}"
+  TMPDIR1="${TMPDIR}"
 elif test ! -z "$TEMPDIR" ; then
-    TMPDIR1="${TEMPDIR}"
+  TMPDIR1="${TEMPDIR}"
 else
-    TMPDIR1="/tmp"
+  TMPDIR1="/tmp"
 fi
 
 TMPC="${TMPDIR1}/libplayer-${RANDOM}-$$-${RANDOM}.c"
@@ -797,9 +797,9 @@ if test $cpu != "generic"; then
 fi
 
 enable_pic(){
-    enable pic
-    add_cppflags -DPIC
-    add_cflags   -fPIC
+  enable pic
+  add_cppflags -DPIC
+  add_cflags   -fPIC
 }
 
 enabled spic && enable pic
@@ -1077,12 +1077,12 @@ fi
 #   version
 #################################################
 get_version(){
-    local name file version
-    name=$1
-    file=src/$2
-    eval $(grep "#define ${name}_VERSION_M" "$file" | awk '{ print $2"="$3 }')
-    eval version=\$${name}_VERSION_MAJOR.\$${name}_VERSION_MINOR.\$${name}_VERSION_MICRO
-    echo $version
+  local name file version
+  name=$1
+  file=src/$2
+  eval $(grep "#define ${name}_VERSION_M" "$file" | awk '{ print $2"="$3 }')
+  eval version=\$${name}_VERSION_MAJOR.\$${name}_VERSION_MINOR.\$${name}_VERSION_MICRO
+  echo $version
 }
 
 VERSION=`get_version LIBPLAYER player.h`
