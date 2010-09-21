@@ -29,7 +29,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <math.h>
-#include <pthread.h>
 
 #include <gst/gst.h>
 #include <gst/interfaces/streamvolume.h>
@@ -53,8 +52,6 @@
 
 /* player specific structure */
 typedef struct gstreamer_player_s {
-  pthread_t th;
-  GMainLoop *loop;
   GstBus *bus;
   GstElement *bin;
   GstElement *video_sink;
@@ -66,7 +63,6 @@ typedef struct gstreamer_identifier_s {
   player_t *player;
   mrl_t *mrl;
   GstElement *bin;
-  GMainLoop *loop;
   int flags;
 } gstreamer_identifier_t;
 
@@ -236,14 +232,6 @@ gstreamer_set_audio_sink (player_t *player)
   return sink;
 }
 
-static void *
-g_loop_thread (void *data)
-{
-  GMainLoop *loop = data;
-  g_main_loop_run (loop);
-  return;
-}
-
 static GstBusSyncReply
 bus_sync_handler_cb (GstBus *bus, GstMessage *message, gpointer data)
 {
@@ -330,7 +318,6 @@ identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
   case GST_MESSAGE_ASYNC_DONE:
     /* we now have enough stream information, shut it down */
     gst_element_set_state (id->bin, GST_STATE_NULL);
-    g_main_loop_unref (id->loop);
     return FALSE;
 
   case GST_MESSAGE_TAG:
@@ -363,7 +350,6 @@ identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 static void
 gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
 {
-  pthread_t th;
   GstBus *bus;
   GstElement *bin, *vs, *as;
   GstState state = GST_STATE_PAUSED;
@@ -388,12 +374,10 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
   id->player = player;
   id->mrl    = mrl;
   id->bin    = bin;
-  id->loop   = g_main_loop_new (NULL, FALSE);
   id->flags  = flags;
 
-  /* create the event loop and message handler */
+  /* create the message handler */
   gst_bus_add_watch (bus, identify_bus_callback, id);
-  pthread_create (&th, NULL, g_loop_thread, id->loop);
 
   /* resource name retrieval */
   switch (mrl->resource)
@@ -505,10 +489,6 @@ gstreamer_player_init (player_t *player)
 
   gst_bus_set_sync_handler (g->bus, bus_sync_handler_cb, player);
 
-  /* start our main loop thread */
-  g->loop = g_main_loop_new (NULL, FALSE);
-  pthread_create (&g->th, NULL, g_loop_thread, g->loop);
-
   return PLAYER_INIT_OK;
 }
 
@@ -534,7 +514,6 @@ gstreamer_player_uninit (player_t *player)
 
   gst_object_unref (GST_OBJECT (g->bin));
   gst_object_unref (GST_OBJECT (g->bus));
-  g_main_loop_unref (g->loop);
 
   gst_deinit ();
 
