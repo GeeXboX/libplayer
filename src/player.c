@@ -115,7 +115,7 @@ player_init (player_type_t type,
   pthread_cond_t *sv_cond;
   pthread_mutex_t *sv_mutex;
 
-  player = calloc (1, sizeof (player_t));
+  player = PCALLOC (player_t, 1);
   if (!player)
     return NULL;
 
@@ -248,8 +248,8 @@ player_uninit (player_t *player)
 
   pl_playlist_free (player->playlist);
   pthread_mutex_destroy (&player->mutex_verb);
-  free (player->funcs);
-  free (player);
+  PFREE (player->funcs);
+  PFREE (player);
 }
 
 void

@@ -626,7 +626,7 @@ thread_fifo (void *arg)
     {
       if (mplayer->search.property)
       {
-        free (mplayer->search.property);
+        PFREE (mplayer->search.property);
         mplayer->search.property = NULL;
         sem_post (&mplayer->sem);
       }
@@ -955,7 +955,7 @@ slave_get_property_int (player_t *player, slave_property_t property)
   if (result)
   {
     value = (int) rintf (pl_atof (result));
-    free (result);
+    PFREE (result);
   }
 
   return value;
@@ -972,7 +972,7 @@ slave_get_property_float (player_t *player, slave_property_t property)
   if (result)
   {
     value = pl_atof (result);
-    free (result);
+    PFREE (result);
   }
 
   return value;
@@ -1331,8 +1331,7 @@ mp_resource_get_uri_cd (const char *protocol, mrl_resource_cd_args_t *args)
     snprintf (uri, size, "%s%s%s%s%s",
               protocol, track_start, track_end, speed, device ? device : "");
 
-  if (device)
-    free (device);
+  PFREE (device);
 
   return uri;
 }
@@ -1374,8 +1373,7 @@ mp_resource_get_uri_dvd (const char *protocol,
     snprintf (uri, size, "%s%s%s%s",
               protocol, title_start, title_end, device ? device : "");
 
-  if (device)
-    free (device);
+  PFREE (device);
 
   return uri;
 }
@@ -1406,8 +1404,7 @@ mp_resource_get_uri_vcd (const char *protocol,
   if (uri)
     snprintf (uri, size, "%s%s%s", protocol, track_start, device ? device : "");
 
-  if (device)
-    free (device);
+  PFREE (device);
 
   return uri;
 }
@@ -1503,7 +1500,7 @@ mp_resource_get_uri_network (const char *protocol,
   if (uri)
     snprintf (uri, size, "%s%s%s", protocol, at, host_file);
 
-  free (host_file);
+  PFREE (host_file);
 
   return uri;
 }
@@ -1681,45 +1678,38 @@ mp_identify_metadata_clip (mrl_t *mrl,
   {
   case PROPERTY_METADATA_NAME:
   case PROPERTY_METADATA_TITLE:
-    if (meta->title)
-      free (meta->title);
+    PFREE (meta->title);
     meta->title = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_ARTIST:
   case PROPERTY_METADATA_AUTHOR:
-    if (meta->artist)
-      free (meta->artist);
+    PFREE (meta->artist);
     meta->artist = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_GENRE:
-    if (meta->genre)
-      free (meta->genre);
+    PFREE (meta->genre);
     meta->genre = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_ALBUM:
-    if (meta->album)
-      free (meta->album);
+    PFREE (meta->album);
     meta->album = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_YEAR:
-    if (meta->year)
-      free (meta->year);
+    PFREE (meta->year);
     meta->year = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_TRACK:
-    if (meta->track)
-      free (meta->track);
+    PFREE (meta->track);
     meta->track = *value ? strdup (value) : NULL;
     break;
 
   case PROPERTY_METADATA_COMMENT:
-    if (meta->comment)
-      free (meta->comment);
+    PFREE (meta->comment);
     meta->comment = *value ? strdup (value) : NULL;
     break;
 
@@ -1805,8 +1795,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_CDDB_INFO_ARTIST=");
   if (it == buffer)
   {
-    if (meta->artist)
-      free (meta->artist);
+    PFREE (meta->artist);
     meta->artist = strdup (parse_field (it));
     return 1;
   }
@@ -1814,8 +1803,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_CDDB_INFO_ALBUM=");
   if (it == buffer)
   {
-    if (meta->album)
-      free (meta->album);
+    PFREE (meta->album);
     meta->album = strdup (parse_field (it));
     return 1;
   }
@@ -1823,8 +1811,7 @@ mp_identify_metadata_cd (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_CDDB_INFO_GENRE=");
   if (it == buffer)
   {
-    if (meta->genre)
-      free (meta->genre);
+    PFREE (meta->genre);
     meta->genre = strdup (parse_field (it));
     return 1;
   }
@@ -1846,8 +1833,7 @@ mp_identify_metadata_dvd (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_DVD_VOLUME_ID=");
   if (it == buffer)
   {
-    if (dvd->volumeid)
-      free (dvd->volumeid);
+    PFREE (dvd->volumeid);
     dvd->volumeid = strdup (parse_field (it));
     return 1;
   }
@@ -1910,14 +1896,12 @@ mp_identify_metadata_sub (mrl_t *mrl, const char *buffer)
 
     if (strstr (val, "NAME") == val)
     {
-      if (sub->name)
-        free (sub->name);
+      PFREE (sub->name);
       sub->name = strdup (parse_field (val));
     }
     else if (strstr (val, "LANG") == val)
     {
-      if (sub->lang)
-        free (sub->lang);
+      PFREE (sub->lang);
       sub->lang = strdup (parse_field (val));
     }
     return 1;
@@ -1959,14 +1943,12 @@ mp_identify_metadata_audio (mrl_t *mrl, const char *buffer)
 
     if (strstr (val, "NAME") == val)
     {
-      if (audio->name)
-        free (audio->name);
+      PFREE (audio->name);
       audio->name = strdup (parse_field (val));
     }
     else if (strstr (val, "LANG") == val)
     {
-      if (audio->lang)
-        free (audio->lang);
+      PFREE (audio->lang);
       audio->lang = strdup (parse_field (val));
     }
     return 1;
@@ -2025,8 +2007,7 @@ mp_identify_audio (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_AUDIO_CODEC=");
   if (it == buffer)
   {
-    if (audio->codec)
-      free (audio->codec);
+    PFREE (audio->codec);
     audio->codec = strdup (parse_field (it));
     return 1;
   }
@@ -2073,8 +2054,7 @@ mp_identify_video (mrl_t *mrl, const char *buffer)
   it = strstr (buffer, "ID_VIDEO_CODEC=");
   if (it == buffer)
   {
-    if (video->codec)
-      free (video->codec);
+    PFREE (video->codec);
     video->codec = strdup (parse_field (it));
     return 1;
   }
@@ -2205,7 +2185,7 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
 
   if (pipe (mp_pipe))
   {
-    free (uri);
+    PFREE (uri);
     return;
   }
 
@@ -2284,7 +2264,7 @@ mp_identify (player_t *player, mrl_t *mrl, int flags)
 
     /* wait the death of MPlayer */
     waitpid (pid, NULL, 0);
-    free (uri);
+    PFREE (uri);
     close (mp_pipe[0]);
     fclose (mp_fifo);
   }
@@ -2342,7 +2322,7 @@ opt_free (item_opt_t *opts)
   while (opt)
   {
     opt = opts->next;
-    free (opts);
+    PFREE (opts);
   }
 }
 
@@ -2358,7 +2338,7 @@ item_list_free (item_list_t *list, int nb)
     if (list[i].opt)
       opt_free (list[i].opt);
 
-  free (list);
+  PFREE (list);
 }
 
 static item_opt_t *
@@ -2382,7 +2362,7 @@ mp_prop_get_option (char *it_min, char *it_max)
   if (opt_min == OPT_OFF && opt_max == OPT_OFF)
     return NULL;
 
-  opt = calloc (1, sizeof (item_opt_t));
+  opt = PCALLOC (item_opt_t, 1);
   if (!opt)
     return NULL;
 
@@ -2662,7 +2642,7 @@ executable_is_available (player_t *player, const char *bin)
     snprintf (prog, sizeof (prog), "%s/%s", p, bin);
     if (!access (prog, X_OK))
     {
-      free (fp);
+      PFREE (fp);
       return 1;
     }
   }
@@ -2670,7 +2650,7 @@ executable_is_available (player_t *player, const char *bin)
   pl_log (player, PLAYER_MSG_ERROR,
           MODULE_NAME, "%s executable not found in the PATH", bin);
 
-  free (fp);
+  PFREE (fp);
   return 0;
 }
 
@@ -3087,7 +3067,7 @@ mplayer_uninit (player_t *player)
   pthread_mutex_destroy (&mplayer->mutex_start);
   sem_destroy (&mplayer->sem);
 
-  free (mplayer);
+  PFREE (mplayer);
 }
 
 static void
@@ -3208,7 +3188,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
   default:
     pl_log (player, PLAYER_MSG_WARNING,
             MODULE_NAME, "unsupported snapshot type (%i)", t);
-    free (uri);
+    PFREE (uri);
     return;
   }
 
@@ -3216,7 +3196,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
   {
     pl_log (player, PLAYER_MSG_ERROR,
             MODULE_NAME, "unable to create temporary directory (%s)", tmp);
-    free (uri);
+    PFREE (uri);
     return;
   }
 
@@ -3285,7 +3265,7 @@ mplayer_mrl_video_snapshot (player_t *player, mrl_t *mrl,
   {
     /* wait the death of MPlayer */
     waitpid (pid, NULL, 0);
-    free (uri);
+    PFREE (uri);
 
     if (pl_file_exists (file))
     {
@@ -3346,7 +3326,7 @@ mplayer_playback_start (player_t *player)
   /* 0: new play, 1: append to the current playlist */
   slave_cmd_str_opt (player, SLAVE_LOADFILE, uri, 0);
 
-  free (uri);
+  PFREE (uri);
 
   if (get_mplayer_status (player) != MPLAYER_IS_PLAYING)
     return PLAYER_PB_ERROR;
@@ -3543,7 +3523,7 @@ mplayer_audio_get_mute (player_t *player)
     else
       mute = PLAYER_MUTE_OFF;
 
-    free (buffer);
+    PFREE (buffer);
   }
 
   return mute;
@@ -4199,7 +4179,7 @@ pl_register_functions_mplayer (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = calloc (1, sizeof (player_funcs_t));
+  funcs = PCALLOC (player_funcs_t, 1);
   if (!funcs)
     return NULL;
 
@@ -4273,7 +4253,7 @@ pl_register_private_mplayer (void)
 {
   mplayer_t *mplayer = NULL;
 
-  mplayer = calloc (1, sizeof (mplayer_t));
+  mplayer = PCALLOC (mplayer_t, 1);
   if (!mplayer)
     return NULL;
 

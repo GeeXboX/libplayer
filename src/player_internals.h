@@ -276,6 +276,9 @@ struct player_s {
 #define MRL_USES_VO(m) ((m) && (m)->prop && (m)->prop->video)
 #define MRL_USES_AO(m) ((m) && (m)->prop && (m)->prop->audio)
 
+#define PFREE(p) do { if (p) free (p); p = NULL; } while (0)
+#define PCALLOC(s, n) (s *) calloc (n, sizeof (s))
+
 /*****************************************************************************/
 /*                          MRL Internal functions                           */
 /*****************************************************************************/

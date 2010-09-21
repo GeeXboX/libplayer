@@ -1226,7 +1226,7 @@ thread_supervisor (void *arg)
     in = data->in;
     out = data->out;
     mode = data->mode;
-    free (data);
+    PFREE (data);
 
     supervisor_sync_catch (supervisor);
 
@@ -1364,7 +1364,7 @@ pl_supervisor_send (player_t *player, supervisor_mode_t mode,
     sem_wait (&supervisor->sem_ctl);
   else if (res)
   {
-    free (data);
+    PFREE (data);
     pl_log (player, PLAYER_MSG_ERROR,
             MODULE_NAME, "error on queue? no sense :(");
   }
@@ -1378,14 +1378,14 @@ pl_supervisor_new (void)
 {
   supervisor_t *supervisor;
 
-  supervisor = calloc (1, sizeof (supervisor_t));
+  supervisor = PCALLOC (supervisor_t, 1);
   if (!supervisor)
     return NULL;
 
   supervisor->queue = pl_fifo_queue_new ();
   if (!supervisor->queue)
   {
-    free (supervisor);
+    PFREE (supervisor);
     return NULL;
   }
 
@@ -1471,6 +1471,6 @@ pl_supervisor_uninit (player_t *player)
 
   pthread_mutex_destroy (&supervisor->mutex_cb);
 
-  free (supervisor);
+  PFREE (supervisor);
   player->supervisor = NULL;
 }

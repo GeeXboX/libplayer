@@ -47,7 +47,7 @@ pl_playlist_new (int shuffle, int loop, player_loop_t loop_mode)
 {
   playlist_t *playlist;
 
-  playlist = calloc (1, sizeof (playlist_t));
+  playlist = PCALLOC (playlist_t, 1);
   if (!playlist)
     return NULL;
 
@@ -66,10 +66,8 @@ pl_playlist_free (playlist_t *playlist)
   if (playlist->mrl_list)
     mrl_list_free (playlist->mrl_list);
 
-  if (playlist->shuffle_list)
-    free (playlist->shuffle_list);
-
-  free (playlist);
+  PFREE (playlist->shuffle_list);
+  PFREE (playlist);
 }
 
 void
@@ -107,8 +105,7 @@ playlist_shuffle_init (playlist_t *playlist)
 
   playlist->shuffle_cnt = pl_playlist_count_mrl (playlist);
 
-  if (playlist->shuffle_list)
-    free (playlist->shuffle_list);
+  PFREE (playlist->shuffle_list);
 
   playlist->shuffle_list = malloc (playlist->shuffle_cnt * sizeof (int));
   if (!playlist->shuffle_list)

@@ -184,7 +184,7 @@ vlc_resource_get_uri_network (const char *protocol,
   if (uri)
     snprintf (uri, size, "%s%s%s", protocol, at, host_file);
 
-  free (host_file);
+  PFREE (host_file);
 
   return uri;
 }
@@ -458,13 +458,12 @@ vlc_identify (player_t *player, mrl_t *mrl, int flags)
   libvlc_media_player_stop (mp);
   libvlc_media_release (media);
 
-  if (es)
-    free (es);
+  PFREE (es);
 
  err_media:
   libvlc_media_player_release (mp);
  err_mp:
-  free (uri);
+  PFREE (uri);
 }
 
 /*****************************************************************************/
@@ -640,7 +639,7 @@ vlc_uninit (player_t *player)
   pl_x11_uninit (player);
 #endif /* USE_X11 */
 
-  free (vlc);
+  PFREE (vlc);
 }
 
 static void
@@ -764,8 +763,7 @@ vlc_mrl_video_snapshot (player_t *player, mrl_t *mrl, pl_unused int pos,
   libvlc_video_take_snapshot (vlc->mp, 0, dst, width, height);
 
  out:
-  if (es)
-    free (es);
+  PFREE (es);
 }
 
 static int
@@ -837,7 +835,7 @@ vlc_playback_start (player_t *player)
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "uri: %s", uri);
   media = libvlc_media_new_location (vlc->core, uri);
-  free (uri);
+  PFREE (uri);
 
   if (!media)
     return PLAYER_PB_ERROR;
@@ -1266,7 +1264,7 @@ pl_register_functions_vlc (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = calloc (1, sizeof (player_funcs_t));
+  funcs = PCALLOC (player_funcs_t, 1);
   if (!funcs)
     return NULL;
 
@@ -1340,7 +1338,7 @@ pl_register_private_vlc (void)
 {
   vlc_t *vlc = NULL;
 
-  vlc = calloc (1, sizeof (vlc_t));
+  vlc = PCALLOC (vlc_t, 1);
   if (!vlc)
     return NULL;
 

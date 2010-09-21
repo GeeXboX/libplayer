@@ -64,10 +64,7 @@ dummy_uninit (player_t *player)
 
   dummy = (dummy_t *) player->priv;
 
-  if (!dummy)
-    return;
-
-  free (dummy);
+  PFREE (dummy);
 }
 
 static void
@@ -204,7 +201,7 @@ pl_register_functions_dummy (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = calloc (1, sizeof (player_funcs_t));
+  funcs = PCALLOC (player_funcs_t, 1);
   if (!funcs)
     return NULL;
 

@@ -22,7 +22,10 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdlib.h>
+#include <stdint.h>
 
+#include "player.h"
+#include "player_internals.h"
 #include "fifo_queue.h"
 
 typedef struct fifo_queue_item_s {
@@ -44,7 +47,7 @@ pl_fifo_queue_new (void)
 {
   fifo_queue_t *queue;
 
-  queue = calloc (1, sizeof (fifo_queue_t));
+  queue = PCALLOC (fifo_queue_t, 1);
   if (!queue)
     return NULL;
 
@@ -66,14 +69,14 @@ pl_fifo_queue_free (fifo_queue_t *queue)
   while (item)
   {
     next = item->next;
-    free (item);
+    PFREE (item);
     item = next;
   }
 
   pthread_mutex_destroy (&queue->mutex);
   sem_destroy (&queue->sem);
 
-  free (queue);
+  PFREE (queue);
 }
 
 int
@@ -89,12 +92,12 @@ pl_fifo_queue_push (fifo_queue_t *queue, int id, void *data)
   item = queue->item;
   if (item)
   {
-    queue->item_last->next = calloc (1, sizeof (fifo_queue_item_t));
+    queue->item_last->next = PCALLOC (fifo_queue_item_t, 1);
     item = queue->item_last->next;
   }
   else
   {
-    item = calloc (1, sizeof (fifo_queue_item_t));
+    item = PCALLOC (fifo_queue_item_t, 1);
     queue->item = item;
   }
 
@@ -143,7 +146,7 @@ pl_fifo_queue_pop (fifo_queue_t *queue, int *id, void **data)
 
   /* remove the entry and go to the next */
   next = item->next;
-  free (item);
+  PFREE (item);
   queue->item = next;
   pthread_mutex_unlock (&queue->mutex);
 

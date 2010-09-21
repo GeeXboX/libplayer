@@ -210,7 +210,7 @@ xi_resource_get_uri_network (const char *protocol,
   if (uri)
     snprintf (uri, size, "%s%s", protocol, host_file);
 
-  free (host_file);
+  PFREE (host_file);
 
   return uri;
 }
@@ -286,8 +286,7 @@ xine_identify_metadata_dvd (mrl_t *mrl, xine_stream_t *stream)
   s = xine_get_meta_info (stream, XINE_META_INFO_TITLE);
   if (s)
   {
-    if (dvd->volumeid)
-      free (dvd->volumeid);
+    PFREE (dvd->volumeid);
     dvd->volumeid = strdup (s);
   }
 
@@ -304,56 +303,49 @@ xine_identify_metadata_clip (mrl_t *mrl, xine_stream_t *stream)
   s = xine_get_meta_info (stream, XINE_META_INFO_TITLE);
   if (s)
   {
-    if (meta->title)
-      free (meta->title);
+    PFREE (meta->title);
     meta->title = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_ARTIST);
   if (s)
   {
-    if (meta->artist)
-      free (meta->artist);
+    PFREE (meta->artist);
     meta->artist = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_GENRE);
   if (s)
   {
-    if (meta->genre)
-      free (meta->genre);
+    PFREE (meta->genre);
     meta->genre = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_ALBUM);
   if (s)
   {
-    if (meta->album)
-      free (meta->album);
+    PFREE (meta->album);
     meta->album = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_YEAR);
   if (s)
   {
-    if (meta->year)
-      free (meta->year);
+    PFREE (meta->year);
     meta->year = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_TRACK_NUMBER);
   if (s)
   {
-    if (meta->track)
-      free (meta->track);
+    PFREE (meta->track);
     meta->track = strdup (s);
   }
 
   s = xine_get_meta_info (stream, XINE_META_INFO_COMMENT);
   if (s)
   {
-    if (meta->comment)
-      free (meta->comment);
+    PFREE (meta->comment);
     meta->comment = strdup (s);
   }
 }
@@ -397,8 +389,7 @@ xine_identify_audio (mrl_t *mrl, xine_stream_t *stream)
   s = xine_get_meta_info (stream, XINE_META_INFO_AUDIOCODEC);
   if (s)
   {
-    if (audio->codec)
-      free (audio->codec);
+    PFREE (audio->codec);
     audio->codec = strdup (s);
   }
 
@@ -435,8 +426,7 @@ xine_identify_video (mrl_t *mrl, xine_stream_t *stream)
   s = xine_get_meta_info (stream, XINE_META_INFO_VIDEOCODEC);
   if (s)
   {
-    if (video->codec)
-      free (video->codec);
+    PFREE (video->codec);
     video->codec = strdup (s);
   }
 
@@ -536,7 +526,7 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
  err_vo:
   xine_close_audio_driver (x->xine, ao);
  err_ao:
-  free (uri);
+  PFREE (uri);
 }
 
 /*****************************************************************************/
@@ -573,7 +563,7 @@ xine_player_init (player_t *player)
     char *cfgfile = malloc (cfgfile_len);
     snprintf (cfgfile, cfgfile_len, "%s/.xine/config", homedir);
     xine_config_load (x->xine, cfgfile);
-    free (cfgfile);
+    PFREE (cfgfile);
   }
   xine_init (x->xine);
   xine_engine_set_param (x->xine,
@@ -765,7 +755,7 @@ xine_player_uninit (player_t *player)
   pl_x11_uninit (player);
 #endif /* USE_X11 */
 
-  free (x);
+  PFREE (x);
 }
 
 static void
@@ -970,7 +960,7 @@ xine_player_playback_start (player_t *player)
   else
     mrl = strdup (uri);
 
-  free (uri);
+  PFREE (uri);
 
   if (!mrl)
     return PLAYER_PB_ERROR;
@@ -983,7 +973,7 @@ xine_player_playback_start (player_t *player)
   xine_open (x->stream, mrl);
   xine_play (x->stream, 0, 0);
 
-  free (mrl);
+  PFREE (mrl);
 
   return PLAYER_PB_OK;
 }
@@ -1297,7 +1287,7 @@ xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
 
   case PLAYER_DVDNAV_MOUSECLICK:
     event = XINE_EVENT_INPUT_MOUSE_BUTTON;
-    input = calloc (1, sizeof (xine_input_data_t));
+    input = PCALLOC (xine_input_data_t, 1);
     if (!input)
       break;
 
@@ -1312,8 +1302,7 @@ xine_player_dvd_nav (player_t *player, player_dvdnav_t value)
 
   send_event (player, event, input, input ? sizeof (*input) : 0);
 
-  if (input)
-    free (input);
+  PFREE (input);
 }
 
 static void
@@ -1418,7 +1407,7 @@ pl_register_functions_xine (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = calloc (1, sizeof (player_funcs_t));
+  funcs = PCALLOC (player_funcs_t, 1);
   if (!funcs)
     return NULL;
 
@@ -1492,7 +1481,7 @@ pl_register_private_xine (void)
 {
   xine_player_t *x = NULL;
 
-  x = calloc (1, sizeof (xine_player_t));
+  x = PCALLOC (xine_player_t, 1);
   if (!x)
     return NULL;
 

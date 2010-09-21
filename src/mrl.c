@@ -245,12 +245,12 @@ mrl_get_metadata_subtitle (player_t *player, mrl_t *mrl, int pos,
   if (name)
     *name = out.name;
   else if (out.name)
-    free (out.name);
+    PFREE (out.name);
 
   if (lang)
     *lang = out.lang;
   else if (out.lang)
-    free (out.lang);
+    PFREE (out.lang);
 
   return out.ret;
 }
@@ -294,12 +294,12 @@ mrl_get_metadata_audio (player_t *player, mrl_t *mrl, int pos,
   if (name)
     *name = out.name;
   else if (out.name)
-    free (out.name);
+    PFREE (out.name);
 
   if (lang)
     *lang = out.lang;
   else if (out.lang)
-    free (out.lang);
+    PFREE (out.lang);
 
   return out.ret;
 }

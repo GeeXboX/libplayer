@@ -67,7 +67,7 @@ mrl_properties_audio_new (void)
 {
   mrl_properties_audio_t *audio;
 
-  audio = calloc (1, sizeof (mrl_properties_audio_t));
+  audio = PCALLOC (mrl_properties_audio_t, 1);
 
   return audio;
 }
@@ -78,9 +78,8 @@ mrl_properties_audio_free (mrl_properties_audio_t *audio)
   if (!audio)
     return;
 
-  if (audio->codec)
-    free (audio->codec);
-  free (audio);
+  PFREE (audio->codec);
+  PFREE (audio);
 }
 
 mrl_properties_video_t *
@@ -88,7 +87,7 @@ mrl_properties_video_new (void)
 {
   mrl_properties_video_t *video;
 
-  video = calloc (1, sizeof (mrl_properties_video_t));
+  video = PCALLOC (mrl_properties_video_t, 1);
 
   return video;
 }
@@ -99,9 +98,8 @@ mrl_properties_video_free (mrl_properties_video_t *video)
   if (!video)
     return;
 
-  if (video->codec)
-    free (video->codec);
-  free (video);
+  PFREE (video->codec);
+  PFREE (video);
 }
 
 mrl_properties_t *
@@ -109,7 +107,7 @@ mrl_properties_new (void)
 {
   mrl_properties_t *prop;
 
-  prop = calloc (1, sizeof (mrl_properties_t));
+  prop = PCALLOC (mrl_properties_t, 1);
 
   return prop;
 }
@@ -124,7 +122,7 @@ mrl_properties_free (mrl_properties_t *prop)
     mrl_properties_audio_free (prop->audio);
   if (prop->video)
     mrl_properties_video_free (prop->video);
-  free (prop);
+  PFREE (prop);
 }
 
 mrl_metadata_cd_track_t *
@@ -132,7 +130,7 @@ mrl_metadata_cd_track_new (void)
 {
   mrl_metadata_cd_track_t *track;
 
-  track = calloc (1, sizeof (mrl_metadata_cd_track_t));
+  track = PCALLOC (mrl_metadata_cd_track_t, 1);
 
   return track;
 }
@@ -170,7 +168,7 @@ mrl_metadata_cd_new (void)
 {
   mrl_metadata_cd_t *cd;
 
-  cd = calloc (1, sizeof (mrl_metadata_cd_t));
+  cd = PCALLOC (mrl_metadata_cd_t, 1);
 
   return cd;
 }
@@ -180,7 +178,7 @@ mrl_metadata_dvd_title_new (void)
 {
   mrl_metadata_dvd_title_t *title;
 
-  title = calloc (1, sizeof (mrl_metadata_dvd_title_t));
+  title = PCALLOC (mrl_metadata_dvd_title_t, 1);
 
   return title;
 }
@@ -218,7 +216,7 @@ mrl_metadata_dvd_new (void)
 {
   mrl_metadata_dvd_t *dvd;
 
-  dvd = calloc (1, sizeof (mrl_metadata_dvd_t));
+  dvd = PCALLOC (mrl_metadata_dvd_t, 1);
 
   return dvd;
 }
@@ -228,7 +226,7 @@ mrl_metadata_sub_new (void)
 {
   mrl_metadata_sub_t *sub;
 
-  sub = calloc (1, sizeof (mrl_metadata_sub_t));
+  sub = PCALLOC (mrl_metadata_sub_t, 1);
 
   return sub;
 }
@@ -266,7 +264,7 @@ mrl_metadata_audio_new (void)
 {
   mrl_metadata_audio_t *audio;
 
-  audio = calloc (1, sizeof (mrl_metadata_audio_t));
+  audio = PCALLOC (mrl_metadata_audio_t, 1);
 
   return audio;
 }
@@ -304,7 +302,7 @@ mrl_metadata_new (mrl_resource_t res)
 {
   mrl_metadata_t *meta;
 
-  meta = calloc (1, sizeof (mrl_metadata_t));
+  meta = PCALLOC (mrl_metadata_t, 1);
   if (!meta)
     return NULL;
 
@@ -338,11 +336,10 @@ mrl_metadata_cd_free (mrl_metadata_cd_t *cd)
   track = cd->track;
   while (track)
   {
-    if (track->name)
-      free (track->name);
+    PFREE (track->name);
     track_p = track;
     track = track->next;
-    free (track_p);
+    PFREE (track_p);
   }
 }
 
@@ -354,15 +351,14 @@ mrl_metadata_dvd_free (mrl_metadata_dvd_t *dvd)
   if (!dvd)
     return;
 
-  if (dvd->volumeid)
-    free (dvd->volumeid);
+  PFREE (dvd->volumeid);
 
   title = dvd->title;
   while (title)
   {
     title_p = title;
     title = title->next;
-    free (title_p);
+    PFREE (title_p);
   }
 }
 
@@ -373,12 +369,10 @@ mrl_metadata_sub_free (mrl_metadata_sub_t *sub)
 
   while (sub)
   {
-    if (sub->name)
-      free (sub->name);
-    if (sub->lang)
-      free (sub->lang);
+    PFREE (sub->name);
+    PFREE (sub->lang);
     sub_n = sub->next;
-    free (sub);
+    PFREE (sub);
     sub = sub_n;
   }
 }
@@ -390,12 +384,10 @@ mrl_metadata_audio_free (mrl_metadata_audio_t *audio)
 
   while (audio)
   {
-    if (audio->name)
-      free (audio->name);
-    if (audio->lang)
-      free (audio->lang);
+    PFREE (audio->name);
+    PFREE (audio->lang);
     audio_n = audio->next;
-    free (audio);
+    PFREE (audio);
     audio = audio_n;
   }
 }
@@ -406,20 +398,13 @@ mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res)
   if (!meta)
     return;
 
-  if (meta->title)
-    free (meta->title);
-  if (meta->artist)
-    free (meta->artist);
-  if (meta->genre)
-    free (meta->genre);
-  if (meta->album)
-    free (meta->album);
-  if (meta->year)
-    free (meta->year);
-  if (meta->track)
-    free (meta->track);
-  if (meta->comment)
-    free (meta->comment);
+  PFREE (meta->title);
+  PFREE (meta->artist);
+  PFREE (meta->genre);
+  PFREE (meta->album);
+  PFREE (meta->year);
+  PFREE (meta->track);
+  PFREE (meta->comment);
 
   if (meta->subs)
     mrl_metadata_sub_free (meta->subs);
@@ -443,10 +428,10 @@ mrl_metadata_free (mrl_metadata_t *meta, mrl_resource_t res)
     default:
       break;
     }
-    free (meta->priv);
+    PFREE (meta->priv);
   }
 
-  free (meta);
+  PFREE (meta);
 }
 
 static void
@@ -455,8 +440,7 @@ mrl_resource_local_free (mrl_resource_local_args_t *args)
   if (!args)
     return;
 
-  if (args->location)
-    free (args->location);
+  PFREE (args->location);
 }
 
 static void
@@ -465,8 +449,7 @@ mrl_resource_cd_free (mrl_resource_cd_args_t *args)
   if (!args)
     return;
 
-  if (args->device)
-    free (args->device);
+  PFREE (args->device);
 }
 
 static void
@@ -475,12 +458,9 @@ mrl_resource_videodisc_free (mrl_resource_videodisc_args_t *args)
   if (!args)
     return;
 
-  if (args->device)
-    free (args->device);
-  if (args->audio_lang)
-    free (args->audio_lang);
-  if (args->sub_lang)
-    free (args->sub_lang);
+  PFREE (args->device);
+  PFREE (args->audio_lang);
+  PFREE (args->sub_lang);
 }
 
 static void
@@ -489,16 +469,11 @@ mrl_resource_tv_free (mrl_resource_tv_args_t *args)
   if (!args)
     return;
 
-  if (args->device)
-    free (args->device);
-  if (args->driver)
-    free (args->driver);
-  if (args->channel)
-    free (args->channel);
-  if (args->output_format)
-    free (args->output_format);
-  if (args->norm)
-    free (args->norm);
+  PFREE (args->device);
+  PFREE (args->driver);
+  PFREE (args->channel);
+  PFREE (args->output_format);
+  PFREE (args->norm);
 }
 
 static void
@@ -507,14 +482,10 @@ mrl_resource_network_free (mrl_resource_network_args_t *args)
   if (!args)
     return;
 
-  if (args->url)
-    free (args->url);
-  if (args->username)
-    free (args->username);
-  if (args->password)
-    free (args->password);
-  if (args->user_agent)
-    free (args->user_agent);
+  PFREE (args->url);
+  PFREE (args->username);
+  PFREE (args->password);
+  PFREE (args->user_agent);
 }
 
 void
@@ -854,10 +825,10 @@ mrl_sv_free (mrl_t *mrl, int recursive)
     char **sub = mrl->subs;
     while (*sub)
     {
-      free (*sub);
+      PFREE (*sub);
       sub++;
     }
-    free (mrl->subs);
+    PFREE (mrl->subs);
   }
 
   if (mrl->prop)
@@ -910,13 +881,13 @@ mrl_sv_free (mrl_t *mrl, int recursive)
     default:
       break;
     }
-    free (mrl->priv);
+    PFREE (mrl->priv);
   }
 
   if (recursive && mrl->next)
     mrl_sv_free (mrl->next, 1);
 
-  free (mrl);
+  PFREE (mrl);
 }
 
 uint32_t
@@ -1475,7 +1446,7 @@ mrl_sv_new (player_t *player, mrl_resource_t res, void *args)
     return NULL;
   }
 
-  mrl = calloc (1, sizeof (mrl_t));
+  mrl = PCALLOC (mrl_t, 1);
   if (!mrl)
     return NULL;
 

@@ -306,8 +306,7 @@ gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
     if (!r)
       return;
 
-    if (*meta)
-      free (*meta);
+    PFREE (*meta);
     *meta = strdup (value);
 
     g_free (value);
@@ -322,8 +321,7 @@ gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
       return;
 
     snprintf (buf, sizeof (buf), "%d", value);
-    if (*meta)
-      free (*meta);
+    PFREE (*meta);
     *meta = strdup (buf);
   }
   else if (gst_tag_get_type (tag) == G_TYPE_INT)
@@ -336,8 +334,7 @@ gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
       return;
 
     snprintf (buf, sizeof (buf), "%d", value);
-    if (*meta)
-      free (*meta);
+    PFREE (*meta);
     *meta = strdup (buf);
   }
 }
@@ -624,9 +621,9 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
             "unrecognized resource type: %d", mrl->resource);
   }
 
-  free (uri);
-  free (id->audio_codec);
-  free (id->video_codec);
+  PFREE (uri);
+  PFREE (id->audio_codec);
+  PFREE (id->video_codec);
 }
 
 #define GST_SIGNAL(msg, cb) \
@@ -719,7 +716,7 @@ gstreamer_player_uninit (player_t *player)
 
   gst_deinit ();
 
-  free (g);
+  PFREE (g);
 }
 
 static void
@@ -879,7 +876,7 @@ gstreamer_player_playback_start (player_t *player)
             "unrecognized resource type: %d", mrl->resource);
   }
 
-  free (uri);
+  PFREE (uri);
 
 #ifdef USE_X11
   if (MRL_USES_VO (mrl))
@@ -1141,7 +1138,7 @@ pl_register_functions_gstreamer (void)
 {
   player_funcs_t *funcs = NULL;
 
-  funcs = calloc (1, sizeof (player_funcs_t));
+  funcs = PCALLOC (player_funcs_t, 1);
   if (!funcs)
     return NULL;
 
@@ -1215,7 +1212,7 @@ pl_register_private_gstreamer (void)
 {
   gstreamer_player_t *g = NULL;
 
-  g = calloc (1, sizeof (gstreamer_player_t));
+  g = PCALLOC (gstreamer_player_t, 1);
   if (!g)
     return NULL;
 

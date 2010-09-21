@@ -22,6 +22,8 @@
 #include <pthread.h>
 #include <stdlib.h>
 
+#include "player.h"
+#include "player_internals.h"
 #include "fifo_queue.h"
 #include "event_handler.h"
 
@@ -125,14 +127,14 @@ pl_event_handler_register (void *data,
   if (!data || !event_cb)
     return NULL;
 
-  handler = calloc (1, sizeof (event_handler_t));
+  handler = PCALLOC (event_handler_t, 1);
   if (!handler)
     return NULL;
 
   handler->queue = pl_fifo_queue_new ();
   if (!handler->queue)
   {
-    free (handler);
+    PFREE (handler);
     return NULL;
   }
 
@@ -203,7 +205,7 @@ pl_event_handler_uninit (event_handler_t *handler)
   pthread_mutex_destroy (&handler->mutex_enable);
   pthread_mutex_destroy (&handler->mutex_run);
 
-  free (handler);
+  PFREE (handler);
 }
 
 int

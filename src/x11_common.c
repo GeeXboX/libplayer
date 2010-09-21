@@ -278,7 +278,7 @@ pl_x11_resize (player_t *player)
     {
       width  = geom->width;
       height = geom->height;
-      free (geom);
+      PFREE (geom);
     }
 
     x11->width  = width;
@@ -448,13 +448,13 @@ pl_x11_uninit (player_t *player)
       xcb_disconnect (vis->connection);
 #endif /* USE_XLIB_HACK */
 #endif /* HAVE_XINE */
-    free (x11->data);
+    PFREE (x11->data);
   }
 
   xcb_disconnect (x11->conn);
 
   pthread_mutex_destroy (&x11->mutex);
-  free (x11);
+  PFREE (x11);
   player->x11 = NULL;
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window destroyed");
@@ -589,7 +589,7 @@ pl_x11_init (player_t *player)
   if (!player)
     return 0;
 
-  player->x11 = calloc (1, sizeof (x11_t));
+  player->x11 = PCALLOC (x11_t, 1);
   x11 = player->x11;
   if (!x11)
     return 0;
@@ -643,7 +643,7 @@ pl_x11_init (player_t *player)
     {
       x11->width  = geom->width;
       x11->height = geom->height;
-      free (geom);
+      PFREE (geom);
     }
 
     cookie_atts = xcb_get_window_attributes (x11->conn, win_root);
@@ -651,7 +651,7 @@ pl_x11_init (player_t *player)
     if (atts)
     {
       visual = atts->visual;
-      free (atts);
+      PFREE (atts);
     }
   }
 
@@ -727,12 +727,12 @@ pl_x11_init (player_t *player)
   {
 #ifdef HAVE_XINE
 #ifdef USE_XLIB_HACK
-    x11_visual_t *vis = calloc (1, sizeof (x11_visual_t));
+    x11_visual_t *vis = PCALLOC (x11_visual_t, 1);
 
     pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
             "The Xlib hack has been enabled, beware of races!");
 #else
-    xcb_visual_t *vis = calloc (1, sizeof (xcb_visual_t));
+    xcb_visual_t *vis = PCALLOC (xcb_visual_t, 1);
 #endif /* USE_XLIB_HACK */
 
     if (vis)
@@ -760,7 +760,7 @@ pl_x11_init (player_t *player)
  err_conn:
   xcb_disconnect (x11->conn);
  err:
-  free (x11);
+  PFREE (x11);
   player->x11 = NULL;
   return 0;
 }
