@@ -225,6 +225,8 @@ typedef struct player_funcs_s {
 
 } player_funcs_t;
 
+#define PL_NOT_SUPPORTED NULL
+
 #define PLAYER_FUNCS_WARN(fct) \
   pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, #fct " is unimplemented")
 

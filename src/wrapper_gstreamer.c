@@ -1198,11 +1198,11 @@ pl_register_functions_gstreamer (void)
   funcs->tv_channel_prev    = NULL;
   funcs->tv_channel_next    = NULL;
 
-  funcs->radio_channel_set  = NULL;
-  funcs->radio_channel_prev = NULL;
-  funcs->radio_channel_next = NULL;
+  funcs->radio_channel_set  = PL_NOT_SUPPORTED;
+  funcs->radio_channel_prev = PL_NOT_SUPPORTED;
+  funcs->radio_channel_next = PL_NOT_SUPPORTED;
 
-  funcs->vdr                = NULL;
+  funcs->vdr                = PL_NOT_SUPPORTED;
 
   return funcs;
 }
