@@ -60,6 +60,8 @@ imp_functions ()
   TOTAL=$2
 
   NB_OK=`grep -h -c "funcs->.*$NAME.*" $wrapper`
+  NB_NOT_SUPPORTED=`grep -h -c "funcs->.*PL_NOT_SUPPORTED.*" $wrapper`
+  TOTAL=$((TOTAL - NB_NOT_SUPPORTED))
   NB_NULL=$((TOTAL - NB_OK))
   PERCENT=$((NB_OK * 100 / TOTAL))
 
