@@ -403,7 +403,7 @@ identify_get_props (gstreamer_identifier_t *id)
       if (gst_structure_get_fraction (s, "framerate", &fps_n, &fps_d))
       {
         prop->video->frameduration = (uint32_t)
-          (PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV * (float)fps_d / (float)fps_n);
+          (PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV * (float) fps_d / fps_n);
       }
 
       gst_caps_unref (caps);
@@ -1054,7 +1054,7 @@ gstreamer_audio_set_volume (player_t *player, int value)
 
   if (gstreamer_audio_can_set_volume (player))
   {
-    volume = ((double) (value)) / 100.0;
+    volume = value / 100.0;
 
     gst_element_get_state (es, &cur_state, NULL, GST_CLOCK_TIME_NONE);
     if (cur_state == GST_STATE_READY || cur_state == GST_STATE_PLAYING)
