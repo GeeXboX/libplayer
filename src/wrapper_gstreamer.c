@@ -154,6 +154,7 @@ gstreamer_set_video_sink (player_t *player)
 {
   GstElement *sink = NULL;
   int use_x11 = 0;
+  int ret;
 
   if (!player)
     return NULL;
@@ -185,25 +186,13 @@ gstreamer_set_video_sink (player_t *player)
   }
 
 #ifdef USE_X11
-  if (sink && use_x11)
+  ret = pl_x11_init (player);
+  if (player->vo != PLAYER_VO_AUTO && !ret)
   {
-    GstXOverlay *ov;
-    uint32_t winid;
-    int ret = 0;
-
-    ret = pl_x11_init (player);
-    if (player->vo != PLAYER_VO_AUTO && !ret)
-    {
-      gst_object_unref (GST_OBJECT (sink));
-      pl_log (player, PLAYER_MSG_ERROR,
-              MODULE_NAME, "X initialization has failed");
-      return NULL;
-    }
-
-    winid = pl_x11_get_window (player->x11);
-
-    ov = GST_X_OVERLAY (sink);
-    gst_x_overlay_set_xwindow_id (ov, winid);
+    gst_object_unref (GST_OBJECT (sink));
+    pl_log (player, PLAYER_MSG_ERROR,
+            MODULE_NAME, "X initialization has failed");
+    return NULL;
   }
 #endif /* USE_X11 */
 
@@ -255,6 +244,27 @@ gstreamer_gloop_thread (void *data)
   g_main_loop_run (g->loop);
 
   return NULL;
+}
+
+static GstBusSyncReply
+bus_sync_handler_cb (GstBus *bus, GstMessage *message, gpointer data)
+{
+  player_t *player = data;
+  const GstStructure *str;
+  GstXOverlay *ov;
+
+  str = gst_message_get_structure (message);
+  if (!str)
+    return GST_BUS_PASS;
+
+  if (!gst_structure_has_name (str, "prepare-xwindow-id"))
+    return GST_BUS_PASS;
+
+  ov = GST_X_OVERLAY (GST_MESSAGE_SRC (message));
+  if (ov)
+    gst_x_overlay_set_xwindow_id (ov, pl_x11_get_window (player->x11));
+
+  return GST_BUS_DROP;
 }
 
 static void
@@ -505,6 +515,8 @@ gstreamer_player_init (player_t *player)
                                   "volume") ? g->audio_sink : g->bin;
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
+
+  gst_bus_set_sync_handler (g->bus, bus_sync_handler_cb, player);
 
   /* start our main loop thread */
   pthread_create (&g->th, NULL, gstreamer_gloop_thread, g);
