@@ -162,7 +162,9 @@ gstreamer_set_video_sink (player_t *player)
   switch (player->vo)
   {
   case PLAYER_VO_AUTO:
-    sink = gst_element_factory_make ("autovideosink", VIDEO_SINK_NAME);
+    sink = gst_element_factory_make ("gconfvideosink", VIDEO_SINK_NAME);
+    if (!sink)
+      sink = gst_element_factory_make ("autovideosink", VIDEO_SINK_NAME);
     break;
   case PLAYER_VO_NULL:
     sink = gst_element_factory_make ("fakesink", VIDEO_SINK_NAME);
@@ -211,7 +213,9 @@ gstreamer_set_audio_sink (player_t *player)
 
   switch (player->ao) {
   case PLAYER_AO_AUTO:
-    sink = gst_element_factory_make ("autoaudiosink", AUDIO_SINK_NAME);
+    sink = gst_element_factory_make ("gconfaudiosink", AUDIO_SINK_NAME);
+    if (!sink)
+      sink = gst_element_factory_make ("autoaudiosink", AUDIO_SINK_NAME);
     break;
   case PLAYER_AO_NULL:
     sink = gst_element_factory_make ("fakesink", AUDIO_SINK_NAME);
