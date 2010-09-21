@@ -288,7 +288,7 @@ bus_sync_handler_cb (pl_unused GstBus *bus, GstMessage *message, gpointer data)
 
   return GST_BUS_DROP;
 }
-#endif
+#endif /* USE_X11 */
 
 static void
 gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
@@ -350,12 +350,12 @@ identify_get_props (gstreamer_identifier_t *id)
   gint n_video, n_audio, i;
 
   g_object_get (bin,
-      "n-audio", &n_audio,
-      "n-video", &n_video,
-      NULL);
+                "n-audio", &n_audio,
+                "n-video", &n_video,
+                NULL);
 
   pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
-      "n_audio=%d, n_video=%d", n_audio, n_video);
+          "n_audio=%d, n_video=%d", n_audio, n_video);
 
   /* note that caps chould change dynamically.. but I don't think libplayer
    * has any mechanism to deal with dynamically changing caps, so I'll
@@ -380,7 +380,7 @@ identify_get_props (gstreamer_identifier_t *id)
       if (pad)
       {
         caps = gst_pad_get_negotiated_caps (pad);
-        gst_object_unref(pad);
+        gst_object_unref (pad);
       }
     }
 
@@ -485,8 +485,8 @@ identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
       GstFormat fmt = GST_FORMAT_TIME;
       gint64 len;
 
-      if (gst_element_query_duration (id->bin, &fmt, &len) &&
-          (fmt == GST_FORMAT_TIME))
+      if (gst_element_query_duration (id->bin, &fmt, &len)
+          && (fmt == GST_FORMAT_TIME))
       {
         id->mrl->prop->length = NS_TO_MS (len);
 
@@ -604,7 +604,7 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
     gst_element_set_state (bin, GST_STATE_PAUSED);
 
     /* wait for stream parsing event */
-    while (TRUE)
+    while (1)
     {
       GstMessage *msg =
         gst_bus_timed_pop_filtered (bus, GST_CLOCK_TIME_NONE,
@@ -616,10 +616,8 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
     }
   }
   else
-  {
     pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
             "unrecognized resource type: %d", mrl->resource);
-  }
 
   PFREE (uri);
   PFREE (id->audio_codec);
@@ -686,7 +684,7 @@ gstreamer_player_init (player_t *player)
 
 #ifdef USE_X11
   gst_bus_set_sync_handler (g->bus, bus_sync_handler_cb, player);
-#endif
+#endif /* USE_X11 */
 
   return PLAYER_INIT_OK;
 }
@@ -780,7 +778,7 @@ gstreamer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
     mrl->prop = mrl_properties_new ();
 
   gstreamer_identify (player, mrl,
-      IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
+                      IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
 }
 
 static void
@@ -1034,7 +1032,7 @@ gstreamer_audio_can_set_volume (player_t *player)
 
   /* TODO: return FALSE if using AC3 Passthrough */
 
-  return (player->ao == PLAYER_AO_NULL) ? 0 : 1;
+  return !(player->ao == PLAYER_AO_NULL);
 }
 
 static void

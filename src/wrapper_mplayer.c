@@ -2691,11 +2691,11 @@ mp_preinit_vo (player_t *player, uint32_t *winid)
     }
     *winid = pl_x11_get_window (player->x11);
     break;
-#else
+#else /* USE_X11 */
     pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
             "auto-detection for videoout is not enabled without X11 support");
     return -1;
-#endif /* USE_X11 */
+#endif /* !USE_X11 */
 
   default:
     pl_log (player, PLAYER_MSG_ERROR,
@@ -2893,7 +2893,7 @@ mplayer_init (player_t *player)
 
       break;
     }
-#endif
+#endif /* USE_X11 */
 
     case PLAYER_VO_AUTO:
     default:
