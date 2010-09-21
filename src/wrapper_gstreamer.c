@@ -269,7 +269,7 @@ gstreamer_set_audio_sink (player_t *player)
 
 #ifdef USE_X11
 static GstBusSyncReply
-bus_sync_handler_cb (GstBus *bus, GstMessage *message, gpointer data)
+bus_sync_handler_cb (pl_unused GstBus *bus, GstMessage *message, gpointer data)
 {
   player_t *player = data;
   const GstStructure *str;
