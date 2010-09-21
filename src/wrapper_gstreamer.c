@@ -50,6 +50,9 @@
 
 #define MODULE_NAME "gstreamer"
 
+#define NS_TO_MS(ns) (ns / 1000000)
+#define MS_TO_NS(ms) (ms * 1000000)
+
 /* player specific structure */
 typedef struct gstreamer_player_s {
   GstBus *bus;
@@ -62,6 +65,8 @@ typedef struct gstreamer_player_s {
 typedef struct gstreamer_identifier_s {
   player_t *player;
   mrl_t *mrl;
+  char *audio_codec;
+  char *video_codec;
   GstElement *bin;
   int flags;
 } gstreamer_identifier_t;
@@ -254,6 +259,7 @@ gstreamer_set_audio_sink (player_t *player)
   return sink;
 }
 
+#ifdef USE_X11
 static GstBusSyncReply
 bus_sync_handler_cb (GstBus *bus, GstMessage *message, gpointer data)
 {
@@ -274,6 +280,7 @@ bus_sync_handler_cb (GstBus *bus, GstMessage *message, gpointer data)
 
   return GST_BUS_DROP;
 }
+#endif
 
 static void
 gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
@@ -330,22 +337,180 @@ gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
 #define GET_TAG(tag, name) \
   gstreamer_get_tag (tags, &meta->tag, GST_TAG_##name);
 
+static void
+identify_get_props (gstreamer_identifier_t *id)
+{
+  GstElement *bin = id->bin;
+  mrl_properties_t *prop = id->mrl->prop;
+  gint n_video, n_audio, i;
+
+  g_object_get (bin,
+      "n-audio", &n_audio,
+      "n-video", &n_video,
+      NULL);
+
+  pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
+      "n_audio=%d, n_video=%d", n_audio, n_video);
+
+  /* note that caps chould change dynamically.. but I don't think libplayer
+   * has any mechanism to deal with dynamically changing caps, so I'll
+   * ignore installing notify::caps signal handlers on the pads..
+   */
+
+  if (n_video > 0)
+  {
+    GstCaps *caps = NULL;
+
+    if (!prop->video)
+      prop->video = mrl_properties_video_new ();
+
+    for (i = 0; i < n_video && !caps; i++)
+    {
+      GstPad *pad = NULL;
+      g_signal_emit_by_name (bin, "get-video-pad", i, &pad);
+
+      pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
+          "video: pad=%"GST_PTR_FORMAT, pad);
+
+      if (pad)
+      {
+        caps = gst_pad_get_negotiated_caps (pad);
+        gst_object_unref(pad);
+      }
+    }
+
+    if (caps)
+    {
+      GstStructure *s = gst_caps_get_structure (caps, 0);
+      gint fps_n, fps_d;
+
+      pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
+          "video: caps=%"GST_PTR_FORMAT, caps);
+
+      if (id->video_codec)
+        prop->video->codec = strdup (id->video_codec);
+
+      gst_structure_get_int (s, "width", (gint *)&prop->video->width);
+      gst_structure_get_int (s, "height", (gint *)&prop->video->height);
+
+      // XXX prop->video->aspect
+
+      if (gst_structure_get_fraction (s, "framerate", &fps_n, &fps_d))
+      {
+        prop->video->frameduration = (uint32_t)
+            (PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV * (float)fps_d / (float)fps_n);
+      }
+
+      gst_caps_unref (caps);
+    }
+  }
+
+  if (n_audio > 0)
+  {
+    GstCaps *caps = NULL;
+
+    if (!prop->audio)
+      prop->audio = mrl_properties_audio_new ();
+
+    for (i = 0; i < n_audio && !caps; i++)
+    {
+      GstPad *pad = NULL;
+      g_signal_emit_by_name (bin, "get-audio-pad", i, &pad);
+
+      pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
+          "audio: pad=%"GST_PTR_FORMAT, pad);
+
+      if (pad)
+      {
+        caps = gst_pad_get_negotiated_caps (pad);
+        gst_object_unref(pad);
+      }
+    }
+
+    if (caps)
+    {
+      GstStructure *s = gst_caps_get_structure (caps, 0);
+
+      pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
+          "audio: caps=%"GST_PTR_FORMAT, caps);
+
+      // XXX prop->audio->bitrate comes from tags??
+
+      if (id->audio_codec)
+        prop->audio->codec = strdup (id->audio_codec);
+
+      gst_structure_get_int (s, "channels", (gint *)&prop->audio->channels);
+      gst_structure_get_int (s, "rate", (gint *)&prop->audio->samplerate);
+      gst_structure_get_int (s, "width", (gint *)&prop->audio->bits);
+
+      gst_caps_unref (caps);
+    }
+  }
+}
+
 static gboolean
 identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 {
   gstreamer_identifier_t *id = data;
 
+  pl_log (id->player, PLAYER_MSG_VERBOSE,
+          MODULE_NAME, "Message Type: %s", GST_MESSAGE_TYPE_NAME (msg));
+
   switch (GST_MESSAGE_TYPE (msg))
   {
+  case GST_MESSAGE_ERROR:
+  {
+    GError *err = NULL;
+    gchar *dbg_info = NULL;
+
+    gst_message_parse_error (msg, &err, &dbg_info);
+    pl_log (id->player, PLAYER_MSG_ERROR, MODULE_NAME,
+        "error from element: %s: %s",
+        GST_OBJECT_NAME (msg->src), err->message);
+    pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
+        "debugging info: %s", dbg_info ? dbg_info : "none");
+    g_error_free (err);
+    g_free (dbg_info);
+    /* fall-thru */
+  }
   case GST_MESSAGE_ASYNC_DONE:
+  {
+    if (id->mrl->prop)
+    {
+      GstFormat fmt = GST_FORMAT_TIME;
+      gint64 len;
+
+      if (gst_element_query_duration (id->bin, &fmt, &len) &&
+          (fmt == GST_FORMAT_TIME))
+      {
+        id->mrl->prop->length = NS_TO_MS (len);
+
+        /* TODO maybe we should attempt a seek to start or end of file to
+         * figure out if the seek completes.. but the seek operation
+         * completes asynchronously so for now we just assume that if we
+         * can figure out the duration, then we can probably seek too..
+         */
+        id->mrl->prop->seekable = TRUE;
+
+        pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
+            "len=%d, assuming seekable..", len);
+      }
+
+      identify_get_props (id);
+    }
+
     /* we now have enough stream information, shut it down */
     gst_element_set_state (id->bin, GST_STATE_NULL);
     return FALSE;
-
+  }
   case GST_MESSAGE_TAG:
   {
     GstTagList *tags;
     mrl_metadata_t *meta = id->mrl->meta;
+
+    /* the video/audio codec is needed for props */
+    gstreamer_get_tag (tags, &id->video_codec, GST_TAG_VIDEO_CODEC);
+    gstreamer_get_tag (tags, &id->audio_codec, GST_TAG_AUDIO_CODEC);
 
     /* only fetch metadata if really requested */
     if (!(id->flags & IDENTIFY_METADATA))
@@ -374,9 +539,29 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
 {
   GstBus *bus;
   GstElement *bin, *vs, *as;
-  GstState state = GST_STATE_PAUSED;
   gstreamer_identifier_t *id;
   char *uri;
+
+  /* TODO can we avoid constructing a pipeline twice and simply get all props
+   * and metadata in one shot?
+   */
+
+  if (mrl->prop)
+  {
+    if (mrl->resource == MRL_RESOURCE_FILE)
+    {
+      mrl_resource_local_args_t *args = mrl->priv;
+      if (args && args->location)
+      {
+        const char *location = args->location;
+
+        if (strstr (location, "file://") == location)
+          location += 7;
+
+        mrl->prop->size = pl_file_size (location);
+      }
+    }
+  }
 
   /* create a new pipeline for stream identification */
   bin = gst_element_factory_make ("playbin2", "identifier");
@@ -387,7 +572,7 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
   g_object_set (vs, "sync", TRUE, NULL);
   g_object_set (G_OBJECT (bin), "video-sink", vs, NULL);
 
-  /* create a fake video sink */
+  /* create a fake audio sink */
   as = gst_element_factory_make ("fakesink", AUDIO_SINK_NAME);
   g_object_set (G_OBJECT (bin), "audio-sink", as, NULL);
 
@@ -397,14 +582,15 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
   id->mrl    = mrl;
   id->bin    = bin;
   id->flags  = flags;
-
-  /* create the message handler */
-  gst_bus_add_watch (bus, identify_bus_callback, id);
+  id->audio_codec = NULL;
+  id->video_codec = NULL;
 
   uri = get_uri (mrl);
   if (uri)
   {
-    g_object_set (G_OBJECT (bin), "uri", uri, NULL);
+    pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "identify: ", uri);
+
+    g_object_set (bin, "uri", uri, NULL);
 
     /*
      * Put GStreamer engine in paused mode
@@ -413,23 +599,24 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
     gst_element_set_state (bin, GST_STATE_PAUSED);
 
     /* wait for stream parsing event */
-    while (state != GST_STATE_NULL)
+    while (TRUE)
     {
-      GstStateChangeReturn st;
+      GstMessage *msg = gst_bus_timed_pop_filtered (bus,
+          GST_CLOCK_TIME_NONE,
+          GST_MESSAGE_ASYNC_DONE | GST_MESSAGE_TAG | GST_MESSAGE_ERROR);
 
-      st = gst_element_get_state (bin, &state, NULL, GST_CLOCK_TIME_NONE);
-      if (st == GST_STATE_CHANGE_SUCCESS && state == GST_STATE_NULL)
+      if (!identify_bus_callback (bus, msg, id))
         break;
-
-      /* wait for 100 ms */
-      pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "wait for 100ms..");
-      usleep (100000);
     }
   }
   else
   {
-    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "unrecognized resource type: %d", mrl->resource);
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
+        "unrecognized resource type: %d", mrl->resource);
   }
+
+  free (id->audio_codec);
+  free (id->video_codec);
 }
 
 #define GST_SIGNAL(msg, cb) \
@@ -490,7 +677,9 @@ gstreamer_player_init (player_t *player)
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
 
+#ifdef USE_X11
   gst_bus_set_sync_handler (g->bus, bus_sync_handler_cb, player);
+#endif
 
   return PLAYER_INIT_OK;
 }
@@ -574,39 +763,29 @@ gstreamer_set_verbosity (player_t *player, player_verbosity_level_t level)
 static void
 gstreamer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
-  char *location = NULL;
-  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_properties");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
-  if (!player || !mrl || !mrl->prop)
+  if (!player || !mrl)
     return;
 
-  location = get_uri (mrl);
-  if (location)
-  {
-    if (strstr (location, "file:") == location)
-      location += 5;
+  /* XXX mrl_internal does not allocate prop's */
+  if (!mrl->prop)
+    mrl->prop = mrl_properties_new ();
 
-    mrl->prop->size = pl_file_size (location);
-  }
-  else
-  {
-    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "unrecognized resource type: %d", mrl->resource);
-  }
+  gstreamer_identify (player, mrl,
+      IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
 }
 
 static void
 gstreamer_mrl_retrieve_metadata (player_t *player, mrl_t *mrl)
 {
-  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_metadata");
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
   if (!player || !mrl || !mrl->meta)
     return;
 
   gstreamer_identify (player, mrl, IDENTIFY_METADATA);
 }
-
-#define NS_TO_MS(ns) (ns / 1000000)
-#define MS_TO_NS(ms) (ms * 1000000)
 
 static int
 gstreamer_get_time_pos (player_t *player)
@@ -663,35 +842,35 @@ gstreamer_player_playback_start (player_t *player)
 {
   char *uri = NULL;
   gstreamer_player_t *g;
-  mrl_t *m;
+  mrl_t *mrl;
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_start");
 
   if (!player)
     return PLAYER_PB_FATAL;
 
-  m = pl_playlist_get_mrl (player->playlist);
-  if (!m)
+  mrl = pl_playlist_get_mrl (player->playlist);
+  if (!mrl)
     return PLAYER_PB_ERROR;
 
   g = player->priv;
 
-  uri = get_uri (m);
+  uri = get_uri (mrl);
   if (uri)
   {
-    g_object_set (G_OBJECT (g->bin), "uri", mrl, NULL);
+    g_object_set (G_OBJECT (g->bin), "uri", uri, NULL);
 
     /* put GStreamer engine in playback state */
     gst_element_set_state (g->bin, GST_STATE_PLAYING);
   }
   else
   {
-    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "unrecognized resource type: %d", m->resource);
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "unrecognized resource type: %d", mrl->resource);
   }
 
 #ifdef USE_X11
-  //if (MRL_USES_VO (m)) /* properties retrieval is not yet working */
-  //pl_x11_map (player);
+  if (MRL_USES_VO (mrl))
+    pl_x11_map (player);
 #endif /* USE_X11 */
 
   return PLAYER_PB_OK;
@@ -702,7 +881,7 @@ gstreamer_player_playback_stop (player_t *player)
 {
   gstreamer_player_t *g = NULL;
 #ifdef USE_X11
-  //mrl_t *mrl; /* properties retrieval is not yet working */
+  mrl_t *mrl;
 #endif /* USE_X11 */
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_stop");
@@ -715,9 +894,9 @@ gstreamer_player_playback_stop (player_t *player)
   gst_element_set_state (g->bin, GST_STATE_NULL);
 
 #ifdef USE_X11
-  //mrl = pl_playlist_get_mrl (player->playlist);
-  //if (MRL_USES_VO (mrl)) /* properties retrieval is not yet working */
-  //pl_x11_unmap (player);
+  mrl = pl_playlist_get_mrl (player->playlist);
+  if (MRL_USES_VO (mrl))
+    pl_x11_unmap (player);
 #endif /* USE_X11 */
 }
 
