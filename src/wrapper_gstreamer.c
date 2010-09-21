@@ -971,7 +971,7 @@ gstreamer_player_playback_seek (player_t *player,
 
     break;
   case PLAYER_PB_SEEK_PERCENT:
-    pos = value / 100 * len;
+    pos = value * len / 100;
     break;
   case PLAYER_PB_SEEK_ABSOLUTE:
     pos = MS_TO_NS (value);
