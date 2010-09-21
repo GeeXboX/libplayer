@@ -237,17 +237,11 @@ gstreamer_set_audio_sink (player_t *player)
 }
 
 static void *
-gstreamer_gloop_thread (void *data)
+g_loop_thread (void *data)
 {
-  gstreamer_player_t *g = data;
-
-  if (!g)
-    return NULL;
-
-  g->loop = g_main_loop_new (NULL, FALSE);
-  g_main_loop_run (g->loop);
-
-  return NULL;
+  GMainLoop *loop = data;
+  g_main_loop_run (loop);
+  return;
 }
 
 static GstBusSyncReply
@@ -366,22 +360,10 @@ identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
   return TRUE;
 }
 
-static void *
-gstreamer_identify_gloop_thread (void *data)
-{
-  GMainLoop *loop = data;
-
-  loop = g_main_loop_new (NULL, FALSE);
-  g_main_loop_run (loop);
-
-  return NULL;
-}
-
 static void
 gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
 {
   pthread_t th;
-  GMainLoop **loop = NULL;
   GstBus *bus;
   GstElement *bin, *vs, *as;
   GstState state = GST_STATE_PAUSED;
@@ -406,12 +388,12 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
   id->player = player;
   id->mrl    = mrl;
   id->bin    = bin;
-  id->loop   = (GMainLoop *) &loop;
+  id->loop   = g_main_loop_new (NULL, FALSE);
   id->flags  = flags;
 
   /* create the event loop and message handler */
   gst_bus_add_watch (bus, identify_bus_callback, id);
-  pthread_create (&th, NULL, gstreamer_identify_gloop_thread, &loop);
+  pthread_create (&th, NULL, g_loop_thread, id->loop);
 
   /* resource name retrieval */
   switch (mrl->resource)
@@ -458,6 +440,7 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
       break;
 
     /* wait for 100 ms */
+    pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "wait for 100ms..");
     usleep (100000);
   }
 }
@@ -523,7 +506,8 @@ gstreamer_player_init (player_t *player)
   gst_bus_set_sync_handler (g->bus, bus_sync_handler_cb, player);
 
   /* start our main loop thread */
-  pthread_create (&g->th, NULL, gstreamer_gloop_thread, g);
+  g->loop = g_main_loop_new (NULL, FALSE);
+  pthread_create (&g->th, NULL, g_loop_thread, g->loop);
 
   return PLAYER_INIT_OK;
 }
