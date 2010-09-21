@@ -66,6 +66,28 @@ typedef struct gstreamer_identifier_s {
   int flags;
 } gstreamer_identifier_t;
 
+
+static char *
+get_uri (mrl_t *m)
+{
+  switch (m->resource)
+  {
+  case MRL_RESOURCE_FILE:
+  {
+    mrl_resource_local_args_t *args;
+
+    args = m->priv;
+    if (!args)
+      break;
+
+    return args->location;
+  }
+  default:
+    break;
+  }
+  return NULL;
+}
+
 static void
 gstreamer_set_eof (player_t *player)
 {
@@ -354,7 +376,7 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
   GstElement *bin, *vs, *as;
   GstState state = GST_STATE_PAUSED;
   gstreamer_identifier_t *id;
-  char uri[PATH_MAX + 16] = { 0 };
+  char *uri;
 
   /* create a new pipeline for stream identification */
   bin = gst_element_factory_make ("playbin2", "identifier");
@@ -379,53 +401,34 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
   /* create the message handler */
   gst_bus_add_watch (bus, identify_bus_callback, id);
 
-  /* resource name retrieval */
-  switch (mrl->resource)
+  uri = get_uri (mrl);
+  if (uri)
   {
-  case MRL_RESOURCE_FILE:
-  {
-    mrl_resource_local_args_t *args;
+    g_object_set (G_OBJECT (bin), "uri", uri, NULL);
 
-    args = mrl->priv;
-    if (!args)
-      break;
+    /*
+     * Put GStreamer engine in paused mode
+     * Everything will be cleaned up by event loop at message reception
+     */
+    gst_element_set_state (bin, GST_STATE_PAUSED);
 
-    /* check if given MRL is a relative path */
-    if (args->location[0] != '/')
+    /* wait for stream parsing event */
+    while (state != GST_STATE_NULL)
     {
-      char *cwd;
-      cwd = get_current_dir_name ();
-      snprintf (uri, sizeof (uri), "file://%s/%s", cwd, args->location);
-      free (cwd);
+      GstStateChangeReturn st;
+
+      st = gst_element_get_state (bin, &state, NULL, GST_CLOCK_TIME_NONE);
+      if (st == GST_STATE_CHANGE_SUCCESS && state == GST_STATE_NULL)
+        break;
+
+      /* wait for 100 ms */
+      pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "wait for 100ms..");
+      usleep (100000);
     }
-    else
-      snprintf (uri, sizeof (uri), "file://%s", args->location);
-    break;
   }
-  default:
-    break;
-  }
-
-  g_object_set (G_OBJECT (bin), "uri", uri, NULL);
-
-  /*
-   * Put GStreamer engine in paused mode
-   * Everything will be cleaned up by event loop at message reception
-   */
-  gst_element_set_state (bin, GST_STATE_PAUSED);
-
-  /* wait for stream parsing event */
-  while (state != GST_STATE_NULL)
+  else
   {
-    GstStateChangeReturn st;
-
-    st = gst_element_get_state (bin, &state, NULL, GST_CLOCK_TIME_NONE);
-    if (st == GST_STATE_CHANGE_SUCCESS && state == GST_STATE_NULL)
-      break;
-
-    /* wait for 100 ms */
-    pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "wait for 100ms..");
-    usleep (100000);
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "unrecognized resource type: %d", mrl->resource);
   }
 }
 
@@ -571,24 +574,23 @@ gstreamer_set_verbosity (player_t *player, player_verbosity_level_t level)
 static void
 gstreamer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
+  char *location = NULL;
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "mrl_retrieve_properties");
 
   if (!player || !mrl || !mrl->prop)
     return;
 
-  /* now fetch properties */
-  if (mrl->resource == MRL_RESOURCE_FILE)
+  location = get_uri (mrl);
+  if (location)
   {
-    mrl_resource_local_args_t *args = mrl->priv;
-    if (args && args->location)
-    {
-      const char *location = args->location;
+    if (strstr (location, "file:") == location)
+      location += 5;
 
-      if (strstr (location, "file:") == location)
-        location += 5;
-
-      mrl->prop->size = pl_file_size (location);
-    }
+    mrl->prop->size = pl_file_size (location);
+  }
+  else
+  {
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "unrecognized resource type: %d", mrl->resource);
   }
 }
 
@@ -659,7 +661,7 @@ gstreamer_get_percent_pos (player_t *player)
 static playback_status_t
 gstreamer_player_playback_start (player_t *player)
 {
-  char mrl[PATH_MAX + 16] = { 0 };
+  char *uri = NULL;
   gstreamer_player_t *g;
   mrl_t *m;
 
@@ -674,36 +676,18 @@ gstreamer_player_playback_start (player_t *player)
 
   g = player->priv;
 
-  switch (m->resource)
+  uri = get_uri (m);
+  if (uri)
   {
-  case MRL_RESOURCE_FILE:
+    g_object_set (G_OBJECT (g->bin), "uri", mrl, NULL);
+
+    /* put GStreamer engine in playback state */
+    gst_element_set_state (g->bin, GST_STATE_PLAYING);
+  }
+  else
   {
-    mrl_resource_local_args_t *args;
-
-    args = m->priv;
-    if (!args)
-      break;
-
-    /* check if given MRL is a relative path */
-    if (args->location[0] != '/')
-    {
-      char *cwd;
-      cwd = get_current_dir_name ();
-      sprintf (mrl, "file://%s/%s", cwd, args->location);
-      free (cwd);
-    }
-    else
-      sprintf (mrl, "file://%s", args->location);
-    break;
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "unrecognized resource type: %d", m->resource);
   }
-  default:
-    break;
-  }
-
-  g_object_set (G_OBJECT (g->bin), "uri", mrl, NULL);
-
-  /* put GStreamer engine in playback state */
-  gst_element_set_state (g->bin, GST_STATE_PLAYING);
 
 #ifdef USE_X11
   //if (MRL_USES_VO (m)) /* properties retrieval is not yet working */
