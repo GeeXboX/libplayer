@@ -370,7 +370,7 @@ identify_get_props (gstreamer_identifier_t *id)
       g_signal_emit_by_name (bin, "get-video-pad", i, &pad);
 
       pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
-          "video: pad=%"GST_PTR_FORMAT, pad);
+              "video: pad=%"GST_PTR_FORMAT, pad);
 
       if (pad)
       {
@@ -390,15 +390,15 @@ identify_get_props (gstreamer_identifier_t *id)
       if (id->video_codec)
         prop->video->codec = strdup (id->video_codec);
 
-      gst_structure_get_int (s, "width", (gint *)&prop->video->width);
-      gst_structure_get_int (s, "height", (gint *)&prop->video->height);
+      gst_structure_get_int (s, "width",  (gint *) &prop->video->width);
+      gst_structure_get_int (s, "height", (gint *) &prop->video->height);
 
       // XXX prop->video->aspect
 
       if (gst_structure_get_fraction (s, "framerate", &fps_n, &fps_d))
       {
         prop->video->frameduration = (uint32_t)
-            (PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV * (float)fps_d / (float)fps_n);
+          (PLAYER_VIDEO_FRAMEDURATION_RATIO_DIV * (float)fps_d / (float)fps_n);
       }
 
       gst_caps_unref (caps);
@@ -418,7 +418,7 @@ identify_get_props (gstreamer_identifier_t *id)
       g_signal_emit_by_name (bin, "get-audio-pad", i, &pad);
 
       pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
-          "audio: pad=%"GST_PTR_FORMAT, pad);
+              "audio: pad=%"GST_PTR_FORMAT, pad);
 
       if (pad)
       {
@@ -432,16 +432,16 @@ identify_get_props (gstreamer_identifier_t *id)
       GstStructure *s = gst_caps_get_structure (caps, 0);
 
       pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
-          "audio: caps=%"GST_PTR_FORMAT, caps);
+              "audio: caps=%"GST_PTR_FORMAT, caps);
 
       // XXX prop->audio->bitrate comes from tags??
 
       if (id->audio_codec)
         prop->audio->codec = strdup (id->audio_codec);
 
-      gst_structure_get_int (s, "channels", (gint *)&prop->audio->channels);
-      gst_structure_get_int (s, "rate", (gint *)&prop->audio->samplerate);
-      gst_structure_get_int (s, "width", (gint *)&prop->audio->bits);
+      gst_structure_get_int (s, "channels", (gint *) &prop->audio->channels);
+      gst_structure_get_int (s, "rate",     (gint *) &prop->audio->samplerate);
+      gst_structure_get_int (s, "width",    (gint *) &prop->audio->bits);
 
       gst_caps_unref (caps);
     }
@@ -465,10 +465,10 @@ identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
 
     gst_message_parse_error (msg, &err, &dbg_info);
     pl_log (id->player, PLAYER_MSG_ERROR, MODULE_NAME,
-        "error from element: %s: %s",
-        GST_OBJECT_NAME (msg->src), err->message);
+            "error from element: %s: %s",
+            GST_OBJECT_NAME (msg->src), err->message);
     pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
-        "debugging info: %s", dbg_info ? dbg_info : "none");
+            "debugging info: %s", dbg_info ? dbg_info : "none");
     g_error_free (err);
     g_free (dbg_info);
     /* fall-thru */
@@ -493,7 +493,7 @@ identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
         id->mrl->prop->seekable = TRUE;
 
         pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
-            "len=%d, assuming seekable..", len);
+                "len=%d, assuming seekable..", len);
       }
 
       identify_get_props (id);
@@ -577,11 +577,11 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
   g_object_set (G_OBJECT (bin), "audio-sink", as, NULL);
 
   /* map the identification struct */
-  id         = malloc (sizeof (gstreamer_identifier_t));
-  id->player = player;
-  id->mrl    = mrl;
-  id->bin    = bin;
-  id->flags  = flags;
+  id              = malloc (sizeof (gstreamer_identifier_t));
+  id->player      = player;
+  id->mrl         = mrl;
+  id->bin         = bin;
+  id->flags       = flags;
   id->audio_codec = NULL;
   id->video_codec = NULL;
 
@@ -601,9 +601,10 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
     /* wait for stream parsing event */
     while (TRUE)
     {
-      GstMessage *msg = gst_bus_timed_pop_filtered (bus,
-          GST_CLOCK_TIME_NONE,
-          GST_MESSAGE_ASYNC_DONE | GST_MESSAGE_TAG | GST_MESSAGE_ERROR);
+      GstMessage *msg =
+        gst_bus_timed_pop_filtered (bus, GST_CLOCK_TIME_NONE,
+                                    GST_MESSAGE_ASYNC_DONE |
+                                    GST_MESSAGE_TAG | GST_MESSAGE_ERROR);
 
       if (!identify_bus_callback (bus, msg, id))
         break;
@@ -612,7 +613,7 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
   else
   {
     pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
-        "unrecognized resource type: %d", mrl->resource);
+            "unrecognized resource type: %d", mrl->resource);
   }
 
   free (id->audio_codec);
@@ -865,7 +866,8 @@ gstreamer_player_playback_start (player_t *player)
   }
   else
   {
-    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "unrecognized resource type: %d", mrl->resource);
+    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
+            "unrecognized resource type: %d", mrl->resource);
   }
 
 #ifdef USE_X11
