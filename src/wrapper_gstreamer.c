@@ -85,7 +85,15 @@ get_uri (mrl_t *m)
     if (!args)
       break;
 
-    return args->location;
+    /* check if given MRL is a relative UNIX path */
+    if (args->location[0] == '/')
+    {
+      char uri[1024];
+      snprintf (uri, sizeof (uri), "file://%s", args->location);
+      return strdup (uri);
+    }
+
+    return strdup (args->location);
   }
   default:
     break;
@@ -616,6 +624,7 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
             "unrecognized resource type: %d", mrl->resource);
   }
 
+  free (uri);
   free (id->audio_codec);
   free (id->video_codec);
 }
@@ -869,6 +878,8 @@ gstreamer_player_playback_start (player_t *player)
     pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
             "unrecognized resource type: %d", mrl->resource);
   }
+
+  free (uri);
 
 #ifdef USE_X11
   if (MRL_USES_VO (mrl))
