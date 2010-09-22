@@ -510,25 +510,25 @@ identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
   }
   case GST_MESSAGE_TAG:
   {
-    GstTagList *tags;
+    GstTagList *tags = NULL;
     mrl_metadata_t *meta = id->mrl->meta;
+
+    gst_message_parse_tag (msg, &tags);
 
     /* the video/audio codec is needed for props */
     gstreamer_get_tag (tags, &id->video_codec, GST_TAG_VIDEO_CODEC);
     gstreamer_get_tag (tags, &id->audio_codec, GST_TAG_AUDIO_CODEC);
 
     /* only fetch metadata if really requested */
-    if (!(id->flags & IDENTIFY_METADATA))
-      break;
-
-    gst_message_parse_tag (msg, &tags);
-
+    if (id->flags & IDENTIFY_METADATA)
+    {
     GET_TAG (title,   TITLE);
     GET_TAG (artist,  ARTIST);
     GET_TAG (album,   ALBUM);
     GET_TAG (genre,   GENRE);
     GET_TAG (comment, COMMENT);
     GET_TAG (track,   TRACK_NUMBER);
+    }
 
     gst_tag_list_free (tags);
     break;
