@@ -498,7 +498,7 @@ identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
         id->mrl->prop->seekable = TRUE;
 
         pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
-                "len=%d, assuming seekable..", len);
+                "len=%"PRIi64", assuming seekable..", len);
       }
 
       identify_get_props (id);
