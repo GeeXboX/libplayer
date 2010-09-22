@@ -522,12 +522,12 @@ identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
     /* only fetch metadata if really requested */
     if (id->flags & IDENTIFY_METADATA)
     {
-    GET_TAG (title,   TITLE);
-    GET_TAG (artist,  ARTIST);
-    GET_TAG (album,   ALBUM);
-    GET_TAG (genre,   GENRE);
-    GET_TAG (comment, COMMENT);
-    GET_TAG (track,   TRACK_NUMBER);
+      GET_TAG (title,   TITLE);
+      GET_TAG (artist,  ARTIST);
+      GET_TAG (album,   ALBUM);
+      GET_TAG (genre,   GENRE);
+      GET_TAG (comment, COMMENT);
+      GET_TAG (track,   TRACK_NUMBER);
     }
 
     gst_tag_list_free (tags);
