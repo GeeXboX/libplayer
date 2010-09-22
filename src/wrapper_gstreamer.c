@@ -593,7 +593,7 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
   uri = get_uri (mrl);
   if (uri)
   {
-    pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "identify: ", uri);
+    pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "identify: %s", uri);
 
     g_object_set (bin, "uri", uri, NULL);
 
