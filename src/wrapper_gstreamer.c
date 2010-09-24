@@ -297,7 +297,9 @@ gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
   if (!list || !tag)
     return;
 
-  if (gst_tag_get_type (tag) == G_TYPE_STRING)
+  switch (gst_tag_get_type (tag))
+  {
+  case G_TYPE_STRING:
   {
     gchar *value;
 
@@ -309,8 +311,9 @@ gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
     *meta = strdup (value);
 
     g_free (value);
+    break;
   }
-  else if (gst_tag_get_type (tag) == G_TYPE_UINT)
+  case G_TYPE_UINT:
   {
     guint value;
     char buf[128] = { 0 };
@@ -322,8 +325,9 @@ gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
     snprintf (buf, sizeof (buf), "%d", value);
     PFREE (*meta);
     *meta = strdup (buf);
+    break;
   }
-  else if (gst_tag_get_type (tag) == G_TYPE_INT)
+  case G_TYPE_INT:
   {
     gint value;
     char buf[128] = { 0 };
@@ -335,6 +339,8 @@ gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
     snprintf (buf, sizeof (buf), "%d", value);
     PFREE (*meta);
     *meta = strdup (buf);
+    break;
+  }
   }
 }
 
