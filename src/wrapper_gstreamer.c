@@ -144,8 +144,7 @@ bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
     gst_message_parse_error (msg, &err, &debug);
     g_free (debug);
 
-    pl_log (player, PLAYER_MSG_ERROR,
-            MODULE_NAME, "Error: %s", err->message);
+    pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME, "%s", err->message);
     g_error_free (err);
 
     gstreamer_set_eof (player);
