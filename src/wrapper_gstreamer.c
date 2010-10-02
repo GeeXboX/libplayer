@@ -782,12 +782,8 @@ gstreamer_mrl_retrieve_properties (player_t *player, mrl_t *mrl)
 {
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
-  if (!player || !mrl)
+  if (!player || !mrl || !mrl->prop)
     return;
-
-  /* XXX mrl_internal does not allocate prop's */
-  if (!mrl->prop)
-    mrl->prop = mrl_properties_new ();
 
   gstreamer_identify (player, mrl,
                       IDENTIFY_AUDIO | IDENTIFY_VIDEO | IDENTIFY_PROPERTIES);
