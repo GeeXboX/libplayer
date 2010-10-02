@@ -1,5 +1,6 @@
+libplayer (1.0)
 
-2009-12-06  Mathieu Schroeter  <mathieu.schroeter@gamesover.ch>
+  1.0.0: 6 Dec, 2009
 
-	* Initial project release (v1.0.0).
-	* MPlayer and xine backends are well supported.
+    * Initial project release.
+    * MPlayer and xine backends are well supported.
