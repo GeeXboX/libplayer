@@ -6,8 +6,7 @@ Its goal is to interact with Enna Media Center.
 
 libplayer provides a generic A/V API that relies on various
 multimedia player for Linux systems.
-It currently supports MPlayer, xine and VLC only.
-More bindings (GStreamer, ...) are bound to come some day.
+It currently supports MPlayer, xine, GStreamer and VLC only.
 
 DEVELOPERS
 ~~~~~~~~~~
@@ -24,7 +23,7 @@ towards frontends, only the abstraction layer has to be exported.
 ALWAYS consider player.h as the ONLY public header.
 Private definitions have to go to player_internals.h
 NEVER include other headers in .h files, always do so in .c files.
-NEVER use printf(), always use plog().
+NEVER use printf(), always use pl_log().
 Check your code for warnings before commits.
 
 Versioning policy
