@@ -764,7 +764,8 @@ show_info (player_t *player, mrl_t *mrl)
 
       if (meta)
       {
-        printf (" Meta CD Track %i Name: %s (%i sec)\n", i, meta, length / 1000);
+        printf (" Meta CD Track %i Name: %s (%i sec)\n",
+                i, meta, length / 1000);
         free (meta);
       }
       else
@@ -869,27 +870,27 @@ main (int argc, char **argv)
       if (!strcmp (optarg, "mplayer"))
 #ifdef HAVE_MPLAYER
         type = PLAYER_TYPE_MPLAYER;
-#else
+#else /* HAVE_MPLAYER */
         printf ("MPlayer not supported, dummy player used instead!\n");
-#endif /* HAVE_MPLAYER */
+#endif /* !HAVE_MPLAYER */
       if (!strcmp (optarg, "xine"))
 #ifdef HAVE_XINE
         type = PLAYER_TYPE_XINE;
-#else
+#else /* HAVE_XINE */
         printf ("xine not supported, dummy player used instead!\n");
-#endif /* HAVE_XINE */
+#endif /* !HAVE_XINE */
       if (!strcmp (optarg, "vlc"))
 #ifdef HAVE_VLC
         type = PLAYER_TYPE_VLC;
-#else
+#else /* HAVE_VLC */
         printf ("VLC not supported, dummy player used instead!\n");
-#endif /* HAVE_VLC */
+#endif /* !HAVE_VLC */
       if (!strcmp (optarg, "gstreamer") || !strcmp (optarg, "gst"))
 #ifdef HAVE_GSTREAMER
         type = PLAYER_TYPE_GSTREAMER;
-#else
+#else /* HAVE_GSTREAMER */
         printf ("GStreamer not supported, dummy player used instead!\n");
-#endif /* HAVE_GSTREAMER */
+#endif /* !HAVE_GSTREAMER */
       break;
 
     case 'a':

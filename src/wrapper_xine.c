@@ -643,15 +643,15 @@ xine_player_init (player_t *player)
       data = pl_x11_get_data (player->x11);
 #ifdef USE_XLIB_HACK
       visual = XINE_VISUAL_TYPE_X11;
-#else
+#else /* USE_XLIB_HACK */
       visual = XINE_VISUAL_TYPE_XCB;
-#endif /* USE_XLIB_HACK */
+#endif /* !USE_XLIB_HACK */
     }
-#else
+#else /* USE_X11 */
     pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
             "auto-detection for videoout is not enabled without X11 support");
     return PLAYER_INIT_ERROR;
-#endif /* USE_X11 */
+#endif /* !USE_X11 */
   }
 
   /* init video output driver */

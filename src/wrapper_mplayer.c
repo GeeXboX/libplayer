@@ -2678,7 +2678,7 @@ mp_preinit_vo (player_t *player, uint32_t *winid)
     pl_log (player, PLAYER_MSG_ERROR,
             MODULE_NAME, "libplayer is not compiled with X11 support");
     return -1;
-#endif /* USE_X11 */
+#endif /* !USE_X11 */
 
   case PLAYER_VO_AUTO:
 #ifdef USE_X11

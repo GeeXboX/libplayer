@@ -362,7 +362,8 @@ identify_get_props (gstreamer_identifier_t *id)
   pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
           "n_audio=%d, n_video=%d", n_audio, n_video);
 
-  /* note that caps chould change dynamically.. but I don't think libplayer
+  /*
+   * note that caps chould change dynamically.. but I don't think libplayer
    * has any mechanism to deal with dynamically changing caps, so I'll
    * ignore installing notify::caps signal handlers on the pads..
    */
@@ -403,7 +404,7 @@ identify_get_props (gstreamer_identifier_t *id)
       gst_structure_get_int (s, "width",  (gint *) &prop->video->width);
       gst_structure_get_int (s, "height", (gint *) &prop->video->height);
 
-      // XXX prop->video->aspect
+      /* XXX prop->video->aspect */
 
       if (gst_structure_get_fraction (s, "framerate", &fps_n, &fps_d))
       {
@@ -444,7 +445,7 @@ identify_get_props (gstreamer_identifier_t *id)
       pl_log (id->player, PLAYER_MSG_VERBOSE, MODULE_NAME,
               "audio: caps=%"GST_PTR_FORMAT, caps);
 
-      // XXX prop->audio->bitrate comes from tags??
+      /* XXX prop->audio->bitrate comes from tags?? */
 
       if (id->audio_codec)
         prop->audio->codec = strdup (id->audio_codec);
@@ -495,7 +496,8 @@ identify_bus_callback (pl_unused GstBus *bus, GstMessage *msg, gpointer data)
       {
         id->mrl->prop->length = NS_TO_MS (len);
 
-        /* TODO maybe we should attempt a seek to start or end of file to
+        /*
+         * TODO maybe we should attempt a seek to start or end of file to
          * figure out if the seek completes.. but the seek operation
          * completes asynchronously so for now we just assume that if we
          * can figure out the duration, then we can probably seek too..
@@ -552,7 +554,8 @@ gstreamer_identify (player_t *player, mrl_t *mrl, int flags)
   gstreamer_identifier_t *id;
   char *uri;
 
-  /* TODO can we avoid constructing a pipeline twice and simply get all props
+  /*
+   * TODO can we avoid constructing a pipeline twice and simply get all props
    * and metadata in one shot?
    */
 
@@ -678,9 +681,11 @@ gstreamer_player_init (player_t *player)
   if (g->audio_sink)
     g_object_set (G_OBJECT (g->bin), "audio-sink", g->audio_sink, NULL);
 
-  /* If we're using an audio sink that has a volume property,
-     then that's what we need to modify for volume control,
-     not the playbin's one */
+  /*
+   * If we're using an audio sink that has a volume property,
+   * then that's what we need to modify for volume control,
+   * not the playbin's one
+   * */
   g->volume_ctrl =
     g_object_class_find_property (G_OBJECT_GET_CLASS (g->audio_sink),
                                   "volume") ? g->audio_sink : g->bin;

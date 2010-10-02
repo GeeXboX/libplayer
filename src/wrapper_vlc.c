@@ -524,7 +524,7 @@ vlc_init (player_t *player)
     vlc_argv[vlc_argc++] = "glx,dummy";
     use_x11 = 1;
     break;
-#endif
+#endif /* USE_X11 */
 
   case PLAYER_VO_AUTO:
     use_x11 = 1;
@@ -574,11 +574,11 @@ vlc_init (player_t *player)
     }
 
     winid = pl_x11_get_window (player->x11);
-#else
+#else /* USE_X11 */
     pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
             "auto-detection for videoout is not enabled without X11 support");
     return PLAYER_INIT_ERROR;
-#endif /* USE_X11 */
+#endif /* !USE_X11 */
   }
 
   vlc = player->priv;
