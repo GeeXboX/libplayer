@@ -2674,6 +2674,7 @@ mp_preinit_vo (player_t *player, uint32_t *winid)
   case PLAYER_VO_XV:
   case PLAYER_VO_GL:
   case PLAYER_VO_VDPAU:
+  case PLAYER_VO_VAAPI:
 #ifndef USE_X11
     pl_log (player, PLAYER_MSG_ERROR,
             MODULE_NAME, "libplayer is not compiled with X11 support");
@@ -2894,6 +2895,13 @@ mplayer_init (player_t *player)
       break;
     }
 #endif /* USE_X11 */
+
+    case PLAYER_VO_VAAPI:
+      params[pp++] = "-vo";
+      params[pp++] = "vaapi";
+      params[pp++] = "-va";
+      params[pp++] = "vaapi";
+      break;
 
     case PLAYER_VO_AUTO:
     default:
