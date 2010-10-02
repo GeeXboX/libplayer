@@ -184,7 +184,9 @@ gstreamer_set_video_sink (player_t *player)
 {
   GstElement *sink = NULL;
   int use_x11 = 0;
+#ifdef USE_X11
   int ret;
+#endif /* USE_X11 */
 
   if (!player)
     return NULL;
