@@ -363,6 +363,18 @@ player_mrl_next (player_t *player)
                       SV_FUNC_PLAYER_MRL_NEXT, NULL, NULL);
 }
 
+void
+player_mrl_continue (player_t *player)
+{
+  pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
+
+  if (!player)
+    return;
+
+  pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
+                      SV_FUNC_PLAYER_MRL_NEXT_PLAY, NULL, NULL);
+}
+
 /***************************************************************************/
 /*                                                                         */
 /* Player tuning & properties                                              */

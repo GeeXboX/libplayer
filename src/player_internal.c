@@ -196,6 +196,12 @@ player_sv_mrl_next_play (player_t *player)
   if (!player)
     return;
 
+  if (player->pb_mode != PLAYER_PB_AUTO)
+  {
+    player_sv_mrl_next (player);
+    return;
+  }
+
   player_sv_playback_stop (player);
 
   if (!pl_playlist_next_play (player->playlist))

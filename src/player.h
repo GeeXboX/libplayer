@@ -824,6 +824,17 @@ void player_mrl_previous (player_t *player);
 void player_mrl_next (player_t *player);
 
 /**
+ * \brief Go to the next MRL object accordingly to the loop and shuffle.
+ *
+ * The behaviour is the same that player_mrl_next() if the 'loop' or the 'shuffle'
+ * is not enabled and the playback mode is not AUTO.
+ *
+ * \warning MT-Safe in multithreaded applications (see \ref mtlevel).
+ * \param[in] player      Player controller.
+ */
+void player_mrl_continue (player_t *player);
+
+/**
  * @}
  */
 

@@ -83,6 +83,7 @@
   " s   : stop the current playback\n" \
   " b   : start the previous stream in the playlist\n" \
   " n   : start the next stream in the playlist\n" \
+  " c   : continue with the next stream accordingly to the playback mode.\n" \
   " r   : remove the current stream of the playlist\n" \
   " t   : remove all streams of the playlist\n" \
   " q   : quit " APPNAME "\n" \
@@ -1156,6 +1157,10 @@ main (int argc, char **argv)
     case 'n':   /* start the next stream in the playlist */
       player_mrl_next (player);
       printf ("NEXT STREAM\n");
+      break;
+    case 'c':   /* continue with the next stream accordingly to the pb mode. */
+      player_mrl_continue (player);
+      printf ("CONTINUE\n");
       break;
     case 'o':   /* pause the current playback */
       player_playback_pause (player);
