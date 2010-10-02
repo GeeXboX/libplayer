@@ -130,7 +130,8 @@ typedef enum player_vo {
   PLAYER_VO_FB,
   PLAYER_VO_DIRECTFB,
   PLAYER_VO_VDPAU,
-  PLAYER_VO_OMAP
+  PLAYER_VO_OMAP,
+  PLAYER_VO_VAAPI,
 } player_vo_t;
 
 /** \brief Player audio outputs. */
