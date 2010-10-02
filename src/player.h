@@ -288,7 +288,7 @@ typedef enum mrl_resource {
 
   /* Local Streams */
   MRL_RESOURCE_FIFO,        /*  NO           NO           NO           NO   */
-  MRL_RESOURCE_FILE,        /*  NO           YES          YES          YES  */
+  MRL_RESOURCE_FILE,        /*  YES          YES          YES          YES  */
   MRL_RESOURCE_STDIN,       /*  NO           NO           NO           NO   */
 
   /* Audio CD */
@@ -322,7 +322,7 @@ typedef enum mrl_resource {
 
 /** \brief Arguments for local streams. */
 typedef struct mrl_resource_local_args_s {
-  char *location;           /*  NO           YES          YES          YES  */
+  char *location;           /*  YES          YES          YES          YES  */
   int playlist;             /*  NO           NO           NO           NO   */
 } mrl_resource_local_args_t;
 
