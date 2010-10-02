@@ -757,7 +757,9 @@ pl_x11_init (player_t *player)
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
   return 1;
 
+#ifdef HAVE_XINE
  err_conn:
+#endif /* HAVE_XINE */
   xcb_disconnect (x11->conn);
  err:
   PFREE (x11);
