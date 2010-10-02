@@ -6,7 +6,6 @@ syntax: regexp
 ~$
 config\.log
 config\.mak
-libplayer-regtest$
 libplayer-test$
 libplayer-testvdr$
 ^libplayer\.pc

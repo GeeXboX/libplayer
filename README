@@ -16,11 +16,6 @@ Build using traditional ./configure && make commands.
 Try ./configure --help for list of available build options
 and audio/video engines bindings.
 
-libplayer comes with a regression tests toolkit called regtest-libplayer.
-Use it to validate your code before each modification to libplayer.
-If you add new functions to libplayer, ALWAYS add them
-to regtest-libplayer.c too.
-
 libplayer uses GNU Coding Standards as default indentation and code style.
 Please always conform to this standard before applying your changes.
 

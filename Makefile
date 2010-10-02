@@ -6,10 +6,6 @@ include config.mak
 PKGCONFIG_DIR = $(libdir)/pkgconfig
 PKGCONFIG_FILE = libplayer.pc
 
-PLREGTEST = libplayer-regtest
-PLREGTEST_SRCS = libplayer-regtest.c
-PLREGTEST_OBJS = $(PLREGTEST_SRCS:.c=.o)
-PLREGTEST_MAN = $(PLREGTEST).1
 PLTEST = libplayer-test
 PLTEST_SRCS = libplayer-test.c
 PLTEST_OBJS = $(PLTEST_SRCS:.c=.o)
@@ -22,7 +18,7 @@ PLTESTVDR_MAN = $(PLTESTVDR).1
 APPS_CPPFLAGS = -Isrc $(CFG_CPPFLAGS) $(CPPFLAGS)
 APPS_LDFLAGS = -Lsrc -lplayer $(CFG_LDFLAGS) $(LDFLAGS)
 
-MANS = $(PLREGTEST_MAN) $(PLTEST_MAN) $(PLTESTVDR_MAN)
+MANS = $(PLTEST_MAN) $(PLTESTVDR_MAN)
 
 ifeq ($(BUILD_STATIC),yes)
 ifeq ($(BUILD_SHARED),no)
@@ -64,19 +60,16 @@ config.mak: configure
 lib:
 	$(MAKE) -C src
 
-$(PLREGTEST): $(PLREGTEST_OBJS)
-	$(CC) $(PLREGTEST_OBJS) $(APPS_LDFLAGS) -lpthread -o $(PLREGTEST)
 $(PLTEST): $(PLTEST_OBJS)
 	$(CC) $(PLTEST_OBJS) $(APPS_LDFLAGS) -o $(PLTEST)
 $(PLTESTVDR): $(PLTESTVDR_OBJS)
 	$(CC) $(PLTESTVDR_OBJS) $(APPS_LDFLAGS) -o $(PLTESTVDR)
 
 apps-dep:
-	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(PLREGTEST_SRCS) 1>.depend
-	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(PLTEST_SRCS) 1>>.depend
+	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(PLTEST_SRCS) 1>.depend
 	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(PLTESTVDR_SRCS) 1>>.depend
 
-apps-all: $(PLREGTEST) $(PLTEST) $(PLTESTVDR)
+apps-all: $(PLTEST) $(PLTESTVDR)
 
 apps: apps-dep lib
 	$(MAKE) apps-all
@@ -96,7 +89,6 @@ bindings-clean:
 clean: bindings-clean
 	$(MAKE) -C src clean
 	rm -f *.o
-	rm -f $(PLREGTEST)
 	rm -f $(PLTEST)
 	rm -f $(PLTESTVDR)
 	rm -f .depend
@@ -118,7 +110,6 @@ install-pkgconfig: $(PKGCONFIG_FILE)
 
 install-apps: apps
 	$(INSTALL) -d $(bindir)
-	$(INSTALL) -c -m 755 $(PLREGTEST) $(bindir)
 	$(INSTALL) -c -m 755 $(PLTEST) $(bindir)
 	$(INSTALL) -c -m 755 $(PLTESTVDR) $(bindir)
 
@@ -144,7 +135,6 @@ uninstall-pkgconfig:
 	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
 
 uninstall-apps:
-	rm -f $(bindir)/$(PLREGTEST)
 	rm -f $(bindir)/$(PLTEST)
 	rm -f $(bindir)/$(PLTESTVDR)
 
@@ -170,7 +160,7 @@ dist:
 	-$(RM) -rf libplayer-$(VERSION)
 
 dist-all:
-	cp $(EXTRADIST) $(PLREGTEST_SRCS) $(PLTEST_SRCS) $(PLTESTVDR_SRCS) Makefile $(DIST)
+	cp $(EXTRADIST) $(PLTEST_SRCS) $(PLTESTVDR_SRCS) Makefile $(DIST)
 
 .PHONY: dist dist-all
 
