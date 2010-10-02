@@ -704,8 +704,8 @@ mrl_metadata_plog (player_t *player, mrl_t *mrl)
         pl_log (player, PLAYER_MSG_INFO,
                 MODULE_NAME, "Meta CD Track %i Name: %s", cnt, track->name);
 
-      pl_log (player, PLAYER_MSG_INFO,
-              MODULE_NAME, "Meta CD Track %i Length: %i ms", cnt, track->length);
+      pl_log (player, PLAYER_MSG_INFO, MODULE_NAME,
+              "Meta CD Track %i Length: %i ms", cnt, track->length);
 
       cnt++;
       track = track->next;

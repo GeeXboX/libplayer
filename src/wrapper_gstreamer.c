@@ -687,7 +687,7 @@ gstreamer_player_init (player_t *player)
    * If we're using an audio sink that has a volume property,
    * then that's what we need to modify for volume control,
    * not the playbin's one
-   * */
+   */
   g->volume_ctrl =
     g_object_class_find_property (G_OBJECT_GET_CLASS (g->audio_sink),
                                   "volume") ? g->audio_sink : g->bin;

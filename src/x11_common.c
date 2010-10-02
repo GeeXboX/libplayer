@@ -30,9 +30,9 @@
 #include <vdpau/vdpau.h>
 #include <vdpau/vdpau_x11.h>
 #endif /* USE_VDPAU */
-#else
+#else /* USE_XLIB_HACK */
 #include <xcb/xcb.h>
-#endif /* USE_XLIB_HACK */
+#endif /* !USE_XLIB_HACK */
 
 #ifdef HAVE_XINE
 #include <xine.h>
@@ -140,7 +140,7 @@ pl_x11_vdpau_caps (player_t *player)
 
  out:
   XCloseDisplay (display);
-#else
+#else /* USE_XLIB_HACK && USE_VDPAU */
   (void) player;
 #endif /* !(USE_XLIB_HACK && USE_VDPAU) */
   return flags;
@@ -442,11 +442,11 @@ pl_x11_uninit (player_t *player)
     x11_visual_t *vis = x11->data;
     if (vis->display)
       XCloseDisplay (vis->display);
-#else
+#else /* USE_XLIB_HACK */
     xcb_visual_t *vis = x11->data;
     if (vis->connection)
       xcb_disconnect (vis->connection);
-#endif /* USE_XLIB_HACK */
+#endif /* !USE_XLIB_HACK */
 #endif /* HAVE_XINE */
     PFREE (x11->data);
   }
@@ -580,7 +580,7 @@ pl_x11_init (player_t *player)
 #ifdef USE_XLIB_HACK
   Display *xine_conn   = NULL;
   int      xine_screen = 0;
-#else
+#else /* USE_XLIB_HACK */
   xcb_connection_t *xine_conn   = NULL;
   xcb_screen_t     *xine_screen = NULL;
 #endif /* !USE_XLIB_HACK */
@@ -610,7 +610,7 @@ pl_x11_init (player_t *player)
 
     XSetEventQueueOwner (xine_conn, XlibOwnsEventQueue);
     xine_screen = XDefaultScreen (xine_conn);
-#else
+#else /* USE_XLIB_HACK */
     xine_conn = x11_connection (player, &xine_screen);
     if (!xine_conn)
       goto err_conn;
@@ -731,19 +731,19 @@ pl_x11_init (player_t *player)
 
     pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
             "The Xlib hack has been enabled, beware of races!");
-#else
+#else /* USE_XLIB_HACK */
     xcb_visual_t *vis = PCALLOC (xcb_visual_t, 1);
-#endif /* USE_XLIB_HACK */
+#endif /* !USE_XLIB_HACK */
 
     if (vis)
     {
 #ifdef USE_XLIB_HACK
       vis->display         = xine_conn;
       vis->d               = x11->win_video;
-#else
+#else /* USE_XLIB_HACK */
       vis->connection      = xine_conn;
       vis->window          = x11->win_video;
-#endif /* USE_XLIB_HACK */
+#endif /* !USE_XLIB_HACK */
       vis->screen          = xine_screen;
       vis->dest_size_cb    = xine_dest_size_cb;
       vis->frame_output_cb = xine_frame_output_cb;
