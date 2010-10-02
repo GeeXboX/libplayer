@@ -62,7 +62,7 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
 {
   player_t *player = NULL;
 
-  player = (player_t *) user_data;
+  player = user_data;
   if (!player)
     return;
 
@@ -98,7 +98,7 @@ send_event (player_t *player, int event, void *data, int data_size)
   if (!player)
     return;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   if (!x || !x->stream)
     return;
@@ -481,7 +481,7 @@ xine_identify (player_t *player, mrl_t *mrl, int flags)
   if (!player || !mrl)
     return;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   if (!x)
     return;
@@ -550,8 +550,7 @@ xine_player_init (player_t *player)
   if (!player)
     return PLAYER_INIT_ERROR;
 
-  x = (xine_player_t *) player->priv;
-
+  x = player->priv;
   if (!x)
     return PLAYER_INIT_ERROR;
 
@@ -729,8 +728,7 @@ xine_player_uninit (player_t *player)
   if (!player)
     return;
 
-  x = (xine_player_t *) player->priv;
-
+  x = player->priv;
   if (!x)
     return;
 
@@ -767,7 +765,7 @@ xine_player_set_verbosity (player_t *player, player_verbosity_level_t level)
   if (!player)
     return;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
   if (!x)
     return;
 
@@ -843,8 +841,7 @@ xine_player_get_time_pos (player_t *player)
   if (!player)
     return -1;
 
-  x = (xine_player_t *) player->priv;
-
+  x = player->priv;
   if (!x->stream)
     return -1;
 
@@ -935,7 +932,7 @@ xine_player_playback_start (player_t *player)
   if (!player)
     return PLAYER_PB_FATAL;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   mrl_c = pl_playlist_get_mrl (player->playlist);
   if (!x->stream || !mrl_c)
@@ -991,7 +988,7 @@ xine_player_playback_stop (player_t *player)
   if (!player)
     return;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   if (!x->stream)
     return;
@@ -1016,7 +1013,7 @@ xine_player_playback_pause (player_t *player)
   if (!player)
     return PLAYER_PB_FATAL;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   if (!x->stream)
     return PLAYER_PB_ERROR;
@@ -1041,7 +1038,7 @@ xine_player_playback_seek (player_t *player, int value, player_pb_seek_t seek)
   if (!player)
     return;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   if (!x->stream)
     return;
@@ -1102,7 +1099,7 @@ xine_player_audio_get_volume (player_t *player)
   if (!player)
     return -1;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   if (!x->stream)
     return -1;
@@ -1121,7 +1118,7 @@ xine_player_audio_set_volume (player_t *player, int value)
   if (!player)
     return;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   if (!x->stream)
     return;
@@ -1139,7 +1136,7 @@ xine_player_audio_get_mute (player_t *player)
   if (!player)
     return PLAYER_MUTE_UNKNOWN;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   if (!x->stream)
     return PLAYER_MUTE_UNKNOWN;
@@ -1168,7 +1165,7 @@ xine_player_audio_set_mute (player_t *player, player_mute_t value)
   if (!player)
     return;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   if (!x->stream)
     return;
@@ -1236,7 +1233,7 @@ xine_player_sub_set_delay (player_t *player, int value)
   if (!player)
     return;
 
-  x = (xine_player_t *) player->priv;
+  x = player->priv;
 
   if (!x->stream)
     return;
