@@ -1,5 +1,11 @@
 libplayer (2.0)
 
+  2.0.1: 3 Oct, 2010
+
+    * The libplayer version was not passed correctly to Doxygen.
+    * Fix a segmentation fault when the default screen used by the X server can
+      not be found.
+
   2.0.0: 3 Oct, 2010
 
     X11:
