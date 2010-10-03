@@ -1,3 +1,53 @@
+libplayer (2.0)
+
+  2.0.0: 3 Oct, 2010
+
+    X11:
+    * The code related to X11 has been rewritten in order to use XCB instead of
+      Xlib. It fixes many potential problems related to the multi-threading.
+    * New function to detect the VDPAU capabilities of the GPU.
+    * The display (see DISPLAY environment variable) can be provided explicitly
+      with the public API.
+
+    MPlayer:
+    * Fix VDPAU handling accordingly to the VDPAU capabilities of the GPU
+      (see --enable-xlib-hack with configure).
+    * The OSD can be enabled/disabled.
+    * Support for DVB resource.
+    * Support for VAAPI and DirectFB video outputs.
+    * New parameter to control the video decoding quality.
+
+    xine:
+    * Support for VDPAU (see --enable-xlib-hack with configure) and DirectFB
+      video outputs.
+    * Support for more network resources.
+    * The video aspect can be changed.
+    * The playback speed can be changed.
+
+    GStreamer: still experimental
+    * Many improvements and functionalities.
+    * Support for audio and video files.
+
+    VLC: still experimental
+    * Many improvements and functionalities.
+    * Support for X11/XV video outputs.
+    * Support for files, network streams and DVD resources.
+
+    Other:
+    * Many fixes and enhancements in Makefile and configure.
+    * Drop player_video_set_fullscreen() function which was useless.
+    * New public function to retrieve the libplayer version.
+    * New public function to continue to the next MRL is the playlist
+      accordingly to the playback mode.
+    * Support for PulseAudio.
+    * Now a userdata can be passed to the event callback.
+    * All binaries have a manpage.
+    * Partial support for MS Windows. The core of the lib is supported but not
+      all backends can be compiled (for example, MPlayer is not supported).
+    * The Python binding is not up-to-date and disabled by default.
+    * Many small fixes and cosmetics ...
+
+
 libplayer (1.0)
 
   1.0.0: 6 Dec, 2009
