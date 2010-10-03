@@ -37,7 +37,7 @@ libplayer (2.0)
     * Many fixes and enhancements in Makefile and configure.
     * Drop player_video_set_fullscreen() function which was useless.
     * New public function to retrieve the libplayer version.
-    * New public function to continue to the next MRL is the playlist
+    * New public function to continue to the next MRL in the playlist
       accordingly to the playback mode.
     * Support for PulseAudio.
     * Now a userdata can be passed to the event callback.
