@@ -525,8 +525,13 @@ static xcb_screen_t *
 screen_of_display (xcb_connection_t *c, int screen)
 {
   xcb_screen_iterator_t iter;
+  const xcb_setup_t *setup;
 
-  iter = xcb_setup_roots_iterator (xcb_get_setup (c));
+  setup = xcb_get_setup (c);
+  if (!setup)
+    return NULL;
+
+  iter = xcb_setup_roots_iterator (setup);
   for (; iter.rem; --screen, xcb_screen_next (&iter))
     if (!screen)
       return iter.data;
@@ -550,7 +555,7 @@ x11_connection (player_t *player, xcb_screen_t **screen)
   }
 
   *screen = screen_of_display (conn, screen_num);
-  if (!screen)
+  if (!*screen)
   {
     pl_log (player, PLAYER_MSG_WARNING,
             MODULE_NAME, "Failed to found the screen");
