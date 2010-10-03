@@ -108,7 +108,20 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
       development, you're highly welcomed to join in.
       </p>
       <p>
-      Current release is 1.0.0, featuring with the following changes :
+      Current release is 2.0.0, featuring with the following changes :
+      </p>
+      <ul>
+        <li>XCB is used instead of Xlib</li>
+        <li>VDPAU support with xine and MPlayer</li>
+        <li>Support for VAAPI and DirectFB in some backends</li>
+        <li>Improvements in the GStreamer and VLC backends
+            (<b>still experimental</b>).</li>
+        <li>... Many other changes, look at
+            <a href="http://hg.geexbox.org/libplayer/file/v2.0.0/ChangeLog">
+            ChangeLog</a></li>
+      </ul>
+      <p>
+      Changes in 1.0.0 :
       </p>
       <ul>
         <li>Initial project release</li>
@@ -128,7 +141,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
       Copyright and License
     </h2>
       <p>
-      libplayer is copyright (C) 2007-2009 Benjamin Zores, Mathieu Schroeter.
+      libplayer is copyright (C) 2006-2010 Benjamin Zores, Mathieu Schroeter.
       </p>
       <p>
       This library is free software; you can redistribute it and/or modify it
@@ -156,7 +169,7 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
       You can find the public API documentation
       <a href="http://libplayer.geexbox.org/doxygen/html/index.html">HTML</a>
       /
-      <a href="http://libplayer.geexbox.org/doxygen/pdf/libplayer-1.0.0.pdf">
+      <a href="http://libplayer.geexbox.org/doxygen/pdf/libplayer.pdf">
       PDF</a> automatically generated from the libplayer source code, using
       <a href="http://www.doxygen.org">Doxygen</a>.
       </p>
@@ -166,22 +179,11 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
       Download
     </h2>
       <p>
-      The currently available libplayer release is 1.0.0.<br />
+      The currently available libplayer release is 2.0.0.<br />
       Sources can be downloaded
-      <a href="http://libplayer.geexbox.org/releases/libplayer-1.0.0.tar.bz2">
+      <a href="http://libplayer.geexbox.org/releases/libplayer-2.0.0.tar.bz2">
       here</a>.
       </p>
-
-      <h3>Packages</h3>
-        <p>
-        If you're using Ubuntu 9.10 (Karmic) GNU/Linux distribution, libplayer
-        packages are available through your packet manager for your i386 and
-        amd64 architectures.
-        </p>
-        <p>Simply add the following line to your /etc/apt/sources.list file :</p>
-        <pre>deb http://packages.geexbox.org/ karmic main</pre>
-        <p>and install libplayer with : </p>
-        <pre>sudo aptitude update &amp;&amp; sudo aptitude install libplayer</pre>
 
       <h3>Development Tree</h3>
         <p>
