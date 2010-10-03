@@ -16,7 +16,7 @@ all: doxygen
 doxygen:
 ifeq ($(DOC),yes)
 ifeq (,$(wildcard doxygen))
-	PROJECT_NUMBER="$(LIBPLAYER_VERSION)" doxygen Doxyfile
+	PROJECT_NUMBER="$(VERSION)" doxygen Doxyfile
 endif
 endif
 
