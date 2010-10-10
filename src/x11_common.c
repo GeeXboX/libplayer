@@ -548,7 +548,7 @@ x11_connection (player_t *player, xcb_screen_t **screen)
   *screen = NULL;
 
   conn = xcb_connect (player->x11_display, &screen_num);
-  if (!conn)
+  if (xcb_connection_has_error (conn))
   {
     pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME, "Failed to open display");
     return NULL;
