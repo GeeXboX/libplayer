@@ -72,7 +72,7 @@ typedef struct x11_s {
 } x11_t;
 
 
-int
+static int
 win_vdpau_caps_get (window_t *win)
 {
   int flags = 0;
