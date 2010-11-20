@@ -43,8 +43,8 @@ SRCS = \
 	event.c \
 	event_handler.c \
 	supervisor.c \
-	wrapper_dummy.c \
 	window.c \
+	wrapper_dummy.c \
 
 EXTRADIST = \
 	event.h \
@@ -57,14 +57,14 @@ EXTRADIST = \
 	player_internals.h \
 	playlist.h \
 	supervisor.h \
+	window.h \
+	window_common.h \
+	window_xcb.h \
 	wrapper_dummy.h \
 	wrapper_gstreamer.h \
 	wrapper_mplayer.h \
 	wrapper_vlc.h \
 	wrapper_xine.h \
-	window.h \
-	window_common.h \
-	window_xcb.h \
 
 SRCS-$(WIN_XCB)			+= window_xcb.c
 SRCS-$(WRAPPER_MPLAYER)		+= wrapper_mplayer.c
