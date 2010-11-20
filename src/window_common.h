@@ -22,6 +22,12 @@
 #ifndef PLAYER_WINDOW_COMMON_H
 #define PLAYER_WINDOW_COMMON_H
 
+/**
+ * \file window_common.h
+ *
+ * Internal window backend API header.
+ */
+
 #include "window.h"
 
 typedef enum window_backend {
@@ -31,6 +37,9 @@ typedef enum window_backend {
   WIN_BACKEND_GDI, /* TODO */
 } window_backend_t;
 
+/**
+ * \brief Functions for the backend.
+ */
 typedef struct window_funcs_s {
   /**
    * \brief Init the backend.
@@ -48,7 +57,7 @@ typedef struct window_funcs_s {
   void (*uninit) (struct window_s *win);
 
   /**
-   * \brief Map and raised the window.
+   * \brief Map and raise the window.
    *
    * \param[in] win         Window handle.
    */
