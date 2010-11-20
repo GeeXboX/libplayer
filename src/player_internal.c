@@ -29,10 +29,7 @@
 #include "logs.h"
 #include "playlist.h"
 #include "event.h"
-
-#ifdef USE_X11
-#include "x11_common.h"
-#endif /* USE_X11 */
+#include "window.h"
 
 #define MODULE_NAME "player"
 
@@ -320,23 +317,24 @@ void
 player_sv_x_window_set_properties (player_t *player,
                                    int x, int y, int w, int h, int flags)
 {
-#ifdef USE_X11
   int f = 0;
-#else /* USE_X11 */
-  player = NULL;
-  x = y = w = h = flags = 0;
-#endif /* !USE_X11 */
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, __FUNCTION__);
 
-  if (!player || !player->x11)
+  if (!player)
     return;
 
-#ifdef USE_X11
+  if (!player->window)
+  {
+    pl_log (player, PLAYER_MSG_VERBOSE,
+            MODULE_NAME, "ignored because no X window");
+    return;
+  }
+
   if (flags == PLAYER_X_WINDOW_AUTO)
   {
-    f = X11_PROPERTY_X | X11_PROPERTY_Y |
-        X11_PROPERTY_W | X11_PROPERTY_H;
+    f = WIN_PROPERTY_X | WIN_PROPERTY_Y |
+        WIN_PROPERTY_W | WIN_PROPERTY_H;
     x = 0;
     y = 0;
     w = 0;
@@ -345,18 +343,17 @@ player_sv_x_window_set_properties (player_t *player,
   else
   {
     if (flags & PLAYER_X_WINDOW_X)
-      f = X11_PROPERTY_X;
+      f = WIN_PROPERTY_X;
     if (flags & PLAYER_X_WINDOW_Y)
-      f |= X11_PROPERTY_Y;
+      f |= WIN_PROPERTY_Y;
     if (flags & PLAYER_X_WINDOW_W)
-      f |= X11_PROPERTY_W;
+      f |= WIN_PROPERTY_W;
     if (flags & PLAYER_X_WINDOW_H)
-      f |= X11_PROPERTY_H;
+      f |= WIN_PROPERTY_H;
   }
 
-  pl_x11_set_winprops (player->x11, x, y, w, h, f);
-  pl_x11_resize (player);
-#endif /* USE_X11 */
+  pl_window_win_props_set (player->window, x, y, w, h, f);
+  pl_window_resize (player->window);
 }
 
 void

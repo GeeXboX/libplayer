@@ -33,9 +33,9 @@
 #include <gst/gst.h>
 #include <gst/interfaces/streamvolume.h>
 
-#ifdef USE_X11
+#ifdef HAVE_WIN_XCB
 #include <gst/interfaces/xoverlay.h>
-#endif /* USE_X11 */
+#endif /* HAVE_WIN_XCB */
 
 #include "player.h"
 #include "player_internals.h"
@@ -43,10 +43,8 @@
 #include "logs.h"
 #include "event.h"
 #include "fs_utils.h"
+#include "window.h"
 #include "wrapper_gstreamer.h"
-#ifdef USE_X11
-#include "x11_common.h"
-#endif /* USE_X11 */
 
 #define MODULE_NAME "gstreamer"
 
@@ -184,9 +182,9 @@ gstreamer_set_video_sink (player_t *player)
 {
   GstElement *sink = NULL;
   int use_x11 = 0;
-#ifdef USE_X11
+#ifdef HAVE_WIN_XCB
   int ret;
-#endif /* USE_X11 */
+#endif /* HAVE_WIN_XCB */
 
   if (!player)
     return NULL;
@@ -219,8 +217,8 @@ gstreamer_set_video_sink (player_t *player)
     break;
   }
 
-#ifdef USE_X11
-  ret = pl_x11_init (player);
+#ifdef HAVE_WIN_XCB
+  ret = pl_window_init (player->window);
   if (player->vo != PLAYER_VO_AUTO && !ret)
   {
     gst_object_unref (GST_OBJECT (sink));
@@ -228,7 +226,7 @@ gstreamer_set_video_sink (player_t *player)
             MODULE_NAME, "X initialization has failed");
     return NULL;
   }
-#endif /* USE_X11 */
+#endif /* HAVE_WIN_XCB */
 
   return sink;
 }
@@ -269,7 +267,7 @@ gstreamer_set_audio_sink (player_t *player)
   return sink;
 }
 
-#ifdef USE_X11
+#ifdef HAVE_WIN_XCB
 static GstBusSyncReply
 bus_sync_handler_cb (pl_unused GstBus *bus, GstMessage *message, gpointer data)
 {
@@ -286,11 +284,11 @@ bus_sync_handler_cb (pl_unused GstBus *bus, GstMessage *message, gpointer data)
 
   ov = GST_X_OVERLAY (GST_MESSAGE_SRC (message));
   if (ov)
-    gst_x_overlay_set_xwindow_id (ov, pl_x11_get_window (player->x11));
+    gst_x_overlay_set_xwindow_id (ov, pl_window_winid_get (player->window));
 
   return GST_BUS_DROP;
 }
-#endif /* USE_X11 */
+#endif /* HAVE_WIN_XCB */
 
 static void
 gstreamer_get_tag (GstTagList *list, char **meta, const gchar *tag)
@@ -695,9 +693,9 @@ gstreamer_player_init (player_t *player)
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
 
-#ifdef USE_X11
+#ifdef HAVE_WIN_XCB
   gst_bus_set_sync_handler (g->bus, bus_sync_handler_cb, player);
-#endif /* USE_X11 */
+#endif /* HAVE_WIN_XCB */
 
   return PLAYER_INIT_OK;
 }
@@ -718,9 +716,7 @@ gstreamer_player_uninit (player_t *player)
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
 
-#ifdef USE_X11
-  pl_x11_uninit (player);
-#endif /* USE_X11 */
+  pl_window_uninit (player->window);
 
   gst_object_unref (GST_OBJECT (g->bin));
   gst_object_unref (GST_OBJECT (g->bus));
@@ -885,10 +881,8 @@ gstreamer_player_playback_start (player_t *player)
 
   PFREE (uri);
 
-#ifdef USE_X11
   if (MRL_USES_VO (mrl))
-    pl_x11_map (player);
-#endif /* USE_X11 */
+    pl_window_map (player->window);
 
   return PLAYER_PB_OK;
 }
@@ -897,9 +891,7 @@ static void
 gstreamer_player_playback_stop (player_t *player)
 {
   gstreamer_player_t *g = NULL;
-#ifdef USE_X11
   mrl_t *mrl;
-#endif /* USE_X11 */
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_stop");
 
@@ -910,11 +902,9 @@ gstreamer_player_playback_stop (player_t *player)
 
   gst_element_set_state (g->bin, GST_STATE_NULL);
 
-#ifdef USE_X11
   mrl = pl_playlist_get_mrl (player->playlist);
   if (MRL_USES_VO (mrl))
-    pl_x11_unmap (player);
-#endif /* USE_X11 */
+    pl_window_unmap (player->window);
 }
 
 static playback_status_t

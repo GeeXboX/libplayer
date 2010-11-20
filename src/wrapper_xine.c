@@ -36,11 +36,8 @@
 #include "event.h"
 #include "fs_utils.h"
 #include "parse_utils.h"
+#include "window.h"
 #include "wrapper_xine.h"
-
-#ifdef USE_X11
-#include "x11_common.h"
-#endif /* USE_X11 */
 
 #define MODULE_NAME "xine"
 
@@ -74,9 +71,7 @@ xine_player_event_listener_cb (void *user_data, const xine_event_t *event)
             MODULE_NAME, "Playback of stream has ended");
     player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED);
 
-#ifdef USE_X11
-    pl_x11_unmap (player);
-#endif /* USE_X11 */
+    pl_window_unmap (player->window);
     break;
   }
   case XINE_EVENT_PROGRESS:
@@ -574,7 +569,7 @@ xine_player_init (player_t *player)
     id_vo = "none";
     break;
 
-#ifdef USE_X11
+#ifdef HAVE_WIN_XCB
   case PLAYER_VO_X11:
     use_x11 = 1;
     id_vo = "xshm";
@@ -601,7 +596,7 @@ xine_player_init (player_t *player)
     id_vo = "vdpau";
     break;
 #endif /* USE_XLIB_HACK */
-#endif /* USE_X11 */
+#endif /* HAVE_WIN_XCB */
 
   case PLAYER_VO_FB:
     id_vo = "fb";
@@ -625,8 +620,8 @@ xine_player_init (player_t *player)
 
   if (use_x11)
   {
-#ifdef USE_X11
-    int ret = pl_x11_init (player);
+#ifdef HAVE_WIN_XCB
+    int ret = pl_window_init (player->window);
     if (!ret && player->vo != PLAYER_VO_AUTO)
     {
       pl_log (player, PLAYER_MSG_ERROR,
@@ -640,18 +635,18 @@ xine_player_init (player_t *player)
     }
     else
     {
-      data = pl_x11_get_data (player->x11);
+      data = pl_window_data_get (player->window);
 #ifdef USE_XLIB_HACK
       visual = XINE_VISUAL_TYPE_X11;
 #else /* USE_XLIB_HACK */
       visual = XINE_VISUAL_TYPE_XCB;
 #endif /* !USE_XLIB_HACK */
     }
-#else /* USE_X11 */
+#else /* HAVE_WIN_XCB */
     pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
-            "auto-detection for videoout is not enabled without X11 support");
+            "auto-detection for window is not enabled without X11 support");
     return PLAYER_INIT_ERROR;
-#endif /* !USE_X11 */
+#endif /* !HAVE_WIN_XCB */
   }
 
   /* init video output driver */
@@ -709,11 +704,11 @@ xine_player_init (player_t *player)
   xine_event_create_listener_thread (x->event_queue,
                                      xine_player_event_listener_cb, player);
 
-#ifdef USE_X11
-  if (player->x11)
+#ifdef HAVE_WIN_XCB
+  if (player->window)
     xine_port_send_gui_data (x->vo_port,
                              XINE_GUI_SEND_VIDEOWIN_VISIBLE, (void *) 1);
-#endif /* USE_X11 */
+#endif /* HAVE_WIN_XCB */
 
   return PLAYER_INIT_OK;
 }
@@ -749,9 +744,7 @@ xine_player_uninit (player_t *player)
   if (x->xine)
     xine_exit (x->xine);
 
-#ifdef USE_X11
-  pl_x11_uninit (player);
-#endif /* USE_X11 */
+  pl_window_uninit (player->window);
 
   PFREE (x);
 }
@@ -891,16 +884,16 @@ xine_player_set_mouse_pos (player_t *player, int x, int y)
 
   xine = player->priv;
 
-#ifdef USE_X11
-  if (player->x11)
+#ifdef HAVE_WIN_XCB
+  if (player->window)
   {
     int video_x, video_y;
 
-    pl_x11_get_video_pos (player->x11, &video_x, &video_y);
+    pl_window_video_pos_get (player->window, &video_x, &video_y);
     x -= video_x;
     y -= video_y;
   }
-#endif /* USE_X11 */
+#endif /* HAVE_WIN_XCB */
 
   rect.x = x;
   rect.y = y;
@@ -962,10 +955,8 @@ xine_player_playback_start (player_t *player)
   if (!mrl)
     return PLAYER_PB_ERROR;
 
-#ifdef USE_X11
   if (MRL_USES_VO (mrl_c))
-    pl_x11_map (player);
-#endif /* USE_X11 */
+    pl_window_map (player->window);
 
   xine_open (x->stream, mrl);
   xine_play (x->stream, 0, 0);
@@ -978,9 +969,7 @@ xine_player_playback_start (player_t *player)
 static void
 xine_player_playback_stop (player_t *player)
 {
-#ifdef USE_X11
   mrl_t *mrl;
-#endif /* USE_X11 */
   xine_player_t *x = NULL;
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_stop");
@@ -993,11 +982,9 @@ xine_player_playback_stop (player_t *player)
   if (!x->stream)
     return;
 
-#ifdef USE_X11
   mrl = pl_playlist_get_mrl (player->playlist);
   if (MRL_USES_VO (mrl))
-    pl_x11_unmap (player);
-#endif /* USE_X11 */
+    pl_window_unmap (player->window);
 
   xine_stop (x->stream);
   xine_close (x->stream);

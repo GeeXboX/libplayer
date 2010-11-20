@@ -1,6 +1,6 @@
 /*
  * GeeXboX libplayer: a multimedia A/V abstraction layer API.
- * Copyright (C) 2007-2009 Mathieu Schroeter <mathieu@schroetersa.ch>
+ * Copyright (C) 2007-2010 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * This file is part of libplayer.
  *
@@ -41,13 +41,16 @@
 #include "player.h"
 #include "player_internals.h"
 #include "logs.h"
-#include "x11_common.h"
 
-#define MODULE_NAME "x11"
+#include "window.h"
+#include "window_common.h"
+#include "window_xcb.h"
+
+#define MODULE_NAME "window_xcb"
 
 static const uint32_t val_raised[] = { XCB_STACK_MODE_ABOVE };
 
-struct x11_s {
+typedef struct x11_s {
   xcb_connection_t *conn;
   xcb_window_t      win_video;
   xcb_window_t      win_black; /* black background  (use_subwin to 1) */
@@ -66,11 +69,11 @@ struct x11_s {
 
   double pixel_aspect;
   void *data;
-};
+} x11_t;
 
 
 int
-pl_x11_vdpau_caps (player_t *player)
+win_vdpau_caps_get (window_t *win)
 {
   int flags = 0;
 #if defined (USE_XLIB_HACK) && defined (USE_VDPAU)
@@ -83,34 +86,34 @@ pl_x11_vdpau_caps (player_t *player)
   VdpDecoderQueryCapabilities *func;
 
   static const struct {
-    x11_vdpau_caps_t cap;
+    window_vdpau_caps_t cap;
     uint32_t id;
   } vdpau_decoders[] = {
-    { X11_VDPAU_MPEG1,        VDP_DECODER_PROFILE_MPEG1               },
-    { X11_VDPAU_MPEG2,        VDP_DECODER_PROFILE_MPEG2_SIMPLE        },
-    { X11_VDPAU_MPEG2,        VDP_DECODER_PROFILE_MPEG2_MAIN          },
-    { X11_VDPAU_H264,         VDP_DECODER_PROFILE_H264_BASELINE       },
-    { X11_VDPAU_H264,         VDP_DECODER_PROFILE_H264_MAIN           },
-    { X11_VDPAU_H264,         VDP_DECODER_PROFILE_H264_HIGH           },
-    { X11_VDPAU_VC1,          VDP_DECODER_PROFILE_VC1_SIMPLE          },
-    { X11_VDPAU_VC1,          VDP_DECODER_PROFILE_VC1_MAIN            },
-    { X11_VDPAU_VC1,          VDP_DECODER_PROFILE_VC1_ADVANCED        },
-    { X11_VDPAU_MPEG4_PART2,  VDP_DECODER_PROFILE_MPEG4_PART2_SP      },
-    { X11_VDPAU_MPEG4_PART2,  VDP_DECODER_PROFILE_MPEG4_PART2_ASP     },
-    { X11_VDPAU_DIVX4,        VDP_DECODER_PROFILE_DIVX4_QMOBILE       },
-    { X11_VDPAU_DIVX4,        VDP_DECODER_PROFILE_DIVX4_MOBILE        },
-    { X11_VDPAU_DIVX4,        VDP_DECODER_PROFILE_DIVX4_HOME_THEATER  },
-    { X11_VDPAU_DIVX4,        VDP_DECODER_PROFILE_DIVX4_HD_1080P      },
-    { X11_VDPAU_DIVX5,        VDP_DECODER_PROFILE_DIVX5_QMOBILE       },
-    { X11_VDPAU_DIVX5,        VDP_DECODER_PROFILE_DIVX5_MOBILE        },
-    { X11_VDPAU_DIVX5,        VDP_DECODER_PROFILE_DIVX5_HOME_THEATER  },
-    { X11_VDPAU_DIVX5,        VDP_DECODER_PROFILE_DIVX5_HD_1080P      },
+    { WIN_VDPAU_MPEG1,   VDP_DECODER_PROFILE_MPEG1               },
+    { WIN_VDPAU_MPEG2,   VDP_DECODER_PROFILE_MPEG2_SIMPLE        },
+    { WIN_VDPAU_MPEG2,   VDP_DECODER_PROFILE_MPEG2_MAIN          },
+    { WIN_VDPAU_H264,    VDP_DECODER_PROFILE_H264_BASELINE       },
+    { WIN_VDPAU_H264,    VDP_DECODER_PROFILE_H264_MAIN           },
+    { WIN_VDPAU_H264,    VDP_DECODER_PROFILE_H264_HIGH           },
+    { WIN_VDPAU_VC1,     VDP_DECODER_PROFILE_VC1_SIMPLE          },
+    { WIN_VDPAU_VC1,     VDP_DECODER_PROFILE_VC1_MAIN            },
+    { WIN_VDPAU_VC1,     VDP_DECODER_PROFILE_VC1_ADVANCED        },
+    { WIN_VDPAU_MPEG4P2, VDP_DECODER_PROFILE_MPEG4_PART2_SP      },
+    { WIN_VDPAU_MPEG4P2, VDP_DECODER_PROFILE_MPEG4_PART2_ASP     },
+    { WIN_VDPAU_DIVX4,   VDP_DECODER_PROFILE_DIVX4_QMOBILE       },
+    { WIN_VDPAU_DIVX4,   VDP_DECODER_PROFILE_DIVX4_MOBILE        },
+    { WIN_VDPAU_DIVX4,   VDP_DECODER_PROFILE_DIVX4_HOME_THEATER  },
+    { WIN_VDPAU_DIVX4,   VDP_DECODER_PROFILE_DIVX4_HD_1080P      },
+    { WIN_VDPAU_DIVX5,   VDP_DECODER_PROFILE_DIVX5_QMOBILE       },
+    { WIN_VDPAU_DIVX5,   VDP_DECODER_PROFILE_DIVX5_MOBILE        },
+    { WIN_VDPAU_DIVX5,   VDP_DECODER_PROFILE_DIVX5_HOME_THEATER  },
+    { WIN_VDPAU_DIVX5,   VDP_DECODER_PROFILE_DIVX5_HD_1080P      },
   };
 
-  if (!player)
+  if (!win)
     return 0;
 
-  display = XOpenDisplay (player->x11_display);
+  display = XOpenDisplay (win->player->x11_display);
   if (!display)
     return 0;
 
@@ -141,7 +144,7 @@ pl_x11_vdpau_caps (player_t *player)
  out:
   XCloseDisplay (display);
 #else /* USE_XLIB_HACK && USE_VDPAU */
-  (void) player;
+  (void) win;
 #endif /* !(USE_XLIB_HACK && USE_VDPAU) */
   return flags;
 }
@@ -192,46 +195,64 @@ zoom (player_t *player, uint16_t parentwidth, uint16_t parentheight,
                        *x, *y, *width, *height, convert);
 }
 
-uint32_t
-pl_x11_get_window (x11_t *x11)
+static uint32_t
+win_winid_get (window_t *win)
 {
-  if (!x11)
+  x11_t *x11;
+
+  if (!win)
     return 0;
 
-  return (uint32_t) x11->win_video;
+  x11 = win->backend_data;
+  return x11 ? (uint32_t) x11->win_video : 0;
 }
 
-void *
-pl_x11_get_data (x11_t *x11)
+static void *
+win_data_get (window_t *win)
 {
-  if (!x11)
+  x11_t *x11;
+
+  if (!win)
     return NULL;
 
-  return x11->data;
+  x11 = win->backend_data;
+  return x11 ? x11->data : NULL;
 }
 
-void
-pl_x11_set_winprops (x11_t *x11, int x, int y, int w, int h, int flags)
+static void
+win_win_props_set (window_t *win, int x, int y, int w, int h, int flags)
 {
+  x11_t *x11;
+
+  if (!win)
+    return;
+
+  x11 = win->backend_data;
   if (!x11)
     return;
 
   pthread_mutex_lock (&x11->mutex);
-  if (flags & X11_PROPERTY_X)
+  if (flags & WIN_PROPERTY_X)
     x11->x = x;
-  if (flags & X11_PROPERTY_Y)
+  if (flags & WIN_PROPERTY_Y)
     x11->y = y;
-  if (flags & X11_PROPERTY_W)
+  if (flags & WIN_PROPERTY_W)
     x11->w = w;
-  if (flags & X11_PROPERTY_H)
+  if (flags & WIN_PROPERTY_H)
     x11->h = h;
   pthread_mutex_unlock (&x11->mutex);
 }
 
-void
-pl_x11_get_video_pos (x11_t *x11, int *x, int *y)
+static void
+win_video_pos_get (window_t *win, int *x, int *y)
 {
-  if (!x11 || (!x && !y))
+  x11_t *x11;
+
+  if (!win || (!x && !y))
+    return;
+
+  x11 = win->backend_data;
+  if (!x11)
     return;
 
   pthread_mutex_lock (&x11->mutex);
@@ -247,32 +268,31 @@ pl_x11_get_video_pos (x11_t *x11, int *x, int *y)
 #define PL_X11_CHANGES_W 2
 #define PL_X11_CHANGES_H 3
 
-void
-pl_x11_resize (player_t *player)
+static void
+win_resize (window_t *win)
 {
-  x11_t *x11 = NULL;
+  x11_t *x11;
   uint32_t changes[] = { 0, 0, 0, 0 }; /* x, y, w, h */
   int16_t x, y;
   uint16_t width, height;
 
-  if (!player || !player->x11)
+  if (!win)
     return;
 
-  x11 = player->x11;
-
-  if (!x11->conn)
+  x11 = win->backend_data;
+  if (!x11 || !x11->conn)
     return;
 
   pthread_mutex_lock (&x11->mutex);
   width  = x11->width;
   height = x11->height;
 
-  if (player->winid)
+  if (win->player->winid)
   {
     xcb_get_geometry_cookie_t cookie;
     xcb_get_geometry_reply_t *geom;
 
-    cookie = xcb_get_geometry (x11->conn, (xcb_window_t) player->winid);
+    cookie = xcb_get_geometry (x11->conn, (xcb_window_t) win->player->winid);
     geom = xcb_get_geometry_reply (x11->conn, cookie, NULL);
     if (geom)
     {
@@ -315,12 +335,12 @@ pl_x11_resize (player_t *player)
 
     x11->x_vid = 0;
     x11->y_vid = 0;
-    x11->w_vid = player->w;
-    x11->h_vid = player->h;
+    x11->w_vid = win->player->w;
+    x11->h_vid = win->player->h;
 
     /* fix the size and offset */
-    zoom (player, width, height,
-          player->aspect, &x11->x_vid, &x11->y_vid, &x11->w_vid, &x11->h_vid);
+    zoom (win->player, width, height, win->player->aspect,
+          &x11->x_vid, &x11->y_vid, &x11->w_vid, &x11->h_vid);
 
     changes[PL_X11_CHANGES_X] = (uint32_t) x11->x_vid;
     changes[PL_X11_CHANGES_Y] = (uint32_t) x11->y_vid;
@@ -349,23 +369,22 @@ pl_x11_resize (player_t *player)
 
   xcb_flush (x11->conn);
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window resized");
+  pl_log (win->player, PLAYER_MSG_INFO, MODULE_NAME, "window resized");
 }
 
-void
-pl_x11_map (player_t *player)
+static void
+win_map (window_t *win)
 {
-  x11_t *x11 = NULL;
+  x11_t *x11;
 
-  if (!player || !player->x11)
+  if (!win)
     return;
 
-  x11 = player->x11;
-
-  if (!x11->conn)
+  x11 = win->backend_data;
+  if (!x11 || !x11->conn)
     return;
 
-  pl_x11_resize (player);
+  win_resize (win);
 
   if (x11->use_subwin && x11->win_black)
   {
@@ -382,20 +401,19 @@ pl_x11_map (player_t *player)
 
   xcb_flush (x11->conn);
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window mapped");
+  pl_log (win->player, PLAYER_MSG_INFO, MODULE_NAME, "window mapped");
 }
 
-void
-pl_x11_unmap (player_t *player)
+static void
+win_unmap (window_t *win)
 {
-  x11_t *x11 = NULL;
+  x11_t *x11;
 
-  if (!player || !player->x11)
+  if (!win)
     return;
 
-  x11 = player->x11;
-
-  if (!x11->conn)
+  x11 = win->backend_data;
+  if (!x11 || !x11->conn)
     return;
 
   if (x11->use_subwin && x11->win_black)
@@ -405,20 +423,19 @@ pl_x11_unmap (player_t *player)
 
   xcb_flush (x11->conn);
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window unmapped");
+  pl_log (win->player, PLAYER_MSG_INFO, MODULE_NAME, "window unmapped");
 }
 
-void
-pl_x11_uninit (player_t *player)
+static void
+win_uninit (window_t *win)
 {
-  x11_t *x11 = NULL;
+  x11_t *x11;
 
-  if (!player || !player->x11)
+  if (!win)
     return;
 
-  x11 = player->x11;
-
-  if (!x11->conn)
+  x11 = win->backend_data;
+  if (!x11 || !x11->conn)
     return;
 
   xcb_unmap_window (x11->conn, x11->win_video);
@@ -454,10 +471,10 @@ pl_x11_uninit (player_t *player)
   xcb_disconnect (x11->conn);
 
   pthread_mutex_destroy (&x11->mutex);
+  win->backend_data = NULL;
   PFREE (x11);
-  player->x11 = NULL;
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window destroyed");
+  pl_log (win->player, PLAYER_MSG_INFO, MODULE_NAME, "window destroyed");
 }
 
 #ifdef HAVE_XINE
@@ -572,8 +589,8 @@ x11_connection (player_t *player, xcb_screen_t **screen)
  * the override_redirect attribute. But it works fine when the main window
  * is attached to an other (see player_init(), winid parameter).
  */
-int
-pl_x11_init (player_t *player)
+static int
+win_init (window_t *win)
 {
   x11_t *x11 = NULL;
   xcb_window_t win_root;
@@ -591,32 +608,32 @@ pl_x11_init (player_t *player)
 #endif /* !USE_XLIB_HACK */
 #endif /* HAVE_XINE */
 
-  if (!player)
+  if (!win)
     return 0;
 
-  player->x11 = PCALLOC (x11_t, 1);
-  x11 = player->x11;
+  x11 = PCALLOC (x11_t, 1);
+  win->backend_data = x11;
   if (!x11)
     return 0;
 
-  x11->conn = x11_connection (player, &x11->screen);
+  x11->conn = x11_connection (win->player, &x11->screen);
   if (!x11->conn)
     goto err;
 
-  if (player->type == PLAYER_TYPE_MPLAYER)
+  if (win->player->type == PLAYER_TYPE_MPLAYER)
     x11->use_subwin = 1;
-  else if (player->type == PLAYER_TYPE_XINE)
+  else if (win->player->type == PLAYER_TYPE_XINE)
   {
 #ifdef HAVE_XINE
 #ifdef USE_XLIB_HACK
-    xine_conn = XOpenDisplay (player->x11_display);
+    xine_conn = XOpenDisplay (win->player->x11_display);
     if (!xine_conn)
       goto err_conn;
 
     XSetEventQueueOwner (xine_conn, XlibOwnsEventQueue);
     xine_screen = XDefaultScreen (xine_conn);
 #else /* USE_XLIB_HACK */
-    xine_conn = x11_connection (player, &xine_screen);
+    xine_conn = x11_connection (win->player, &xine_screen);
     if (!xine_conn)
       goto err_conn;
 #endif /* !USE_XLIB_HACK */
@@ -627,7 +644,7 @@ pl_x11_init (player_t *player)
 
   attributes[0] = x11->screen->black_pixel;
 
-  win_root = (xcb_window_t) player->winid;
+  win_root = (xcb_window_t) win->player->winid;
   if (!win_root)
   {
     x11->width  = x11->screen->width_in_pixels;
@@ -728,13 +745,13 @@ pl_x11_init (player_t *player)
 
   x11->pixel_aspect = 1.0;
 
-  if (player->type == PLAYER_TYPE_XINE)
+  if (win->player->type == PLAYER_TYPE_XINE)
   {
 #ifdef HAVE_XINE
 #ifdef USE_XLIB_HACK
     x11_visual_t *vis = PCALLOC (x11_visual_t, 1);
 
-    pl_log (player, PLAYER_MSG_WARNING, MODULE_NAME,
+    pl_log (win->player, PLAYER_MSG_WARNING, MODULE_NAME,
             "The Xlib hack has been enabled, beware of races!");
 #else /* USE_XLIB_HACK */
     xcb_visual_t *vis = PCALLOC (xcb_visual_t, 1);
@@ -759,7 +776,7 @@ pl_x11_init (player_t *player)
 #endif /* HAVE_XINE */
   }
 
-  pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
+  pl_log (win->player, PLAYER_MSG_INFO, MODULE_NAME, "window initialized");
   return 1;
 
 #ifdef HAVE_XINE
@@ -768,6 +785,34 @@ pl_x11_init (player_t *player)
   xcb_disconnect (x11->conn);
  err:
   PFREE (x11);
-  player->x11 = NULL;
+  win->backend_data = NULL;
   return 0;
+}
+
+
+/***************************************************************************/
+/*                           Public Video Out API                          */
+/***************************************************************************/
+
+window_funcs_t *
+pl_window_xcb_register (void)
+{
+  window_funcs_t *funcs;
+
+  funcs = PCALLOC (window_funcs_t, 1);
+  if (!funcs)
+    return NULL;
+
+  funcs->init           = win_init;
+  funcs->uninit         = win_uninit;
+  funcs->map            = win_map;
+  funcs->unmap          = win_unmap;
+  funcs->resize         = win_resize;
+  funcs->winid_get      = win_winid_get;
+  funcs->data_get       = win_data_get;
+  funcs->video_pos_get  = win_video_pos_get;
+  funcs->win_props_set  = win_win_props_set;
+  funcs->vdpau_caps_get = win_vdpau_caps_get;
+
+  return funcs;
 }

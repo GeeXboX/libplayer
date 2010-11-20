@@ -43,7 +43,8 @@ SRCS = \
 	event.c \
 	event_handler.c \
 	supervisor.c \
-	wrapper_dummy.c
+	wrapper_dummy.c \
+	window.c \
 
 EXTRADIST = \
 	event.h \
@@ -61,9 +62,11 @@ EXTRADIST = \
 	wrapper_mplayer.h \
 	wrapper_vlc.h \
 	wrapper_xine.h \
-	x11_common.h \
+	window.h \
+	window_common.h \
+	window_xcb.h \
 
-SRCS-$(X11)			+= x11_common.c
+SRCS-$(WIN_XCB)			+= window_xcb.c
 SRCS-$(WRAPPER_MPLAYER)		+= wrapper_mplayer.c
 SRCS-$(WRAPPER_VLC)		+= wrapper_vlc.c
 SRCS-$(WRAPPER_XINE)		+= wrapper_xine.c

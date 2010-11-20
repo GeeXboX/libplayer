@@ -49,6 +49,10 @@ show_help(){
   echo "  --enable-xine               build xine wrapper"
   echo "  --disable-xine              do not build xine wrapper"
   echo ""
+  echo "Window backends options:"
+  echo "  --enable-win-xcb            build XCB window support"
+  echo "  --disable-win-xcb           do not build XCB window support"
+  echo ""
   echo "Optional features:"
   echo "  --enable-binding-python     build Python bindings"
   echo "  --enable-xlib-hack          use Xlib (can cause races, beware)"
@@ -68,7 +72,6 @@ show_help(){
   echo "  --enable-small              optimize for size instead of speed"
   echo "  --cross-prefix=PREFIX       use PREFIX for compilation tools [$cross_prefix]"
   echo "  --cross-compile             assume a cross-compiler is used"
-  echo "  --disable-x11               disable X11 support"
   echo "  --enable-pic                build position-independent code"
   echo ""
   echo "Miscellaneous:"
@@ -534,7 +537,7 @@ wrapper_gstreamer="auto"
 binding_python="no"
 xlib_hack="no"
 vdpau="no" # depends of xlib_hack
-x11="auto"
+win_xcb="auto"
 pic="no"
 INSTALL="install"
 VERSION=""
@@ -629,9 +632,9 @@ for opt do
   ;;
   --with-vdpau-dir=*) libvdpaudir="$optval";
   ;;
-  --enable-x11) x11="yes";
+  --enable-win-xcb) win_xcb="yes";
   ;;
-  --disable-x11) x11="no";
+  --disable-win-xcb) win_xcb="no";
   ;;
   --enable-pic) pic="yes";
   ;;
@@ -1015,8 +1018,8 @@ fi
 #################################################
 #   check for libxcb
 #################################################
-if test "$x11" = "auto" -o "$x11" = "yes"; then
-  x11="no"
+if test "$win_xcb" = "auto" -o "$win_xcb" = "yes"; then
+  win_xcb="no"
   echolog "Checking for libxcb ..."
   if [ -n "$libxcbdir" ]; then
     check_cppflags -I$libxcbdir/include
@@ -1025,8 +1028,8 @@ if test "$x11" = "auto" -o "$x11" = "yes"; then
 
   check_lib_pkgcfg xcb xcb/xcb.h xcb_generate_id -lxcb
   if [ "$?" = 0 ]; then
-    add_cppflags -DUSE_X11
-    x11="yes"
+    add_cppflags -DHAVE_WIN_XCB
+    win_xcb="yes"
   fi
 fi
 
@@ -1045,7 +1048,7 @@ fi
 #################################################
 if test "$xlib_hack" = "auto" -o "$xlib_hack" = "yes"; then
   xlib_hack="no"
-  if test "$x11" = "yes"; then
+  if test "$win_xcb" = "yes"; then
     echolog "Checking for libX11-xcb ..."
 
     check_lib_pkgcfg x11-xcb X11/Xlib-xcb.h xcb_generate_id -lX11-xcb -lX11 -lxcb
@@ -1137,11 +1140,13 @@ echolog "  MPlayer:           $wrapper_mplayer"
 echolog "  VLC:               $wrapper_vlc"
 echolog "  xine:              $wrapper_xine"
 echolog ""
+echolog "built-in window backends:"
+echolog "  XCB:               $win_xcb"
+echolog ""
 echolog "Bindings:"
 echolog "  Python:            $binding_python"
 echolog ""
 echolog "Miscellaneous:"
-echolog "  X11 support:       $x11"
 echolog "  Xlib hack:         $xlib_hack"
 echolog "  Documentation:     $doc"
 echolog ""
@@ -1212,7 +1217,7 @@ append_config "WRAPPER_MPLAYER=$wrapper_mplayer"
 append_config "WRAPPER_VLC=$wrapper_vlc"
 append_config "WRAPPER_GSTREAMER=$wrapper_gstreamer"
 append_config "BINDING_PYTHON=$binding_python"
-append_config "X11=$x11"
+append_config "WIN_XCB=$win_xcb"
 append_config "XLIB_HACK=$xlib_hack"
 append_config "DOC=$doc"
 

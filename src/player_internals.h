@@ -25,7 +25,6 @@
 
 #include <pthread.h>
 
-struct x11_s;
 struct playlist_s;
 struct event_handler_s;
 struct supervisor_s;
@@ -255,7 +254,7 @@ struct player_s {
   player_ao_t   ao;           /* audio output driver name     */
   player_vo_t   vo;           /* video output driver name     */
 
-  struct x11_s *x11;          /* for X11 video out            */
+  struct window_s *window;    /* window backend               */
   const char   *x11_display;  /* for non-default display      */
   uint32_t      winid;        /* embedded Window ID for X11   */
   int   x, y;                 /* video position               */

@@ -38,11 +38,8 @@
 #include "event.h"
 #include "fs_utils.h"
 #include "parse_utils.h"
+#include "window.h"
 #include "wrapper_mplayer.h"
-
-#ifdef USE_X11
-#include "x11_common.h"
-#endif /* USE_X11 */
 
 #define MODULE_NAME "mplayer"
 
@@ -673,9 +670,7 @@ thread_fifo (void *arg)
 
         player_event_send (player, PLAYER_EVENT_PLAYBACK_FINISHED);
 
-#ifdef USE_X11
-        pl_x11_unmap (player);
-#endif /* USE_X11 */
+        pl_window_unmap (player->window);
       }
       else
       {
@@ -778,9 +773,7 @@ thread_fifo (void *arg)
         mplayer->status = MPLAYER_IS_IDLE;
         pthread_mutex_unlock (&mplayer->mutex_status);
 
-#ifdef USE_X11
-        pl_x11_unmap (player);
-#endif /* USE_X11 */
+        pl_window_unmap (player->window);
       }
     }
 
@@ -820,9 +813,7 @@ thread_fifo (void *arg)
     }
   }
 
-#ifdef USE_X11
-  pl_x11_unmap (player);
-#endif /* USE_X11 */
+  pl_window_unmap (player->window);
 
   pthread_mutex_lock (&mplayer->mutex_status);
   mplayer->status = MPLAYER_IS_DEAD;
@@ -2674,28 +2665,28 @@ mp_preinit_vo (player_t *player, uint32_t *winid)
   case PLAYER_VO_GL:
   case PLAYER_VO_VDPAU:
   case PLAYER_VO_VAAPI:
-#ifndef USE_X11
+#ifndef HAVE_WIN_XCB
     pl_log (player, PLAYER_MSG_ERROR,
             MODULE_NAME, "libplayer is not compiled with X11 support");
     return -1;
-#endif /* !USE_X11 */
+#endif /* !HAVE_WIN_XCB */
 
   case PLAYER_VO_AUTO:
-#ifdef USE_X11
-    ret = pl_x11_init (player);
+#ifdef HAVE_WIN_XCB
+    ret = pl_window_init (player->window);
     if (player->vo != PLAYER_VO_AUTO && !ret)
     {
       pl_log (player, PLAYER_MSG_ERROR,
               MODULE_NAME, "initialization for X has failed");
       return -1;
     }
-    *winid = pl_x11_get_window (player->x11);
+    *winid = pl_window_winid_get (player->window);
     break;
-#else /* USE_X11 */
+#else /* HAVE_WIN_XCB */
     pl_log (player, PLAYER_MSG_ERROR, MODULE_NAME,
-            "auto-detection for videoout is not enabled without X11 support");
+            "auto-detection for window is not enabled without X11 support");
     return -1;
-#endif /* !USE_X11 */
+#endif /* !HAVE_WIN_XCB */
 
   default:
     pl_log (player, PLAYER_MSG_ERROR,
@@ -2862,7 +2853,7 @@ mplayer_init (player_t *player)
       params[pp++] = "directfb:double";
       break;
 
-#ifdef USE_X11
+#ifdef HAVE_WIN_XCB
     case PLAYER_VO_VDPAU:
     {
       int caps;
@@ -2871,24 +2862,24 @@ mplayer_init (player_t *player)
       params[pp++] = "-vo";
       params[pp++] = "vdpau,xv,x11";
 
-      caps = pl_x11_vdpau_caps (player);
+      caps = pl_window_vdpau_caps_get (player->window);
       if (!caps)
         break;
 
       params[pp++] = "-vc";
-      if (caps & (X11_VDPAU_MPEG1 | X11_VDPAU_MPEG2))
+      if (caps & (WIN_VDPAU_MPEG1 | WIN_VDPAU_MPEG2))
         strcat (vc, "ffmpeg12vdpau,");
-      if (caps & X11_VDPAU_H264)
+      if (caps & WIN_VDPAU_H264)
         strcat (vc, "ffh264vdpau,");
-      if (caps & X11_VDPAU_VC1)
+      if (caps & WIN_VDPAU_VC1)
         strcat (vc, "ffvc1vdpau,ffwmv3vdpau,");
-      if (caps & (X11_VDPAU_MPEG4_PART2 | X11_VDPAU_DIVX4 | X11_VDPAU_DIVX5))
+      if (caps & (WIN_VDPAU_MPEG4P2 | WIN_VDPAU_DIVX4 | WIN_VDPAU_DIVX5))
         strcat (vc, "ffodivxvdpau,");
       params[pp++] = vc;
 
       break;
     }
-#endif /* USE_X11 */
+#endif /* HAVE_WIN_XCB */
 
     case PLAYER_VO_VAAPI:
       params[pp++] = "-vo";
@@ -3054,9 +3045,7 @@ mplayer_uninit (player_t *player)
     pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "MPlayer child terminated");
   }
 
-#ifdef USE_X11
-  pl_x11_uninit (player);
-#endif /* USE_X11 */
+  pl_window_uninit (player->window);
 
   item_list_free (mplayer->slave_cmds, g_slave_cmds_nb);
   item_list_free (mplayer->slave_props, g_slave_props_nb);
@@ -3352,10 +3341,8 @@ mplayer_playback_start (player_t *player)
     slave_set_property_int (player, PROPERTY_SUB, 0);
   }
 
-#ifdef USE_X11
   if (MRL_USES_VO (mrl))
-    pl_x11_map (player);
-#endif /* USE_X11 */
+    pl_window_map (player->window);
 
   return PLAYER_PB_OK;
 }
@@ -3364,9 +3351,7 @@ static void
 mplayer_playback_stop (player_t *player)
 {
   mplayer_t *mplayer = NULL;
-#ifdef USE_X11
   mrl_t *mrl;
-#endif /* USE_X11 */
 
   pl_log (player, PLAYER_MSG_VERBOSE, MODULE_NAME, "playback_stop");
 
@@ -3388,11 +3373,9 @@ mplayer_playback_stop (player_t *player)
   mplayer->status = MPLAYER_IS_IDLE;
   pthread_mutex_unlock (&mplayer->mutex_status);
 
-#ifdef USE_X11
   mrl = pl_playlist_get_mrl (player->playlist);
   if (MRL_USES_VO (mrl))
-    pl_x11_unmap (player);
-#endif /* USE_X11 */
+    pl_window_unmap (player->window);
 
   slave_cmd (player, SLAVE_STOP);
 }
@@ -3607,17 +3590,15 @@ mplayer_set_mouse_pos (player_t *player, int x, int y)
   if (!player)
     return;
 
-#ifdef USE_X11
   /* absolute to relative */
-  if (player->x11)
+  if (player->window)
   {
     int video_x, video_y;
 
-    pl_x11_get_video_pos (player->x11, &video_x, &video_y);
+    pl_window_video_pos_get (player->window, &video_x, &video_y);
     x -= video_x;
     y -= video_y;
   }
-#endif /* USE_X11 */
 
   slave_cmd_int_opt (player, SLAVE_SET_MOUSE_POS, x, y);
 }
@@ -3794,9 +3775,7 @@ mplayer_video_set_ar (player_t *player, float value)
   else
     player->aspect = value;
 
-#ifdef USE_X11
-  pl_x11_resize (player);
-#endif /* USE_X11 */
+  pl_window_resize (player->window);
 
   slave_cmd_float (player, SLAVE_SWITCH_RATIO, player->aspect);
 }

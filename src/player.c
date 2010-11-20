@@ -31,6 +31,7 @@
 #include "playlist.h" /* pl_playlist_new pl_playlist_free */
 #include "supervisor.h"
 #include "event_handler.h"
+#include "window.h"
 
 /* players wrappers */
 #include "wrapper_dummy.h"
@@ -214,6 +215,8 @@ player_init (player_type_t type,
     return NULL;
   }
 
+  player->window = pl_window_register (player);
+
   pl_event_handler_enable (player->event);
 
   player_set_verbosity (player, verbosity);
@@ -239,6 +242,8 @@ player_uninit (player_t *player)
 
   pl_supervisor_send (player, SV_MODE_WAIT_FOR_END,
                       SV_FUNC_PLAYER_UNINIT, NULL, NULL);
+
+  pl_window_destroy (player->window);
 
   pl_log (player, PLAYER_MSG_INFO, MODULE_NAME, "pl_event_handler_uninit");
   pl_event_handler_disable (player->event);
