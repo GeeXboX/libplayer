@@ -243,7 +243,8 @@ gstreamer_set_audio_sink (player_t *player)
   if (!player)
     return NULL;
 
-  switch (player->ao) {
+  switch (player->ao)
+  {
   case PLAYER_AO_AUTO:
     sink = gst_element_factory_make ("gconfaudiosink", AUDIO_SINK_NAME);
     if (!sink)
