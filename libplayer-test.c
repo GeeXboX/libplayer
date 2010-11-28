@@ -46,7 +46,7 @@
   " -h --help               this help\n" \
   " -p --player <player>    specify the player (mplayer|xine|vlc|gstreamer)\n" \
   " -a --audio  <audioout>  specify the audio output (alsa|oss|pulse|null)\n" \
-  " -g --video  <videoout>  specify the video output (x11|sdl:x11|xv|gl|vdpau|fb|directfb|vaapi|null)\n" \
+  " -g --video  <videoout>  specify the video output (x11|sdl:x11|xv|gl|vdpau|fb|directfb|vaapi|v4l2|null)\n" \
   " -q --quality <level>    specify the picture quality (0|1|2, best to worse)\n" \
   " -v --verbose            increase verbosity\n" \
   "\n" \
@@ -922,6 +922,8 @@ main (int argc, char **argv)
         vo = PLAYER_VO_DIRECTFB;
       else if (!strcmp (optarg, "vaapi"))
         vo = PLAYER_VO_VAAPI;
+      else if (!strcmp (optarg, "v4l2"))
+        vo = PLAYER_VO_V4L2;
       else if (!strcmp (optarg, "null"))
         vo = PLAYER_VO_NULL;
       break;
