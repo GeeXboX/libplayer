@@ -213,6 +213,10 @@ gstreamer_set_video_sink (player_t *player)
     sink = gst_element_factory_make ("xvimagesink", VIDEO_SINK_NAME);
     use_x11 = 1;
     break;
+  case PLAYER_VO_GL:
+    sink = gst_element_factory_make ("glimagesink", VIDEO_SINK_NAME);
+    use_x11 = 1;
+    break;
   case PLAYER_VO_V4L2:
     sink = gst_element_factory_make ("v4l2sink", VIDEO_SINK_NAME);
     use_x11 = 1;
