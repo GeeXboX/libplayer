@@ -234,7 +234,7 @@ add_pkgconfig_libs(){
 
 check_cmd(){
   log "$@"
-  "$@" >>$logfile 2>&1
+  $@ >>$logfile 2>&1
 }
 
 check_cc(){
