@@ -181,7 +181,6 @@ static GstElement *
 gstreamer_set_video_sink (player_t *player)
 {
   GstElement *sink = NULL;
-  int use_x11 = 0;
 #ifdef HAVE_WIN_XCB
   int ret;
 #endif /* HAVE_WIN_XCB */
@@ -203,23 +202,18 @@ gstreamer_set_video_sink (player_t *player)
     break;
   case PLAYER_VO_X11:
     sink = gst_element_factory_make ("ximagesink", VIDEO_SINK_NAME);
-    use_x11 = 1;
     break;
   case PLAYER_VO_X11_SDL:
     sink = gst_element_factory_make ("sdlvideosink", VIDEO_SINK_NAME);
-    use_x11 = 1;
     break;
   case PLAYER_VO_XV:
     sink = gst_element_factory_make ("xvimagesink", VIDEO_SINK_NAME);
-    use_x11 = 1;
     break;
   case PLAYER_VO_GL:
     sink = gst_element_factory_make ("glimagesink", VIDEO_SINK_NAME);
-    use_x11 = 1;
     break;
   case PLAYER_VO_V4L2:
     sink = gst_element_factory_make ("v4l2sink", VIDEO_SINK_NAME);
-    use_x11 = 1;
     break;
   default:
     break;
