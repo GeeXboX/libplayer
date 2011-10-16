@@ -121,6 +121,9 @@ getch (void)
   tcsetattr (STDIN_FILENO, TCSANOW, &newt);
 
   n = read (STDIN_FILENO, &ch, sizeof (ch));
+  if (!n)
+    return 0;
+
   putchar ('\n');
   while (ch)
   {
@@ -146,6 +149,8 @@ load_res_local (player_t *player)
   {
     char *r;
     r = fgets (file, sizeof (file), stdin);
+    if (!r)
+      continue;
     *(file + strlen (file) - 1) = '\0';
   }
 
@@ -186,24 +191,34 @@ load_res_cd (player_t *player)
   {
     char *r;
     r = fgets (device, sizeof (device), stdin);
+    if (!r)
+      continue;
     *(device + strlen (device) - 1) = '\0';
   }
   args->device = strdup (device);
 
   printf ("cddb [0|1]: ");
   n = scanf ("%1u", &val);
+  if (n != 1)
+    val = 1;
   res = val ? MRL_RESOURCE_CDDB : MRL_RESOURCE_CDDA;
 
   printf ("Track start: ");
   n = scanf ("%3u", &val);
+  if (n != 1)
+    val = 1;
   args->track_start = (uint8_t) val;
 
   printf ("Track end: ");
   n = scanf ("%3u", &val);
+  if (n != 1)
+    val = 99;
   args->track_end = (uint8_t) val;
 
   printf ("Speed: ");
   n = scanf ("%3u", &val);
+  if (n != 1)
+    val = 1;
   args->speed = (uint8_t) val;
 
   mrl = mrl_new (player, res, args);
@@ -237,24 +252,34 @@ load_res_dvd (player_t *player)
   {
     char *r;
     r = fgets (device, sizeof (device), stdin);
+    if (!r)
+      continue;
     *(device + strlen (device) - 1) = '\0';
   }
   args->device = strdup (device);
 
   printf ("dvdnav [0|1]: ");
   n = scanf ("%1u", &val);
+  if (n != 1)
+    val = 0;
   res = val ? MRL_RESOURCE_DVDNAV : MRL_RESOURCE_DVD;
 
   printf ("Title start: ");
   n = scanf ("%3u", &val);
+  if (n != 1)
+    val = 1;
   args->title_start = (uint8_t) val;
 
   printf ("Title end: ");
   n = scanf ("%3u", &val);
+  if (n != 1)
+    val = 1;
   args->title_end = (uint8_t) val;
 
   printf ("Angle: ");
   n = scanf ("%3u", &val);
+  if (n != 1)
+    val = 1;
   args->angle = (uint8_t) val;
 
   mrl = mrl_new (player, res, args);
@@ -288,12 +313,16 @@ load_res_vcd (player_t *player)
   {
     char *r;
     r = fgets (device, sizeof (device), stdin);
+    if (!r)
+      continue;
     *(device + strlen (device) - 1) = '\0';
   }
   args->device = strdup (device);
 
   printf ("Track start: ");
   n = scanf ("%4u", &val);
+  if (n != 1)
+    val = 1;
   args->track_start = (uint8_t) val;
 
   mrl = mrl_new (player, res, args);
@@ -325,6 +354,8 @@ load_res_radio (player_t *player)
   {
     char *r;
     r = fgets (str, sizeof (str), stdin);
+    if (!r)
+      continue;
     *(str + strlen (str) - 1) = '\0';
   }
   if (strcmp (str, "null"))
@@ -361,6 +392,8 @@ load_res_tv (player_t *player)
   {
     char *r;
     r = fgets (str, sizeof (str), stdin);
+    if (!r)
+      continue;
     *(str + strlen (str) - 1) = '\0';
   }
   if (strcmp (str, "null"))
@@ -369,6 +402,8 @@ load_res_tv (player_t *player)
 
   printf ("Input: ");
   n = scanf ("%u", &val);
+  if (n != 1)
+    val = 1;
   args->input = (uint8_t) val;
 
   printf ("Norm (null, PAL, SECAM, NTSC, ...): ");
@@ -376,6 +411,8 @@ load_res_tv (player_t *player)
   {
     char *r;
     r = fgets (str, sizeof (str), stdin);
+    if (!r)
+      continue;
     *(str + strlen (str) - 1) = '\0';
   }
   if (strcmp (str, "null"))
@@ -412,6 +449,8 @@ load_res_network (player_t *player)
   {
     char *r;
     r = fgets (url, sizeof (url), stdin);
+    if (!r)
+      continue;
     *(url + strlen (url) - 1) = '\0';
   }
   args->url = strdup (url);
@@ -1137,6 +1176,8 @@ main (int argc, char **argv)
       int n, p = 0;
       printf ("position [second]: ");
       n = scanf ("%u", &p);
+      if (n != 1)
+        p = 0;
       mrl_video_snapshot (player, NULL, p, MRL_SNAPSHOT_JPG, "./snapshot.jpg");
       printf ("SNAPSHOT: (pos %i sec) saved to ./snapshot.jpg\n", p);
       break;
@@ -1207,6 +1248,8 @@ main (int argc, char **argv)
       {
         char *r;
         r = fgets (channel, sizeof (channel), stdin);
+        if (!r)
+          continue;
         *(channel + strlen (channel) - 1) = '\0';
       }
       if (input == 'y')
