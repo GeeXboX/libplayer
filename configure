@@ -345,7 +345,7 @@ check_libconfig(){
   err=1
   if `which "$config" 1>/dev/null 2>&1`; then
     cflags=`$config $ccflags`
-    [ -n "$cflags" ] && check_cflags "$cflags"
+    [ -n "$cflags" ] && check_cflags $cflags
     libs=`$config $clibs`
     if [ -n "$libs" ]; then
       temp_extralibs "$libs"
@@ -367,7 +367,7 @@ check_libconfig_exists(){
   err=1
   if `which "$config" 1>/dev/null 2>&1`; then
     cflags=`$config $ccflags`
-    [ -n "$cflags" ] && temp_cflags "$cflags"
+    [ -n "$cflags" ] && temp_cflags $cflags
     libs=`$config $clibs`
     if [ -n "$libs" ]; then
       temp_extralibs "$libs"
@@ -389,7 +389,7 @@ check_pkgconfig(){
   err=1
   if `which pkg-config 1>/dev/null 2>&1`; then
     cflags=`pkg-config $pkg $ccflags`
-    [ -n "$cflags" ] && check_cflags "$cflags"
+    [ -n "$cflags" ] && check_cflags $cflags
     libs=`pkg-config $pkg $clibs`
     if [ -n "$libs" ]; then
       temp_extralibs "$libs"
