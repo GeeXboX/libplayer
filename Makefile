@@ -41,7 +41,7 @@ EXTRADIST = \
 SUBDIRS = \
 	bindings \
 	bindings/python \
-	DOCS \
+	Documentations \
 	samples \
 	src \
 
@@ -75,10 +75,10 @@ apps: apps-dep lib
 	$(MAKE) apps-all
 
 docs:
-	$(MAKE) -C DOCS
+	$(MAKE) -C Documentations
 
 docs-clean:
-	$(MAKE) -C DOCS clean
+	$(MAKE) -C Documentations clean
 
 bindings: lib
 	$(MAKE) -C bindings
@@ -114,7 +114,7 @@ install-apps: apps
 	$(INSTALL) -c -m 755 $(PLTESTVDR) $(bindir)
 
 install-docs: docs
-	$(MAKE) -C DOCS install
+	$(MAKE) -C Documentations install
 
 install-man: $(MANS)
 	for m in $(MANS); do \
@@ -139,7 +139,7 @@ uninstall-apps:
 	rm -f $(bindir)/$(PLTESTVDR)
 
 uninstall-docs:
-	$(MAKE) -C DOCS uninstall
+	$(MAKE) -C Documentations uninstall
 
 uninstall-man:
 	for m in $(MANS); do \
